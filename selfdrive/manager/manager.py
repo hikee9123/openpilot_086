@@ -124,13 +124,13 @@ def manager_thread(spinner=None):
   EnableLogger = int(params.get("RecordFront"))
   
   if not EnableLogger:
-    managed_processes.remove( 'loggerd' )
-    managed_processes.remove( 'logcatd' )
-    managed_processes.remove( 'logmessaged' )
-    managed_processes.remove( 'uploader' )
-    managed_processes.remove( 'updated' )
-    managed_processes.remove( 'deleter' )
-    managed_processes.remove('tombstoned')
+    managed_processes['loggerd'].stop()
+    managed_processes['logcatd'].stop()
+    managed_processes['logmessaged'].stop()
+    managed_processes['uploader'].stop()
+    managed_processes['updated'].stop()
+    managed_processes['deleter'].stop()
+    managed_processes['tombstoned'].stop()
   else:
     # save boot log
     subprocess.call("./bootlog", cwd=os.path.join(BASEDIR, "selfdrive/loggerd"))
