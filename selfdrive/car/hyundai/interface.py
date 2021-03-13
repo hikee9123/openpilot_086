@@ -57,6 +57,7 @@ class CarInterface(CarInterfaceBase):
       ret.lateralTuning.lqr.k = [-110., 451.]
       ret.lateralTuning.lqr.l = [0.33, 0.318]
    
+      #ret.steerControlType = car.CarParams.SteerControlType.angle
     elif candidate == CAR.SANTA_FE:
       ret.lateralTuning.pid.kf = 0.00005
       ret.mass = 3982. * CV.LB_TO_KG + STD_CARGO_KG
