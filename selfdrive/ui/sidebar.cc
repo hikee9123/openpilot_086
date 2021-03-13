@@ -6,6 +6,8 @@
 #include "paint.hpp"
 #include "sidebar.hpp"
 
+float fFontSize = 0.8
+
 static void draw_background(UIState *s) {
 #ifndef QT_GUI_LIB
   const NVGcolor color = COLOR_BLACK_ALPHA(85);
