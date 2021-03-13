@@ -131,6 +131,7 @@ class Controls:
     self.events_prev = []
     self.current_alert_types = [ET.PERMANENT]
     self.logged_comm_issue = False
+    self.usb_power  = False
 
     self.sm['liveCalibration'].calStatus = Calibration.CALIBRATED
     self.sm['deviceState'].freeSpacePercent = 100
@@ -157,6 +158,8 @@ class Controls:
     self.events.clear()
     self.events.add_from_msg(CS.events)
     self.events.add_from_msg(self.sm['driverMonitoringState'].events)
+
+    self.usb_power = self.sm['pandaState'].usbPowerMode != log.PandaState.UsbPowerMode.client
 
     # Handle startup event
     if self.startup_event is not None:
@@ -244,7 +247,7 @@ class Controls:
         if not self.sm['liveLocationKalman'].gpsOK and (self.distance_traveled > 1000) and not TICI:
           # Not show in first 1 km to allow for driving out of garage. This event shows after 5 minutes
           self.events.add(EventName.noGps)
-      if not self.sm.all_alive(['roadCameraState', 'driverCameraState']) and (self.sm.frame > 10 / DT_CTRL):
+      if not self.sm.all_alive(['roadCameraState', 'driverCameraState']) and (self.sm.frame > 5 / DT_CTRL):
         self.events.add(EventName.cameraMalfunction)
         self.mismatch_counter = 0
       if self.sm['modelV2'].frameDropPerc > 20:
@@ -431,8 +434,10 @@ class Controls:
     """Send actuators and hud commands to the car, send controlsstate and MPC logging"""
     global trace1
 
+    text = 'usb_power={:.0f}'.format( self.usb_power )
+
     log_alertTextMsg1 = trace1.global_alertTextMsg1
-    log_alertTextMsg2 = trace1.global_alertTextMsg2
+    log_alertTextMsg2 = trace1.global_alertTextMsg2 + text
 
 
     CC = car.CarControl.new_message()

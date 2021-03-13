@@ -143,8 +143,6 @@ typedef struct UIScene {
   cereal::CarControl::Reader carControl;
   cereal::LateralPlan::Reader lateralPlan;
   cereal::LiveParametersData::Reader   liveParameters;
-
-
   cereal::GpsLocationData::Reader   gpsLocationExternal;
 
 
