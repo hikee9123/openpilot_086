@@ -47,7 +47,7 @@ class CarInterface(CarInterfaceBase):
       ret.lateralTuning.pid.kpBP, ret.lateralTuning.pid.kpV = [[0.], [0.20]]
       ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kiV = [[0.], [0.01]]
 
-      """
+      
       ret.lateralTuning.init('lqr')
       ret.lateralTuning.lqr.scale = 1600.0
       ret.lateralTuning.lqr.ki = 0.01
@@ -59,6 +59,7 @@ class CarInterface(CarInterfaceBase):
       ret.lateralTuning.lqr.k = [-110., 451.]
       ret.lateralTuning.lqr.l = [0.33, 0.318]
       
+      """
       #ret.steerControlType = car.CarParams.SteerControlType.angle
       ret.lateralTuning.init('indi')
       ret.lateralTuning.indi.innerLoopGainBP = [0.]
