@@ -120,8 +120,20 @@ def manager_thread(spinner=None):
   cloudlog.info("manager start")
   cloudlog.info({"environ": os.environ})
 
-  # save boot log
-  subprocess.call("./bootlog", cwd=os.path.join(BASEDIR, "selfdrive/loggerd"))
+  params = Params()
+  EnableLogger = int(params.get("RecordFront"))
+  
+  if not EnableLogger:
+    managed_processes.remove( 'loggerd' )
+    managed_processes.remove( 'logcatd' )
+    managed_processes.remove( 'logmessaged' )
+    managed_processes.remove( 'uploader' )
+    managed_processes.remove( 'updated' )
+    managed_processes.remove( 'deleter' )
+    managed_processes.remove('tombstoned')
+  else:
+    # save boot log
+    subprocess.call("./bootlog", cwd=os.path.join(BASEDIR, "selfdrive/loggerd"))
 
   ignore = []
   if os.getenv("NOBOARD") is not None:
