@@ -209,7 +209,7 @@ class Controls:
     if self.can_rcv_error or (not CS.canValid and self.sm.frame > 5 / DT_CTRL):
       self.events.add(EventName.canError)
     if (self.sm['pandaState'].safetyModel != self.CP.safetyModel and self.sm.frame > 2 / DT_CTRL) or \
-      self.mismatch_counter >= 200:
+      self.mismatch_counter >= 400:
       self.events.add(EventName.controlsMismatch)
 
     if len(self.sm['radarState'].radarErrors):
@@ -244,7 +244,7 @@ class Controls:
         if not self.sm['liveLocationKalman'].gpsOK and (self.distance_traveled > 1000) and not TICI:
           # Not show in first 1 km to allow for driving out of garage. This event shows after 5 minutes
           self.events.add(EventName.noGps)
-      if not self.sm.all_alive(['roadCameraState', 'driverCameraState']) and (self.sm.frame > 5 / DT_CTRL):
+      if not self.sm.all_alive(['roadCameraState', 'driverCameraState']) and (self.sm.frame > 10 / DT_CTRL):
         self.events.add(EventName.cameraMalfunction)
       if self.sm['modelV2'].frameDropPerc > 20:
         self.events.add(EventName.modeldLagging)
