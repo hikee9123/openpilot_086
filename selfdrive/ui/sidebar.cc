@@ -61,6 +61,11 @@ static void draw_network_type(UIState *s) {
   nvgFontFace(s->vg, "sans-regular");
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
   nvgTextBox(s->vg, network_x, network_y, network_w, network_type ? network_type : "--", NULL);
+
+  nvgFontSize(s->vg, 40*fFontSize);
+  std::string ip = s->scene.deviceState.getWifiIpAddress();
+  nvgTextBox(s->vg, network_x-20, network_y + 50, 250, ip.c_str(), NULL);
+
 }
 
 static void draw_metric(UIState *s, const char *label_str, const char *value_str, const int severity, const int y_offset, const char *message_str) {

@@ -9,6 +9,11 @@ GearShifter = car.CarState.GearShifter
 
 
 class CarState(CarStateBase):
+  def __init__(self, CP):
+    super().__init__(CP)
+
+    self.acc_active = False
+
   def update(self, cp, cp_cam):
     ret = car.CarState.new_message()
 
@@ -43,10 +48,12 @@ class CarState(CarStateBase):
       ret.cruiseState.standstill = cp.vl["TCS13"]['StandStill'] == 1
     else:
       ret.cruiseState.available = cp.vl["SCC11"]['MainMode_ACC'] == 1
-      ret.cruiseState.enabled = cp.vl["SCC12"]['ACCMode'] != 0
+      self.acc_active = cp.vl["SCC12"]['ACCMode'] != 0
+      #ret.cruiseState.enabled = cp.vl["SCC12"]['ACCMode'] != 0
+      ret.cruiseState.enabled = ret.cruiseState.available
       ret.cruiseState.standstill = cp.vl["SCC11"]['SCCInfoDisplay'] == 4.
 
-    if ret.cruiseState.enabled:
+    if self.acc_active:
       speed_conv = CV.MPH_TO_MS if cp.vl["CLU11"]["CF_Clu_SPEED_UNIT"] else CV.KPH_TO_MS
       ret.cruiseState.speed = cp.vl["SCC11"]['VSetDis'] * speed_conv
     else:
@@ -61,7 +68,7 @@ class CarState(CarStateBase):
 
     if self.CP.carFingerprint in EV_HYBRID:
       ret.gas = cp.vl["E_EMS11"]['Accel_Pedal_Pos'] / 256.
-      ret.gasPressed = ret.gas > 0
+      ret.gasPressed = ret.gas > 5
     else:
       ret.gas = cp.vl["EMS12"]['PV_AV_CAN'] / 100
       ret.gasPressed = bool(cp.vl["EMS16"]["CF_Ems_AclAct"])
@@ -194,6 +201,9 @@ class CarState(CarStateBase):
       ("CR_Mdps_StrColTq", "MDPS12", 0),
       ("CF_Mdps_ToiActive", "MDPS12", 0),
       ("CF_Mdps_ToiUnavail", "MDPS12", 0),
+      ("CF_Mdps_MsgCount2", "MDPS12", 0),  #
+      ("CF_Mdps_Chksum2", "MDPS12", 0),    #
+     
       ("CF_Mdps_FailStat", "MDPS12", 0),
       ("CR_Mdps_OutTq", "MDPS12", 0),
 

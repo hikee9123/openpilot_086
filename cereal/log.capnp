@@ -283,7 +283,8 @@ struct DeviceState @0xa4d8b5af2aa492eb {
   offroadPowerUsageUwh @23 :UInt32;
   networkStrength @24 :NetworkStrength;
   carBatteryCapacityUwh @25 :UInt32;
-
+  wifiIpAddress @31 :Text;
+  
   fanSpeedPercentDesired @10 :UInt16;
   started @11 :Bool;
   startedMonoTime @13 :UInt64;

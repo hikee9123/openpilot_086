@@ -35,7 +35,29 @@ class CarInterface(CarInterfaceBase):
       if fw.ecu == "eps" and b"," in fw.fwVersion:
         eps_modified = True
 
-    if candidate == CAR.SANTA_FE:
+    if candidate == CAR.GRANDEUR_HEV_19:
+      ret.mass = 1675. + STD_CARGO_KG
+      ret.wheelbase = 2.845
+      ret.steerRatio = 16.5  #13.96   #12.5
+      ret.steerMaxBP = [0.]
+      ret.steerMaxV = [1.0]
+      ret.lateralTuning.pid.kf = 0.000005
+  
+      ret.lateralTuning.pid.kpBP, ret.lateralTuning.pid.kpV = [[0.], [0.20]]
+      ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kiV = [[0.], [0.02]]
+
+      ret.lateralTuning.init('lqr')
+      ret.lateralTuning.lqr.scale = 1600.0
+      ret.lateralTuning.lqr.ki = 0.01
+      ret.lateralTuning.lqr.dcGain = 0.0027
+
+      ret.lateralTuning.lqr.a = [0., 1., -0.22619643, 1.21822268]
+      ret.lateralTuning.lqr.b = [-1.92006585e-04, 3.95603032e-05]
+      ret.lateralTuning.lqr.c = [1., 0.]
+      ret.lateralTuning.lqr.k = [-110., 451.]
+      ret.lateralTuning.lqr.l = [0.33, 0.318]
+   
+    elif candidate == CAR.SANTA_FE:
       ret.lateralTuning.pid.kf = 0.00005
       ret.mass = 3982. * CV.LB_TO_KG + STD_CARGO_KG
       ret.wheelbase = 2.766
@@ -214,7 +236,7 @@ class CarInterface(CarInterfaceBase):
       ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.16], [0.01]]
 
     # these cars require a special panda safety mode due to missing counters and checksums in the messages
-    if candidate in [CAR.HYUNDAI_GENESIS, CAR.IONIQ_EV_2020, CAR.IONIQ_EV_LTD, CAR.IONIQ, CAR.KONA_EV, CAR.KIA_SORENTO,
+    if candidate in [CAR.GRANDEUR_HEV_19,CAR.HYUNDAI_GENESIS, CAR.IONIQ_EV_2020, CAR.IONIQ_EV_LTD, CAR.IONIQ, CAR.KONA_EV, CAR.KIA_SORENTO,
                      CAR.SONATA_LF, CAR.KIA_NIRO_EV, CAR.KIA_OPTIMA, CAR.VELOSTER, CAR.KIA_STINGER, CAR.KIA_SELTOS,
                      CAR.GENESIS_G70, CAR.GENESIS_G80, CAR.KIA_CEED]:
       ret.safetyModel = car.CarParams.SafetyModel.hyundaiLegacy
