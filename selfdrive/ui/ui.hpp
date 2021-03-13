@@ -146,6 +146,13 @@ typedef struct UIScene {
 
 
   cereal::GpsLocationData::Reader   gpsLocationExternal;
+
+
+  struct _STATUS_
+  {
+      char text1[512];
+      char text2[512];
+  } alert;
 } UIScene;
 
 typedef struct UIState {

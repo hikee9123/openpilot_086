@@ -518,6 +518,11 @@ struct ControlsState @0x97ff69c53601abf1 {
   cumLagMs @15 :Float32;
   canErrorCounter @57 :UInt32;
 
+  output @59 :Float32;
+  alertTextMsg1  @60 :Text;
+  alertTextMsg2  @61 :Text;
+
+
   lateralControlState :union {
     indiState @52 :LateralINDIState;
     pidState @53 :LateralPIDState;

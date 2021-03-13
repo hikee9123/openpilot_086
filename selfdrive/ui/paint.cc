@@ -264,7 +264,7 @@ static void ui_draw_debug(UIState *s)
     x_pos = ui_viz_rx + 300;
     y_pos = 100+250; 
 
-    ui_print( s, x_pos, y_pos+0,   "sR:%.2f , %.2f  Fan:%.0f", steerRatio,  fanSpeed/1000. );
+    ui_print( s, x_pos, y_pos+0,   "sR:%.2f  Fan:%.0f", steerRatio,  fanSpeed/1000. );
     ui_print( s, x_pos, y_pos+50,  "aO:%.2f, %.2f", angleOffset, angleOffsetAverage );
     ui_print( s, x_pos, y_pos+100, "sF:%.2f", stiffnessFactor );
    ui_print( s, x_pos, y_pos+150, "lW:%.2f  cpuPerc:%d", laneWidth, cpuPerc );

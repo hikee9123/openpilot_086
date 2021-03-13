@@ -57,9 +57,9 @@ void ui_init(UIState *s) {
   s->sm = new SubMaster({
     "modelV2", "controlsState", "uiLayoutState", "liveCalibration", "radarState", "deviceState", "liveLocationKalman",
     "pandaState", "carParams", "driverState", "driverMonitoringState", "sensorEvents", "carState", "ubloxGnss",
-#ifdef QCOM2
+//#ifdef QCOM2
     "roadCameraState",
-#endif
+//#endif
     "liveParameters","lateralPlan","carControl","gpsLocationExternal",
   });
 
@@ -147,6 +147,17 @@ static void update_sockets(UIState *s) {
   UIScene &scene = s->scene;
   if (scene.started && sm.updated("controlsState")) {
     scene.controls_state = sm["controlsState"].getControlsState();
+
+// debug Message
+    std::string user_text1 = scene.controls_state.getAlertTextMsg1();
+    std::string user_text2 = scene.controls_state.getAlertTextMsg2();
+    const char* va_text1 = user_text1.c_str();
+    const char* va_text2 = user_text2.c_str();    
+    if (va_text1) snprintf(scene.alert.text1, sizeof(scene.alert.text1), "%s", va_text1);
+    else  scene.alert.text1[0] = '\0';
+
+    if (va_text2) snprintf(scene.alert.text2, sizeof(scene.alert.text2), "%s", va_text2);
+    else scene.alert.text2[0] = '\0';    
   }
   if (sm.updated("carState")) {
     scene.car_state = sm["carState"].getCarState();
@@ -238,12 +249,12 @@ static void update_sockets(UIState *s) {
       }
     }
   }
-#ifdef QCOM2
+//#ifdef QCOM2
   if (sm.updated("roadCameraState")) {
     scene.frame = sm["roadCameraState"].getRoadCameraState();
     scene.light_sensor = std::clamp<float>(1023.0 - scene.frame.getIntegLines(), 0.0, 1023.0);
   }
-#endif
+//#endif
   scene.started = scene.deviceState.getStarted() || scene.driver_view;
 
    if (sm.updated("liveParameters")) 
