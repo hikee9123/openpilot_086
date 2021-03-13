@@ -240,7 +240,7 @@ class CarInterface(CarInterfaceBase):
     # these cars require a special panda safety mode due to missing counters and checksums in the messages
     if ret.radarOffCan or ret.openpilotLongitudinalControl or Params().get('CommunityFeaturesToggle') == b'1':
       ret.safetyModel = car.CarParams.SafetyModel.hyundaiCommunity    
-    if candidate in [CAR.GRANDEUR_HEV_19,CAR.HYUNDAI_GENESIS, CAR.IONIQ_EV_2020, CAR.IONIQ_EV_LTD, CAR.IONIQ, CAR.KONA_EV, CAR.KIA_SORENTO,
+    elif candidate in [CAR.GRANDEUR_HEV_19,CAR.HYUNDAI_GENESIS, CAR.IONIQ_EV_2020, CAR.IONIQ_EV_LTD, CAR.IONIQ, CAR.KONA_EV, CAR.KIA_SORENTO,
                      CAR.SONATA_LF, CAR.KIA_NIRO_EV, CAR.KIA_OPTIMA, CAR.VELOSTER, CAR.KIA_STINGER, CAR.KIA_SELTOS,
                      CAR.GENESIS_G70, CAR.GENESIS_G80, CAR.KIA_CEED]:
       ret.safetyModel = car.CarParams.SafetyModel.hyundaiLegacy
