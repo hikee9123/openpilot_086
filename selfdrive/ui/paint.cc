@@ -296,8 +296,8 @@ static void ui_draw_debug(UIState *s)
 
 
 
-    //ui_print( s, 0, 1020, "%s", scene.alert.text1 );
-    //ui_print( s, 0, 1078, "%s", scene.alert.text2 );
+    ui_print( s, 0, 1020, "%s", scene.alert.text1 );
+    ui_print( s, 0, 1078, "%s", scene.alert.text2 );
   }
 
 

@@ -5,6 +5,8 @@ from selfdrive.car.hyundai.hyundaican import create_lkas11, create_clu11, create
 from selfdrive.car.hyundai.values import Buttons, CarControllerParams, CAR
 from opendbc.can.packer import CANPacker
 
+import common.log as trace1
+
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 
 
@@ -73,6 +75,11 @@ class CarController():
 
     if apply_steer:
       can_sends.append( create_mdps12(self.packer, frame, CS.mdps12) )
+
+
+    str_log1 = 'torg:{:5.0f}  pcm_cancel_cmd={:.0f}'.format( apply_steer, pcm_cancel_cmd  )
+    str_log2 = 'gas={:.1f}'.format(  CS.out.gas  )
+    trace1.printf( '{} {}'.format( str_log1, str_log2 ) )
 
     if pcm_cancel_cmd:
       can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.CANCEL))
