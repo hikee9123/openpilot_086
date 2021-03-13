@@ -220,12 +220,12 @@ static void ui_draw_debug(UIState *s)
   UIScene &scene = s->scene;
 
   int ui_viz_rx = s->viz_rect.x;
-  int ui_viz_rw = s->viz_rect.w;
+ // int ui_viz_rw = s->viz_rect.w;
 
 
 
-  int viz_speed_w = 280;
-  int viz_speed_x = ui_viz_rx+((ui_viz_rw/2)-(viz_speed_w/2));
+  //int viz_speed_w = 280;
+  //int viz_speed_x = ui_viz_rx+((ui_viz_rw/2)-(viz_speed_w/2));
 
   int  y_pos = ui_viz_rx + 300;
   int  x_pos = 100+250; 
