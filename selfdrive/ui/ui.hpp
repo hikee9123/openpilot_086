@@ -74,14 +74,14 @@ typedef enum UIStatus {
 
 static std::map<UIStatus, NVGcolor> bg_colors = {
 #ifndef QT_GUI_LIB
-  {STATUS_OFFROAD, nvgRGBA(0x07, 0x23, 0x39, 0xf1)},
+  {STATUS_OFFROAD, nvgRGBA(0x07, 0x23, 0x39, 0xe1)},
 #else
-  {STATUS_OFFROAD, nvgRGBA(0x0, 0x0, 0x0, 0xff)},
+  {STATUS_OFFROAD, nvgRGBA(0x0, 0x0, 0x0, 0xef)},
 #endif
   {STATUS_DISENGAGED, nvgRGBA(0x17, 0x33, 0x49, 0xc8)},
-  {STATUS_ENGAGED, nvgRGBA(0x17, 0x86, 0x44, 0xf1)},
-  {STATUS_WARNING, nvgRGBA(0xDA, 0x6F, 0x25, 0xf1)},
-  {STATUS_ALERT, nvgRGBA(0xC9, 0x22, 0x31, 0xf1)},
+  {STATUS_ENGAGED, nvgRGBA(0x17, 0x86, 0x44, 0x51)},
+  {STATUS_WARNING, nvgRGBA(0xDA, 0x6F, 0x25, 0x51)},
+  {STATUS_ALERT, nvgRGBA(0xC9, 0x22, 0x31, 0xe1)},
 };
 
 typedef struct {
@@ -134,6 +134,18 @@ typedef struct UIScene {
   float light_sensor, accel_sensor, gyro_sensor;
   bool started, ignition, is_metric, longitudinal_control;
   uint64_t started_frame;
+
+
+  // atom
+  int  dash_menu_no;
+  cereal::ModelDataV2::Reader modelDataV2;
+  cereal::FrameData::Reader   frame;
+  cereal::CarControl::Reader carControl;
+  cereal::LateralPlan::Reader lateralPlan;
+  cereal::LiveParametersData::Reader   liveParameters;
+
+
+  cereal::GpsLocationData::Reader   gpsLocationExternal;
 } UIScene;
 
 typedef struct UIState {
