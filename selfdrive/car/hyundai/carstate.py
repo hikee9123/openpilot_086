@@ -150,9 +150,8 @@ class CarState(CarStateBase):
       ret.leftBlindspot = cp.vl["LCA11"]["CF_Lca_IndLeft"] != 0
       ret.rightBlindspot = cp.vl["LCA11"]["CF_Lca_IndRight"] != 0
 
-    self.gearShifter = ret.gearShifter
+    
     # save the entire LKAS11 and CLU11
-    self.mdps12 = copy.copy(cp.vl["MDPS12"])    
     self.lkas11 = copy.copy(cp_cam.vl["LKAS11"])
     self.clu11 = copy.copy(cp.vl["CLU11"])
     self.park_brake = cp.vl["TCS13"]['PBRAKE_ACT'] == 1
@@ -163,6 +162,9 @@ class CarState(CarStateBase):
     self.prev_cruise_buttons = self.cruise_buttons
     self.cruise_buttons = cp.vl["CLU11"]["CF_Clu_CruiseSwState"]
 
+    # atom_append
+    self.mdps12 = copy.copy(cp.vl["MDPS12"])
+    self.gearShifter = ret.gearShifter
     return ret
 
   @staticmethod
