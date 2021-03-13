@@ -224,8 +224,8 @@ static void ui_draw_debug(UIState *s)
 
 
 
-  const int viz_speed_w = 280;
-  const int viz_speed_x = ui_viz_rx+((ui_viz_rw/2)-(viz_speed_w/2));
+  int viz_speed_w = 280;
+  int viz_speed_x = ui_viz_rx+((ui_viz_rw/2)-(viz_speed_w/2));
 
   int  y_pos = ui_viz_rx + 300;
   int  x_pos = 100+250; 
