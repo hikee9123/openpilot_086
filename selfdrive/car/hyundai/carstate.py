@@ -15,6 +15,7 @@ class CarState(CarStateBase):
     self.acc_active = False
 
     self.time_delay_int = 600
+    self.gearShifter = GearShifter.unknown
 
   def update(self, cp, cp_cam):
     ret = car.CarState.new_message()
@@ -149,6 +150,7 @@ class CarState(CarStateBase):
       ret.leftBlindspot = cp.vl["LCA11"]["CF_Lca_IndLeft"] != 0
       ret.rightBlindspot = cp.vl["LCA11"]["CF_Lca_IndRight"] != 0
 
+    self.gearShifter = ret.gearShifter
     # save the entire LKAS11 and CLU11
     self.mdps12 = copy.copy(cp.vl["MDPS12"])    
     self.lkas11 = copy.copy(cp_cam.vl["LKAS11"])
