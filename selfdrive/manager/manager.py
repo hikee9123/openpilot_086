@@ -120,20 +120,7 @@ def manager_thread(spinner=None):
   cloudlog.info("manager start")
   cloudlog.info({"environ": os.environ})
 
-  params = Params()
-  EnableLogger = int(params.get("RecordFront"))
-  
-  if not EnableLogger:
-    managed_processes['loggerd'].stop()
-    managed_processes['logcatd'].stop()
-    managed_processes['logmessaged'].stop()
-    managed_processes['uploader'].stop()
-    managed_processes['updated'].stop()
-    managed_processes['deleter'].stop()
-    managed_processes['tombstoned'].stop()
-  else:
-    # save boot log
-    subprocess.call("./bootlog", cwd=os.path.join(BASEDIR, "selfdrive/loggerd"))
+
 
   ignore = []
   if os.getenv("NOBOARD") is not None:
@@ -151,7 +138,25 @@ def manager_thread(spinner=None):
     spinner.close()
 
   started_prev = False
+  #params = Params()
   params = Params()
+  EnableLogger = int(params.get("RecordFront"))
+  
+  if not EnableLogger:
+    managed_processes['loggerd'].stop()
+    managed_processes['logcatd'].stop()
+    managed_processes['logmessaged'].stop()
+    managed_processes['uploader'].stop()
+    managed_processes['updated'].stop()
+    managed_processes['deleter'].stop()
+    managed_processes['tombstoned'].stop()
+  else:
+    # save boot log
+    subprocess.call("./bootlog", cwd=os.path.join(BASEDIR, "selfdrive/loggerd"))
+
+
+
+
   sm = messaging.SubMaster(['deviceState'])
   pm = messaging.PubMaster(['managerState'])
 
