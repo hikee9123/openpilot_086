@@ -10,7 +10,6 @@
 #include "safety/safety_gm.h"
 #include "safety/safety_ford.h"
 #include "safety/safety_hyundai.h"
-//#include "safety/safety_hyundai_077.h"
 #include "safety/safety_chrysler.h"
 #include "safety/safety_subaru.h"
 #include "safety/safety_mazda.h"
