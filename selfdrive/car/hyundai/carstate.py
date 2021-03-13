@@ -14,6 +14,8 @@ class CarState(CarStateBase):
 
     self.acc_active = False
 
+    self.time_delay_int = 600
+
   def update(self, cp, cp_cam):
     ret = car.CarState.new_message()
 
@@ -52,6 +54,17 @@ class CarState(CarStateBase):
       #ret.cruiseState.enabled = cp.vl["SCC12"]['ACCMode'] != 0
       ret.cruiseState.enabled = ret.cruiseState.available
       ret.cruiseState.standstill = cp.vl["SCC11"]['SCCInfoDisplay'] == 4.
+
+
+    if self.time_delay_int <= 0:
+      if self.gearShifter != GearShifter.drive or ret.doorOpen  or ret.seatbeltUnlatched:
+        self.time_delay_int = 300
+        ret.cruiseState.enabled = False
+      else:
+        ret.cruiseState.enabled = ret.cruiseState.available
+    else:
+      self.time_delay_int -= 1
+      ret.cruiseState.enabled = False      
 
     if self.acc_active:
       speed_conv = CV.MPH_TO_MS if cp.vl["CLU11"]["CF_Clu_SPEED_UNIT"] else CV.KPH_TO_MS
