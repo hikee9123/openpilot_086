@@ -241,7 +241,7 @@ static void ui_draw_debug(UIState *s)
   float  cpuPerc = scene.deviceState.getCpuUsagePercent();
 
 
-  auto lane_line_probs = scene.modelDataV2.getLaneLineProbs();
+  //auto lane_line_probs = scene.modelDataV2.getLaneLineProbs();
 
     nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
     nvgFontSize(s->vg, 36*1.5*fFontSize);
@@ -256,7 +256,7 @@ static void ui_draw_debug(UIState *s)
     ui_print( s, x_pos, y_pos+100, "sF:%.2f", stiffnessFactor );
    ui_print( s, x_pos, y_pos+150, "lW:%.2f  cpuPerc:%d", laneWidth, cpuPerc );
 
-    ui_print( s, x_pos, y_pos+250, "prob:%.2f, %.2f, %.2f, %.2f", lane_line_probs[0], lane_line_probs[1], lane_line_probs[2], lane_line_probs[3] );
+   // ui_print( s, x_pos, y_pos+250, "prob:%.2f, %.2f, %.2f, %.2f", lane_line_probs[0], lane_line_probs[1], lane_line_probs[2], lane_line_probs[3] );
 
 
     
