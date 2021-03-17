@@ -218,6 +218,8 @@ static void ui_draw_vision_maxspeed(UIState *s) {
 static void ui_draw_debug(UIState *s) 
 {
   UIScene &scene = s->scene;
+  /*
+
 
   int ui_viz_rx = s->viz_rect.x;
  // int ui_viz_rw = s->viz_rect.w;
@@ -239,10 +241,10 @@ static void ui_draw_debug(UIState *s)
 
 
  // float  planSteerRatio = scene.lateralPlan.getSteerRatio();
-  float  laneWidth = scene.lateralPlan.getLaneWidth();
+  //float  laneWidth = scene.lateralPlan.getLaneWidth();
 
-  float  fanSpeed = scene.deviceState.getFanSpeedPercentDesired();
-  float  cpuPerc = scene.deviceState.getCpuUsagePercent();
+  //float  fanSpeed = scene.deviceState.getFanSpeedPercentDesired();
+  //float  cpuPerc = scene.deviceState.getCpuUsagePercent();
 
 
   
@@ -250,15 +252,16 @@ static void ui_draw_debug(UIState *s)
   //int modeSel = cruiseState.getModeSel();
   //float model_speed = scene.controls_state.getModelSpeed();
 
-  auto lane_line_probs = scene.modelDataV2.getLaneLineProbs();
-  //auto road_edge_stds = scene.modelDataV2.getRoadEdges();
- // float curvature = scene.controls_state.getCurvature();
+
+ // auto lane_line_probs = scene.modelDataV2.getLaneLineProbs();
+
+
 
   nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
   if( scene.dash_menu_no  )  
   {
 
-    /*
+
     nvgFontSize(s->vg, 36*1.5*fFontSize);
 
     //ui_print( s, ui_viz_rx+10, 50, "S:%d",  s->awake_timeout );
@@ -272,7 +275,7 @@ static void ui_draw_debug(UIState *s)
    ui_print( s, x_pos, y_pos+150, "lW:%.2f  cpuPerc:%d", laneWidth, cpuPerc );
 
     ui_print( s, x_pos, y_pos+250, "prob:%.2f, %.2f, %.2f, %.2f", lane_line_probs[0], lane_line_probs[1], lane_line_probs[2], lane_line_probs[3] );
-  */
+
 
     
 
@@ -280,15 +283,15 @@ static void ui_draw_debug(UIState *s)
     //ui_print( s, x_pos, y_pos+300, "Poly:%.2f, %.2f = %.2f", scene.pathPlan.lPoly, scene.pathPlan.rPoly, dPoly );
   // ui_print( s, x_pos, y_pos+350, "map:%d,cam:%d", scene.live.map_valid, scene.live.speedlimitahead_valid  );
 
-/*
+
     // tpms
-    auto tpms = scene.car_state.getTpms();
-    float fl = tpms.getFl();
-    float fr = tpms.getFr();
-    float rl = tpms.getRl();
-    float rr = tpms.getRr();
-    ui_print( s, x_pos, y_pos+350, "tpms:%.0f,%.0f,%.0f,%.0f", fl, fr, rl, rr );
-*/
+   // auto tpms = scene.car_state.getTpms();
+    //float fl = tpms.getFl();
+    //float fr = tpms.getFr();
+    //float rl = tpms.getRl();
+    //float rr = tpms.getRr();
+    //ui_print( s, x_pos, y_pos+350, "tpms:%.0f,%.0f,%.0f,%.0f", fl, fr, rl, rr );
+
 
    // int  lensPos = scene.frame.getLensPos();
    // int  lensTruePos = scene.frame.getLensTruePos();
@@ -300,7 +303,7 @@ static void ui_draw_debug(UIState *s)
     ui_print( s, 0, 1020, "%s", scene.alert.text1 );
     ui_print( s, 0, 1078, "%s", scene.alert.text2 );
   }
-
+*/
 
 /*
   char str_msg[512];
@@ -321,6 +324,9 @@ static void ui_draw_debug(UIState *s)
   nvgFillColor(s->vg, nColor);  
   ui_print( s, x_pos, y_pos+80, str_msg );
   */
+
+     ui_print( s, 0, 1020, "%s", scene.alert.text1 );
+    ui_print( s, 0, 1078, "%s", scene.alert.text2 );
 }
 
 /*
