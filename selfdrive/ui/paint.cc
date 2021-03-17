@@ -217,9 +217,11 @@ static void ui_draw_vision_maxspeed(UIState *s) {
 
 static void ui_draw_debug(UIState *s) 
 {
+  UIScene &scene = s->scene;
+
   if( scene.dash_menu_no == 0 ) return;
   
-  UIScene &scene = s->scene;
+
 
   int  ui_viz_rx = s->viz_rect.x;
   int  y_pos = ui_viz_rx + 300;
