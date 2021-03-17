@@ -217,51 +217,31 @@ static void ui_draw_vision_maxspeed(UIState *s) {
 
 static void ui_draw_debug(UIState *s) 
 {
+  if( scene.dash_menu_no == 0 ) return;
+  
   UIScene &scene = s->scene;
-  /*
 
-
-  int ui_viz_rx = s->viz_rect.x;
- // int ui_viz_rw = s->viz_rect.w;
-
-
-
-  //int viz_speed_w = 280;
-  //int viz_speed_x = ui_viz_rx+((ui_viz_rw/2)-(viz_speed_w/2));
-
+  int  ui_viz_rx = s->viz_rect.x;
   int  y_pos = ui_viz_rx + 300;
   int  x_pos = 100+250; 
 
+  float  steerRatio = scene.liveParameters.getSteerRatio();
+  float  fanSpeed = scene.deviceState.getFanSpeedPercentDesired();
 
 
   float  angleOffset = scene.liveParameters.getAngleOffsetDeg();
   float  angleOffsetAverage = scene.liveParameters.getAngleOffsetAverageDeg();
   float  stiffnessFactor = scene.liveParameters.getStiffnessFactor();
-  float  steerRatio = scene.liveParameters.getSteerRatio();
-
-
- // float  planSteerRatio = scene.lateralPlan.getSteerRatio();
-  //float  laneWidth = scene.lateralPlan.getLaneWidth();
-
-  //float  fanSpeed = scene.deviceState.getFanSpeedPercentDesired();
-  //float  cpuPerc = scene.deviceState.getCpuUsagePercent();
-
-
-  
-  //auto cruiseState = scene.car_state.getCruiseState();  
-  //int modeSel = cruiseState.getModeSel();
-  //float model_speed = scene.controls_state.getModelSpeed();
-
-
- // auto lane_line_probs = scene.modelDataV2.getLaneLineProbs();
 
 
 
-  nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
-  if( scene.dash_menu_no  )  
-  {
+  float  laneWidth = scene.lateralPlan.getLaneWidth();
+  float  cpuPerc = scene.deviceState.getCpuUsagePercent();
 
 
+  auto lane_line_probs = scene.modelDataV2.getLaneLineProbs();
+
+    nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
     nvgFontSize(s->vg, 36*1.5*fFontSize);
 
     //ui_print( s, ui_viz_rx+10, 50, "S:%d",  s->awake_timeout );
@@ -302,31 +282,7 @@ static void ui_draw_debug(UIState *s)
 
     ui_print( s, 0, 1020, "%s", scene.alert.text1 );
     ui_print( s, 0, 1078, "%s", scene.alert.text2 );
-  }
-*/
 
-/*
-  char str_msg[512];
-  NVGcolor nColor = COLOR_WHITE;
-  x_pos = viz_speed_x + 300;
-  y_pos = 120;
-
-  nvgFontSize(s->vg, 80);
-  switch( modeSel  )
-  {
-    case 0: strcpy( str_msg, "0.OP MODE" ); nColor = COLOR_WHITE; break;
-    case 1: strcpy( str_msg, "1.CURVE" );    nColor = nvgRGBA(200, 200, 255, 255);  break;
-    case 2: strcpy( str_msg, "2.FWD CAR" );  nColor = nvgRGBA(200, 255, 255, 255);  break;
-    case 3: strcpy( str_msg, "3.HYUNDAI" );  nColor = nvgRGBA(200, 255, 255, 255);  break;
-    case 4: strcpy( str_msg, "4.CURVATURE" );   nColor = nvgRGBA(200, 255, 255, 255);  break;
-    default :  sprintf( str_msg, "%d.NORMAL", modeSel ); nColor = COLOR_WHITE;  break;
-  }
-  nvgFillColor(s->vg, nColor);  
-  ui_print( s, x_pos, y_pos+80, str_msg );
-  */
-
-     ui_print( s, 0, 1020, "%s", scene.alert.text1 );
-    ui_print( s, 0, 1078, "%s", scene.alert.text2 );
 }
 
 /*
