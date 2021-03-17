@@ -257,6 +257,8 @@ static void ui_draw_debug(UIState *s)
   nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
   if( scene.dash_menu_no  )  
   {
+
+    /*
     nvgFontSize(s->vg, 36*1.5*fFontSize);
 
     //ui_print( s, ui_viz_rx+10, 50, "S:%d",  s->awake_timeout );
@@ -270,8 +272,7 @@ static void ui_draw_debug(UIState *s)
    ui_print( s, x_pos, y_pos+150, "lW:%.2f  cpuPerc:%d", laneWidth, cpuPerc );
 
     ui_print( s, x_pos, y_pos+250, "prob:%.2f, %.2f, %.2f, %.2f", lane_line_probs[0], lane_line_probs[1], lane_line_probs[2], lane_line_probs[3] );
-   // ui_print( s, x_pos, y_pos+300, "edge:%.2f, %.2f", road_edge_stds[0], road_edge_stds[1] );
-
+  */
 
     
 
@@ -289,10 +290,10 @@ static void ui_draw_debug(UIState *s)
     ui_print( s, x_pos, y_pos+350, "tpms:%.0f,%.0f,%.0f,%.0f", fl, fr, rl, rr );
 */
 
-    int  lensPos = scene.frame.getLensPos();
-    int  lensTruePos = scene.frame.getLensTruePos();
+   // int  lensPos = scene.frame.getLensPos();
+   // int  lensTruePos = scene.frame.getLensTruePos();
     //int  lensErr = scene.frame.getLensErr();
-    ui_print( s, x_pos, y_pos+400, "frame:%d,%d", lensPos, lensTruePos );
+  //  ui_print( s, x_pos, y_pos+400, "frame:%d,%d", lensPos, lensTruePos );
 
 
 
