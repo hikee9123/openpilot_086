@@ -495,6 +495,9 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w )
       if(cpuTemp > 92) {
         val_color = nvgRGBA(255, 0, 0, 200);
       }
+
+    float gpuTemp  = maxGpuTemp[0];
+
       // temp is alway in C * 10
       snprintf(val_str, sizeof(val_str), "%.1f", cpuTemp );
       snprintf(uom_str, sizeof(uom_str), "%.1f", cpuPerc);
@@ -521,7 +524,7 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w )
     }
     // temp is alway in C * 1000
     snprintf(val_str, sizeof(val_str), "%.1f", batteryTemp);
-    snprintf(uom_str, sizeof(uom_str), "%.1f", maxGpuTemp);
+    snprintf(uom_str, sizeof(uom_str), "%.1f", gpuTemp);
     bb_h +=bb_ui_draw_measure(s,  val_str, uom_str, "BAT TEMP",
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
