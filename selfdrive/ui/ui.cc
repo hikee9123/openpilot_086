@@ -188,7 +188,8 @@ static void update_sockets(UIState *s) {
     }
   }
   if (sm.updated("modelV2")) {
-    update_model(s, sm["modelV2"].getModelV2());
+    scene.modelDataV2 = sm["modelV2"].getModelV2();
+    update_model(s, scene.modelDataV2);
   }
   if (sm.updated("uiLayoutState")) {
     auto data = sm["uiLayoutState"].getUiLayoutState();

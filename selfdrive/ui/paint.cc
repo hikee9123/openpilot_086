@@ -241,7 +241,7 @@ static void ui_draw_debug(UIState *s)
   float  cpuPerc = scene.deviceState.getCpuUsagePercent();
 
 
-  //auto lane_line_probs = scene.modelDataV2.getLaneLineProbs();
+  auto lane_line_probs = scene.modelDataV2.getLaneLineProbs();
 
     nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
     nvgFontSize(s->vg, 36*1.5*fFontSize);
@@ -256,7 +256,7 @@ static void ui_draw_debug(UIState *s)
     ui_print( s, x_pos, y_pos+100, "sF:%.2f", stiffnessFactor );
    ui_print( s, x_pos, y_pos+150, "lW:%.2f  cpuPerc:%d", laneWidth, cpuPerc );
 
-   // ui_print( s, x_pos, y_pos+250, "prob:%.2f, %.2f, %.2f, %.2f", lane_line_probs[0], lane_line_probs[1], lane_line_probs[2], lane_line_probs[3] );
+    ui_print( s, x_pos, y_pos+250, "prob:%.2f, %.2f, %.2f, %.2f", lane_line_probs[0], lane_line_probs[1], lane_line_probs[2], lane_line_probs[3] );
 
 
     
@@ -469,7 +469,7 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w )
 
 
   auto  maxCpuTemp = scene->deviceState.getCpuTempC();
-  //auto  maxGpuTemp = scene->deviceState.getGpuTempC();
+  auto  maxGpuTemp = scene->deviceState.getGpuTempC();
   float  batteryTemp = scene->deviceState.getBatteryTempC();
   //add CPU temperature
 
@@ -487,6 +487,7 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w )
     char uom_str[6];
     NVGcolor val_color = nvgRGBA(255, 255, 255, 200);
     float cpuTemp = maxCpuTemp[0];
+    float  cpuPerc = scene->deviceState.getCpuUsagePercent();
 
       if( cpuTemp > 80) {
         val_color = nvgRGBA(255, 188, 3, 200);
@@ -496,7 +497,7 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w )
       }
       // temp is alway in C * 10
       snprintf(val_str, sizeof(val_str), "%.1f", cpuTemp );
-      snprintf(uom_str, sizeof(uom_str), "");
+      snprintf(uom_str, sizeof(uom_str), ".1f", cpuPerc);
     bb_h +=bb_ui_draw_measure(s,  val_str, uom_str, "CPU TEMP",
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
@@ -520,7 +521,7 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w )
     }
     // temp is alway in C * 1000
     snprintf(val_str, sizeof(val_str), "%.1f", batteryTemp);
-    snprintf(uom_str, sizeof(uom_str), "");
+    snprintf(uom_str, sizeof(uom_str), "%.1f", maxGpuTemp);
     bb_h +=bb_ui_draw_measure(s,  val_str, uom_str, "BAT TEMP",
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
