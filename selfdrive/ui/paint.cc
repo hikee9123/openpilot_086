@@ -238,7 +238,7 @@ static void ui_draw_debug(UIState *s)
 
 
   float  laneWidth = scene.lateralPlan.getLaneWidth();
-  float  cpuPerc = scene.deviceState.getCpuUsagePercent();
+  //float  cpuPerc = scene.deviceState.getCpuUsagePercent();
 
 
   auto lane_line_probs = scene.modelDataV2.getLaneLineProbs();
@@ -254,7 +254,7 @@ static void ui_draw_debug(UIState *s)
     ui_print( s, x_pos, y_pos+0,   "sR:%.2f  Fan:%.0f", steerRatio,  fanSpeed/1000. );
     ui_print( s, x_pos, y_pos+50,  "aO:%.2f, %.2f", angleOffset, angleOffsetAverage );
     ui_print( s, x_pos, y_pos+100, "sF:%.2f", stiffnessFactor );
-   ui_print( s, x_pos, y_pos+150, "lW:%.2f  cpuPerc:%d", laneWidth, cpuPerc );
+   ui_print( s, x_pos, y_pos+150, "lW:%.2f", laneWidth );
 
     ui_print( s, x_pos, y_pos+250, "prob:%.2f, %.2f, %.2f, %.2f", lane_line_probs[0], lane_line_probs[1], lane_line_probs[2], lane_line_probs[3] );
 
@@ -501,7 +501,7 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w )
 
       // temp is alway in C * 10
       snprintf(val_str, sizeof(val_str), "%.1f", cpuTemp );
-      snprintf(uom_str, sizeof(uom_str), "%.1f", cpuPerc);
+      snprintf(uom_str, sizeof(uom_str), "%d", cpuPerc);
     bb_h +=bb_ui_draw_measure(s,  val_str, uom_str, "CPU TEMP",
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
