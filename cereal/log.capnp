@@ -283,6 +283,8 @@ struct DeviceState @0xa4d8b5af2aa492eb {
   offroadPowerUsageUwh @23 :UInt32;
   networkStrength @24 :NetworkStrength;
   carBatteryCapacityUwh @25 :UInt32;
+
+  # atom
   wifiIpAddress @31 :Text;
   
   fanSpeedPercentDesired @10 :UInt16;
@@ -519,6 +521,7 @@ struct ControlsState @0x97ff69c53601abf1 {
   cumLagMs @15 :Float32;
   canErrorCounter @57 :UInt32;
 
+  # atom
   output @59 :Float32;
   alertTextMsg1  @60 :Text;
   alertTextMsg2  @61 :Text;
