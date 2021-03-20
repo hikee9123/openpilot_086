@@ -41,9 +41,16 @@ static void draw_network_strength(UIState *s) {
 static void draw_battery_icon(UIState *s) {
   const char *battery_img = s->scene.deviceState.getBatteryStatus() == "Charging" ? "battery_charging" : "battery";
   const Rect rect = {160, 255, 76, 36};
+
+  int batteryPercent = s->scene.deviceState.getBatteryPercent();
+
   ui_fill_rect(s->vg, {rect.x + 6, rect.y + 5,
-              int((rect.w - 19) * s->scene.deviceState.getBatteryPercent() * 0.01), rect.h - 11}, COLOR_WHITE);
+              int((rect.w - 19) * batteryPercent * 0.01), rect.h - 11}, COLOR_WHITE);
   ui_draw_image(s, rect, battery_img, 1.0f);
+
+  char temp_value_str1[32];
+  snprintf(temp_value_str1, sizeof(temp_value_str1), "%d", batteryPercent );
+  nvgTextBox(s->vg, rect.x, rect.y - 2, rect.w, temp_value_str1, NULL);   
 }
 
 static void draw_network_type(UIState *s) {
