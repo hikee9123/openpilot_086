@@ -167,6 +167,16 @@ QWidget * device_panel() {
     Params().write_db_value("IsDriverViewEnabled", "1", 1);
   });
 
+  QPushButton* git_pull_btn = new QPushButton("Git pull");
+  device_layout->addWidget(git_pull_btn, 0, Qt::AlignBottom);
+  device_layout->addWidget(horizontal_line(), Qt::AlignBottom);
+  QObject::connect(git_pull_btn, &QPushButton::released, [=]() {
+    if (ConfirmationDialog::confirm("Are you sure you want to git pull?")) {
+      system("git pull");
+    } 
+  });
+
+
   // TODO: show current calibration values
   QPushButton *clear_cal_btn = new QPushButton("Reset Calibration");
   device_layout->addWidget(clear_cal_btn, 0, Qt::AlignBottom);
