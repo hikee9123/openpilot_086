@@ -141,7 +141,7 @@ QWidget * toggles_panel() {
 QWidget * device_panel() {
 
   QVBoxLayout *device_layout = new QVBoxLayout;
-  device_layout->setMargin(100);
+  device_layout->setMargin(90);
   device_layout->setSpacing(30);
 
   Params params = Params();
