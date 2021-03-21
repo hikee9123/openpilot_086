@@ -135,8 +135,8 @@ def main(sm=None, pm=None):
       angle_offset_fast = math.degrees(x[States.ANGLE_OFFSET_FAST])
       v_ego = sm['carState'].vEgo
 
-      if v_ego < 12:  # 40 km/h
-         v_ego_BP = [0,12]
+      if v_ego < 14:  # 50 km/h
+         v_ego_BP = [3,14]
          angle_rate = [0,1]
          angle_offset_fast *= interp( v_ego, v_ego_BP, angle_rate )
 
