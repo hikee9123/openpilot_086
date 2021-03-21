@@ -11,6 +11,7 @@ from selfdrive.locationd.models.car_kf import CarKalman, ObservationKind, States
 from selfdrive.locationd.models.constants import GENERATED_DIR
 from selfdrive.swaglog import cloudlog
 
+from common.numpy_fast import interp
 
 class ParamsLearner:
   def __init__(self, CP, steer_ratio, stiffness_factor, angle_offset):
@@ -110,7 +111,8 @@ def main(sm=None, pm=None):
 
   # When driving in wet conditions the stiffness can go down, and then be too low on the next drive
   # Without a way to detect this we have to reset the stiffness every drive
-  params['stiffnessFactor'] = 1.0
+  params['stiffnessFactor'] = 1.1
+  params['angleOffsetAverageDeg'] = 0
 
   learner = ParamsLearner(CP, params['steerRatio'], params['stiffnessFactor'], math.radians(params['angleOffsetAverageDeg']))
 
@@ -130,10 +132,18 @@ def main(sm=None, pm=None):
       msg.liveParameters.sensorValid = True
 
       x = learner.kf.x
+      angle_offset_fast = math.degrees(x[States.ANGLE_OFFSET_FAST])
+      v_ego = sm['carState'].vEgo
+
+      if v_ego < 12:  # 40 km/h
+         v_ego_BP = [0,12]
+         angle_rate = [0,1]
+         angle_offset_fast *= interp( v_ego, v_ego_BP, angle_rate )
+
       msg.liveParameters.steerRatio = float(x[States.STEER_RATIO])
       msg.liveParameters.stiffnessFactor = float(x[States.STIFFNESS])
       msg.liveParameters.angleOffsetAverageDeg = math.degrees(x[States.ANGLE_OFFSET])
-      msg.liveParameters.angleOffsetDeg = msg.liveParameters.angleOffsetAverageDeg + math.degrees(x[States.ANGLE_OFFSET_FAST])
+      msg.liveParameters.angleOffsetDeg = msg.liveParameters.angleOffsetAverageDeg + angle_offset_fast
       msg.liveParameters.valid = all((
         abs(msg.liveParameters.angleOffsetAverageDeg) < 10.0,
         abs(msg.liveParameters.angleOffsetDeg) < 10.0,
