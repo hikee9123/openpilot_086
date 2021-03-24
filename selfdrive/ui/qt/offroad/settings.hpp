@@ -6,11 +6,18 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QButtonGroup>
-#include <QStackedLayout>
+#include <QScrollArea>
+#include <QStackedWidget>
 
 #include "selfdrive/ui/qt/widgets/controls.hpp"
 
 // ********** settings window + top-level panels **********
+
+class DevicePanel : public QWidget {
+  Q_OBJECT
+public:
+  explicit DevicePanel(QWidget* parent = nullptr);
+};
 
 class DeveloperPanel : public QFrame {
   Q_OBJECT
@@ -35,6 +42,6 @@ private:
   QPushButton *sidebar_alert_widget;
   QWidget *sidebar_widget;
   QButtonGroup *nav_btns;
-  QStackedLayout *panel_layout;
-  QFrame* panel_frame;
+  QStackedWidget *panel_widget;
+  QScrollArea *panel_frame;
 };

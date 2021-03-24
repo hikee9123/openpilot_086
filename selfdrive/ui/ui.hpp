@@ -33,6 +33,7 @@
 #define COLOR_BLACK_ALPHA(x) nvgRGBA(0, 0, 0, x)
 #define COLOR_WHITE nvgRGBA(255, 255, 255, 255)
 #define COLOR_WHITE_ALPHA(x) nvgRGBA(255, 255, 255, x)
+#define COLOR_RED_ALPHA(x) nvgRGBA(201, 34, 49, x)
 #define COLOR_YELLOW nvgRGBA(218, 202, 37, 255)
 #define COLOR_RED nvgRGBA(201, 34, 49, 255)
 
@@ -132,14 +133,14 @@ typedef struct UIScene {
   vertex_data lead_vertices[2];
 
   float light_sensor, accel_sensor, gyro_sensor;
-  bool started, ignition, is_metric, longitudinal_control;
+  bool started, ignition, is_metric, longitudinal_control, end_to_end;
   uint64_t started_frame;
 
 
   // atom
   int  dash_menu_no;
   cereal::ModelDataV2::Reader modelDataV2;
-  cereal::FrameData::Reader   frame;
+  cereal::FrameData::Reader   camera_state;
   cereal::CarControl::Reader carControl;
   cereal::LateralPlan::Reader lateralPlan;
   cereal::LiveParametersData::Reader   liveParameters;

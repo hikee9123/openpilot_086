@@ -253,8 +253,9 @@ static void update_sockets(UIState *s) {
   }
 //#ifdef QCOM2
   if (sm.updated("roadCameraState")) {
-    scene.frame = sm["roadCameraState"].getRoadCameraState();
-    scene.light_sensor = std::clamp<float>(1023.0 - scene.frame.getIntegLines(), 0.0, 1023.0);
+    scene.camera_state = sm["roadCameraState"].getRoadCameraState();
+    float gain = camera_state.getGainFrac() * (camera_state.getGlobalGain() > 100 ? 2.5 : 1.0) / 10.0;
+    scene.light_sensor = std::clamp<float>((1023.0 / 1757.0) * (1757.0 - camera_state.getIntegLines()) * (1.0 - gain), 0.0, 1023.0);
   }
 //#endif
   scene.started = scene.deviceState.getStarted() || scene.driver_view;
@@ -370,6 +371,7 @@ static void update_status(UIState *s) {
       s->scene.started_frame = s->sm->frame;
 
       read_param(&s->scene.is_rhd, "IsRHD");
+      read_param(&s->scene.end_to_end, "EndToEndToggle");
       s->active_app = cereal::UiLayoutState::App::NONE;
       s->sidebar_collapsed = true;
       s->scene.alert_size = cereal::ControlsState::AlertSize::NONE;
