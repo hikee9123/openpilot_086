@@ -258,16 +258,16 @@ static void update_sockets(UIState *s) {
 //#endif
   scene.started = scene.deviceState.getStarted() || scene.driver_view;
 
-   if (sm.updated("liveParameters")) 
-  {
-    scene.liveParameters = sm["liveParameters"].getLiveParameters();
-  }
 
+   // atom
+   if (sm.updated("liveParameters")) 
+   { 
+    scene.liveParameters = sm["liveParameters"].getLiveParameters();
+   }
    if (sm.updated("lateralPlan"))
    {
     scene.lateralPlan = sm["lateralPlan"].getLateralPlan();
    } 
-
    if (sm.updated("carControl"))
    {
     scene.carControl = sm["carControl"].getCarControl();
