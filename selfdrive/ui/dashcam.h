@@ -463,7 +463,7 @@ static void screen_menu_button(UIState *s, int touch_x, int touch_y, int touched
 
 void dashcam(UIState *s)
 {
-  ui_state->sidebar_collapsed
+  
 
   int touch_x = s->scene.mouse.touch_x;
   int touch_y = s->scene.mouse.touch_y;
@@ -472,7 +472,7 @@ void dashcam(UIState *s)
   s->scene.mouse.touched = 0;
   if ( touched  ) 
   {
-      printf("touched x,y: (%d,%d) %d\n", touch_x, touch_y, touched);
+      printf("touched x,y: (%d,%d) %d  %d\n", touch_x, touch_y, touched, s->sidebar_collapsed);
   }
 
 
