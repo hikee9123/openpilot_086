@@ -464,12 +464,10 @@ static void screen_menu_button(UIState *s, int touch_x, int touch_y, int touched
 void dashcam(UIState *s)
 {
   if (!s->awake) return;
-  if (!s->scene.started) return;
-  
   int touch_x = s->scene.mouse.touch_x;
   int touch_y = s->scene.mouse.touch_y;
   int touched = s->scene.mouse.touched;
-
+  int touch_cnt = s->scene.mouse.touch_cnt;
 
   if ( touched  ) 
   {
@@ -480,7 +478,8 @@ void dashcam(UIState *s)
 
   }
 
-
+  if (!s->scene.started) return;
+  if (s->scene.driver_view) return;
 
 
   screen_draw_button(s, touch_x, touch_y);
