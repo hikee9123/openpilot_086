@@ -473,8 +473,13 @@ void dashcam(UIState *s)
   if ( touched  ) 
   {
     s->scene.mouse.touched = 0;    
-      printf("touched x,y: (%d,%d) %d  %d\n", touch_x, touch_y, touched, s->sidebar_collapsed);
+    printf("touched x,y: (%d,%d) %d  %d\n", touch_x, touch_y, touched, s->sidebar_collapsed);
+
+    printf(" %d, %d %d  %d  %d\n", s->scene.started, s->status, s->scene.started_frame, s->vipc_client, s->vipc_client->connected);
+
   }
+
+
 
 
   screen_draw_button(s, touch_x, touch_y);
