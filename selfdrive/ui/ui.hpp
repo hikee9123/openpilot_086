@@ -140,6 +140,7 @@ typedef struct UIScene {
     int touch_x;
     int touch_y;
     int touched;
+    int touch_cnt;
   } mouse;
 
   cereal::ModelDataV2::Reader modelDataV2;
