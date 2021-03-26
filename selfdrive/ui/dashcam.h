@@ -467,9 +467,9 @@ void dashcam(UIState *s)
   int touch_y = s->scene.mouse.touch_y;
   int touched = s->scene.mouse.touched;
 
-  if ( touched & Qt::LeftButton ) 
+  if ( touched  ) 
   {
-      printf("touched x,y: (%d,%d)\n", touch_x, touch_y);
+      printf("touched x,y: (%d,%d) %d\n", touch_x, touch_y, touched);
   }
 
 
