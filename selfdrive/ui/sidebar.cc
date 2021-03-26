@@ -9,22 +9,16 @@
 extern float  fFontSize;
 
 static void draw_background(UIState *s) {
-#ifndef QT_GUI_LIB
-  const NVGcolor color = COLOR_BLACK_ALPHA(85);
-#else
   const NVGcolor color = nvgRGBA(0x39, 0x39, 0x39, 0xff);
-#endif
   ui_fill_rect(s->vg, {0, 0, sbr_w, s->fb_h}, color);
 }
 
 static void draw_settings_button(UIState *s) {
-  const float alpha = s->active_app == cereal::UiLayoutState::App::SETTINGS ? 1.0f : 0.65f;
-  ui_draw_image(s, settings_btn, "button_settings", alpha);
+  ui_draw_image(s, settings_btn, "button_settings", 0.65f);
 }
 
 static void draw_home_button(UIState *s) {
-  const float alpha = s->active_app == cereal::UiLayoutState::App::HOME ? 1.0f : 0.65f;
-  ui_draw_image(s, home_btn, "button_home", alpha);
+  ui_draw_image(s, home_btn, "button_home", 1.0f);
 }
 
 static void draw_network_strength(UIState *s) {
@@ -123,7 +117,7 @@ static void draw_temp_metric(UIState *s) {
       {cereal::DeviceState::ThermalStatus::YELLOW, 1},
       {cereal::DeviceState::ThermalStatus::RED, 2},
       {cereal::DeviceState::ThermalStatus::DANGER, 3}};
-  std::string temp_val = std::to_string((int)s->scene.deviceState.getAmbientTempC()) + "Â°C";
+  std::string temp_val = std::to_string((int)s->scene.deviceState.getAmbientTempC()) + "¡ÆC";
   draw_metric(s, "TEMP", temp_val.c_str(), temp_severity_map[s->scene.deviceState.getThermalStatus()], 0, NULL);
 }
 

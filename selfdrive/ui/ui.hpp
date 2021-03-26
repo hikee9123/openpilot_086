@@ -74,11 +74,7 @@ typedef enum UIStatus {
 } UIStatus;
 
 static std::map<UIStatus, NVGcolor> bg_colors = {
-#ifndef QT_GUI_LIB
-  {STATUS_OFFROAD, nvgRGBA(0x07, 0x23, 0x39, 0x31)},
-#else
   {STATUS_OFFROAD, nvgRGBA(0x0, 0x0, 0x0, 0xef)},
-#endif
   {STATUS_DISENGAGED, nvgRGBA(0x17, 0x33, 0x49, 0xc8)},
   {STATUS_ENGAGED, nvgRGBA(0x17, 0x86, 0x44, 0x51)},
   {STATUS_WARNING, nvgRGBA(0xDA, 0x6F, 0x25, 0x51)},
@@ -139,13 +135,19 @@ typedef struct UIScene {
 
   // atom
   int  dash_menu_no;
+  struct _mouse
+  {
+    int touch_x;
+    int touch_y;
+    int touched;
+  } mouse;
+
   cereal::ModelDataV2::Reader modelDataV2;
   cereal::FrameData::Reader   camera_state;
   cereal::CarControl::Reader carControl;
   cereal::LateralPlan::Reader lateralPlan;
   cereal::LiveParametersData::Reader   liveParameters;
   cereal::GpsLocationData::Reader   gpsLocationExternal;
-
 
   struct _STATUS_
   {
@@ -174,7 +176,6 @@ typedef struct UIState {
   Sound *sound;
   UIStatus status;
   UIScene scene;
-  cereal::UiLayoutState::App active_app;
 
   // graphics
   std::unique_ptr<GLShader> gl_shader;
