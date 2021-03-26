@@ -164,6 +164,13 @@ class CarState(CarStateBase):
     # atom_append
     self.mdps12 = copy.copy(cp.vl["MDPS12"])
     self.gearShifter = ret.gearShifter
+
+    #TPMS
+    ret.tpms.fl = cp.vl["TPMS11"]['PRESSURE_FL']
+    ret.tpms.fr = cp.vl["TPMS11"]['PRESSURE_FR']
+    ret.tpms.rl = cp.vl["TPMS11"]['PRESSURE_RL']
+    ret.tpms.rr = cp.vl["TPMS11"]['PRESSURE_RR']
+ 
     return ret
 
   @staticmethod
@@ -232,6 +239,12 @@ class CarState(CarStateBase):
       ("SCCInfoDisplay", "SCC11", 0),
       ("ACC_ObjDist", "SCC11", 0),
       ("ACCMode", "SCC12", 1),
+
+      # TPMS   1427
+      ("PRESSURE_FL", "TPMS11", 0),
+      ("PRESSURE_FR", "TPMS11", 0),
+      ("PRESSURE_RL", "TPMS11", 0),
+      ("PRESSURE_RR", "TPMS11", 0),      
     ]
 
     checks = [

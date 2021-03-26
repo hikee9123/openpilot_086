@@ -528,12 +528,12 @@ static void ui_draw_debug(UIState *s)
 
 
     // tpms
-   // auto tpms = scene.car_state.getTpms();
-    //float fl = tpms.getFl();
-    //float fr = tpms.getFr();
-    //float rl = tpms.getRl();
-    //float rr = tpms.getRr();
-    //ui_print( s, x_pos, y_pos+350, "tpms:%.0f,%.0f,%.0f,%.0f", fl, fr, rl, rr );
+    auto tpms = scene.car_state.getTpms();
+    float fl = tpms.getFl();
+    float fr = tpms.getFr();
+    float rl = tpms.getRl();
+    float rr = tpms.getRr();
+    ui_print( s, x_pos, y_pos+350, "tpms:%.0f,%.0f,%.0f,%.0f", fl, fr, rl, rr );
 
 
    // int  lensPos = scene.frame.getLensPos();
@@ -592,7 +592,7 @@ void update_dashcam(UIState *s)
   int touch_x = s->scene.mouse.touch_x;
   int touch_y = s->scene.mouse.touch_y;
   int touched = s->scene.mouse.touched;
-  int touch_cnt = s->scene.mouse.touch_cnt;
+  //int touch_cnt = s->scene.mouse.touch_cnt;
 
   if ( touched  ) 
   {
