@@ -130,7 +130,6 @@ class Controls:
     self.events_prev = []
     self.current_alert_types = [ET.PERMANENT]
     self.logged_comm_issue = False
-    self.usb_power  = False
 
     self.sm['liveCalibration'].calStatus = Calibration.CALIBRATED
     self.sm['deviceState'].freeSpacePercent = 100
@@ -160,8 +159,6 @@ class Controls:
     self.events.clear()
     self.events.add_from_msg(CS.events)
     self.events.add_from_msg(self.sm['driverMonitoringState'].events)
-
-    self.usb_power = self.sm['pandaState'].usbPowerMode != log.PandaState.UsbPowerMode.client
 
     # Handle startup event
     if self.startup_event is not None:
@@ -436,12 +433,10 @@ class Controls:
 
   def publish_logs(self, CS, start_time, actuators, v_acc, a_acc, lac_log):
     """Send actuators and hud commands to the car, send controlsstate and MPC logging"""
+
     global trace1
-
-    text = 'usb_power={:.0f}'.format( self.usb_power )
-
     log_alertTextMsg1 = trace1.global_alertTextMsg1
-    log_alertTextMsg2 = trace1.global_alertTextMsg2 + text
+    log_alertTextMsg2 = trace1.global_alertTextMsg2
 
 
     CC = car.CarControl.new_message()

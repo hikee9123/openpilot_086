@@ -11,7 +11,7 @@
 #include "paint.hpp"
 
 
-#include "dashcam.h"
+
 
 int write_param_float(float param, const char* param_name, bool persistent_param) {
   char s[16];
@@ -389,5 +389,4 @@ void ui_update(UIState *s) {
   update_status(s);
   update_alert(s);
   update_vision(s);
-  dashcam(s);   
 }

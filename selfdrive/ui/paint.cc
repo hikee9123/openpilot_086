@@ -11,6 +11,8 @@
 #include "paint.hpp"
 #include "sidebar.hpp"
 
+#include "dashcam.h"
+
 float  fFontSize = 0.8;
 
 // TODO: this is also hardcoded in common/transformations/camera.py
@@ -22,19 +24,6 @@ const float zoom = 1.1;
 const float y_offset = 0.0;
 const float zoom = 2.35;
 #endif
-
-
-static void ui_print(UIState *s, int x, int y,  const char* fmt, ... )
-{
-  //char speed_str[512];  
-  char* msg_buf = NULL;
-  va_list args;
-  va_start(args, fmt);
-  vasprintf( &msg_buf, fmt, args);
-  va_end(args);
-
-  nvgText(s->vg, x, y, msg_buf, NULL);
-}
 
 static void ui_draw_text(const UIState *s, float x, float y, const char *string, float size, NVGcolor color, const char *font_name) {
   nvgFontFace(s->vg, font_name);
@@ -220,115 +209,6 @@ static void ui_draw_vision_maxspeed(UIState *s) {
 }
 
 
-static void ui_draw_debug(UIState *s) 
-{
-  UIScene &scene = s->scene;
-
-  if( scene.dash_menu_no == 0 ) return;
-  
-
-
-  int  ui_viz_rx = s->viz_rect.x;
-  int  y_pos = ui_viz_rx + 300;
-  int  x_pos = 100+250; 
-
-  float  steerRatio = scene.liveParameters.getSteerRatio();
-  float  fanSpeed = scene.deviceState.getFanSpeedPercentDesired();
-
-
-  float  angleOffset = scene.liveParameters.getAngleOffsetDeg();
-  float  angleOffsetAverage = scene.liveParameters.getAngleOffsetAverageDeg();
-  float  stiffnessFactor = scene.liveParameters.getStiffnessFactor();
-
-
-
-  float  laneWidth = scene.lateralPlan.getLaneWidth();
-  //float  cpuPerc = scene.deviceState.getCpuUsagePercent();
-
-
-  auto lane_line_probs = scene.modelDataV2.getLaneLineProbs();
-
-    nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
-    nvgFontSize(s->vg, 36*1.5*fFontSize);
-
-    //ui_print( s, ui_viz_rx+10, 50, "S:%d",  s->awake_timeout );
-
-    x_pos = ui_viz_rx + 300;
-    y_pos = 100+250; 
-
-    ui_print( s, x_pos, y_pos+0,   "sR:%.2f  Fan:%.0f", steerRatio,  fanSpeed/1000. );
-    ui_print( s, x_pos, y_pos+50,  "aO:%.2f, %.2f", angleOffset, angleOffsetAverage );
-    ui_print( s, x_pos, y_pos+100, "sF:%.2f", stiffnessFactor );
-   ui_print( s, x_pos, y_pos+150, "lW:%.2f", laneWidth );
-
-    ui_print( s, x_pos, y_pos+250, "prob:%.2f, %.2f, %.2f, %.2f", lane_line_probs[0], lane_line_probs[1], lane_line_probs[2], lane_line_probs[3] );
-
-
-    
-
-    //float  dPoly = scene.pathPlan.lPoly + scene.pathPlan.rPoly;
-    //ui_print( s, x_pos, y_pos+300, "Poly:%.2f, %.2f = %.2f", scene.pathPlan.lPoly, scene.pathPlan.rPoly, dPoly );
-  // ui_print( s, x_pos, y_pos+350, "map:%d,cam:%d", scene.live.map_valid, scene.live.speedlimitahead_valid  );
-
-
-    // tpms
-   // auto tpms = scene.car_state.getTpms();
-    //float fl = tpms.getFl();
-    //float fr = tpms.getFr();
-    //float rl = tpms.getRl();
-    //float rr = tpms.getRr();
-    //ui_print( s, x_pos, y_pos+350, "tpms:%.0f,%.0f,%.0f,%.0f", fl, fr, rl, rr );
-
-
-   // int  lensPos = scene.frame.getLensPos();
-   // int  lensTruePos = scene.frame.getLensTruePos();
-    //int  lensErr = scene.frame.getLensErr();
-  //  ui_print( s, x_pos, y_pos+400, "frame:%d,%d", lensPos, lensTruePos );
-
-
-
-    ui_print( s, 0, 1020, "%s", scene.alert.text1 );
-    ui_print( s, 0, 1078, "%s", scene.alert.text2 );
-
-}
-
-/*
-  park @1;
-  drive @2;
-  neutral @3;
-  reverse @4;
-  sport @5;
-  low @6;
-  brake @7;
-  eco @8;
-*/
-static void ui_draw_gear( UIState *s )
-{
-  UIScene &scene = s->scene;
-  NVGcolor nColor = COLOR_WHITE;
-
-  cereal::CarState::GearShifter  getGearShifter = scene.car_state.getGearShifter();
-
-  int  ngetGearShifter = int(getGearShifter);
-  int  x_pos = 1700;
-  int  y_pos = 200;
-  char str_msg[512];
-
-  nvgFontSize(s->vg, 150 );
-  switch( ngetGearShifter )
-  {
-    case 1 : strcpy( str_msg, "P" ); nColor = nvgRGBA(200, 200, 255, 255); break;
-    case 2 : strcpy( str_msg, "D" ); nColor = nvgRGBA(200, 200, 255, 255); break;
-    case 3 : strcpy( str_msg, "N" ); nColor = COLOR_WHITE; break;
-    case 4 : strcpy( str_msg, "R" ); nColor = COLOR_RED;  break;
-    case 7 : strcpy( str_msg, "B" ); break;
-    default: sprintf( str_msg, "-" ); break;
-  }
-
-  nvgFillColor(s->vg, nColor);
-  ui_print( s, x_pos, y_pos, str_msg );
-}
-
 static void ui_draw_vision_speed(UIState *s) {
   const float speed = std::max(0.0, s->scene.car_state.getVEgo() * (s->scene.is_metric ? 3.6 : 2.2369363));
   const std::string speed_str = std::to_string((int)std::nearbyint(speed));
@@ -343,10 +223,6 @@ static void ui_draw_vision_speed(UIState *s) {
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
   ui_draw_text(s, s->viz_rect.centerX(), 240, speed_str.c_str(), 96 * 2.5, val_color, "sans-bold");
   ui_draw_text(s, s->viz_rect.centerX(), 320, s->scene.is_metric ? "km/h" : "mph", 36 * 2.5, COLOR_WHITE_ALPHA(200), "sans-regular");
-
-
-
-  ui_draw_debug( s );
 }
 
 static void ui_draw_vision_event(UIState *s) {
@@ -879,6 +755,7 @@ void ui_draw(UIState *s) {
   ui_draw_sidebar(s);
   if (draw_vision) {
     ui_draw_vision(s);
+    update_dashcam(s); 
   }
 
   if (draw_alerts && s->scene.alert_size != cereal::ControlsState::AlertSize::NONE) {
