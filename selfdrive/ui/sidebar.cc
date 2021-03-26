@@ -38,6 +38,9 @@ static void draw_battery_icon(UIState *s) {
 
   int batteryPercent = s->scene.deviceState.getBatteryPercent();
 
+  if( batteryPercent <= 0)
+     batteryPercent = 50;
+
   ui_fill_rect(s->vg, {rect.x + 6, rect.y + 5,
               int((rect.w - 19) * batteryPercent * 0.01), rect.h - 11}, COLOR_WHITE);
   ui_draw_image(s, rect, battery_img, 1.0f);
