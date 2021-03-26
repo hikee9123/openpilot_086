@@ -22,6 +22,9 @@
 #include "widgets/drive_stats.hpp"
 #include "widgets/setup.hpp"
 
+
+#include "dashcam.h"
+
 #define BACKLIGHT_DT 0.25
 #define BACKLIGHT_TS 2.00
 #define BACKLIGHT_OFFROAD 50
@@ -311,6 +314,8 @@ void GLWindow::timerUpdate() {
   }
 
   handle_display_state(&ui_state, false);
+
+  dashcam(&ui_state);  
 
   // scale volume with speed
   sound.volume = util::map_val(ui_state.scene.car_state.getVEgo(), 0.f, 20.f,
