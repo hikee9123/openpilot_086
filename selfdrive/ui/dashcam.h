@@ -475,7 +475,7 @@ void dashcam(UIState *s)
     s->scene.mouse.touched = 0;    
     printf("touched x,y: (%d,%d) %d  %d\n", touch_x, touch_y, touched, s->sidebar_collapsed);
 
-    printf(" %d, %d %d  %d  %d\n", s->scene.started, s->status, s->scene.started_frame, s->vipc_client, s->vipc_client->connected);
+    printf(" %d, %ld  %d \n", s->scene.started,  s->scene.started_frame,  s->vipc_client->connected);
 
   }
 
