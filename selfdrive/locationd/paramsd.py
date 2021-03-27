@@ -12,6 +12,7 @@ from selfdrive.locationd.models.constants import GENERATED_DIR
 from selfdrive.swaglog import cloudlog
 
 from common.numpy_fast import interp
+from selfdrive.config import Conversions as CV
 
 class ParamsLearner:
   def __init__(self, CP, steer_ratio, stiffness_factor, angle_offset):
@@ -31,6 +32,25 @@ class ParamsLearner:
     self.steering_angle = 0
 
     self.valid = True
+
+
+
+  def atom_steerRatio( self, v_ego_kph, cv_value,  atomTuning ):  
+    self.sr_KPH = atomTuning.cvKPH
+    self.sr_BPV = atomTuning.cvBPV
+    self.cv_steerRatioV = atomTuning.cvsteerRatioV
+    self.sr_SteerRatio = []
+
+    nPos = 0
+    for steerRatio in self.sr_BPV:  # steerRatio
+      self.sr_SteerRatio.append( interp( cv_value, steerRatio, self.cv_steerRatioV[nPos] ) )
+      nPos += 1
+      if nPos > 20:
+        break
+
+    steerRatio = interp( v_ego_kph, self.sr_KPH, self.sr_SteerRatio )
+
+    return steerRatio    
 
   def handle_log(self, t, which, msg):
     if which == 'liveLocationKalman':
@@ -67,7 +87,7 @@ class ParamsLearner:
 
 def main(sm=None, pm=None):
   if sm is None:
-    sm = messaging.SubMaster(['liveLocationKalman', 'carState'], poll=['liveLocationKalman'])
+    sm = messaging.SubMaster(['liveLocationKalman', 'carState', 'CarParams'], poll=['liveLocationKalman'])
   if pm is None:
     pm = messaging.PubMaster(['liveParameters'])
 
@@ -132,15 +152,25 @@ def main(sm=None, pm=None):
       msg.liveParameters.sensorValid = True
 
       x = learner.kf.x
+      steerRatio = float(x[States.STEER_RATIO])
       angle_offset_fast = math.degrees(x[States.ANGLE_OFFSET_FAST])
-      v_ego = sm['carState'].vEgo
+      v_ego_kph = sm['carState'].vEgo * CV.MS_TOKPH
 
-      if v_ego < 14:  # 50 km/h
-         v_ego_BP = [3,14]
+
+      if sm['carParams'].steerRateCost > 0:
+        atomTuning = sm['carParams'].atomTuning
+        cv_value = sm['carControl'].modelSpeed
+        steerRatio = learner.atom_steerRatio( v_ego_kph, cv_value,  atomTuning )
+      else:      
+        atomTuning = CP.atomTuning
+        cv_value = 255
+
+      if v_ego_kph < 50:  # 50 km/h
+         v_ego_BP = [10,50]
          angle_rate = [0,1]
-         angle_offset_fast *= interp( v_ego, v_ego_BP, angle_rate )
+         angle_offset_fast *= interp( v_ego_kph, v_ego_BP, angle_rate )
 
-      msg.liveParameters.steerRatio = float(x[States.STEER_RATIO])
+      msg.liveParameters.steerRatio = steerRatio  #float(x[States.STEER_RATIO])
       msg.liveParameters.stiffnessFactor = float(x[States.STIFFNESS])
       msg.liveParameters.angleOffsetAverageDeg = math.degrees(x[States.ANGLE_OFFSET])
       msg.liveParameters.angleOffsetDeg = msg.liveParameters.angleOffsetAverageDeg + angle_offset_fast

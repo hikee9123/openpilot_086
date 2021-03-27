@@ -71,8 +71,6 @@ class SpdController():
 
         self.path_x = np.arange(192)
 
-        self.traceSC = trace1.Loger("SPD_CTRL")
-
         self.wheelbase = 2.845
         self.steerRatio = 12.5  # 12.5
 
@@ -83,10 +81,6 @@ class SpdController():
 
         self.l_poly = []
         self.r_poly = []
-
-        self.movAvg = moveavg1.MoveAvg()
-        self.Timer1 = tm.CTime1000("SPD")
-        self.time_no_lean = 0
 
         self.wait_timer2 = 0
 

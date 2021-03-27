@@ -29,6 +29,41 @@ class CarController():
     self.model_speed = 0
 
 
+  def atom_steerRatio( self, v_ego_kph, cv_value,  atomTuning ):  
+    self.sr_KPH = atomTuning.cvKPH
+    self.sr_BPV = atomTuning.cvBPV
+    self.cv_steerRatioV = atomTuning.cvsteerRatioV
+    self.sr_SteerRatio = []
+
+    nPos = 0
+    for steerRatio in self.sr_BPV:  # steerRatio
+      self.sr_SteerRatio.append( interp( cv_value, steerRatio, self.cv_steerRatioV[nPos] ) )
+      nPos += 1
+      if nPos > 20:
+        break
+
+    steerRatio = interp( v_ego_kph, self.sr_KPH, self.sr_SteerRatio )
+
+    return steerRatio
+
+  def atom_actuatorDelay( self, v_ego_kph, cv_value, atomTuning ):
+    self.sr_KPH = atomTuning.cvKPH
+    self.sr_BPV = atomTuning.cvBPV
+    self.cv_ActuatorDelayV = atomTuning.cvsteerActuatorDelayV
+    self.sr_ActuatorDelay = []
+
+    nPos = 0
+    for steerRatio in self.sr_BPV:
+      self.sr_ActuatorDelay.append( interp( cv_value, steerRatio, self.cv_ActuatorDelayV[nPos] ) )
+      nPos += 1
+      if nPos > 10:
+        break
+
+    actuatorDelay = interp( v_ego_kph, self.sr_KPH, self.sr_ActuatorDelay )
+
+    return actuatorDelay
+
+
   def atom_tune( self, v_ego_kph, cv_value ):  # cV
     self.cv_KPH = self.CP.atomTuning.cvKPH
     self.cv_BPV = self.CP.atomTuning.cvBPV
