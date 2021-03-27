@@ -205,6 +205,9 @@ struct CarState {
     speedOffset @3 :Float32;
     standstill @4 :Bool;
     nonAdaptive @5 :Bool;
+
+    modeSel @6 :Int16;
+    cruiseSwState @7 :Int16;    
   }
 
   enum GearShifter {
@@ -289,6 +292,8 @@ struct CarControl {
 
   cruiseControl @4 :CruiseControl;
   hudControl @5 :HUDControl;
+
+  modelSpeed  @8 :Float32;  
 
   struct Actuators {
     # range from 0.0 - 1.0
@@ -419,6 +424,20 @@ struct CarParams {
   communityFeature @46: Bool;  # true if a community maintained feature is detected
   fingerprintSource @49: FingerprintSource;
   networkLocation @50 :NetworkLocation;  # Where Panda/C2 is integrated into the car's CAN network
+
+
+  # atom
+  atomTuning @56 :AtomTuning;
+
+  struct AtomTuning {
+    cvKPH @0 :List(Float32);
+    cvBPV @1 :List(List(Float32));
+    cvsMaxV @2 :List(List(Float32));
+    cvsdUpV @3 :List(List(Float32));
+    cvsdDnV @4 :List(List(Float32));
+    cvsteerRatioV @5 :List(List(Float32));
+    cvsteerActuatorDelayV @6 :List(List(Float32));
+  }
 
   struct LateralParams {
     torqueBP @0 :List(Int32);

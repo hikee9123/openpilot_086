@@ -5,6 +5,8 @@ from selfdrive.car.interfaces import CarStateBase
 from opendbc.can.parser import CANParser
 from selfdrive.config import Conversions as CV
 
+from selfdrive.car.hyundai.spdcontroller  import SpdController
+
 GearShifter = car.CarState.GearShifter
 
 
@@ -16,6 +18,8 @@ class CarState(CarStateBase):
 
     self.time_delay_int = 600
     self.gearShifter = GearShifter.unknown
+
+    self.SC = SpdController()    
 
   def update(self, cp, cp_cam):
     ret = car.CarState.new_message()
@@ -65,12 +69,16 @@ class CarState(CarStateBase):
         ret.cruiseState.enabled = ret.cruiseState.available
     else:
       self.time_delay_int -= 1
-      ret.cruiseState.enabled = False      
+      ret.cruiseState.enabled = False
+
+    self.cruiseState_modeSel , speed_kph = self.SC.update_cruiseSW( self )
+    ret.cruiseState.modeSel = self.cruiseState_modeSel
+    ret.cruiseState.cruiseSwState = self.cruise_buttons      
 
     self.VSetDis = cp.vl["SCC11"]['VSetDis']
     if self.acc_active:
       speed_conv = CV.MPH_TO_MS if cp.vl["CLU11"]["CF_Clu_SPEED_UNIT"] else CV.KPH_TO_MS
-      ret.cruiseState.speed = self.VSetDis * speed_conv
+      ret.cruiseState.speed = speed_kph * speed_conv
     else:
       ret.cruiseState.speed = 0
 
@@ -163,12 +171,22 @@ class CarState(CarStateBase):
     self.cruise_buttons = cp.vl["CLU11"]["CF_Clu_CruiseSwState"]
 
     # atom_append
+    self.lead_objspd = cp.vl["SCC11"]['ACC_ObjRelSpd'] * CV.MS_TO_KPH       
     self.clu_Vanz = cp.vl["CLU11"]["CF_Clu_Vanz"]
     self.driverOverride = cp.vl["TCS13"]["DriverOverride"]     # 1 Acc,  2 bracking, 0 Normal
     self.mdps12 = copy.copy(cp.vl["MDPS12"])
     self.gearShifter = ret.gearShifter
 
+    
+
+    if self.driverOverride == 1:
+      self.driverAcc_time = 100
+    elif self.driverAcc_time:
+      self.driverAcc_time -= 1    
+
+
     ret.vEgo = self.clu_Vanz * CV.KPH_TO_MS
+
 
     #TPMS
     ret.tpms.fl = cp.vl["TPMS11"]['PRESSURE_FL']

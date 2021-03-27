@@ -6,6 +6,11 @@ from selfdrive.car import STD_CARGO_KG, scale_rot_inertia, scale_tire_stiffness,
 from selfdrive.car.interfaces import CarInterfaceBase
 from common.params import Params
 
+from selfdrive.conf_atom import ConfAtom
+
+
+ATOMC = ConfAtom()
+
 class CarInterface(CarInterfaceBase):
 
   @staticmethod
@@ -14,6 +19,7 @@ class CarInterface(CarInterfaceBase):
 
   @staticmethod
   def get_params(candidate, fingerprint=gen_empty_fingerprint(), car_fw=[]):  # pylint: disable=dangerous-default-value
+    global ATOMC    
     ret = CarInterfaceBase.get_std_params(candidate, fingerprint)
 
     ret.carName = "hyundai"
@@ -60,19 +66,7 @@ class CarInterface(CarInterfaceBase):
       ret.lateralTuning.lqr.k = [-110., 451.]
       ret.lateralTuning.lqr.l = [0.33, 0.318]
       
-      """
-      #ret.steerControlType = car.CarParams.SteerControlType.angle
-      ret.lateralTuning.init('indi')
-      ret.lateralTuning.indi.innerLoopGainBP = [0.]
-      ret.lateralTuning.indi.innerLoopGainV = [2.5]
-      ret.lateralTuning.indi.outerLoopGainBP = [0.]
-      ret.lateralTuning.indi.outerLoopGainV = [3.5]
-      ret.lateralTuning.indi.timeConstantBP = [0.]
-      ret.lateralTuning.indi.timeConstantV = [1.4]
-      ret.lateralTuning.indi.actuatorEffectivenessBP = [0.]
-      ret.lateralTuning.indi.actuatorEffectivenessV = [1.8]
-      ret.steerRatio = 13.56
-      """
+
     elif candidate == CAR.SANTA_FE:
       ret.lateralTuning.pid.kf = 0.00005
       ret.mass = 3982. * CV.LB_TO_KG + STD_CARGO_KG
@@ -272,7 +266,55 @@ class CarInterface(CarInterfaceBase):
 
     ret.enableCamera = True
 
+
+    ret.atomTuning.cvKPH    = ATOMC.cv_KPH
+    ret.atomTuning.cvBPV    = ATOMC.cv_BPV
+    ret.atomTuning.cvsMaxV  = ATOMC.cv_sMaxV
+    ret.atomTuning.cvsdUpV  = ATOMC.cv_sdUPV
+    ret.atomTuning.cvsdDnV  = ATOMC.cv_sdDNV
+    ret.atomTuning.cvsteerRatioV = ATOMC.cv_steerRatioV
+    ret.atomTuning.cvsteerActuatorDelayV = ATOMC.cv_ActuatorDelayV    
     return ret
+
+
+  @staticmethod
+  def live_tune(CP, read=False):
+    global ATOMC 
+
+    if read:
+      ATOMC.read_tune()
+
+    # param
+    CP.atomTuning.cvKPH    = ATOMC.cv_KPH
+    CP.atomTuning.cvBPV    = ATOMC.cv_BPV
+    CP.atomTuning.cvsMaxV  = ATOMC.cv_sMaxV
+    CP.atomTuning.cvsdUpV  = ATOMC.cv_sdUPV
+    CP.atomTuning.cvsdDnV  = ATOMC.cv_sdDNV
+
+    CP.atomTuning.sRKPH     = ATOMC.sR_KPH
+    CP.atomTuning.sRBPV     = ATOMC.sR_BPV
+    
+    CP.atomTuning.sRlqrkiV      = ATOMC.sR_lqr_kiV
+    CP.atomTuning.sRlqrscaleV   = ATOMC.sR_lqr_scaleV
+
+    CP.atomTuning.sRpidKpV      = ATOMC.sR_pid_KpV
+    CP.atomTuning.sRpidKiV      = ATOMC.sR_pid_KiV
+
+    CP.atomTuning.cvsteerRatioV = ATOMC.cv_steerRatioV
+    CP.atomTuning.cvsteerActuatorDelayV = ATOMC.cv_ActuatorDelayV
+    
+
+    CP.lateralsRatom.deadzone = ATOMC.sR_pid_deadzone      # OK
+    CP.lateralsRatom.steerOffset = ATOMC.steerOffset       # OK
+    CP.lateralsRatom.cameraOffset = ATOMC.cameraOffset
+    CP.lateralsRatom.opkrAutoResume = ATOMC.ap_autoReasume
+    CP.lateralsRatom.opkrAutoScreenOff = ATOMC.ap_autoScnOffTime
+    CP.lateralsRatom.learnerParams = ATOMC.learnerParams
+    
+    CP.steerRateCost = ATOMC.steerRateCost
+    CP.steerLimitTimer = ATOMC.steerLimitTimer
+    
+    return CP    
 
   def update(self, c, can_strings):
     self.cp.update_strings(can_strings)
@@ -299,8 +341,6 @@ class CarInterface(CarInterfaceBase):
     return self.CS.out
 
   def apply(self, c):
-    can_sends = self.CC.update(c.enabled, self.CS, self.frame, c.actuators,
-                               c.cruiseControl.cancel, c.hudControl.visualAlert, c.hudControl.leftLaneVisible,
-                               c.hudControl.rightLaneVisible, c.hudControl.leftLaneDepart, c.hudControl.rightLaneDepart)
+    can_sends = self.CC.update( c, self.CS, self.frame )
     self.frame += 1
     return can_sends

@@ -5,33 +5,15 @@ from selfdrive.car.hyundai.hyundaican import create_lkas11, create_clu11, create
 from selfdrive.car.hyundai.values import Buttons, CarControllerParams, CAR
 from opendbc.can.packer import CANPacker
 
+
+import copy
 import common.log as trace1
+import common.CTime1000 as tm
+from common.numpy_fast import interp
+from selfdrive.config import Conversions as CV
 
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 
-
-def process_hud_alert(enabled, fingerprint, visual_alert, left_lane,
-                      right_lane, left_lane_depart, right_lane_depart):
-  sys_warning = (visual_alert == VisualAlert.steerRequired)
-
-  # initialize to no line visible
-  sys_state = 1
-  if left_lane and right_lane or sys_warning:  # HUD alert only display when LKAS status is active
-    sys_state = 3 if enabled or sys_warning else 4
-  elif left_lane:
-    sys_state = 5
-  elif right_lane:
-    sys_state = 6
-
-  # initialize to no warnings
-  left_lane_warning = 0
-  right_lane_warning = 0
-  if left_lane_depart:
-    left_lane_warning = 1 if fingerprint in [CAR.GENESIS_G90, CAR.GENESIS_G80] else 2
-  if right_lane_depart:
-    right_lane_warning = 1 if fingerprint in [CAR.GENESIS_G90, CAR.GENESIS_G80] else 2
-
-  return sys_warning, sys_state, left_lane_warning, right_lane_warning
 
 
 class CarController():
@@ -44,11 +26,94 @@ class CarController():
     self.steer_rate_limited = False
     self.last_resume_frame = 0
 
-  def update(self, enabled, CS, frame, actuators, pcm_cancel_cmd, visual_alert,
-             left_lane, right_lane, left_lane_depart, right_lane_depart):
+    self.model_speed = 0
+
+
+  def atom_tune( self, v_ego_kph, cv_value ):  # cV
+    self.cv_KPH = self.CP.atomTuning.cvKPH
+    self.cv_BPV = self.CP.atomTuning.cvBPV
+    self.cv_sMaxV  = self.CP.atomTuning.cvsMaxV
+    self.cv_sdUpV = self.CP.atomTuning.cvsdUpV
+    self.cv_sdDnV = self.CP.atomTuning.cvsdDnV
+
+    self.steerMAX = []
+    self.steerdUP = []
+    self.steerdDN = []
+
+    # Max
+    nPos = 0
+    for sCV in self.cv_BPV:  
+      self.steerMAX.append( interp( cv_value, sCV, self.cv_sMaxV[nPos] ) )
+      self.steerdUP.append( interp( cv_value, sCV, self.cv_sdUpV[nPos] ) )
+      self.steerdDN.append( interp( cv_value, sCV, self.cv_sdDnV[nPos] ) )
+      nPos += 1
+      if nPos > 20:
+        break
+
+    MAX = interp( v_ego_kph, self.cv_KPH, self.steerMAX )
+    UP  = interp( v_ego_kph, self.cv_KPH, self.steerdUP )
+    DN  = interp( v_ego_kph, self.cv_KPH, self.steerdDN )
+
+    str_log1 = 'ego={:.1f} /{:.1f}/{:.1f}/{:.1f}'.format(v_ego_kph,  MAX, UP, DN )
+    trace1.printf2( '{}'.format( str_log1 ) )      
+    return MAX, UP, DN
+
+
+  def steerParams_torque(self, CS, actuators ):
+    param = copy.copy(self.p)
+    v_ego_kph = CS.out.vEgo * CV.MS_TO_KPH
+
+    nMAX, nUP, nDN = self.atom_tune( v_ego_kph, self.model_speed )
+    param.STEER_MAX = min( param.STEER_MAX, nMAX)
+    param.STEER_DELTA_UP = min( param.STEER_DELTA_UP, nUP)
+    param.STEER_DELTA_DOWN = min( param.STEER_DELTA_DOWN, nDN )
+    return  param    
+
+  def process_hud_alert(self, enabled, c ):
+    visual_alert = c.hudControl.visualAlert
+    left_lane = c.hudControl.leftLaneVisible
+    right_lane = c.hudControl.rightLaneVisible
+
+    sys_warning = (visual_alert == VisualAlert.steerRequired)
+
+    if left_lane:
+      self.hud_timer_left = 100
+
+    if right_lane:
+      self.hud_timer_right = 100
+
+    if self.hud_timer_left:
+      self.hud_timer_left -= 1
+ 
+    if self.hud_timer_right:
+      self.hud_timer_right -= 1
+
+
+    # initialize to no line visible
+    sys_state = 1
+
+    if self.hud_timer_left and self.hud_timer_right or sys_warning:  # HUD alert only display when LKAS status is active
+      if (self.steer_torque_ratio > 0.7) and (enabled or sys_warning):
+        sys_state = 3
+      else:
+        sys_state = 4
+    elif self.hud_timer_left:
+      sys_state = 5
+    elif self.hud_timer_right:
+      sys_state = 6
+
+    return sys_warning, sys_state    
+
+  def update(self, c, CS, frame ):
+    enabled = c.enabled
+    actuators  = c.actuators
+    pcm_cancel_cmd  = c.cruiseControl.cancel
+    self.model_speed = c.modelSpeed
+
     # Steering Torque
-    new_steer = int(round(actuators.steer * self.p.STEER_MAX))
-    apply_steer = apply_std_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, self.p)
+    param = self.steerParams_torque( CS, c.actuators )
+    new_steer = int(round(actuators.steer * param.STEER_MAX))
+    apply_steer = apply_std_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, param)
     self.steer_rate_limited = new_steer != apply_steer
 
     # disable if steer angle reach 90 deg, otherwise mdps fault in some models
@@ -63,21 +128,17 @@ class CarController():
 
     self.apply_steer_last = apply_steer
 
-    sys_warning, sys_state, left_lane_warning, right_lane_warning = \
-      process_hud_alert(enabled, self.car_fingerprint, visual_alert,
-                        left_lane, right_lane, left_lane_depart, right_lane_depart)
+    sys_warning, self.hud_sys_state = self.process_hud_alert( lkas_active, c )
 
     can_sends = []
     can_sends.append(create_lkas11(self.packer, frame, self.car_fingerprint, apply_steer, lkas_active,
-                                   CS.lkas11, sys_warning, sys_state, enabled,
-                                   left_lane, right_lane,
-                                   left_lane_warning, right_lane_warning))
+                                   CS.lkas11, sys_warning, self.hud_sys_state, c))
 
     if apply_steer:
       can_sends.append( create_mdps12(self.packer, frame, CS.mdps12) )
 
 
-    str_log1 = 'torg:{:5.0f}  pcm_cancel_cmd={:.0f}'.format( apply_steer, pcm_cancel_cmd  )
+    str_log1 = 'torg:{:5.0f} dn={:.1f} up={:.1f}'.format( apply_steer, param.STEER_DELTA_DOWN, param.STEER_DELTA_UP   )
     str_log2 = 'gas={:.1f}'.format(  CS.out.gas  )
     trace1.printf( '{} {}'.format( str_log1, str_log2 ) )
 
@@ -88,7 +149,7 @@ class CarController():
       # send resume at a max freq of 10Hz
       if CS.lead_distance != self.last_lead_distance and (frame - self.last_resume_frame) * DT_CTRL > 0.1:
         # send 25 messages at a time to increases the likelihood of resume being accepted
-        can_sends.extend([create_clu11(self.packer, frame, CS.clu11, Buttons.RES_ACCEL)] * 25)
+        can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.RES_ACCEL))
         self.last_resume_frame = frame
     else:
         self.last_lead_distance = CS.lead_distance
