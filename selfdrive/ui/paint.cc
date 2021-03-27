@@ -208,7 +208,6 @@ static void ui_draw_vision_maxspeed(UIState *s) {
   }
 }
 
-
 static void ui_draw_vision_speed(UIState *s) {
   const float speed = std::max(0.0, s->scene.car_state.getVEgo() * (s->scene.is_metric ? 3.6 : 2.2369363));
   const std::string speed_str = std::to_string((int)std::nearbyint(speed));

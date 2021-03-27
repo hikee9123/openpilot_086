@@ -172,6 +172,7 @@ Community Maintained Cars and Features
 | SEAT      | Ateca 2018                    | Driver Assistance | Stock            | 0mph               | 0mph         |
 | Å koda     | Kodiaq 2018                   | Driver Assistance | Stock            | 0mph               | 0mph         |
 | Å koda     | Scala 2020                    | Driver Assistance | Stock            | 0mph               | 0mph         |
+| Å koda     | Superb 2018                   | Driver Assistance | Stock            | 0mph               | 0mph         |
 | Subaru    | Ascent 2019                   | EyeSight          | Stock            | 0mph               | 0mph         |
 | Subaru    | Crosstrek 2018-19             | EyeSight          | Stock            | 0mph               | 0mph         |
 | Subaru    | Forester 2019-20              | EyeSight          | Stock            | 0mph               | 0mph         |
@@ -226,7 +227,7 @@ The list above does not represent an exhaustive list of situations that may inte
 Limitations of openpilot ACC and FCW
 ------
 
-openpilot ACC and openpilot FCW are not systems that allow careless or inattentive driving. It is still necessary for the driver to pay close attention to the vehicle?™s surroundings and to be ready to re-take control of the gas and the brake at all times.
+openpilot ACC and openpilot FCW are not systems that allow careless or inattentive driving. It is still necessary for the driver to pay close attention to the vehicleâ€™s surroundings and to be ready to re-take control of the gas and the brake at all times.
 
 Many factors can impact the performance of openpilot ACC and openpilot FCW, causing them to be unable to function as intended. These include, but are not limited to:
 
@@ -319,37 +320,37 @@ And [follow us on Twitter](https://twitter.com/comma_ai).
 Directory Structure
 ------
     .
-    ?œâ??€ cereal              # The messaging spec and libs used for all logs
-    ?œâ??€ common              # Library like functionality we've developed here
-    ?œâ??€ installer/updater   # Manages auto-updates of openpilot
-    ?œâ??€ opendbc             # Files showing how to interpret data from cars
-    ?œâ??€ panda               # Code used to communicate on CAN
-    ?œâ??€ phonelibs           # Libraries used on NEOS devices
-    ?œâ??€ pyextra             # Libraries used on NEOS devices
-    ?”â??€ selfdrive           # Code needed to drive the car
-        ?œâ??€ assets          # Fonts, images and sounds for UI
-        ?œâ??€ athena          # Allows communication with the app
-        ?œâ??€ boardd          # Daemon to talk to the board
-        ?œâ??€ camerad         # Driver to capture images from the camera sensors
-        ?œâ??€ car             # Car specific code to read states and control actuators
-        ?œâ??€ common          # Shared C/C++ code for the daemons
-        ?œâ??€ controls        # Perception, planning and controls
-        ?œâ??€ debug           # Tools to help you debug and do car ports
-        ?œâ??€ locationd       # Soon to be home of precise location
-        ?œâ??€ logcatd         # Android logcat as a service
-        ?œâ??€ loggerd         # Logger and uploader of car data
-        ?œâ??€ modeld          # Driving and monitoring model runners
-        ?œâ??€ proclogd        # Logs information from proc
-        ?œâ??€ sensord         # IMU / GPS interface code
-        ?œâ??€ test            # Unit tests, system tests and a car simulator
-        ?”â??€ ui              # The UI
+    â”œâ”€â”€ cereal              # The messaging spec and libs used for all logs
+    â”œâ”€â”€ common              # Library like functionality we've developed here
+    â”œâ”€â”€ installer/updater   # Manages auto-updates of openpilot
+    â”œâ”€â”€ opendbc             # Files showing how to interpret data from cars
+    â”œâ”€â”€ panda               # Code used to communicate on CAN
+    â”œâ”€â”€ phonelibs           # Libraries used on NEOS devices
+    â”œâ”€â”€ pyextra             # Libraries used on NEOS devices
+    â””â”€â”€ selfdrive           # Code needed to drive the car
+        â”œâ”€â”€ assets          # Fonts, images and sounds for UI
+        â”œâ”€â”€ athena          # Allows communication with the app
+        â”œâ”€â”€ boardd          # Daemon to talk to the board
+        â”œâ”€â”€ camerad         # Driver to capture images from the camera sensors
+        â”œâ”€â”€ car             # Car specific code to read states and control actuators
+        â”œâ”€â”€ common          # Shared C/C++ code for the daemons
+        â”œâ”€â”€ controls        # Perception, planning and controls
+        â”œâ”€â”€ debug           # Tools to help you debug and do car ports
+        â”œâ”€â”€ locationd       # Soon to be home of precise location
+        â”œâ”€â”€ logcatd         # Android logcat as a service
+        â”œâ”€â”€ loggerd         # Logger and uploader of car data
+        â”œâ”€â”€ modeld          # Driving and monitoring model runners
+        â”œâ”€â”€ proclogd        # Logs information from proc
+        â”œâ”€â”€ sensord         # IMU / GPS interface code
+        â”œâ”€â”€ test            # Unit tests, system tests and a car simulator
+        â””â”€â”€ ui              # The UI
 
 Licensing
 ------
 
 openpilot is released under the MIT license. Some parts of the software are released under other licenses as specified.
 
-Any user of this software shall indemnify and hold harmless comma.ai, Inc. and its directors, officers, employees, agents, stockholders, affiliates, subcontractors and customers from and against all allegations, claims, actions, suits, demands, damages, liabilities, obligations, losses, settlements, judgments, costs and expenses (including without limitation attorneys??fees and costs) which arise out of, relate to or result from any use of this software by user.
+Any user of this software shall indemnify and hold harmless comma.ai, Inc. and its directors, officers, employees, agents, stockholders, affiliates, subcontractors and customers from and against all allegations, claims, actions, suits, demands, damages, liabilities, obligations, losses, settlements, judgments, costs and expenses (including without limitation attorneysâ€™ fees and costs) which arise out of, relate to or result from any use of this software by user.
 
 **THIS IS ALPHA QUALITY SOFTWARE FOR RESEARCH PURPOSES ONLY. THIS IS NOT A PRODUCT.
 YOU ARE RESPONSIBLE FOR COMPLYING WITH LOCAL LAWS AND REGULATIONS.
