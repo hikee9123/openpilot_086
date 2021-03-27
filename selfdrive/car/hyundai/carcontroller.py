@@ -28,7 +28,7 @@ class CarController():
 
     self.model_speed = 0
 
-
+  """
   def atom_steerRatio( self, v_ego_kph, cv_value,  atomTuning ):  
     self.sr_KPH = atomTuning.cvKPH
     self.sr_BPV = atomTuning.cvBPV
@@ -62,7 +62,7 @@ class CarController():
     actuatorDelay = interp( v_ego_kph, self.sr_KPH, self.sr_ActuatorDelay )
 
     return actuatorDelay
-
+  """
 
   def atom_tune( self, v_ego_kph, cv_value ):  # cV
     self.cv_KPH = self.CP.atomTuning.cvKPH
