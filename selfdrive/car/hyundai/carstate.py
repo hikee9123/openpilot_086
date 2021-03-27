@@ -30,7 +30,7 @@ class CarState(CarStateBase):
     ret.wheelSpeeds.rl = cp.vl["WHL_SPD11"]['WHL_SPD_RL'] * CV.KPH_TO_MS
     ret.wheelSpeeds.rr = cp.vl["WHL_SPD11"]['WHL_SPD_RR'] * CV.KPH_TO_MS
     ret.vEgoRaw = (ret.wheelSpeeds.fl + ret.wheelSpeeds.fr + ret.wheelSpeeds.rl + ret.wheelSpeeds.rr) / 4.
-    ret.vEgo, ret.aEgo = self.update_speed_kf(ret.vEgoRaw)
+    vEgo, ret.aEgo = self.update_speed_kf(ret.vEgoRaw)
 
     ret.standstill = ret.vEgoRaw < 0.1
 
@@ -67,9 +67,10 @@ class CarState(CarStateBase):
       self.time_delay_int -= 1
       ret.cruiseState.enabled = False      
 
+    self.VSetDis = cp.vl["SCC11"]['VSetDis']
     if self.acc_active:
       speed_conv = CV.MPH_TO_MS if cp.vl["CLU11"]["CF_Clu_SPEED_UNIT"] else CV.KPH_TO_MS
-      ret.cruiseState.speed = cp.vl["SCC11"]['VSetDis'] * speed_conv
+      ret.cruiseState.speed = self.VSetDis * speed_conv
     else:
       ret.cruiseState.speed = 0
 
@@ -162,8 +163,12 @@ class CarState(CarStateBase):
     self.cruise_buttons = cp.vl["CLU11"]["CF_Clu_CruiseSwState"]
 
     # atom_append
+    self.clu_Vanz = cp.vl["CLU11"]["CF_Clu_Vanz"]
+    self.driverOverride = cp.vl["TCS13"]["DriverOverride"]     # 1 Acc,  2 bracking, 0 Normal
     self.mdps12 = copy.copy(cp.vl["MDPS12"])
     self.gearShifter = ret.gearShifter
+
+    ret.vEgo = self.clu_Vanz * CV.KPH_TO_MS
 
     #TPMS
     ret.tpms.fl = cp.vl["TPMS11"]['PRESSURE_FL']
