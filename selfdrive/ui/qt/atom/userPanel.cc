@@ -59,7 +59,9 @@ UserPanel::UserPanel(QWidget* parent) : QFrame(parent)
   QVBoxLayout *main_layout = new QVBoxLayout(this);
   main_layout->setMargin(100);
   setLayout(main_layout);
-  setStyleSheet(R"(QLabel {font-size: 50px;})");
+ // setStyleSheet(R"(QLabel {font-size: 50px;})");
+
+   layout()->addWidget(new SshToggle());
 }
 
 void UserPanel::showEvent(QShowEvent *event) 
@@ -88,7 +90,7 @@ void UserPanel::showEvent(QShowEvent *event)
     }
   }
 
-  layout()->addWidget(new SshToggle());
+
 }
 
 /*
