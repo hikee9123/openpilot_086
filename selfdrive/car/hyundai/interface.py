@@ -320,9 +320,6 @@ class CarInterface(CarInterfaceBase):
     self.CS.out = ret.as_reader()
     return self.CS.out
 
-  def  update_model( self, sm ):
-    self.CS.update_model(  sm )
-
 
   def apply(self, c):
     can_sends = self.CC.update( c, self.CS, self.frame )

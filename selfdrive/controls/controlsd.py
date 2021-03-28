@@ -273,7 +273,6 @@ class Controls:
     CS = self.CI.update(self.CC, can_strs)
 
     self.sm.update(0)
-    self.CI.update_model( self.sm )
 
     # Check for CAN timeout
     if not can_strs:

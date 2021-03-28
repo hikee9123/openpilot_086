@@ -6,7 +6,6 @@ import cereal.messaging as messaging
 
 
 from cereal import log
-import cereal.messaging as messaging
 from selfdrive.config import Conversions as CV
 from selfdrive.controls.lib.speed_smoother import speed_smoother
 from selfdrive.controls.lib.long_mpc import LongitudinalMpc
@@ -101,6 +100,9 @@ class SpdController():
 
         self.curve_speed = 0
         self.curvature_gain = 1
+
+        ignore = ['modelV2'] 
+        self.sm = messaging.SubMaster(['modelV2'], ignore_alive=ignore)        
         
 
     def reset(self):
@@ -111,9 +113,9 @@ class SpdController():
 
 
 
-    def cal_curve_speed(self, sm, v_ego, frame):
+    def cal_curve_speed(self, v_ego, frame):
         #if frame % 10 == 0:
-        md = sm['modelV2']
+        md = self.sm['modelV2']
         if len(md.position.x) == TRAJECTORY_SIZE and len(md.position.y) == TRAJECTORY_SIZE:
             x = md.position.x
             y = md.position.y
@@ -162,32 +164,32 @@ class SpdController():
                model_speed = MAX_SPEED
         else:
             model_speed = MAX_SPEED
-          
 
         return  model_speed
 
 
-    def cal_model_speed(self, sm, v_ego):
-        md = sm['modelV2']
-        #print('{}'.format( md ) )
-        if len(md.path.poly):
-            self.prob = list(md.path.poly)
+    def cal_model_speed(self, v_ego):
+        if sm.updated['modelV2']:
+            md = self.sm['modelV2']
+            #print('{}'.format( md ) )
+            if len(md.path.poly):
+                self.prob = list(md.path.poly)
 
-            model_speed = self.calc_laneProb( self.prob, v_ego )
-    
-            delta_model = model_speed - self.old_model_speed
-            if self.old_model_init < 10:
-                self.old_model_init += 1
-                self.old_model_speed = model_speed
-            elif self.old_model_speed == model_speed:
-                pass
-            elif delta_model < -1:
-                self.old_model_speed -= 0.5  #model_speed
-            elif delta_model > 0:
-                self.old_model_speed += 0.1
+                model_speed = self.calc_laneProb( self.prob, v_ego )
+        
+                delta_model = model_speed - self.old_model_speed
+                if self.old_model_init < 10:
+                    self.old_model_init += 1
+                    self.old_model_speed = model_speed
+                elif self.old_model_speed == model_speed:
+                    pass
+                elif delta_model < -1:
+                    self.old_model_speed -= 0.5  #model_speed
+                elif delta_model > 0:
+                    self.old_model_speed += 0.1
 
-            else:
-                self.old_model_speed = model_speed
+                else:
+                    self.old_model_speed = model_speed
 
         return self.old_model_speed
 
@@ -288,7 +290,7 @@ class SpdController():
         str5 = str3 +  str4
         trace1.printf2( str5 )
 
-    def lead_control(self, CS, sm, CC ):
+    def lead_control(self, CS, CC ):
         dRel = CC.dRel
         vRel = CC.vRel
         active_time = 10
@@ -359,7 +361,7 @@ class SpdController():
 
 
 
-    def update(self, CS, sm, CC ):
+    def update(self, CS, CC ):
         self.cruise_set_mode = CS.out.cruiseState.modeSel
         self.cruise_set_speed_kph = CS.out.cruiseState.speed * CV.MS_TO_KPH
         if CS.driverOverride == 2 or not CS.acc_active or CS.cruise_buttons == Buttons.RES_ACCEL or CS.cruise_buttons == Buttons.SET_DECEL:
@@ -370,7 +372,7 @@ class SpdController():
         elif self.wait_timer2:
             self.wait_timer2 -= 1
         else:
-            btn_type, clu_speed, active_time = self.lead_control( CS, sm, CC )   # speed controller spdcontroller.py
+            btn_type, clu_speed, active_time = self.lead_control( CS,  CC )   # speed controller spdcontroller.py
 
             if CS.clu_Vanz < 20:
                 self.btn_type = Buttons.NONE
