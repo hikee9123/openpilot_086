@@ -21,7 +21,8 @@ class CarState(CarStateBase):
     self.time_delay_int = 600
     self.gearShifter = GearShifter.unknown
 
-    self.SC = SpdController()    
+    self.sm = None
+    self.SC = SpdController()
 
   def update(self, cp, cp_cam):
     ret = car.CarState.new_message()
@@ -189,6 +190,10 @@ class CarState(CarStateBase):
 
     ret.vEgo = self.clu_Vanz * CV.KPH_TO_MS
 
+    if self.sm == None:
+      ret.modelSpeed = 0
+    else:
+      ret.modelSpeed = self.SC.cal_model_speed( self.sm, ret.vEgo )
 
     #TPMS
     ret.tpms.fl = cp.vl["TPMS11"]['PRESSURE_FL']
@@ -197,6 +202,9 @@ class CarState(CarStateBase):
     ret.tpms.rr = cp.vl["TPMS11"]['PRESSURE_RR']
  
     return ret
+
+  def  update_model( self, sm ):
+    self.sm = sm
 
   @staticmethod
   def get_can_parser(CP):

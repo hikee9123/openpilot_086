@@ -39,8 +39,6 @@ def manager_init():
     ("OpenpilotEnabledToggle", "1"),
     ("VisionRadarToggle", "0"),
     ("IsDriverViewEnabled", "0"),
-
-    ("IsOpenpilotViewEnabled", "0"),
   ]
 
   if params.get("RecordFrontLock", encoding='utf-8') == "1":

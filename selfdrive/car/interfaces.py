@@ -86,6 +86,9 @@ class CarInterfaceBase():
   def update(self, c, can_strings):
     raise NotImplementedError
 
+  def  update_model( self, sm ):
+    raise NotImplementedError
+    
   # return sendcan, pass in a car.CarControl
   def apply(self, c):
     raise NotImplementedError

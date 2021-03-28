@@ -10,7 +10,6 @@ import cereal.messaging as messaging
 from selfdrive.config import Conversions as CV
 from selfdrive.swaglog import cloudlog
 from selfdrive.boardd.boardd import can_list_to_can_capnp
-from selfdrive.car.hyundai.interface import CarInterface
 from selfdrive.car.car_helpers import get_car, get_startup_event, get_one_can
 from selfdrive.controls.lib.lane_planner import CAMERA_OFFSET
 from selfdrive.controls.lib.drive_helpers import update_v_cruise, initialize_v_cruise
@@ -27,7 +26,7 @@ from selfdrive.locationd.calibrationd import Calibration
 from selfdrive.hardware import HARDWARE, TICI
 
 import common.log as  trace1
-from selfdrive.car.hyundai.spdcontroller  import SpdController
+
 
 LDW_MIN_SPEED = 31 * CV.MPH_TO_MS
 LANE_DEPARTURE_THRESHOLD = 0.1
@@ -50,8 +49,6 @@ EventName = car.CarEvent.EventName
 class Controls:
   def __init__(self, sm=None, pm=None, can_sock=None):
     config_realtime_process(3, Priority.CTRL_HIGH)
-
-    self.SC = SpdController()    
 
     # Setup sockets
     self.pm = pm
@@ -276,6 +273,7 @@ class Controls:
     CS = self.CI.update(self.CC, can_strs)
 
     self.sm.update(0)
+    self.CI.update_model( self.sm )
 
     # Check for CAN timeout
     if not can_strs:
@@ -489,7 +487,6 @@ class Controls:
     self.AM.add_many(self.sm.frame, alerts, self.enabled)
     self.AM.process_alerts(self.sm.frame, clear_event)
     CC.hudControl.visualAlert = self.AM.visual_alert
-
 
     if not self.read_only:
       # send car controls over can

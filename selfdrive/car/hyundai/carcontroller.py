@@ -111,14 +111,10 @@ class CarController():
     return sys_warning, sys_state    
 
   def update(self, c, CS, frame ):
-
-    self.modelSpeed = self.SC.cal_model_speed( self.sm, CS.vEgo)
-    CS.modelSpeed  = self.modelSpeed
-
     enabled = c.enabled
     actuators  = c.actuators
     pcm_cancel_cmd  = c.cruiseControl.cancel
-    self.model_speed = CS.modelSpeed
+    self.model_speed = CS.out.modelSpeed
 
     # Steering Torque
     param = self.steerParams_torque( CS, c.actuators )
