@@ -157,10 +157,6 @@ class Controls:
     self.rk = Ratekeeper(100, print_delay_threshold=None)
     self.prof = Profiler(False)  # off by default
 
-    # atom
-    self.hyundai_lkas = self.read_only  #read_only
-
-
   def update_events(self, CS):
     """Compute carEvents from carState"""
 
@@ -385,7 +381,7 @@ class Controls:
     # Update VehicleModel
     params = self.sm['liveParameters']
     x = max(params.stiffnessFactor, 0.1)
-    sr = max(params.steerRatioCV, 0.1)
+    sr = max(params.steerRatio, 0.1)
     self.VM.update_params(x, sr)
 
     lat_plan = self.sm['lateralPlan']
@@ -495,7 +491,7 @@ class Controls:
     CC.hudControl.visualAlert = self.AM.visual_alert
     CC.modelSpeed  = self.SC.cal_model_speed( self.sm, CS.vEgo)
 
-    if not self.hyundai_lkas:
+    if not self.read_only:
       # send car controls over can
       can_sends = self.CI.apply(CC, self.CP)
       self.pm.send('sendcan', can_list_to_can_capnp(can_sends, msgtype='sendcan', valid=CS.canValid))
@@ -600,7 +596,7 @@ class Controls:
 
     self.update_events(CS)
 
-    if not self.hyundai_lkas:
+    if not self.read_only:
       # Update control state
       self.state_transition(CS)
       self.prof.checkpoint("State transition")
@@ -613,16 +609,6 @@ class Controls:
     # Publish data
     self.publish_logs(CS, start_time, actuators, v_acc, a_acc, lac_log)
     self.prof.checkpoint("Sent")
-
-    if self.read_only:
-      self.hyundai_lkas = self.read_only
-    elif CS.cruiseState.enabled and self.hyundai_lkas:
-      self.CP = CarInterface.live_tune( self.CP, True )
-      self.hyundai_lkas = False
-    elif not CS.cruiseState.enabled and not self.hyundai_lkas:
-      self.hyundai_lkas = True
-
-
 
   def controlsd_thread(self):
     while True:
