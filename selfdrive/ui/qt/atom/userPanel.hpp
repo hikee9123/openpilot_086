@@ -18,7 +18,7 @@ class UserPanel : public QFrame
 {
   Q_OBJECT
 public:
-  explicit DeveloperPanel(QWidget* parent = nullptr);
+  explicit UserPanel(QWidget* parent = nullptr);
 
 protected:
   void showEvent(QShowEvent *event) override;
