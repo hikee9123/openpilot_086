@@ -29,7 +29,7 @@ UserPanel::UserPanel(QWidget* parent) : QFrame(parent)
                                         {
                                             if (ConfirmationDialog::confirm("Are you sure you want to git pull?")) 
                                             {
-                                              system("git pull");
+                                              std::system("git pull");
                                             }
                                         }
                                        )
@@ -110,40 +110,3 @@ QWidget * user_panel(QWidget * parent)
 }
 */
 
-
-/*
-UserPanel::UserPanel(QWidget* parent) : QFrame(parent)
-{
-  QVBoxLayout *layout = new QVBoxLayout;
-  layout->setMargin(100);
-  layout->setSpacing(30);
-
-  // simple wifi + tethering buttons
-  const char* launch_wifi = "am start -n com.android.settings/.wifi.WifiPickerActivity \
-                             -a android.net.wifi.PICK_WIFI_NETWORK \
-                             --ez extra_prefs_show_button_bar true \
-                             --es extra_prefs_set_next_text ''";
-  layout->addWidget(new ButtonControl("WiFi Settings", "OPEN", "",
-                                      [=]() { std::system(launch_wifi); }));
-
-  layout->addWidget(horizontal_line());
-
-  const char* launch_tethering = "am start -n com.android.settings/.TetherSettings \
-                                  --ez extra_prefs_show_button_bar true \
-                                  --es extra_prefs_set_next_text ''";
-  layout->addWidget(new ButtonControl("Tethering Settings", "OPEN", "",
-                                      [=]() { std::system(launch_tethering); }));
-
-  layout->addWidget(horizontal_line());
-
-  // SSH key management
-  layout->addWidget(new SshToggle());
-  layout->addWidget(horizontal_line());
-  layout->addWidget(new SshControl());
-
-  layout->addStretch(1);
-
-  QWidget *w = new QWidget;
-  w->setLayout(layout);
-}
-*/
