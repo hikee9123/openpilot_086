@@ -29,6 +29,11 @@ class CarController():
 
     self.model_speed = 0
 
+    # hud
+    self.hud_timer_left = 0
+    self.hud_timer_right = 0
+    self.hud_sys_state = 0    
+
   """
   def atom_steerRatio( self, v_ego_kph, cv_value,  atomTuning ):  
     self.sr_KPH = atomTuning.cvKPH
