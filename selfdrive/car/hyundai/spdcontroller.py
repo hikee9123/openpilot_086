@@ -102,7 +102,8 @@ class SpdController():
         self.curvature_gain = 1
 
         ignore = ['modelV2'] 
-        self.sm = messaging.SubMaster(['modelV2'], ignore_alive=ignore)        
+        #self.sm = messaging.SubMaster(['modelV2'], ignore_alive=ignore)
+        self.sm = messaging.SubMaster(['modelV2'])      
         
 
     def reset(self):
