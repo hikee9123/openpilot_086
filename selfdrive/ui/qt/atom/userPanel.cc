@@ -17,8 +17,8 @@
 
 #include "userPanel.hpp"
 
-
-UserPanel::UserPanel(QWidget* parent) : QWidget(parent)
+/*
+UserPanel::UserPanel(QWidget* parent) : QFrame(parent)
 {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(100);
@@ -52,7 +52,7 @@ UserPanel::UserPanel(QWidget* parent) : QWidget(parent)
   QWidget *w = new QWidget;
   w->setLayout(layout);
 }
-
+*/
 
 UserPanel::UserPanel(QWidget* parent) : QFrame(parent) 
 {
