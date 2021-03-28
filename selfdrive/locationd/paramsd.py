@@ -167,7 +167,7 @@ def main(sm=None, pm=None):
       actuatorDelayCV = CP.steerActuatorDelay
       steerRatioCV = float(x[States.STEER_RATIO])
       angle_offset_fast = math.degrees(x[States.ANGLE_OFFSET_FAST])
-      v_ego_kph = sm['carState'].vEgo * CV.MS_TOKPH
+      v_ego_kph = sm['carState'].vEgo * CV.MS_TO_KPH
 
 
       if sm['carParams'].steerRateCost > 0:
