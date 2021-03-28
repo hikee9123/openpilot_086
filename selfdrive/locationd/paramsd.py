@@ -96,7 +96,7 @@ class ParamsLearner:
 
 def main(sm=None, pm=None):
   if sm is None:
-    sm = messaging.SubMaster(['liveLocationKalman', 'carState', 'carParams', 'carControl'], poll=['liveLocationKalman'])
+    sm = messaging.SubMaster(['liveLocationKalman', 'carState', 'carParams'], poll=['liveLocationKalman'])
   if pm is None:
     pm = messaging.PubMaster(['liveParameters'])
 
@@ -172,7 +172,7 @@ def main(sm=None, pm=None):
 
       if sm['carParams'].steerRateCost > 0:
         atomTuning = sm['carParams'].atomTuning
-        cv_value = sm['carControl'].modelSpeed
+        cv_value = sm['carState'].modelSpeed
         steerRatioCV, actuatorDelayCV = learner.atom_tune( v_ego_kph, cv_value,  atomTuning )
 
 

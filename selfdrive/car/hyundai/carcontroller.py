@@ -117,7 +117,7 @@ class CarController():
     enabled = c.enabled
     actuators  = c.actuators
     pcm_cancel_cmd  = c.cruiseControl.cancel
-    self.model_speed = c.modelSpeed
+    self.model_speed = CS.modelSpeed
 
     # Steering Torque
     param = self.steerParams_torque( CS, c.actuators )

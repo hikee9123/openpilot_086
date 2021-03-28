@@ -189,6 +189,7 @@ struct CarState {
 
   # atom
   tpms @37 :WheelSpeeds;
+  modelSpeed @38 :Float32;
 
   struct WheelSpeeds {
     # optional wheel speeds
@@ -350,8 +351,6 @@ struct CarControl {
   gasDEPRECATED @1 :Float32;
   brakeDEPRECATED @2 :Float32;
   steeringTorqueDEPRECATED @3 :Float32;
-
-  modelSpeed @8 :Float32;    
 }
 
 # ****** car param ******

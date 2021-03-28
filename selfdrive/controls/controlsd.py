@@ -489,7 +489,9 @@ class Controls:
     self.AM.add_many(self.sm.frame, alerts, self.enabled)
     self.AM.process_alerts(self.sm.frame, clear_event)
     CC.hudControl.visualAlert = self.AM.visual_alert
-    CC.modelSpeed  = self.SC.cal_model_speed( self.sm, CS.vEgo)
+
+    self.modelSpeed = self.SC.cal_model_speed( self.sm, CS.vEgo)
+    CS.modelSpeed  = self.modelSpeed
 
     if not self.read_only:
       # send car controls over can
