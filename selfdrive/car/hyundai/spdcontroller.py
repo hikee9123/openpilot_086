@@ -173,7 +173,7 @@ class SpdController():
         #if self.sm.updated['modelV2']:
         self.sm.update()
         md = self.sm['modelV2']
-        print('{}'.format( md ) )
+        #print('{}'.format( md ) )
         if len(md.path.poly):
             self.prob = list(md.path.poly)
 
