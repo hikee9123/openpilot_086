@@ -172,7 +172,7 @@ class SpdController():
     def cal_model_speed(self, v_ego):
         #if self.sm.updated['modelV2']:
         md = self.sm['modelV2']
-        #print('{}'.format( md ) )
+        print('{}'.format( md ) )
         if len(md.path.poly):
             self.prob = list(md.path.poly)
 
