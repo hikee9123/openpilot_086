@@ -10,49 +10,13 @@
 #include "widgets/toggle.hpp"
 #include "widgets/offroad_alerts.hpp"
 #include "widgets/controls.hpp"
-#include "widgets/ssh_keys.hpp"
+
 #include "common/params.h"
 #include "common/util.h"
 
 
 #include "userPanel.hpp"
 
-/*
-UserPanel::UserPanel(QWidget* parent) : QFrame(parent)
-{
-  QVBoxLayout *layout = new QVBoxLayout;
-  layout->setMargin(100);
-  layout->setSpacing(30);
-
-  // simple wifi + tethering buttons
-  const char* launch_wifi = "am start -n com.android.settings/.wifi.WifiPickerActivity \
-                             -a android.net.wifi.PICK_WIFI_NETWORK \
-                             --ez extra_prefs_show_button_bar true \
-                             --es extra_prefs_set_next_text ''";
-  layout->addWidget(new ButtonControl("WiFi Settings", "OPEN", "",
-                                      [=]() { std::system(launch_wifi); }));
-
-  layout->addWidget(horizontal_line());
-
-  const char* launch_tethering = "am start -n com.android.settings/.TetherSettings \
-                                  --ez extra_prefs_show_button_bar true \
-                                  --es extra_prefs_set_next_text ''";
-  layout->addWidget(new ButtonControl("Tethering Settings", "OPEN", "",
-                                      [=]() { std::system(launch_tethering); }));
-
-  layout->addWidget(horizontal_line());
-
-  // SSH key management
-  layout->addWidget(new SshToggle());
-  layout->addWidget(horizontal_line());
-  layout->addWidget(new SshControl());
-
-  layout->addStretch(1);
-
-  QWidget *w = new QWidget;
-  w->setLayout(layout);
-}
-*/
 
 UserPanel::UserPanel(QWidget* parent) : QFrame(parent) 
 {
@@ -61,38 +25,23 @@ UserPanel::UserPanel(QWidget* parent) : QFrame(parent)
   setLayout(main_layout);
  // setStyleSheet(R"(QLabel {font-size: 50px;})");
 
-   layout()->addWidget(new SshToggle());
+  layout()->addWidget(new ParamControl("IsOpenpilotViewEnabled",
+                                       "오픈파일럿 주행화면 미리보기",
+                                       "오픈파일럿 주행화면을 미리보기 합니다.",
+                                       "../assets/offroad/icon_openpilot.png"
+                                       ));
+
+   layout()->addWidget(new AutoResumeToggle());
+   layout()->addWidget(new LiveSteerRatioToggle());
+   layout()->addWidget(new TurnSteeringDisableToggle());
+   layout()->addWidget(new PrebuiltToggle());
 }
 
 void UserPanel::showEvent(QShowEvent *event) 
 {
   Params params = Params();
 
-  /*
-  std::string brand = params.read_db_bool("Passive") ? "dashcam" : "openpilot";
-  QList<QPair<QString, std::string>> dev_params = {
-    {"Version", brand + " v" + params.get("Version", false).substr(0, 14)},
-    {"Git Branch", params.get("GitBranch", false)},
-    {"Git Commit", params.get("GitCommit", false).substr(0, 10)},
-    {"Panda Firmware", params.get("PandaFirmwareHex", false)},
-    {"OS Version", Hardware::get_os_version()},
-  };
 
-  for (int i = 0; i < dev_params.size(); i++) {
-    const auto &[name, value] = dev_params[i];
-    QString val = QString::fromStdString(value).trimmed();
-    if (labels.size() > i) {
-      labels[i]->setText(val);
-    } else {
-      labels.push_back(new LabelControl(name, val));
-      layout()->addWidget(labels[i]);
-      if (i < (dev_params.size() - 1)) {
-        layout()->addWidget(horizontal_line());
-      }
-    }
-  }
-
-*/
 }
 
 /*
@@ -144,5 +93,43 @@ QWidget * user_panel(QWidget * parent)
   w->setLayout(layout);
 
   return w;
+}
+*/
+
+
+/*
+UserPanel::UserPanel(QWidget* parent) : QFrame(parent)
+{
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(100);
+  layout->setSpacing(30);
+
+  // simple wifi + tethering buttons
+  const char* launch_wifi = "am start -n com.android.settings/.wifi.WifiPickerActivity \
+                             -a android.net.wifi.PICK_WIFI_NETWORK \
+                             --ez extra_prefs_show_button_bar true \
+                             --es extra_prefs_set_next_text ''";
+  layout->addWidget(new ButtonControl("WiFi Settings", "OPEN", "",
+                                      [=]() { std::system(launch_wifi); }));
+
+  layout->addWidget(horizontal_line());
+
+  const char* launch_tethering = "am start -n com.android.settings/.TetherSettings \
+                                  --ez extra_prefs_show_button_bar true \
+                                  --es extra_prefs_set_next_text ''";
+  layout->addWidget(new ButtonControl("Tethering Settings", "OPEN", "",
+                                      [=]() { std::system(launch_tethering); }));
+
+  layout->addWidget(horizontal_line());
+
+  // SSH key management
+  layout->addWidget(new SshToggle());
+  layout->addWidget(horizontal_line());
+  layout->addWidget(new SshControl());
+
+  layout->addStretch(1);
+
+  QWidget *w = new QWidget;
+  w->setLayout(layout);
 }
 */
