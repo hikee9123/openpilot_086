@@ -1,9 +1,21 @@
-#include <QNetworkReply>
+
+#include <string>
+#include <iostream>
+#include <sstream>
+#include <cassert>
+
+
+#include "settings.hpp"
+#include "widgets/input.hpp"
+#include "widgets/toggle.hpp"
+#include "widgets/offroad_alerts.hpp"
+#include "widgets/controls.hpp"
+#include "widgets/ssh_keys.hpp"
+#include "common/params.h"
+#include "common/util.h"
+
 
 #include "userPanel.hpp"
-#include "common/params.h"
-
-
 
 
 UserPanel::UserPanel(QWidget* parent) : QFrame(parent) 
