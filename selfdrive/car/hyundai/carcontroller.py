@@ -18,6 +18,7 @@ VisualAlert = car.CarControl.HUDControl.VisualAlert
 
 class CarController():
   def __init__(self, dbc_name, CP, VM):
+    self.CP = CP
     self.p = CarControllerParams(CP)
     self.packer = CANPacker(dbc_name)
 
@@ -139,7 +140,10 @@ class CarController():
 
     return sys_warning, sys_state    
 
-  def update(self, c, CS, frame ):
+  def update(self, c, CS, frame, CP ):
+    if self.CP != CP:
+      self.CP = CP
+
     enabled = c.enabled
     actuators  = c.actuators
     pcm_cancel_cmd  = c.cruiseControl.cancel
