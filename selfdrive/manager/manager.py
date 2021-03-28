@@ -39,6 +39,12 @@ def manager_init():
     ("OpenpilotEnabledToggle", "1"),
     ("VisionRadarToggle", "0"),
     ("IsDriverViewEnabled", "0"),
+
+    ("IsOpenpilotViewEnabled", "0"),
+    ("OpkrAutoResume", "0"),
+    ("OpkrLiveSteerRatio", "0"),
+    ("OpkrTurnSteeringDisable", "0"),
+    ("OpkrPrebuilt", "0"),
   ]
 
   if params.get("RecordFrontLock", encoding='utf-8') == "1":
