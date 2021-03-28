@@ -517,7 +517,7 @@ static void ui_draw_debug(UIState *s)
     ui_print( s, x_pos, y_pos+0,   "sR:%.2f, %.2f %.2f", steerRatio,  steerRatioCV, steerActuatorDelayCV );
     ui_print( s, x_pos, y_pos+50,  "aO:%.2f, %.2f", angleOffset, angleOffsetAverage );
     ui_print( s, x_pos, y_pos+100, "sF:%.2f Fan:%.0f", stiffnessFactor, fanSpeed/1000. );
-    ui_print( s, x_pos, y_pos+150, "lW:%.2f CV:%.2f", laneWidth, modelSpeed );
+    ui_print( s, x_pos, y_pos+150, "lW:%.2f CV:%.0f", laneWidth, modelSpeed );
 
     ui_print( s, x_pos, y_pos+250, "prob:%.2f, %.2f, %.2f, %.2f", lane_line_probs[0], lane_line_probs[1], lane_line_probs[2], lane_line_probs[3] );
 
