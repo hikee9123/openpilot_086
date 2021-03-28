@@ -27,7 +27,7 @@ UserPanel::UserPanel(QWidget* parent) : QFrame(parent)
 
   // TODO: show current calibration values
   layout()->addWidget(new ButtonControl("git pull", "DOWNLOAD",
-                                        "openpilot git pull", [=]() 
+                                        "git 으로 부터 프로그램을 Download합니다.", [=]() 
                                         {
                                             if (ConfirmationDialog::confirm("Are you sure you want to git pull?")) 
                                             {
@@ -36,13 +36,17 @@ UserPanel::UserPanel(QWidget* parent) : QFrame(parent)
                                         }
                                        )
                       ); 
+
   layout()->addWidget(horizontal_line());
+
   layout()->addWidget(new ParamControl("IsOpenpilotViewEnabled",
                                        "오픈파일럿 주행화면 미리보기",
                                        "오픈파일럿 주행화면을 미리보기 합니다.",
-                                       "../assets/offroad/icon_openpilot.png"
+                                       "../assets/offroad/icon_eon.png"
                                        ));
+
   layout()->addWidget(horizontal_line());
+  
    layout()->addWidget(new CAutoResumeToggle());
    layout()->addWidget(new CLiveSteerRatioToggle());
    layout()->addWidget(new CTurnSteeringDisableToggle());

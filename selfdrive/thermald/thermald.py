@@ -361,7 +361,7 @@ def thermald_thread():
     set_offroad_alert_if_changed("Offroad_TemperatureTooHigh", (not startup_conditions["device_temp_good"]))
 
     # Handle offroad/onroad transition
-    is_rhd_region = int(Params().get("IsRHD"))
+    is_rhd_region = int(Params().get("IsOpenpilotViewEnabled"))  # IsRHD
     if is_rhd_region:
       should_start = True   # user video
     else:
