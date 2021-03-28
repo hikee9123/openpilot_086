@@ -291,29 +291,10 @@ class CarInterface(CarInterfaceBase):
     CP.atomTuning.cvsdUpV  = ATOMC.cv_sdUPV
     CP.atomTuning.cvsdDnV  = ATOMC.cv_sdDNV
 
-    CP.atomTuning.sRKPH     = ATOMC.sR_KPH
-    CP.atomTuning.sRBPV     = ATOMC.sR_BPV
-    
-    CP.atomTuning.sRlqrkiV      = ATOMC.sR_lqr_kiV
-    CP.atomTuning.sRlqrscaleV   = ATOMC.sR_lqr_scaleV
-
-    CP.atomTuning.sRpidKpV      = ATOMC.sR_pid_KpV
-    CP.atomTuning.sRpidKiV      = ATOMC.sR_pid_KiV
-
     CP.atomTuning.cvsteerRatioV = ATOMC.cv_steerRatioV
     CP.atomTuning.cvsteerActuatorDelayV = ATOMC.cv_ActuatorDelayV
     
-
-    CP.lateralsRatom.deadzone = ATOMC.sR_pid_deadzone      # OK
-    CP.lateralsRatom.steerOffset = ATOMC.steerOffset       # OK
-    CP.lateralsRatom.cameraOffset = ATOMC.cameraOffset
-    CP.lateralsRatom.opkrAutoResume = ATOMC.ap_autoReasume
-    CP.lateralsRatom.opkrAutoScreenOff = ATOMC.ap_autoScnOffTime
-    CP.lateralsRatom.learnerParams = ATOMC.learnerParams
-    
-    CP.steerRateCost = ATOMC.steerRateCost
-    CP.steerLimitTimer = ATOMC.steerLimitTimer
-    
+   
     return CP    
 
   def update(self, c, can_strings):
