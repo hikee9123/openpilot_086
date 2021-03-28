@@ -240,6 +240,7 @@ class CarState(CarStateBase):
       ("DriverBraking", "TCS13", 0),
       ("StandStill", "TCS13", 0),
       ("PBRAKE_ACT", "TCS13", 0),
+      ("DriverOverride", "TCS13", 0),
 
       ("ESC_Off_Step", "TCS15", 0),
       ("AVH_LAMP", "TCS15", 0),
@@ -264,6 +265,8 @@ class CarState(CarStateBase):
       ("ACC_ObjDist", "SCC11", 0),
       ("ACC_ObjRelSpd", "SCC11", 0),      
       ("ACCMode", "SCC12", 1),
+
+      
       
 
       # TPMS   1427
