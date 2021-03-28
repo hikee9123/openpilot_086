@@ -67,6 +67,8 @@ UserPanel::UserPanel(QWidget* parent) : QFrame(parent)
 void UserPanel::showEvent(QShowEvent *event) 
 {
   Params params = Params();
+
+  /*
   std::string brand = params.read_db_bool("Passive") ? "dashcam" : "openpilot";
   QList<QPair<QString, std::string>> dev_params = {
     {"Version", brand + " v" + params.get("Version", false).substr(0, 14)},
@@ -90,7 +92,7 @@ void UserPanel::showEvent(QShowEvent *event)
     }
   }
 
-
+*/
 }
 
 /*

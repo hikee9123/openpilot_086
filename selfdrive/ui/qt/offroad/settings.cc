@@ -267,7 +267,7 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
     {"Network", network_panel(this)},
     {"Toggles", toggles_panel()},
     {"Developer", new DeveloperPanel()},
-    {"User", new UserPanel()},
+    {"User", new UserPanel(this)},
   };
 
   sidebar_layout->addSpacing(45);
@@ -282,8 +282,8 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
         background: none;
         font-size: 65px;
         font-weight: 500;
-        padding-top: 35px;
-        padding-bottom: 35px;
+        padding-top: 18px;
+        padding-bottom: 18px;
       }
       QPushButton:checked {
         color: white;
