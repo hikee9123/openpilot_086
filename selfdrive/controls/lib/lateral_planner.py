@@ -88,6 +88,12 @@ class LateralPlanner():
     active = sm['controlsState'].active
     measured_curvature = sm['controlsState'].curvature
 
+    if sm['liveParameters'].valid:
+      steerActuatorDelayCV = sm['liveParameters'].steerActuatorDelayCV
+    else:
+      steerActuatorDelayCV = CP.steerActuatorDelay
+    
+
     md = sm['modelV2']
     self.LP.parse_model(sm['modelV2'])
     if len(md.position.x) == TRAJECTORY_SIZE and len(md.orientation.x) == TRAJECTORY_SIZE:
@@ -182,7 +188,7 @@ class LateralPlanner():
     self.cur_state.curvature = interp(DT_MDL, self.t_idxs[:MPC_N + 1], self.mpc_solution.curvature)
 
     # TODO this needs more thought, use .2s extra for now to estimate other delays
-    delay = CP.steerActuatorDelay + .2
+    delay = steerActuatorDelayCV + .2
     current_curvature = self.mpc_solution.curvature[0]
     psi = interp(delay, self.t_idxs[:MPC_N + 1], self.mpc_solution.psi)
     next_curvature_rate = self.mpc_solution.curvature_rate[0]

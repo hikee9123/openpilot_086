@@ -1229,6 +1229,9 @@ struct LiveParametersData {
   yawRate @7 :Float32;
   posenetSpeed @8 :Float32;
   posenetValid @9 :Bool;
+
+  steerRatioCV @10 :Float32;
+  steerActuatorDelayCV @11 :Float32;
 }
 
 struct LiveMapDataDEPRECATED {
