@@ -47,7 +47,6 @@ LaneChangeDirection = log.LateralPlan.LaneChangeDirection
 EventName = car.CarEvent.EventName
 
 
-
 class Controls:
   def __init__(self, sm=None, pm=None, can_sock=None):
     config_realtime_process(3, Priority.CTRL_HIGH)
@@ -513,8 +512,6 @@ class Controls:
     angle_steers_des = math.degrees(self.VM.get_steer_from_curvature(-lat_plan.curvature, CS.vEgo))
     angle_steers_des += params.angleOffsetDeg
 
-    
-
     # controlsState
     dat = messaging.new_message('controlsState')
     dat.valid = CS.canValid
@@ -607,8 +604,6 @@ class Controls:
       # Update control state
       self.state_transition(CS)
       self.prof.checkpoint("State transition")
-    else:
-      self.enabled = False           
 
     # Compute actuators (runs PID loops and lateral MPC)
     actuators, v_acc, a_acc, lac_log = self.state_control(CS)
