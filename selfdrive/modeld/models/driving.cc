@@ -48,6 +48,7 @@ constexpr int OUTPUT_SIZE =  POSE_IDX + POSE_SIZE;
 
 // #define DUMP_YUV
 
+// atom
 #include "pathData.h"
 
 void model_init(ModelState* s, cl_device_id device_id, cl_context context) {
@@ -77,6 +78,7 @@ void model_init(ModelState* s, cl_device_id device_id, cl_context context) {
   s->m->addTrafficConvention(s->traffic_convention, TRAFFIC_CONVENTION_LEN);
 #endif
 
+  // atom
   model_matrix_init();
   s->q = CL_CHECK_ERR(clCreateCommandQueue(context, device_id, 0, &err));
 }
