@@ -170,27 +170,27 @@ class SpdController():
 
 
     def cal_model_speed(self, v_ego):
-        if self.sm.updated['modelV2']:
-            md = self.sm['modelV2']
-            #print('{}'.format( md ) )
-            if len(md.path.poly):
-                self.prob = list(md.path.poly)
+        #if self.sm.updated['modelV2']:
+        md = self.sm['modelV2']
+        #print('{}'.format( md ) )
+        if len(md.path.poly):
+            self.prob = list(md.path.poly)
 
-                model_speed = self.calc_laneProb( self.prob, v_ego )
-        
-                delta_model = model_speed - self.old_model_speed
-                if self.old_model_init < 10:
-                    self.old_model_init += 1
-                    self.old_model_speed = model_speed
-                elif self.old_model_speed == model_speed:
-                    pass
-                elif delta_model < -1:
-                    self.old_model_speed -= 0.5  #model_speed
-                elif delta_model > 0:
-                    self.old_model_speed += 0.1
+            model_speed = self.calc_laneProb( self.prob, v_ego )
+    
+            delta_model = model_speed - self.old_model_speed
+            if self.old_model_init < 10:
+                self.old_model_init += 1
+                self.old_model_speed = model_speed
+            elif self.old_model_speed == model_speed:
+                pass
+            elif delta_model < -1:
+                self.old_model_speed -= 0.5  #model_speed
+            elif delta_model > 0:
+                self.old_model_speed += 0.1
 
-                else:
-                    self.old_model_speed = model_speed
+            else:
+                self.old_model_speed = model_speed
 
         return self.old_model_speed
 

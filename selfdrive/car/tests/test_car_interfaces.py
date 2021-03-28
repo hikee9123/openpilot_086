@@ -24,7 +24,9 @@ class TestSpdCtrl:
       #model = self.sm['modelV2']
       #lane_lines = model.laneLines
       #lane_line_probs = model.laneLineProbs
-      while True:
+      nLimit = 10000
+      while nLimit > 0:
+        nLimit -= 1
         curve_speed = self.SC.cal_curve_speed(  30, 10  )
         model_speed = self.SC.cal_model_speed(   30  )
         #self.prob = list(model.path.poly)
