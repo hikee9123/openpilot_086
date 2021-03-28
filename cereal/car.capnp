@@ -293,8 +293,6 @@ struct CarControl {
   cruiseControl @4 :CruiseControl;
   hudControl @5 :HUDControl;
 
-  modelSpeed  @8 :Float32;  
-
   struct Actuators {
     # range from 0.0 - 1.0
     gas @0: Float32;
@@ -352,6 +350,8 @@ struct CarControl {
   gasDEPRECATED @1 :Float32;
   brakeDEPRECATED @2 :Float32;
   steeringTorqueDEPRECATED @3 :Float32;
+
+  modelSpeed @8 :Float32;    
 }
 
 # ****** car param ******

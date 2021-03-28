@@ -96,7 +96,7 @@ class SpdController():
         self.btn_type = Buttons.NONE
         self.active_time = 0
 
-        self.old_model_speed = 0
+        self.old_model_speed = 0.
         self.old_model_init = 0
 
         self.curve_speed = 0
