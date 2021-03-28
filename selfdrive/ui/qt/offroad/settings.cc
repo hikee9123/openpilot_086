@@ -16,6 +16,8 @@
 #include "common/util.h"
 #include "selfdrive/hardware/hw.h"
 
+#include "atom/userPanel.hpp"
+
 
 QWidget * toggles_panel() {
   QVBoxLayout *toggles_list = new QVBoxLayout();
@@ -265,6 +267,7 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
     {"Network", network_panel(this)},
     {"Toggles", toggles_panel()},
     {"Developer", new DeveloperPanel()},
+    {"User", new UserPanel()},
   };
 
   sidebar_layout->addSpacing(45);
