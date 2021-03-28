@@ -5,7 +5,7 @@
 #include <cassert>
 
 
-#include "settings.hpp"
+
 #include "widgets/input.hpp"
 #include "widgets/toggle.hpp"
 #include "widgets/offroad_alerts.hpp"
