@@ -14,14 +14,15 @@
 #include "selfdrive/ui/qt/widgets/controls.hpp"
 
 
-class UserPanel : public QWidget {
+class UserPanel : public QFrame 
+{
   Q_OBJECT
-
 public:
-  explicit UserPanel(QWidget* parent = 0);
+  explicit DeveloperPanel(QWidget* parent = nullptr);
 
-private:
-
+protected:
+  void showEvent(QShowEvent *event) override;
+  QList<LabelControl *> labels;
 };
 
 

@@ -53,6 +53,44 @@ UserPanel::UserPanel(QWidget* parent) : QWidget(parent)
   w->setLayout(layout);
 }
 
+
+UserPanel::UserPanel(QWidget* parent) : QFrame(parent) 
+{
+  QVBoxLayout *main_layout = new QVBoxLayout(this);
+  main_layout->setMargin(100);
+  setLayout(main_layout);
+  setStyleSheet(R"(QLabel {font-size: 50px;})");
+}
+
+void UserPanel::showEvent(QShowEvent *event) 
+{
+  Params params = Params();
+  std::string brand = params.read_db_bool("Passive") ? "dashcam" : "openpilot";
+  QList<QPair<QString, std::string>> dev_params = {
+    {"Version", brand + " v" + params.get("Version", false).substr(0, 14)},
+    {"Git Branch", params.get("GitBranch", false)},
+    {"Git Commit", params.get("GitCommit", false).substr(0, 10)},
+    {"Panda Firmware", params.get("PandaFirmwareHex", false)},
+    {"OS Version", Hardware::get_os_version()},
+  };
+
+  for (int i = 0; i < dev_params.size(); i++) {
+    const auto &[name, value] = dev_params[i];
+    QString val = QString::fromStdString(value).trimmed();
+    if (labels.size() > i) {
+      labels[i]->setText(val);
+    } else {
+      labels.push_back(new LabelControl(name, val));
+      layout()->addWidget(labels[i]);
+      if (i < (dev_params.size() - 1)) {
+        layout()->addWidget(horizontal_line());
+      }
+    }
+  }
+
+  layout()->addWidget(new SshToggle());
+}
+
 /*
 QWidget * user_panel(QWidget * parent) 
 {
