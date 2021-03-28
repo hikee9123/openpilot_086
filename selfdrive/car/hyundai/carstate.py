@@ -16,6 +16,7 @@ class CarState(CarStateBase):
 
     self.acc_active = False
 
+    self.VSetDis = 0
     self.time_delay_int = 600
     self.gearShifter = GearShifter.unknown
 
