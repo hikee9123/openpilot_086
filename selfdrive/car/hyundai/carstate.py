@@ -26,7 +26,7 @@ class CarState(CarStateBase):
     self.SC = SpdController()
 
 
-  def update(self, cp, cp_cam):
+  def update(self, cp, cp_cam, sm):
     ret = car.CarState.new_message()
 
     ret.doorOpen = any([cp.vl["CGW1"]['CF_Gway_DrvDrSw'], cp.vl["CGW1"]['CF_Gway_AstDrSw'],
@@ -200,6 +200,9 @@ class CarState(CarStateBase):
     ret.tpms.rl = cp.vl["TPMS11"]['PRESSURE_RL']
     ret.tpms.rr = cp.vl["TPMS11"]['PRESSURE_RR']
  
+
+
+    ret.modelSpeed = self.SC.cal_model_speed( sm, ret.vEgo )
     return ret
 
 
