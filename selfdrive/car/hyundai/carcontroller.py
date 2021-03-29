@@ -99,7 +99,7 @@ class CarController():
     sys_state = 1
 
     if self.hud_timer_left and self.hud_timer_right or sys_warning:  # HUD alert only display when LKAS status is active
-      if (self.steer_torque_ratio > 0.7) and (enabled or sys_warning):
+      if enabled or sys_warning:
         sys_state = 3
       else:
         sys_state = 4
