@@ -202,7 +202,7 @@ class CarState(CarStateBase):
  
 
 
-    ret.modelSpeed = self.SC.cal_model_speed( sm, ret.vEgo )
+    ret.modelSpeed = 255 #self.SC.cal_model_speed( sm, ret.vEgo )
     return ret
 
 
