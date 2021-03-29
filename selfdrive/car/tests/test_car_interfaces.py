@@ -15,7 +15,7 @@ class TestSpdCtrl:
   def __init__(self):  
     self.SC = SpdctrlSlow()
 
-   # self.sm = messaging.SubMaster(['modelV2'])
+    self.sm = messaging.SubMaster(['modelV2'])
 
 
   def test(self):
@@ -27,11 +27,10 @@ class TestSpdCtrl:
       nLimit = 100
       while nLimit > 0:
         nLimit -= 1
-        curve_speed = self.SC.cal_curve_speed(  30, 10  )
-        model_speed = self.SC.cal_model_speed(   30  )
+        model_speed = self.SC.cal_model_speed( self.sm,  30  )
         #self.prob = list(model.path.poly)
         #model_speed = self.SC.calc_laneProb(  self.prob, 30  )
-        print( 'model_speed = {}  curve_speed={} '.format( model_speed, curve_speed) )
+        print( 'model_speed = {}   '.format( model_speed) )
 
 
 

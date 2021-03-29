@@ -12,6 +12,9 @@ from selfdrive.conf_atom import ConfAtom
 ATOMC = ConfAtom()
 
 class CarInterface(CarInterfaceBase):
+  def __init__(self, CP, CarController, CarState):
+    super().__init__( CP, CarController, CarState)
+    self.modelSpeed = 0
 
   @staticmethod
   def compute_gb(accel, speed):
@@ -302,7 +305,7 @@ class CarInterface(CarInterfaceBase):
     ret = self.CS.update(self.cp, self.cp_cam)
     ret.canValid = self.cp.can_valid and self.cp_cam.can_valid
     ret.steeringRateLimited = self.CC.steer_rate_limited if self.CC is not None else False
-
+    ret.modelSpeed = self.modelSpeed
 
     events = self.create_common_events(ret)
     # TODO: addd abs(self.CS.angle_steers) > 90 to 'steerTempUnavailable' event
@@ -320,6 +323,9 @@ class CarInterface(CarInterfaceBase):
     self.CS.out = ret.as_reader()
     return self.CS.out
 
+
+  def update_mode( self, sm ):
+    self.modelSpeed = self.CS.SC.cal_model_speed( sm, self.CS.vEgo )
 
   def apply(self, c):
     can_sends = self.CC.update( c, self.CS, self.frame )

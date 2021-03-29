@@ -101,8 +101,9 @@ class SpdController():
         self.curve_speed = 0
         self.curvature_gain = 1
 
-        ignore = ['modelV2'] 
-        self.sm = messaging.SubMaster(['modelV2'], ignore_alive=ignore)
+        #self.sm = None
+        #ignore = ['modelV2'] 
+        #self.sm = messaging.SubMaster(['modelV2'], ignore_alive=ignore)
         #self.sm = messaging.SubMaster(['modelV2'])      
         
 
@@ -114,9 +115,8 @@ class SpdController():
 
 
 
-    def cal_curve_speed(self, v_ego, frame):
-        #if frame % 10 == 0:
-        md = self.sm['modelV2']
+    def cal_curve_speed(self, v_ego, sm):
+        md = sm['modelV2']
         if len(md.position.x) == TRAJECTORY_SIZE and len(md.position.y) == TRAJECTORY_SIZE:
             x = md.position.x
             y = md.position.y
@@ -169,11 +169,8 @@ class SpdController():
         return  model_speed
 
 
-    def cal_model_speed(self, v_ego):
-        #if self.sm.updated['modelV2']:
-        #self.sm.update()
-        self.sm.update(0)
-        md = self.sm['modelV2']
+    def cal_model_speed(self, sm, v_ego):
+        md = sm['modelV2']
         #print('{}'.format( md ) )
         if len(md.path.poly):
             self.prob = list(md.path.poly)

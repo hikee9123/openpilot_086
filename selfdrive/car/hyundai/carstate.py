@@ -192,10 +192,7 @@ class CarState(CarStateBase):
 
     ret.vEgo = self.clu_Vanz * CV.KPH_TO_MS
 
-    if self.sm == None:
-      ret.modelSpeed = 0
-    else:
-      ret.modelSpeed = self.SC.cal_model_speed(  ret.vEgo )
+
 
     #TPMS
     ret.tpms.fl = cp.vl["TPMS11"]['PRESSURE_FL']
