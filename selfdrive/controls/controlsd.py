@@ -270,10 +270,10 @@ class Controls:
 
     # Update carState from CAN
     can_strs = messaging.drain_sock_raw(self.can_sock, wait_for_one=True)
-    CS = self.CI.update(self.CC, can_strs)
+    CS = self.CI.update(self.CC, can_strs, self.sm)
 
     self.sm.update(0)
-    self.CI.update_mode( self.sm )
+
 
     # Check for CAN timeout
     if not can_strs:
@@ -379,7 +379,7 @@ class Controls:
     # Update VehicleModel
     params = self.sm['liveParameters']
     x = max(params.stiffnessFactor, 0.1)
-    sr = max(params.steerRatio, 0.1)
+    sr = max(params.steerRatioCV, 0.1)
     self.VM.update_params(x, sr)
 
     lat_plan = self.sm['lateralPlan']
