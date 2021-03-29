@@ -26,7 +26,7 @@ class CarController():
     self.car_fingerprint = CP.carFingerprint
     self.steer_rate_limited = False
     self.last_resume_frame = 0
-
+    self.last_lead_distance = 0
     self.model_speed = 0
 
     # hud
