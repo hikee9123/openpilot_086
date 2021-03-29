@@ -298,11 +298,11 @@ class CarInterface(CarInterfaceBase):
     CP.atomTuning.cvsteerActuatorDelayV = ATOMC.cv_ActuatorDelayV
     return CP    
 
-  def update(self, c, can_strings):
+  def update(self, c, can_strings, sm):
     self.cp.update_strings(can_strings)
     self.cp_cam.update_strings(can_strings)
 
-    ret = self.CS.update(self.cp, self.cp_cam)
+    ret = self.CS.update(self.cp, self.cp_cam, sm)
     ret.canValid = self.cp.can_valid and self.cp_cam.can_valid
     ret.steeringRateLimited = self.CC.steer_rate_limited if self.CC is not None else False
     ret.modelSpeed = 255. #self.modelSpeed
@@ -324,8 +324,7 @@ class CarInterface(CarInterfaceBase):
     return self.CS.out
 
 
-  def update_mode( self, sm ):
-    self.modelSpeed = self.CS.SC.cal_model_speed( sm, self.CS.out.vEgo )
+
 
   def apply(self, c):
     can_sends = self.CC.update( c, self.CS, self.frame )
