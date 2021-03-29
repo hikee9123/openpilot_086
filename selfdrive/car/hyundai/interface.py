@@ -325,7 +325,7 @@ class CarInterface(CarInterfaceBase):
 
 
   def update_mode( self, sm ):
-    self.modelSpeed = self.CS.SC.cal_model_speed( sm, self.CS.vEgo )
+    self.modelSpeed = self.CS.SC.cal_model_speed( sm, self.CS.out.vEgo )
 
   def apply(self, c):
     can_sends = self.CC.update( c, self.CS, self.frame )
