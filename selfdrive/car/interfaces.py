@@ -87,7 +87,7 @@ class CarInterfaceBase():
     return ret
 
   # returns a car.CarState, pass in car.CarControl
-  def update(self, c, can_strings):
+  def update(self, c, can_strings, sm):
     raise NotImplementedError
 
   # return sendcan, pass in a car.CarControl
