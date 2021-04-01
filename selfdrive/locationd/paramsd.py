@@ -96,7 +96,7 @@ class ParamsLearner:
 
 def main(sm=None, pm=None):
   if sm is None:
-    sm = messaging.SubMaster(['liveLocationKalman', 'carState', 'carParams'], poll=['liveLocationKalman'])
+    sm = messaging.SubMaster(['liveLocationKalman', 'carState', 'carParams', 'controlsState'], poll=['liveLocationKalman'])
   if pm is None:
     pm = messaging.PubMaster(['liveParameters'])
 
@@ -135,8 +135,6 @@ def main(sm=None, pm=None):
       'steerRatio': CP.steerRatio,
       'stiffnessFactor': 1.0,
       'angleOffsetAverageDeg': 0.0,
-      'steerRatioCV': CP.steerRatio,
-      'steerActuatorDelayCV': CP.steerActuatorDelay,       
     }
     cloudlog.info("Parameter learner resetting to default values")
 
@@ -172,7 +170,9 @@ def main(sm=None, pm=None):
 
       if sm['carParams'].steerRateCost > 0:
         atomTuning = sm['carParams'].atomTuning
-        cv_value = sm['carState'].modelSpeed
+        cv_value = sm['controlsState'].modelSpeed
+        if cv_value <= 10: 
+          cv_value = 255
         steerRatioCV, actuatorDelayCV = learner.atom_tune( v_ego_kph, cv_value,  atomTuning )
 
 
@@ -200,8 +200,6 @@ def main(sm=None, pm=None):
           'steerRatio': msg.liveParameters.steerRatio,
           'stiffnessFactor': msg.liveParameters.stiffnessFactor,
           'angleOffsetAverageDeg': msg.liveParameters.angleOffsetAverageDeg,
-          'steerRatioCV': msg.liveParameters.steerRatioCV,
-          'steerActuatorDelayCV': msg.liveParameters.steerActuatorDelayCV,       
         }
         put_nonblocking("LiveParameters", json.dumps(params))
 

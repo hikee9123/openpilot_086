@@ -1,20 +1,28 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 from cereal import car
 from selfdrive.config import Conversions as CV
 from selfdrive.car.hyundai.values import CAR
 from selfdrive.car import STD_CARGO_KG, scale_rot_inertia, scale_tire_stiffness, gen_empty_fingerprint
-from selfdrive.car.interfaces import CarInterfaceBase
-from common.params import Params
+from selfdrive.car.interfaces import CarInterfaceBase, MAX_CTRL_SPEED
+
 
 from selfdrive.conf_atom import ConfAtom
-
+from common.params import Params
 
 ATOMC = ConfAtom()
+params = Params()
+
+EventName = car.CarEvent.EventName
+ButtonType = car.CarState.ButtonEvent.Type
+
 
 class CarInterface(CarInterfaceBase):
   def __init__(self, CP, CarController, CarState):
-    super().__init__( CP, CarController, CarState)
-    self.modelSpeed = 0
+    super().__init__(CP, CarController, CarState )
+    self.meg_timer = 0
+    self.meg_name = 0
+    self.pre_button = 0
+    self.pcm_enable_cmd = False
 
   @staticmethod
   def compute_gb(accel, speed):
@@ -22,7 +30,7 @@ class CarInterface(CarInterfaceBase):
 
   @staticmethod
   def get_params(candidate, fingerprint=gen_empty_fingerprint(), car_fw=[]):  # pylint: disable=dangerous-default-value
-    global ATOMC    
+    global ATOMC
     ret = CarInterfaceBase.get_std_params(candidate, fingerprint)
 
     ret.carName = "hyundai"
@@ -35,9 +43,9 @@ class CarInterface(CarInterfaceBase):
     ret.steerActuatorDelay = 0.1  # Default delay
     ret.steerRateCost = 0.5
     ret.steerLimitTimer = 0.4
-    tire_stiffness_factor = 1.
+    tire_stiffness_factor = 1.1
 
-    ret.maxSteeringAngleDeg = 180.
+    ret.maxSteeringAngleDeg = 90.
     ret.startAccel = 1.0
 
     eps_modified = False
@@ -48,18 +56,19 @@ class CarInterface(CarInterfaceBase):
     if candidate == CAR.GRANDEUR_HEV_19:
       ret.mass = 1675. + STD_CARGO_KG
       ret.wheelbase = 2.845
-      ret.steerRatio = 16.5  #13.96   #12.5
-      ret.steerMaxBP = [0., 30*CV.KPH_TO_MS, 50*CV.KPH_TO_MS]
-      ret.steerMaxV = [0.8, 1.0, 1.2]
-    
-      # PID
+      ret.steerRatio = 13.96  #13.96   #12.5
+      ret.steerMaxBP = [0.]
+      ret.steerMaxV = [1.0]
+      ret.steerRateCost = 1.2
+
       ret.lateralTuning.pid.kf = 0.000005
       ret.lateralTuning.pid.kpBP, ret.lateralTuning.pid.kpV = [[0.], [0.20]]
-      ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kiV = [[0.], [0.01]]
+      ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kiV = [[0.], [0.02]]
+      #ret.lateralTuning.pid.kdBP, ret.lateralTuning.pid.kdV = [[0.],[2.5]]
 
       
       ret.lateralTuning.init('lqr')
-      ret.lateralTuning.lqr.scale = 1600.0
+      ret.lateralTuning.lqr.scale = 1700.0
       ret.lateralTuning.lqr.ki = 0.01
       ret.lateralTuning.lqr.dcGain = 0.0027
 
@@ -67,8 +76,7 @@ class CarInterface(CarInterfaceBase):
       ret.lateralTuning.lqr.b = [-1.92006585e-04, 3.95603032e-05]
       ret.lateralTuning.lqr.c = [1., 0.]
       ret.lateralTuning.lqr.k = [-110., 451.]
-      ret.lateralTuning.lqr.l = [0.33, 0.318]
-      
+      ret.lateralTuning.lqr.l = [0.33, 0.318]      
 
     elif candidate == CAR.SANTA_FE:
       ret.lateralTuning.pid.kf = 0.00005
@@ -178,14 +186,6 @@ class CarInterface(CarInterfaceBase):
       tire_stiffness_factor = 0.385
       ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
       ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.25], [0.05]]
-    elif candidate == CAR.KIA_SELTOS:
-      ret.lateralTuning.pid.kf = 0.00005
-      ret.mass = 1310. + STD_CARGO_KG
-      ret.wheelbase = 2.6
-      ret.steerRatio = 13.73  # Spec
-      tire_stiffness_factor = 0.5
-      ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
-      ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.25], [0.05]]
     elif candidate in [CAR.KIA_OPTIMA, CAR.KIA_OPTIMA_H]:
       ret.lateralTuning.pid.kf = 0.00005
       ret.mass = 3558. * CV.LB_TO_KG
@@ -201,21 +201,13 @@ class CarInterface(CarInterfaceBase):
       ret.steerRatio = 14.4 * 1.15   # 15% higher at the center seems reasonable
       ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
       ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.25], [0.05]]
+
     elif candidate == CAR.KIA_FORTE:
       ret.lateralTuning.pid.kf = 0.00005
       ret.mass = 3558. * CV.LB_TO_KG
       ret.wheelbase = 2.80
       ret.steerRatio = 13.75
       tire_stiffness_factor = 0.5
-      ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
-      ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.25], [0.05]]
-    elif candidate == CAR.KIA_CEED:
-      ret.lateralTuning.pid.kf = 0.00005
-      ret.mass = 1450. + STD_CARGO_KG
-      ret.wheelbase = 2.65
-      ret.steerRatio = 13.75
-      tire_stiffness_factor = 0.5
-      ret.lateralTuning.pid.kf = 0.00005
       ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
       ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.25], [0.05]]
 
@@ -248,12 +240,26 @@ class CarInterface(CarInterfaceBase):
       ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
       ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.16], [0.01]]
 
-    # these cars require a special panda safety mode due to missing counters and checksums in the messages
+
+
+    # atom  START
+    ret.atomTuning.cvKPH    = ATOMC.cv_KPH
+    ret.atomTuning.cvBPV    = ATOMC.cv_BPV
+    ret.atomTuning.cvsMaxV  = ATOMC.cv_sMaxV
+    ret.atomTuning.cvsdUpV  = ATOMC.cv_sdUPV
+    ret.atomTuning.cvsdDnV  = ATOMC.cv_sdDNV
+
+    ret.atomTuning.cvsteerRatioV = ATOMC.cv_steerRatioV
+    ret.atomTuning.cvsteerActuatorDelayV = ATOMC.cv_ActuatorDelayV    
+    # atom  END
+
+
+    # set safety_hyundai_community only for non-SCC, MDPS harrness or SCC harrness cars or cars that have unknown issue
     if ret.radarOffCan or ret.openpilotLongitudinalControl or Params().get('CommunityFeaturesToggle') == b'1':
-      ret.safetyModel = car.CarParams.SafetyModel.hyundaiCommunity    
-    elif candidate in [CAR.GRANDEUR_HEV_19,CAR.HYUNDAI_GENESIS, CAR.IONIQ_EV_2020, CAR.IONIQ_EV_LTD, CAR.IONIQ, CAR.KONA_EV, CAR.KIA_SORENTO,
-                     CAR.SONATA_LF, CAR.KIA_NIRO_EV, CAR.KIA_OPTIMA, CAR.VELOSTER, CAR.KIA_STINGER, CAR.KIA_SELTOS,
-                     CAR.GENESIS_G70, CAR.GENESIS_G80, CAR.KIA_CEED]:
+      ret.safetyModel = car.CarParams.SafetyModel.hyundaiCommunity
+    # these cars require a special panda safety mode due to missing counters and checksums in the messages
+    elif candidate in [CAR.HYUNDAI_GENESIS, CAR.IONIQ_EV_2020, CAR.IONIQ_EV_LTD, CAR.IONIQ, CAR.KONA_EV, CAR.KIA_SORENTO, CAR.SONATA_LF,
+                     CAR.KIA_NIRO_EV, CAR.KIA_OPTIMA, CAR.VELOSTER, CAR.KIA_STINGER, CAR.GENESIS_G70, CAR.GENESIS_G80, CAR.GRANDEUR_HEV_19]:
       ret.safetyModel = car.CarParams.SafetyModel.hyundaiLegacy
 
     ret.centerToFront = ret.wheelbase * 0.4
@@ -269,20 +275,13 @@ class CarInterface(CarInterfaceBase):
 
     ret.enableCamera = True
 
-
-    ret.atomTuning.cvKPH    = ATOMC.cv_KPH
-    ret.atomTuning.cvBPV    = ATOMC.cv_BPV
-    ret.atomTuning.cvsMaxV  = ATOMC.cv_sMaxV
-    ret.atomTuning.cvsdUpV  = ATOMC.cv_sdUPV
-    ret.atomTuning.cvsdDnV  = ATOMC.cv_sdDNV
-    ret.atomTuning.cvsteerRatioV = ATOMC.cv_steerRatioV
-    ret.atomTuning.cvsteerActuatorDelayV = ATOMC.cv_ActuatorDelayV    
     return ret
 
 
   @staticmethod
   def live_tune(CP, read=False):
     global ATOMC 
+
 
     if read:
       ATOMC.read_tune()
@@ -296,6 +295,7 @@ class CarInterface(CarInterfaceBase):
 
     CP.atomTuning.cvsteerRatioV = ATOMC.cv_steerRatioV
     CP.atomTuning.cvsteerActuatorDelayV = ATOMC.cv_ActuatorDelayV
+     
     return CP    
 
   def update(self, c, can_strings):
@@ -305,10 +305,42 @@ class CarInterface(CarInterfaceBase):
     ret = self.CS.update(self.cp, self.cp_cam)
     ret.canValid = self.cp.can_valid and self.cp_cam.can_valid
     ret.steeringRateLimited = self.CC.steer_rate_limited if self.CC is not None else False
-    ret.modelSpeed = 255. #self.modelSpeed
 
     events = self.create_common_events(ret)
     # TODO: addd abs(self.CS.angle_steers) > 90 to 'steerTempUnavailable' event
+
+    if not self.cruise_enabled_prev:
+      self.meg_timer = 0
+      self.meg_name =  None
+    else:
+      meg_timer = 100
+      if self.meg_timer:
+        self.meg_timer -= 1
+        meg_timer = 0
+      #elif not self.CS.lkas_button_on:
+      #  self.meg_name = EventName.invalidLkasSetting
+      elif ret.cruiseState.standstill:
+        self.meg_name = EventName.resumeRequired
+      elif self.CC.steer_torque_over_timer and self.CC.steer_torque_ratio < 0.1:
+        self.meg_name = EventName.steerTorqueOver
+      elif self.CC.steer_torque_ratio < 0.5 and self.CS.clu_Vanz > 5:
+        self.meg_name = EventName.steerTorqueLow
+      elif ret.vEgo > MAX_CTRL_SPEED:
+        self.meg_name = EventName.speedTooHigh
+      elif ret.steerError:
+        self.meg_name = EventName.steerUnavailable
+      elif ret.steerWarning:
+        self.meg_name = EventName.steerTempUnavailable
+      else:
+        meg_timer = 0
+        self.meg_name =  None
+
+      if meg_timer != 0:
+        self.meg_timer = 100
+
+      if self.meg_timer and self.meg_name != None:
+        events.add( self.meg_name )
+
 
     # low speed steer alert hysteresis logic (only for cars with steer cut off above 10 m/s)
     if ret.vEgo < (self.CP.minSteerSpeed + 2.) and self.CP.minSteerSpeed > 10.:
@@ -323,11 +355,7 @@ class CarInterface(CarInterfaceBase):
     self.CS.out = ret.as_reader()
     return self.CS.out
 
-
-  def update_mode( self, sm ):
-    self.modelSpeed = self.CS.SC.cal_model_speed( sm, self.CS.out.vEgo )
-
-  def apply(self, c):
-    can_sends = self.CC.update( c, self.CS, self.frame )
+  def apply(self, c, sm, CP):
+    can_sends = self.CC.update(c, self.CS, self.frame, sm, CP )
     self.frame += 1
     return can_sends

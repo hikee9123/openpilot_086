@@ -13,8 +13,8 @@ class CarControllerParams:
       self.STEER_MAX = 384
     else:
       self.STEER_MAX = 255
-    self.STEER_DELTA_UP = 2
-    self.STEER_DELTA_DOWN = 4
+    self.STEER_DELTA_UP = 3
+    self.STEER_DELTA_DOWN = 7
     self.STEER_DRIVER_ALLOWANCE = 50
     self.STEER_DRIVER_MULTIPLIER = 2
     self.STEER_DRIVER_FACTOR = 1
@@ -168,7 +168,7 @@ FINGERPRINTS = {
   }],
   CAR.GRANDEUR_HEV_19: [{
     68: 8, 127: 8, 304: 8, 320: 8, 339: 8, 352: 8, 356: 4, 544: 8, 546: 8, 576: 8, 593: 8, 688: 5, 832: 8, 881: 8, 882: 8, 897: 8, 902: 8, 903: 8, 916: 8, 1040: 8, 1042: 8, 1056: 8, 1057: 8, 1078: 4, 1136: 6, 1151: 6, 1156: 8, 1157: 4, 1168: 7, 1173: 8, 1185: 8, 1225: 8, 1265: 4, 1280: 1, 1287: 4, 1290: 8, 1291: 8, 1292: 8, 1294: 8, 1312: 8, 1322: 8, 1342: 6, 1345: 8, 1348: 8, 1355: 8, 1363: 8, 1369: 8, 1371: 8, 1378: 4, 1407: 8, 1419: 8, 1425: 2, 1427: 6, 1429: 8, 1430: 8, 1448: 8, 1456: 4, 1470: 8, 1476: 8, 1535: 8
-  }]  
+  }]   
 }
 
 # Don't use these fingerprints for fingerprinting, they are still used for ECU detection
@@ -386,6 +386,7 @@ FW_VERSIONS = {
     (Ecu.fwdRadar, 0x7D0, None): [
       b'\xf1\x00DEev SCC F-CUP      1.00 1.03 96400-Q4100         \xf1\xa01.03',
       b'\xf1\x00DEev SCC F-CUP      1.00 1.00 99110-Q4000         \xf1\xa01.00',
+      b'\xf1\x8799110Q4500\xf1\000DEev SCC F-CUP      1.00 1.00 99110-Q4500         \xf1\xa01.00',
     ],
     (Ecu.esp, 0x7D1, None): [
       b'\xf1\xa01.06',
@@ -398,15 +399,25 @@ FW_VERSIONS = {
     (Ecu.fwdCamera, 0x7C4, None): [
       b'\xf1\x00DEE MFC  AT USA LHD 1.00 1.03 95740-Q4000 180821',
       b'\xf1\x00DEE MFC  AT EUR LHD 1.00 1.00 99211-Q4000 191211',
+      b'\xf1\000DEE MFC  AT EUR LHD 1.00 1.00 99211-Q4100 200706',
     ],
   },
   CAR.KIA_SELTOS: {
     (Ecu.fwdRadar, 0x7d0, None): [b'\xf1\x8799110Q5100\xf1\000SP2_ SCC FHCUP      1.01 1.05 99110-Q5100         \xf1\xa01.05',],
-    (Ecu.esp, 0x7d1, None): [b'\xf1\x8758910-Q5450\xf1\000SP ESC \t 101\031\t\005 58910-Q5450\xf1\xa01.01',],
-    (Ecu.engine, 0x7e0, None): [b'\xf1\x81616D2051\000\000\000\000\000\000\000\000',],
+    (Ecu.esp, 0x7d1, None): [
+      b'\xf1\x8758910-Q5450\xf1\000SP ESC \a 101\031\t\005 58910-Q5450\xf1\xa01.01',
+      b'\xf1\x8758910-Q5450\xf1\000SP ESC \t 101\031\t\005 58910-Q5450\xf1\xa01.01',
+     ],
+    (Ecu.engine, 0x7e0, None): [
+      b'\xf1\x81616D2051\000\000\000\000\000\000\000\000',
+      b'\001TSP2KNL06F100J0K',
+     ],
     (Ecu.eps, 0x7d4, None): [b'\xf1\000SP2 MDPS C 1.00 1.04 56300Q5200          ',],
     (Ecu.fwdCamera, 0x7c4, None): [b'\xf1\000SP2 MFC  AT USA LHD 1.00 1.04 99210-Q5000 191114',],
-    (Ecu.transmission, 0x7e1, None): [b'\xf1\x87CZLUB49370612JF7h\xa8y\x87\x99\xa7hv\x99\x97fv\x88\x87x\x89x\x96O\xff\x88\xff\xff\xff.@\xf1\x816V2C2051\000\000\xf1\0006V2B0_C2\000\0006V2C2051\000\000CSP4N20NS3\000\000\000\000',],
+    (Ecu.transmission, 0x7e1, None): [
+      b'\xf1\x87CZLUB49370612JF7h\xa8y\x87\x99\xa7hv\x99\x97fv\x88\x87x\x89x\x96O\xff\x88\xff\xff\xff.@\xf1\x816V2C2051\000\000\xf1\0006V2B0_C2\000\0006V2C2051\000\000CSP4N20NS3\000\000\000\000',
+      b'\xf1\x87954A22D200\xf1\x81T01950A1  \xf1\000T0190XBL  T01950A1  DSP2T16X4X950NS6\xd30\xa5\xb9',
+     ],
   },
   CAR.KIA_OPTIMA: {
     (Ecu.fwdRadar, 0x7d0, None): [b'\xf1\x00JF__ SCC F-CUP      1.00 1.00 96400-D4110         '],
@@ -435,6 +446,9 @@ FEATURES = {
   "use_bsm": set([CAR.GRANDEUR_HEV_19,CAR.SONATA, CAR.PALISADE, CAR.HYUNDAI_GENESIS, CAR.GENESIS_G70,
                   CAR.GENESIS_G80, CAR.GENESIS_G90, CAR.KONA, CAR.IONIQ_EV_2020,
                   CAR.SANTA_FE, CAR.KIA_NIRO_EV, CAR.KIA_SELTOS]),
+
+  # send LFA MFA message for new HKG models
+  "use_lfa_mfa": set([ CAR.PALISADE ]),
 }
 
 EV_HYBRID = set([CAR.GRANDEUR_HEV_19,CAR.IONIQ_EV_2020, CAR.IONIQ_EV_LTD, CAR.IONIQ, CAR.KONA_EV, CAR.KIA_NIRO_EV])
@@ -464,7 +478,7 @@ DBC = {
   CAR.PALISADE: dbc_dict('hyundai_kia_generic', None),
   CAR.VELOSTER: dbc_dict('hyundai_kia_generic', None),
   CAR.KIA_CEED: dbc_dict('hyundai_kia_generic', None),
-  CAR.GRANDEUR_HEV_19: dbc_dict('hyundai_kia_generic', None),  
+  CAR.GRANDEUR_HEV_19: dbc_dict('hyundai_kia_generic', None),
 }
 
-STEER_THRESHOLD = 100
+STEER_THRESHOLD = 150

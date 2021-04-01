@@ -525,7 +525,7 @@ struct ControlsState @0x97ff69c53601abf1 {
   output @59 :Float32;
   alertTextMsg1  @60 :Text;
   alertTextMsg2  @61 :Text;
-
+  modelSpeed @62 :Float32;
 
   lateralControlState :union {
     indiState @52 :LateralINDIState;
@@ -1230,6 +1230,8 @@ struct LiveParametersData {
   posenetSpeed @8 :Float32;
   posenetValid @9 :Bool;
 
+
+  # atom
   steerRatioCV @10 :Float32;
   steerActuatorDelayCV @11 :Float32;
 }

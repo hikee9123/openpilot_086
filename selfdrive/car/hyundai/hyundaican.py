@@ -5,7 +5,7 @@ hyundai_checksum = crcmod.mkCrcFun(0x11D, initCrc=0xFD, rev=False, xorOut=0xdf)
 
 
 def create_lkas11(packer, frame, car_fingerprint, apply_steer, steer_req,
-                  lkas11, sys_warning, sys_state, c  ):
+                  lkas11, sys_warning, sys_state, CC ):
 
   values = lkas11
   values["CF_Lkas_LdwsSysState"] = sys_state
@@ -16,11 +16,11 @@ def create_lkas11(packer, frame, car_fingerprint, apply_steer, steer_req,
   values["CF_Lkas_ActToi"] = steer_req
   values["CF_Lkas_MsgCount"] = frame % 0x10
 
-  left_lane = c.hudControl.leftLaneVisible
-  right_lane = c.hudControl.rightLaneVisible
-  enabled = c.enabled
+  left_lane = CC.hudControl.leftLaneVisible
+  right_lane = CC.hudControl.rightLaneVisible
+  enabled = CC.enabled
 
-  if car_fingerprint in [CAR.SONATA, CAR.PALISADE, CAR.KIA_NIRO_EV, CAR.SANTA_FE, CAR.IONIQ_EV_2020, CAR.KIA_SELTOS]:
+  if car_fingerprint in [CAR.SONATA, CAR.PALISADE, CAR.KIA_NIRO_EV, CAR.SANTA_FE, CAR.IONIQ_EV_2020]:
     values["CF_Lkas_LdwsActivemode"] = int(left_lane) + (int(right_lane) << 1)
     values["CF_Lkas_LdwsOpt_USM"] = 2
 
@@ -63,20 +63,26 @@ def create_lkas11(packer, frame, car_fingerprint, apply_steer, steer_req,
   return packer.make_can_msg("LKAS11", 0, values)
 
 
-def create_clu11(packer, frame, clu11, button):
+def create_clu11(packer, frame, clu11, button, speed = None):
   values = clu11
+
+  if speed != None:
+    values["CF_Clu_Vanz"] = speed
+
   values["CF_Clu_CruiseSwState"] = button
   values["CF_Clu_AliveCnt1"] = frame % 0x10
   return packer.make_can_msg("CLU11", 0, values)
 
 
-def create_lfahda_mfc(packer, enabled, hda_set_speed=0):
-  values = {
-    "LFA_Icon_State": 2 if enabled else 0,
-    "HDA_Active": 1 if hda_set_speed else 0,
-    "HDA_Icon_State": 2 if hda_set_speed else 0,
-    "HDA_VSetReq": hda_set_speed,
-  }
+#def create_lfahda_mfc(packer, enabled, hda_set_speed=0):
+def create_lfahda_mfc( packer, enabled, CS ):
+  values = CS.lfahda_mfc
+  #values = {
+  #  "LFA_Icon_State": 2 if enabled else 0,
+  #  "HDA_Active": 1 if hda_set_speed else 0,
+  #  "HDA_Icon_State": 2 if hda_set_speed else 0,
+  #  "HDA_VSetReq": hda_set_speed,
+  #}
   return packer.make_can_msg("LFAHDA_MFC", 0, values)
 
 def create_acc_commands(packer, enabled, accel, idx, lead_visible, set_speed, stopping):

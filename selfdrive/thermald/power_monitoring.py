@@ -171,7 +171,7 @@ class PowerMonitoring:
     return disable_charging
 
   # See if we need to shutdown
-  def should_shutdown(self, pandaState, offroad_timestamp, started_seen, LEON):
+  def should_shutdown(self, pandaState, offroad_timestamp, started_seen):
     if pandaState is None or offroad_timestamp is None:
       return False
 

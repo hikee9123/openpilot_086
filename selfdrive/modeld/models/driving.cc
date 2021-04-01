@@ -73,13 +73,14 @@ void model_init(ModelState* s, cl_device_id device_id, cl_context context) {
 #endif
 
 #ifdef TRAFFIC_CONVENTION
-  const int idx = Params().read_db_bool("IsRHD") ? 1 : 0;
+  const int idx = Params().getBool("IsRHD") ? 1 : 0;
   s->traffic_convention[idx] = 1.0;
   s->m->addTrafficConvention(s->traffic_convention, TRAFFIC_CONVENTION_LEN);
 #endif
 
   // atom
   model_matrix_init();
+
   s->q = CL_CHECK_ERR(clCreateCommandQueue(context, device_id, 0, &err));
 }
 
@@ -266,6 +267,7 @@ void fill_model(cereal::ModelDataV2::Builder &framed, const ModelDataRaw &net_ou
   }
 
 
+
 // atom model pathData
   // x pos at 10s is a good valid_len
   float valid_len = 0;
@@ -283,7 +285,9 @@ void fill_model(cereal::ModelDataV2::Builder &framed, const ModelDataRaw &net_ou
     }
   }
 
-  fill_path(framed.initPath(), best_plan, 1.0, valid_len, valid_len_idx, 0);  
+  fill_path(framed.initPath(), best_plan, 1.0, valid_len, valid_len_idx, 0);
+
+
 }
 
 void model_publish(PubMaster &pm, uint32_t vipc_frame_id, uint32_t frame_id, float frame_drop,
