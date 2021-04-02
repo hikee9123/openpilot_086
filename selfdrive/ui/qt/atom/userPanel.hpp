@@ -30,11 +30,12 @@ protected:
 
 
 
+
 class CAutoResumeToggle : public ToggleControl {
   Q_OBJECT
 
 public:
-  CAutoResumeToggle() : ToggleControl("자동출발 기능 사용", "SCC 사용중 정차시 자동출발 기능을 사용합니다.", "../assets/offroad/icon_shell.png", Params().get("OpkrAutoResume")) {
+  CAutoResumeToggle() : ToggleControl("자동출발 기능 사용", "SCC 사용중 정차시 자동출발 기능을 사용합니다.", "../assets/offroad/icon_shell.png", Params().getBool("OpkrAutoResume")) {
     QObject::connect(this, &CAutoResumeToggle::toggleFlipped, [=](int state) {
       Params().putBool("OpkrAutoResume", (bool)state);
     });
