@@ -143,6 +143,9 @@ def main(sm=None, pm=None):
   params['stiffnessFactor'] = 1.1
   params['angleOffsetAverageDeg'] = 0
 
+  OpkrLiveSteerRatio = params_reader.getBool("OpkrLiveSteerRatio")
+  
+
   learner = ParamsLearner(CP, params['steerRatio'], params['stiffnessFactor'], math.radians(params['angleOffsetAverageDeg']))
 
   while True:
@@ -168,7 +171,9 @@ def main(sm=None, pm=None):
       v_ego_kph = sm['carState'].vEgo * CV.MS_TO_KPH
 
 
-      if sm['carParams'].steerRateCost > 0:
+      if OpkrLiveSteerRatio:
+        pass
+      elif sm['carParams'].steerRateCost > 0:
         atomTuning = sm['carParams'].atomTuning
         cv_value = sm['controlsState'].modelSpeed
         if cv_value <= 10: 
