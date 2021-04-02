@@ -12,6 +12,9 @@ from selfdrive.config import Conversions as CV
 import cereal.messaging as messaging
 from cereal import log
 
+from common.numpy_fast import interp
+from selfdrive.car.hyundai.values import Buttons
+
 LaneChangeState = log.LateralPlan.LaneChangeState
 LaneChangeDirection = log.LateralPlan.LaneChangeDirection
 
@@ -19,6 +22,7 @@ LOG_MPC = os.environ.get('LOG_MPC', False)
 
 LANE_CHANGE_SPEED_MIN = 30 * CV.KPH_TO_MS
 LANE_CHANGE_TIME_MAX = 10.
+LANE_CHANGE_AUTO_TIME = 1.0
 # this corresponds to 80deg/s and 20deg/s steering angle in a toyota corolla
 MAX_CURVATURE_RATES = [0.03762194918267951, 0.003441203371932992]
 MAX_CURVATURE_RATE_SPEEDS = [0, 35]
@@ -67,6 +71,8 @@ class LateralPlanner():
     self.t_idxs = np.arange(TRAJECTORY_SIZE)
     self.y_pts = np.zeros(TRAJECTORY_SIZE)
 
+    self.m_wait_time = 0
+
   def setup_mpc(self):
     self.libmpc = libmpc_py.libmpc
     self.libmpc.init(MPC_COST_LAT.PATH, MPC_COST_LAT.HEADING, self.steer_rate_cost)
@@ -88,6 +94,11 @@ class LateralPlanner():
     active = sm['controlsState'].active
     measured_curvature = sm['controlsState'].curvature
 
+    cruiseState  = sm['carState'].cruiseState
+    self.m_wait_time += 1
+    if (self.m_wait_time % 100) == 0:
+      self.use_lanelines = Params().get('EndToEndToggle') != b'1'
+
     if sm['liveParameters'].valid:
       steerActuatorDelayCV = sm['liveParameters'].steerActuatorDelayCV
     else:
@@ -100,6 +111,9 @@ class LateralPlanner():
       self.path_xyz = np.column_stack([md.position.x, md.position.y, md.position.z])
       self.t_idxs = np.array(md.position.t)
       self.plan_yaw = list(md.orientation.z)
+
+    ll_probs = md.laneLineProbs   # 0,1,2,3
+    # re_stds = md.roadEdges   # 0,1
 
     # Lane change logic
     one_blinker = sm['carState'].leftBlinker != sm['carState'].rightBlinker
@@ -121,11 +135,25 @@ class LateralPlanner():
       blindspot_detected = ((sm['carState'].leftBlindspot and self.lane_change_direction == LaneChangeDirection.left) or
                             (sm['carState'].rightBlindspot and self.lane_change_direction == LaneChangeDirection.right))
 
+      # auto
+      if torque_applied or self.lane_change_timer < LANE_CHANGE_AUTO_TIME:
+        pass
+      elif self.lane_change_direction == LaneChangeDirection.left:
+        if ll_probs[0] > 0.5:
+          torque_applied = True
+      elif self.lane_change_direction == LaneChangeDirection.right:
+        if ll_probs[3] > 0.5:
+          torque_applied = True
+
       lane_change_prob = self.LP.l_lane_change_prob + self.LP.r_lane_change_prob
 
       # State transitions
       # off
-      if self.lane_change_state == LaneChangeState.off and one_blinker and not self.prev_one_blinker and not below_lane_change_speed:
+      if cruiseState.cruiseSwState == Buttons.CANCEL:
+        self.lane_change_state = LaneChangeState.off
+        self.lane_change_ll_prob = 1.0
+
+      elif self.lane_change_state == LaneChangeState.off and one_blinker and not self.prev_one_blinker and not below_lane_change_speed:
         self.lane_change_state = LaneChangeState.preLaneChange
         self.lane_change_ll_prob = 1.0
 
@@ -139,7 +167,10 @@ class LateralPlanner():
       # starting
       elif self.lane_change_state == LaneChangeState.laneChangeStarting:
         # fade out over .5s
-        self.lane_change_ll_prob = max(self.lane_change_ll_prob - 2*DT_MDL, 0.0)
+        xp = [40,80]
+        fp2 = [1,2]
+        lane_time = interp( v_ego_kph, xp, fp2 )        
+        self.lane_change_ll_prob = max(self.lane_change_ll_prob - lane_time*DT_MDL, 0.0)
         # 98% certainty
         if lane_change_prob < 0.02 and self.lane_change_ll_prob < 0.01:
           self.lane_change_state = LaneChangeState.laneChangeFinishing
