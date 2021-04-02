@@ -16,6 +16,7 @@
 #include "common/params.h"
 #include "common/util.h"
 #include "selfdrive/hardware/hw.h"
+#include "home.hpp"
 
 #include "atom/userPanel.hpp"
 
