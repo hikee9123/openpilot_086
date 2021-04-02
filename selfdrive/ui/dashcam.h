@@ -369,46 +369,6 @@ static int draw_measure(UIState *s,  const char* bb_value, const char* bb_uom, c
   return (int)((bb_valueFontSize + bb_labelFontSize)*2.5) + 5;
 }
 
-static void draw_menu(UIState *s, int bb_x, int bb_y, int bb_w ) 
-{
-  UIScene &scene = s->scene;
-  int bb_rx = bb_x + (int)(bb_w/2);
-  int bb_ry = bb_y;
-  int bb_h = 5;
-  NVGcolor lab_color = nvgRGBA(255, 255, 255, 200);
-  NVGcolor uom_color = nvgRGBA(255, 255, 255, 200);
-  int value_fontSize=25;
-  int label_fontSize=15;
-  int uom_fontSize = 15;
-  int bb_uom_dx =  (int)(bb_w /2 - uom_fontSize*2.5) ;
-
-
-
-  //add visual radar relative distance
-  if( true )
-  {
-    char val_str[50];
-    char uom_str[20];
-    NVGcolor val_color = nvgRGBA(255, 255, 255, 200);
-
-    snprintf(val_str, sizeof(val_str), "git pull");
-    snprintf(uom_str, sizeof(uom_str), "%d", scene.dash_menu_no );
-    bb_h +=draw_measure(s,  val_str, uom_str, "git pull",
-        bb_rx, bb_ry, bb_uom_dx,
-        val_color, lab_color, uom_color,
-        value_fontSize, label_fontSize, uom_fontSize );
-    bb_ry = bb_y + bb_h;
-  }
-
-
-  //finally draw the frame
-  bb_h += 20;
-  nvgBeginPath(s->vg);
-    nvgRoundedRect(s->vg, bb_x, bb_y, bb_w, bb_h, 20);
-    nvgStrokeColor(s->vg, nvgRGBA(255,255,255,80));
-    nvgStrokeWidth(s->vg, 6);
-    nvgStroke(s->vg);
-}
 
 static void screen_menu_button(UIState *s, int touch_x, int touch_y, int touched)
 {
@@ -457,22 +417,6 @@ static void screen_menu_button(UIState *s, int touch_x, int touch_y, int touched
     char  szText[50];
     sprintf( szText, "%d", scene.dash_menu_no );
     nvgText(s->vg, btn_x - 50, btn_y + 50, szText, NULL);
-
-    if( scene.dash_menu_no == 2 )
-    {
-      const int bb_dmr_w = 300;
-      const int bb_dmr_x = s->viz_rect.x + (s->viz_rect.w * 0.9) - bb_dmr_w - (bdr_s * 2);
-      const int bb_dmr_y = (bdr_s + (bdr_s * 1.5)) + 220;
-
-      draw_menu( s, bb_dmr_x, bb_dmr_y, bb_dmr_w );
-      if( touched && screen_button_clicked(touch_x, touch_y, bb_dmr_x, bb_dmr_y, bb_dmr_w, 100) )
-      { 
-        
-         scene.dash_menu_no = 0;
-         printf("git pull\n");
-         system("git pull");
-      }
-    }
 }
 
 static void ui_draw_modeSel(UIState *s) 
@@ -491,7 +435,7 @@ static void ui_draw_modeSel(UIState *s)
   nvgFontSize(s->vg, 80);
   switch( modeSel  )
   {
-    case 0: strcpy( str_msg, "0.OP MODE" ); nColor = COLOR_WHITE; break;
+    case 0: strcpy( str_msg, "0.OP" ); nColor = COLOR_WHITE; break;
     case 1: strcpy( str_msg, "1.CURVE" );    nColor = nvgRGBA(200, 200, 255, 255);  break;
     case 2: strcpy( str_msg, "2.FWD CAR" );  nColor = nvgRGBA(200, 255, 255, 255);  break;
     case 3: strcpy( str_msg, "3.HYUNDAI" );  nColor = nvgRGBA(200, 255, 255, 255);  break;
