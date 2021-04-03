@@ -218,9 +218,17 @@ static void handle_display_state(UIState* s, bool user_input) {
     accel_prev = (accel_prev * (accel_samples - 1) + s->scene.accel_sensor) / accel_samples;
   }
 
-  if (should_wake) {
+  if( s->scene.scr.autoScreenOff && s->scene.scr.nTime == 0)
+  {
+    should_wake = false;
+  }
+  
+  if (should_wake) 
+  {
     awake_timeout = 30 * UI_FREQ;
-  } else if (awake_timeout > 0) {
+  } 
+  else if (awake_timeout > 0) 
+  {
     should_wake = true;
   }
 
