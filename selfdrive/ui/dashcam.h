@@ -522,6 +522,14 @@ void ui_draw_gear( UIState *s )
   ui_print( s, x_pos, y_pos, str_msg );
 }
 
+int get_param( const std::string &key )
+{
+    auto str = QString::fromStdString(Params().get( key ));
+    int value = str.toInt();
+
+
+    return value;
+}
 
 void update_dashcam(UIState *s)
 {
@@ -535,8 +543,9 @@ void update_dashcam(UIState *s)
   {
     s->scene.mouse.touched = 0; 
 
-    s->scene.autoScreenOff = Params().get("OpkrAutoScreenOff");
-    s->scene.brightness = Params().get("OpkrUIBrightness");    
+
+    s->scene.autoScreenOff = get_param("OpkrAutoScreenOff"));
+    s->scene.brightness = get_param("OpkrUIBrightness");    
     printf("touched:(%d,%d) %d  %d \n", touch_x, touch_y, touched, s->sidebar_collapsed);
 
     printf("autoScreenOff=%d, brightness=%d \n", s->scene.autoScreenOff, s->scene.brightness);
