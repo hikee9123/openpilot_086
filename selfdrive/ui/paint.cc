@@ -732,7 +732,7 @@ static void ui_draw_vision_alert(UIState *s) {
 
   nvgFillColor(s->vg, COLOR_WHITE);
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
-
+  GLWindow::wake();
   if (scene->alert_size == cereal::ControlsState::AlertSize::SMALL) {
     ui_draw_text(s, rect.centerX(), rect.centerY() + 15, scene->alert_text1.c_str(), 40*2.5, COLOR_WHITE, "sans-semibold");
   } else if (scene->alert_size == cereal::ControlsState::AlertSize::MID) {
