@@ -50,6 +50,9 @@ private:
   float last_brightness = 0;
   FirstOrderFilter brightness_filter;
 
+private:  // atom
+  void ScreenAwake();
+
 public slots:
   void timerUpdate();
   void backlightUpdate();

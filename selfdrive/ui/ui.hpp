@@ -139,9 +139,10 @@ typedef struct UIScene {
      int  nTime;
      int  autoScreenOff;
      int  brightness;
+     int  awake;
   } scr;
 
-
+  
   int  dash_menu_no;
   struct _mouse
   {

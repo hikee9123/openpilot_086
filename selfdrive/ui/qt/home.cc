@@ -340,6 +340,7 @@ void GLWindow::resizeGL(int w, int h) {
   std::cout << "resize " << w << "x" << h << std::endl;
 }
 
+
 void GLWindow::paintGL() {
   if(GLWindow::ui_state.awake){
     ui_draw(&ui_state);
@@ -353,20 +354,34 @@ void GLWindow::paintGL() {
     prev_draw_t = cur_draw_t;
   }
 
-
-  static int old_key;
-  auto  cruiseState = ui_state.scene.car_state.getCruiseState();
-  int cruiseSwState = cruiseState.getCruiseSwState();
-
-  if( cruiseSwState != old_key )
-  {
-    old_key = cruiseSwState;
-    if(cruiseSwState)
-      GLWindow::wake();
-  }    
-  
+   ScreenAwake();
 }
 
 void GLWindow::wake() {
   handle_display_state(&ui_state, true);
+}
+
+
+
+void GLWindow::ScreenAwake() 
+{
+  const bool draw_alerts = ui_state.scene.started;
+  //const bool draw_vision = draw_alerts && ui_state.vipc_client->connected;
+
+  static int old_key;
+  int  cur_key = ui_state.scene.scr.awake;
+
+  if (draw_alerts && ui_state.scene.alert_size != cereal::ControlsState::AlertSize::NONE) 
+  {
+      cur_key += 1;
+  }
+
+
+
+  if( cur_key != old_key )
+  {
+    old_key = cur_key;
+    if(cur_key)
+        GLWindow::wake();
+  }     
 }

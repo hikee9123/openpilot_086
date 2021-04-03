@@ -73,6 +73,7 @@ class LateralPlanner():
     self.y_pts = np.zeros(TRAJECTORY_SIZE)
 
     self.m_wait_time = 0
+    self.log1 = trace1.Loger("LateralPlanner")
 
   def setup_mpc(self):
     self.libmpc = libmpc_py.libmpc
@@ -149,7 +150,7 @@ class LateralPlanner():
       lane_change_prob = self.LP.l_lane_change_prob + self.LP.r_lane_change_prob
 
       str_log2 = 'll_probs={:.1f}{:.1f}  {:.2f}  {:.0f}'.format( ll_probs[0],ll_probs[3], lane_change_prob, blindspot_detected )
-      trace1.printf2( '{}'.format( str_log2 ) )
+      self.log1.add( str_log2 )
 
       # State transitions
       # off
