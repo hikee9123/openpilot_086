@@ -407,13 +407,6 @@ static void ui_draw_modeSel(UIState *s)
   }
   nvgFillColor(s->vg, nColor);  
   ui_print( s, x_pos, y_pos+80, str_msg );
-
-              
-  int cruiseSwState = cruiseState.getCruiseSwState();
-  if( cruiseSwState )
-  {
-    reset_time(s);
-  }
 }
 
 
@@ -543,6 +536,13 @@ int get_param( const std::string &key )
 
 void update_dashcam(UIState *s, int draw_vision)
 {
+  auto  cruiseState = scene.car_state.getCruiseState();
+  int cruiseSwState = cruiseState.getCruiseSwState();
+  if( cruiseSwState )
+  {
+    reset_time(s);
+  }
+
   if (!s->awake) return;
   int touch_x = s->scene.mouse.touch_x;
   int touch_y = s->scene.mouse.touch_y;
@@ -564,7 +564,6 @@ void update_dashcam(UIState *s, int draw_vision)
   {
     s->scene.mouse.touched = 0; 
     printf("touched:(%d,%d) %d  %d \n", touch_x, touch_y, touched, s->sidebar_collapsed);
-
   }
 
 
