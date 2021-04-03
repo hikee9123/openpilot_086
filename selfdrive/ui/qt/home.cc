@@ -219,7 +219,7 @@ static void handle_display_state(UIState* s, bool user_input) {
   {
      printf("touched  user_input=%d  %d  %d\n", user_input, s->awake, should_wake);
      s->scene.scr.nCurBrightness = s->scene.scr.brightness;
-     s->scene.scr.nTime = s->scene.scr.autoScreenOff * 60 * 15;
+     s->scene.scr.nTime = s->scene.scr.autoScreenOff * 60 * 20;
   }
   else if( s->scene.scr.autoScreenOff && s->scene.scr.nTime == 0)
   {
