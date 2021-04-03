@@ -13,7 +13,7 @@
 
 #include "common/params.h"
 #include "common/util.h"
-
+#include "ui/ui.hpp"
 
 #include "userPanel.hpp"
 
@@ -85,7 +85,8 @@ void CUserPanel::showEvent(QShowEvent *event)
 
 BrightnessControl::BrightnessControl() : AbstractControl("EON 밝기 조절(%)", "EON화면의 밝기를 조절합니다.", "../assets/offroad/icon_shell.png") 
 {
-  UIState* ui_state = &glWindow->ui_state;
+  UIState* ui_state = &GLWindow::ui_state;
+
 
   label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
   label.setStyleSheet("color: #e0e879");
