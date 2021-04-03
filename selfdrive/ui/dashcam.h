@@ -3,6 +3,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#include "common/params.h"
+
 #define CAPTURE_STATE_NONE 0
 #define CAPTURE_STATE_CAPTURING 1
 #define CAPTURE_STATE_NOT_CAPTURING 2
@@ -531,10 +533,14 @@ void update_dashcam(UIState *s)
 
   if ( touched  ) 
   {
-    s->scene.mouse.touched = 0;    
-    printf("touched x,y: (%d,%d) %d  %d\n", touch_x, touch_y, touched, s->sidebar_collapsed);
+    s->scene.mouse.touched = 0; 
 
-    printf(" %d, %ld  %d \n", s->scene.started,  s->scene.started_frame,  s->vipc_client->connected);
+    s->scene.autoScreenOff = Params().get("OpkrAutoScreenOff");
+    s->scene.brightness = Params().get("OpkrUIBrightness");    
+    printf("touched:(%d,%d) %d  %d \n", touch_x, touch_y, touched, s->sidebar_collapsed);
+
+    printf("autoScreenOff=%d, brightness=%d \n", s->scene.autoScreenOff, s->scene.brightness);
+
 
   }
 

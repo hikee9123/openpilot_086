@@ -134,6 +134,8 @@ typedef struct UIScene {
 
 
   // atom
+  int  autoScreenOff;
+  int  brightness;
   int  dash_menu_no;
   struct _mouse
   {

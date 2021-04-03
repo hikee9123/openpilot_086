@@ -273,9 +273,15 @@ void GLWindow::backlightUpdate() {
   }
 
   int brightness = brightness_filter.update(clipped_brightness);
-  if (!ui_state.awake) {
+
+  if (!ui_state.awake) 
+  {
     brightness = 0;
     emit screen_shutoff();
+  }
+  else if( ui_state.scene.brightness )
+  {
+    brightness = 255 * (ui_state.scene.brightness * 0.01);
   }
 
   if (brightness != last_brightness) {
