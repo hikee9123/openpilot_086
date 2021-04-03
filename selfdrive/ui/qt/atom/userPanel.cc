@@ -25,7 +25,7 @@ UserPanel::UserPanel(QWidget* parent) : QFrame(parent)
   setLayout(main_layout);
 
   layout()->addWidget(new ButtonControl("* PROGRAM DOWNLOAD", "<git pull>",
-                                        "git 으로 부터 프로그램을 Download합니다.", [=]() 
+                                        "리모트 Git에서 변경사항이 있으면 로컬에 반영 후 자동 재부팅 됩니다. 변경사항이 없으면 재부팅하지 않습니다. 로컬 파일이 변경된경우 리모트Git 내역을 반영 못할수도 있습니다. 참고바랍니다.", [=]() 
                                         {
                                             if (ConfirmationDialog::confirm("Are you sure you want to git pull?")) 
                                             {
@@ -49,6 +49,15 @@ UserPanel::UserPanel(QWidget* parent) : QFrame(parent)
    layout()->addWidget(new CLiveSteerRatioToggle());
    layout()->addWidget(new CTurnSteeringDisableToggle());
    layout()->addWidget(new CPrebuiltToggle());
+
+  layout()->addWidget(horizontal_line());
+  const char* gitpull_cancel = "/data/openpilot/gitpull_cancel.sh ''";
+  layout->addWidget(new ButtonControl("Git Pull 취소", "실행", "Git Pull을 취소하고 이전상태로 되돌립니다. 커밋내역이 여러개인경우 최신커밋 바로 이전상태로 되돌립니다.",
+                                      [=]() { 
+                                        if (ConfirmationDialog::confirm("GitPull 이전 상태로 되돌립니다. 진행하시겠습니까?")){
+                                          std::system(gitpull_cancel);
+                                        }
+                                      }));  
 }
 
 void UserPanel::showEvent(QShowEvent *event) 
