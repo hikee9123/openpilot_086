@@ -14,6 +14,7 @@
 #include "common/params.h"
 #include "common/util.h"
 #include "ui/ui.hpp"
+#include "ui/qt/home.hpp"
 
 #include "userPanel.hpp"
 
