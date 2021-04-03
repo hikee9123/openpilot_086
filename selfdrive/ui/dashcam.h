@@ -556,7 +556,8 @@ void update_dashcam(UIState *s, int draw_vision)
     program_start = 0;
     s->scene.scr.autoScreenOff = get_param("OpkrAutoScreenOff");
     s->scene.scr.brightness = get_param("OpkrUIBrightness");
-    
+    s->scene.scr.nCurBrightness = s->scene.scr.brightness;
+        
     reset_time(s);
     printf("autoScreenOff=%d, brightness=%d \n", s->scene.scr.autoScreenOff, s->scene.scr.brightness);       
   }

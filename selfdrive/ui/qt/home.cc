@@ -218,8 +218,8 @@ static void handle_display_state(UIState* s, bool user_input) {
   if( user_input )
   {
      printf("touched  user_input=%d  %d  %d\n", user_input, s->awake, should_wake);
- 
-     s->scene.scr.nTime = s->scene.scr.autoScreenOff * 60;
+     s->scene.scene.scr.nCurBrightness = s->scene.scene.scr.brightness;
+     s->scene.scr.nTime = s->scene.scr.autoScreenOff * 60 * 30;
   }
   else if( s->scene.scr.autoScreenOff && s->scene.scr.nTime == 0)
   {
@@ -246,7 +246,11 @@ static void handle_display_state(UIState* s, bool user_input) {
   if (s->awake != should_wake) {
     printf("setting  user_input=%d  %d  %d\n", user_input, s->awake, should_wake);
     s->awake = should_wake;
-    Hardware::set_display_power(s->awake);
+
+    if( should_wake == 0 )
+      s->scene.scene.scr.nCurBrightness = 0;
+
+    //Hardware::set_display_power(s->awake);
     LOGD("setting display power %d", s->awake);
 
     
@@ -302,7 +306,7 @@ void GLWindow::backlightUpdate() {
   }
   else if( ui_state.scene.scr.brightness )
   {
-    brightness = 255 * (ui_state.scene.scr.brightness * 0.01);
+    brightness = 255 * (ui_state.scene.scr.nCurBrightness * 0.01);
   }
 
   if (brightness != last_brightness) {
