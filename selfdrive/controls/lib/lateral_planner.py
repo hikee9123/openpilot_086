@@ -167,6 +167,7 @@ class LateralPlanner():
       # starting
       elif self.lane_change_state == LaneChangeState.laneChangeStarting:
         # fade out over .5s
+        v_ego_kph = v_ego * CV.MS_TO_KPH
         xp = [40,80]
         fp2 = [1,2]
         lane_time = interp( v_ego_kph, xp, fp2 )        
