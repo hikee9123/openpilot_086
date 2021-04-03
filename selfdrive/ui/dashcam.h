@@ -443,6 +443,8 @@ static void ui_draw_debug(UIState *s)
     ui_print( s, x_pos, y_pos+50,  "aO:%.2f, %.2f", angleOffset, angleOffsetAverage );
     ui_print( s, x_pos, y_pos+100, "sF:%.2f Fan:%.0f", stiffnessFactor, fanSpeed/1000. );
     ui_print( s, x_pos, y_pos+150, "lW:%.2f CV:%.0f", laneWidth, modelSpeed );
+    ui_print( s, x_pos, y_pos+200, "time:%d", scene.scr.nTime );
+
 
     ui_print( s, x_pos, y_pos+250, "prob:%.2f, %.2f, %.2f, %.2f", lane_line_probs[0], lane_line_probs[1], lane_line_probs[2], lane_line_probs[3] );
 
@@ -560,7 +562,7 @@ void update_dashcam(UIState *s, int draw_vision)
 
      if( s->scene.scr.autoScreenOff && s->scene.scr.nTime == 0)
      {
-       ui_state.awake = 0;
+       s->awake = 0;
      }
   }
 
