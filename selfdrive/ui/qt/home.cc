@@ -352,6 +352,19 @@ void GLWindow::paintGL() {
     }
     prev_draw_t = cur_draw_t;
   }
+  else
+  {
+    static int old_key;
+    auto  cruiseState = ui_state.scene.car_state.getCruiseState();
+    int cruiseSwState = cruiseState.getCruiseSwState();
+
+    if( cruiseSwState != old_key )
+    {
+      old_key = cruiseSwState;
+      if(cruiseSwState)
+        reset_time(s);
+    }    
+  }
 }
 
 void GLWindow::wake() {
