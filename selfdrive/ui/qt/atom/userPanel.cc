@@ -22,7 +22,7 @@
 
 CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
 {
-  //UIState* ui_state = &glWindow->ui_state;
+  //  UIState* ui_state = &GLWindow::ui_state;
   QVBoxLayout *main_layout = new QVBoxLayout(this);
   main_layout->setMargin(100);
   setLayout(main_layout);
