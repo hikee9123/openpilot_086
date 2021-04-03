@@ -53,6 +53,7 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
   layout()->addWidget(horizontal_line());
 
   layout()->addWidget(new BrightnessControl());
+  layout()->addWidget(new AutoScreenOff());
 
   layout()->addWidget(horizontal_line());
 
@@ -116,7 +117,7 @@ BrightnessControl::BrightnessControl() : AbstractControl("EON 밝기 조절(%)",
     } else {
     }
     QString values = QString::number(value);
-    Params().write_db_value("OpkrUIBrightness", values.toStdString());
+    Params().put("OpkrUIBrightness", values.toStdString());
     refresh();
   });
   
@@ -129,7 +130,7 @@ BrightnessControl::BrightnessControl() : AbstractControl("EON 밝기 조절(%)",
     } else {
     }
     QString values = QString::number(value);
-    Params().write_db_value("OpkrUIBrightness", values.toStdString());
+    Params().put("OpkrUIBrightness", values.toStdString());
     refresh();
   });
   refresh();
@@ -190,7 +191,7 @@ AutoScreenOff::AutoScreenOff() : AbstractControl("EON 화면 끄기(분)", "주�
     } else {
     }
     QString values = QString::number(value);
-    Params().write_db_value("OpkrAutoScreenOff", values.toStdString());
+    Params().put("OpkrAutoScreenOff", values.toStdString());
     refresh();
   });
   
@@ -203,7 +204,7 @@ AutoScreenOff::AutoScreenOff() : AbstractControl("EON 화면 끄기(분)", "주�
     } else {
     }
     QString values = QString::number(value);
-    Params().write_db_value("OpkrAutoScreenOff", values.toStdString());
+    Params().put("OpkrAutoScreenOff", values.toStdString());
     refresh();
   });
   refresh();
