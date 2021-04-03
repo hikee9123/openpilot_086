@@ -14,6 +14,7 @@ from cereal import log
 
 from common.numpy_fast import interp
 from selfdrive.car.hyundai.values import Buttons
+import common.log as trace1
 
 LaneChangeState = log.LateralPlan.LaneChangeState
 LaneChangeDirection = log.LateralPlan.LaneChangeDirection
@@ -146,6 +147,9 @@ class LateralPlanner():
           torque_applied = True
 
       lane_change_prob = self.LP.l_lane_change_prob + self.LP.r_lane_change_prob
+
+      str_log2 = 'll_probs={:.1f}{:.1f}  {:.2f}  {:.0f}'.format( ll_probs[0],ll_probs[3], lane_change_prob, blindspot_detected )
+      trace1.printf2( '{}'.format( str_log2 ) )
 
       # State transitions
       # off

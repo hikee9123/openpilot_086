@@ -270,9 +270,9 @@ class CarController():
     #trace1.printf( '{}'.format( str_log1 ) )
 
     run_speed_ctrl = CS.acc_active and self.SC != None
-    if not run_speed_ctrl:
-      str_log2 = 'LKAS={:.0f}  steer={:5.0f}'.format( CS.lkas_button_on,  CS.out.steeringTorque )
-      trace1.printf2( '{}'.format( str_log2 ) )
+    #if not run_speed_ctrl:
+    #  str_log2 = 'LKAS={:.0f}  steer={:5.0f}'.format( CS.lkas_button_on,  CS.out.steeringTorque )
+    #  trace1.printf2( '{}'.format( str_log2 ) )
 
 
     if pcm_cancel_cmd:
