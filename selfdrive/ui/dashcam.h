@@ -521,6 +521,12 @@ int get_param( const std::string &key )
     return value;
 }
 
+void reset_time(UIState *s)
+{
+   s->scene.scr.nTime = s->scene.scr.autoScreenOff * 60 * 30;
+}
+    
+
 void update_dashcam(UIState *s, int draw_vision)
 {
   if (!s->awake) return;
@@ -529,16 +535,30 @@ void update_dashcam(UIState *s, int draw_vision)
   int touched = s->scene.mouse.touched;
   //int touch_cnt = s->scene.mouse.touch_cnt;
 
+  
+  if( s->scene.scr.nTime > 0 )
+  {
+     s->scene.scr.nTime--;
+
+     if( s->scene.scr.nTime == 0)
+     {
+       ui_state.awake = 0;
+     }
+  }
+
+
   if ( program_start )
   {
     program_start = 0;
-    s->scene.autoScreenOff = get_param("OpkrAutoScreenOff");
-    s->scene.brightness = get_param("OpkrUIBrightness");
-
-    printf("autoScreenOff=%d, brightness=%d \n", s->scene.autoScreenOff, s->scene.brightness);       
+    s->scene.scr.autoScreenOff = get_param("OpkrAutoScreenOff");
+    s->scene.scr.brightness = get_param("OpkrUIBrightness");
+    
+    reset_time(s);
+    printf("autoScreenOff=%d, brightness=%d \n", s->scene.scr.autoScreenOff, s->scene.scr.brightness);       
   }
   else if ( touched  ) 
   {
+    reset_time(s);
     s->scene.mouse.touched = 0; 
     printf("touched:(%d,%d) %d  %d \n", touch_x, touch_y, touched, s->sidebar_collapsed);
 

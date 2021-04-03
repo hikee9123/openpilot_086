@@ -279,9 +279,9 @@ void GLWindow::backlightUpdate() {
     brightness = 0;
     emit screen_shutoff();
   }
-  else if( ui_state.scene.brightness )
+  else if( ui_state.scene.scr.brightness )
   {
-    brightness = 255 * (ui_state.scene.brightness * 0.01);
+    brightness = 255 * (ui_state.scene.scr.brightness * 0.01);
   }
 
   if (brightness != last_brightness) {
