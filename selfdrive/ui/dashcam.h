@@ -39,6 +39,7 @@ bool locked_files[RECORD_FILES]; // Track which files are locked
 int lock_image;                  // Stores reference to the PNG
 int files_created = 0;
 int  capture_cnt = 0;
+int  program_start = 1;
 
 
 void ui_print(UIState *s, int x, int y,  const char* fmt, ... )
@@ -158,17 +159,6 @@ void start_capture()
   {
     mkdir(videos_dir, 0700);
   }
-  /*if (captureNum == 0 && files_created == 0) {
-    DIR *dir;
-    struct dirent *ent;
-    if ((dir = opendir ("/storage/emulated/0/videos")) != NULL) {
-      while ((ent = readdir (dir)) != NULL) {
-        strcpy(filenames[files_created++], ent->d_name);
-      }
-      captureNum = files_created;
-      closedir (dir);
-    }
-  }*/
 
   if (strlen(filenames[captureNum]) && files_created >= RECORD_FILES)
   {
@@ -539,14 +529,19 @@ void update_dashcam(UIState *s, int draw_vision)
   int touched = s->scene.mouse.touched;
   //int touch_cnt = s->scene.mouse.touch_cnt;
 
-  if ( touched  ) 
+  if ( program_start )
+  {
+    program_start = 0;
+    s->scene.autoScreenOff = get_param("OpkrAutoScreenOff");
+    s->scene.brightness = get_param("OpkrUIBrightness");
+
+    printf("autoScreenOff=%d, brightness=%d \n", s->scene.autoScreenOff, s->scene.brightness);       
+  }
+  else if ( touched  ) 
   {
     s->scene.mouse.touched = 0; 
-    s->scene.autoScreenOff = get_param("OpkrAutoScreenOff");
-    s->scene.brightness = get_param("OpkrUIBrightness");    
     printf("touched:(%d,%d) %d  %d \n", touch_x, touch_y, touched, s->sidebar_collapsed);
 
-    printf("autoScreenOff=%d, brightness=%d \n", s->scene.autoScreenOff, s->scene.brightness);
   }
 
   if (!draw_vision) return;
