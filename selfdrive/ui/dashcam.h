@@ -83,6 +83,8 @@ void reset_time(UIState *s)
 {
   GLWindow::wake();
   //s->scene.scr.nTime = s->scene.scr.autoScreenOff * 60 * 30;
+
+
 }
     
 
@@ -563,7 +565,7 @@ void update_dashcam(UIState *s, int draw_vision)
   }
   else if ( touched  ) 
   {
-    reset_time(s);
+   // reset_time(s);
     s->scene.mouse.touched = 0; 
     printf("touched:(%d,%d) %d  %d \n", touch_x, touch_y, touched, s->sidebar_collapsed);
 

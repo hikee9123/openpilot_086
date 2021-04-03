@@ -227,7 +227,7 @@ static void handle_display_state(UIState* s, bool user_input) {
     accel_prev = (accel_prev * (accel_samples - 1) + s->scene.accel_sensor) / accel_samples;
   }
 
-
+  printf("touched  user_input=%d  %d\n", user_input, s->awake);
   
   if (should_wake) {
     awake_timeout = 30 * UI_FREQ;
