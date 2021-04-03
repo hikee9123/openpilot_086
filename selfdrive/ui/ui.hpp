@@ -139,7 +139,6 @@ typedef struct UIScene {
      int  nTime;
      int  autoScreenOff;
      int  brightness;
-     int  nCurBrightness;
   } scr;
 
 

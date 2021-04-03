@@ -120,7 +120,6 @@ BrightnessControl::BrightnessControl() : AbstractControl("EON 밝기 조절(%)",
     }
 
     GLWindow::ui_state.scene.scr.brightness = value;
-    GLWindow::ui_state.scene.scr.nCurBrightness = value;
     QString values = QString::number(value);
     Params().put("OpkrUIBrightness", values.toStdString());
     refresh();
@@ -136,7 +135,6 @@ BrightnessControl::BrightnessControl() : AbstractControl("EON 밝기 조절(%)",
     }
 
     GLWindow::ui_state.scene.scr.brightness = value;
-    GLWindow::ui_state.scene.scr.nCurBrightness = value;
     QString values = QString::number(value);
     Params().put("OpkrUIBrightness", values.toStdString());
     refresh();
