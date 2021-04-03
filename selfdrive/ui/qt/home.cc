@@ -234,11 +234,9 @@ static void handle_display_state(UIState* s, bool user_input) {
     accel_prev = (accel_prev * (accel_samples - 1) + s->scene.accel_sensor) / accel_samples;
   }
 
-  
   if (should_wake) {
     awake_timeout = 30 * UI_FREQ;
-  } 
-  else if (awake_timeout > 0) {
+  } else if (awake_timeout > 0) {
     should_wake = true;
   }
 
@@ -340,7 +338,6 @@ void GLWindow::resizeGL(int w, int h) {
   std::cout << "resize " << w << "x" << h << std::endl;
 }
 
-
 void GLWindow::paintGL() {
   if(GLWindow::ui_state.awake){
     ui_draw(&ui_state);
@@ -368,7 +365,7 @@ void GLWindow::ScreenAwake()
   const bool draw_alerts = ui_state.scene.started;
   //const bool draw_vision = draw_alerts && ui_state.vipc_client->connected;
 
-  static int old_key;
+  
   int  cur_key = ui_state.scene.scr.awake;
 
   if (draw_alerts && ui_state.scene.alert_size != cereal::ControlsState::AlertSize::NONE) 
@@ -377,7 +374,7 @@ void GLWindow::ScreenAwake()
   }
 
 
-
+  static int old_key;
   if( cur_key != old_key )
   {
     old_key = cur_key;

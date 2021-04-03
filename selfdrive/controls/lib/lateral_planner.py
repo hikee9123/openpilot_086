@@ -137,6 +137,8 @@ class LateralPlanner():
       blindspot_detected = ((sm['carState'].leftBlindspot and self.lane_change_direction == LaneChangeDirection.left) or
                             (sm['carState'].rightBlindspot and self.lane_change_direction == LaneChangeDirection.right))
 
+      lane_change_prob = self.LP.l_lane_change_prob + self.LP.r_lane_change_prob
+
       # auto
       if torque_applied or self.lane_change_timer < LANE_CHANGE_AUTO_TIME:
         pass
@@ -147,7 +149,7 @@ class LateralPlanner():
         if ll_probs[3] > 0.5:
           torque_applied = True
 
-      lane_change_prob = self.LP.l_lane_change_prob + self.LP.r_lane_change_prob
+
 
       str_log2 = 'll_probs={:.1f}{:.1f}  {:.2f}  {:.0f}'.format( ll_probs[0],ll_probs[3], lane_change_prob, blindspot_detected )
       self.log1.add( str_log2 )
