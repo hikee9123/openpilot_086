@@ -218,7 +218,7 @@ static void handle_display_state(UIState* s, bool user_input) {
 
   if( user_input )
   {
-     printf("touched  user_input=%d  %d  %d\n", user_input, s->awake, should_wake);
+     //printf("touched  user_input=%d  %d  %d\n", user_input, s->awake, should_wake);
      s->scene.scr.nTime = s->scene.scr.autoScreenOff * 60 * 20;
   }
   else if( s->scene.scr.autoScreenOff && s->scene.scr.nTime == 0)
@@ -352,20 +352,19 @@ void GLWindow::paintGL() {
     }
     prev_draw_t = cur_draw_t;
   }
-  else
-  {
-    static int old_key;
-    auto  cruiseState = ui_state.scene.car_state.getCruiseState();
-    int cruiseSwState = cruiseState.getCruiseSwState();
 
-    if( cruiseSwState != old_key )
-    {
-      old_key = cruiseSwState;
-      if(cruiseSwState)
-        GLWindow::wake();
-        //reset_time(&ui_state);
-    }    
-  }
+
+  static int old_key;
+  auto  cruiseState = ui_state.scene.car_state.getCruiseState();
+  int cruiseSwState = cruiseState.getCruiseSwState();
+
+  if( cruiseSwState != old_key )
+  {
+    old_key = cruiseSwState;
+    if(cruiseSwState)
+      GLWindow::wake();
+  }    
+  
 }
 
 void GLWindow::wake() {
