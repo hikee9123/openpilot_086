@@ -18,7 +18,7 @@
 #include "userPanel.hpp"
 
 
-UserPanel::UserPanel(QWidget* parent) : QFrame(parent) 
+CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
 {
   QVBoxLayout *main_layout = new QVBoxLayout(this);
   main_layout->setMargin(100);
@@ -51,6 +51,12 @@ UserPanel::UserPanel(QWidget* parent) : QFrame(parent)
    layout()->addWidget(new CPrebuiltToggle());
 
   layout()->addWidget(horizontal_line());
+
+  layout()->addWidget(new BrightnessControl());
+
+  layout()->addWidget(horizontal_line());
+
+
   const char* gitpull_cancel = "/data/openpilot/gitpull_cancel.sh ''";
   layout()->addWidget(new ButtonControl("Git Pull 취소", "실행", "Git Pull을 취소하고 이전상태로 되돌립니다. 커밋내역이 여러개인경우 최신커밋 바로 이전상태로 되돌립니다.",
                                       [=]() { 
@@ -60,62 +66,157 @@ UserPanel::UserPanel(QWidget* parent) : QFrame(parent)
                                       }));  
 }
 
-void UserPanel::showEvent(QShowEvent *event) 
+void CUserPanel::showEvent(QShowEvent *event) 
 {
   Params params = Params();
 
 
 }
 
-/*
-QWidget * user_panel(QWidget * parent) 
+
+////////////////////////////////////////////////////////////////////////////////////////
+//
+//  BrightnessControl
+
+
+BrightnessControl::BrightnessControl() : AbstractControl("EON 밝기 조절(%)", "EON화면의 밝기를 조절합니다.", "../assets/offroad/icon_shell.png") 
 {
-  QVBoxLayout *layout = new QVBoxLayout;
 
-  layout->setMargin(100);
-  layout->setSpacing(30);
+  label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
+  label.setStyleSheet("color: #e0e879");
+  hlayout->addWidget(&label);
 
-  // OPKR
-  std::vector<std::pair<std::string, std::string>> labels1 = {{"토글메뉴(UI)", ""},};
-  for (auto &l : labels1) {layout->addWidget(new LabelControl(QString::fromStdString(l.first),
-                             QString::fromStdString(l.second)));
-  }
-  layout->addWidget(new GetoffAlertToggle());
-  layout->addWidget(new BatteryChargingControlToggle());
-  layout->addWidget(new DrivingRecordToggle());
-  layout->addWidget(new HotspotOnBootToggle());
+  btnminus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnplus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnminus.setFixedSize(150, 100);
+  btnplus.setFixedSize(150, 100);
+  hlayout->addWidget(&btnminus);
+  hlayout->addWidget(&btnplus);
 
-  layout->addWidget(horizontal_line());
-  std::vector<std::pair<std::string, std::string>> labels2 = {{"토글메뉴(주행)", ""},};
-  for (auto &l : labels2) {layout->addWidget(new LabelControl(QString::fromStdString(l.first),
-                             QString::fromStdString(l.second)));
-  }
-  layout->addWidget(new AutoResumeToggle());
-  layout->addWidget(new VariableCruiseToggle());
-  layout->addWidget(new BlindSpotDetectToggle());
-  layout->addWidget(new TurnSteeringDisableToggle());
-  layout->addWidget(new CruiseOverMaxSpeedToggle());
-  layout->addWidget(new MapDecelOnlyToggle());
-
-  layout->addWidget(horizontal_line());
-  std::vector<std::pair<std::string, std::string>> labels3 = {{"토글메뉴(개발자)", ""},};
-  for (auto &l : labels3) {layout->addWidget(new LabelControl(QString::fromStdString(l.first),
-                             QString::fromStdString(l.second)));
-  }
-  layout->addWidget(new DebugUiOneToggle());
-  layout->addWidget(new DebugUiTwoToggle());
-  layout->addWidget(new PrebuiltToggle());
-  layout->addWidget(new FPToggle());
-  layout->addWidget(new FPTwoToggle());
-  layout->addWidget(new LDWSToggle());
-  //layout->addWidget(horizontal_line());
-
-  layout->addStretch(1);
-
-  QWidget *w = new QWidget;
-  w->setLayout(layout);
-
-  return w;
+  QObject::connect(&btnminus, &QPushButton::released, [=]() {
+    auto str = QString::fromStdString(Params().get("OpkrUIBrightness"));
+    int value = str.toInt();
+    value = value - 5;
+    if (value <= 0 ) {
+      value = 0;
+    } else {
+    }
+    QString values = QString::number(value);
+    Params().write_db_value("OpkrUIBrightness", values.toStdString());
+    refresh();
+  });
+  
+  QObject::connect(&btnplus, &QPushButton::released, [=]() {
+    auto str = QString::fromStdString(Params().get("OpkrUIBrightness"));
+    int value = str.toInt();
+    value = value + 5;
+    if (value >= 100 ) {
+      value = 100;
+    } else {
+    }
+    QString values = QString::number(value);
+    Params().write_db_value("OpkrUIBrightness", values.toStdString());
+    refresh();
+  });
+  refresh();
 }
-*/
 
+void BrightnessControl::refresh() 
+{
+  QString option = QString::fromStdString(Params().get("OpkrUIBrightness"));
+  if (option == "0") {
+    label.setText(QString::fromStdString("자동조절"));
+  } else {
+    label.setText(QString::fromStdString(Params().get("OpkrUIBrightness")));
+  }
+  btnminus.setText("－");
+  btnplus.setText("＋");
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+//
+//  AutoScreenOff
+
+
+AutoScreenOff::AutoScreenOff() : AbstractControl("EON 화면 끄기(분)", "주행 시작 후 화면보호를 위해 이온화면이 꺼지는 시간을 설정합니다. 터치나 이벤트 발생시 자동으로 켜집니다.", "../assets/offroad/icon_shell.png") 
+{
+
+  label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
+  label.setStyleSheet("color: #e0e879");
+  hlayout->addWidget(&label);
+
+  btnminus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnplus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnminus.setFixedSize(150, 100);
+  btnplus.setFixedSize(150, 100);
+  hlayout->addWidget(&btnminus);
+  hlayout->addWidget(&btnplus);
+
+  QObject::connect(&btnminus, &QPushButton::released, [=]() {
+    auto str = QString::fromStdString(Params().get("OpkrAutoScreenOff"));
+    int value = str.toInt();
+    value = value - 1;
+    if (value <= 0 ) {
+      value = 0;
+    } else {
+    }
+    QString values = QString::number(value);
+    Params().write_db_value("OpkrAutoScreenOff", values.toStdString());
+    refresh();
+  });
+  
+  QObject::connect(&btnplus, &QPushButton::released, [=]() {
+    auto str = QString::fromStdString(Params().get("OpkrAutoScreenOff"));
+    int value = str.toInt();
+    value = value + 1;
+    if (value >= 10 ) {
+      value = 10;
+    } else {
+    }
+    QString values = QString::number(value);
+    Params().write_db_value("OpkrAutoScreenOff", values.toStdString());
+    refresh();
+  });
+  refresh();
+}
+
+void AutoScreenOff::refresh() 
+{
+  QString option = QString::fromStdString(Params().get("OpkrAutoScreenOff"));
+  if (option == "0") {
+    label.setText(QString::fromStdString("항상켜기"));
+  } else {
+    label.setText(QString::fromStdString(Params().get("OpkrAutoScreenOff")));
+  }
+  btnminus.setText("－");
+  btnplus.setText("＋");
+}
