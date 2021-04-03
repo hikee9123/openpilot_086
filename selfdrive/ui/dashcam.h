@@ -536,10 +536,13 @@ int get_param( const std::string &key )
 
 void update_dashcam(UIState *s, int draw_vision)
 {
+  static int old_key;
   auto  cruiseState = s->scene.car_state.getCruiseState();
   int cruiseSwState = cruiseState.getCruiseSwState();
-  if( cruiseSwState )
+
+  if( cruiseSwState != old_key )
   {
+    old_key = cruiseSwState;
     reset_time(s);
   }
 
