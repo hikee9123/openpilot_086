@@ -362,7 +362,8 @@ void GLWindow::paintGL() {
     {
       old_key = cruiseSwState;
       if(cruiseSwState)
-        reset_time(s);
+        GLWindow::wake();
+        //reset_time(&ui_state);
     }    
   }
 }
