@@ -13,8 +13,7 @@
 
 #include "common/params.h"
 #include "common/util.h"
-#include "ui/ui.hpp"
-#include "ui/qt/home.hpp"
+#include "home.hpp"
 
 #include "userPanel.hpp"
 
@@ -86,9 +85,6 @@ void CUserPanel::showEvent(QShowEvent *event)
 
 BrightnessControl::BrightnessControl() : AbstractControl("EON 밝기 조절(%)", "EON화면의 밝기를 조절합니다.", "../assets/offroad/icon_shell.png") 
 {
-  UIState* ui_state = &GLWindow::ui_state;
-
-
   label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
   label.setStyleSheet("color: #e0e879");
   hlayout->addWidget(&label);
@@ -123,7 +119,7 @@ BrightnessControl::BrightnessControl() : AbstractControl("EON 밝기 조절(%)",
     } else {
     }
 
-    ui_state->scene.brightness = value;
+    GLWindow::ui_state.scene.brightness = value;
     QString values = QString::number(value);
     Params().put("OpkrUIBrightness", values.toStdString());
     refresh();
@@ -138,7 +134,7 @@ BrightnessControl::BrightnessControl() : AbstractControl("EON 밝기 조절(%)",
     } else {
     }
 
-    ui_state->scene.brightness = value;
+    GLWindow::ui_state.scene.brightness = value;
     QString values = QString::number(value);
     Params().put("OpkrUIBrightness", values.toStdString());
     refresh();
@@ -200,6 +196,8 @@ AutoScreenOff::AutoScreenOff() : AbstractControl("EON 화면 끄기(분)", "주�
       value = 0;
     } else {
     }
+
+    GLWindow::ui_state.scene.autoScreenOff = value;
     QString values = QString::number(value);
     Params().put("OpkrAutoScreenOff", values.toStdString());
     refresh();
@@ -213,6 +211,8 @@ AutoScreenOff::AutoScreenOff() : AbstractControl("EON 화면 끄기(분)", "주�
       value = 10;
     } else {
     }
+
+    GLWindow::ui_state.scene.autoScreenOff = value;
     QString values = QString::number(value);
     Params().put("OpkrAutoScreenOff", values.toStdString());
     refresh();
