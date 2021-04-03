@@ -531,7 +531,7 @@ int get_param( const std::string &key )
     return value;
 }
 
-void update_dashcam(UIState *s)
+void update_dashcam(UIState *s, int draw_vision)
 {
   if (!s->awake) return;
   int touch_x = s->scene.mouse.touch_x;
@@ -542,17 +542,14 @@ void update_dashcam(UIState *s)
   if ( touched  ) 
   {
     s->scene.mouse.touched = 0; 
-
-
     s->scene.autoScreenOff = get_param("OpkrAutoScreenOff");
     s->scene.brightness = get_param("OpkrUIBrightness");    
     printf("touched:(%d,%d) %d  %d \n", touch_x, touch_y, touched, s->sidebar_collapsed);
 
     printf("autoScreenOff=%d, brightness=%d \n", s->scene.autoScreenOff, s->scene.brightness);
-
-
   }
 
+  if (!draw_vision) return;
   if (!s->scene.started) return;
   if (s->scene.driver_view) return;
 
