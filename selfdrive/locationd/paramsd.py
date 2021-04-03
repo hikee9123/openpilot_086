@@ -143,7 +143,7 @@ def main(sm=None, pm=None):
   params['stiffnessFactor'] = 1.1
   params['angleOffsetAverageDeg'] = 0
 
-  OpkrLiveSteerRatio = params_reader.getBool("OpkrLiveSteerRatio")
+  OpkrLiveSteerRatio = 0  #params_reader.getBool("OpkrLiveSteerRatio")
   
 
   learner = ParamsLearner(CP, params['steerRatio'], params['stiffnessFactor'], math.radians(params['angleOffsetAverageDeg']))
