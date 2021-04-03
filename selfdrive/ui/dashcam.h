@@ -385,7 +385,9 @@ static void ui_draw_modeSel(UIState *s)
   int x_pos = viz_speed_x + 300;
   int y_pos = 120;
 
-  int modeSel = scene.car_state.getCruiseState().getModeSel();
+
+  auto  cruiseState = scene.car_state.getCruiseState();
+  int modeSel = cruiseState.getModeSel();
   nvgFontSize(s->vg, 80);
   switch( modeSel  )
   {
@@ -398,6 +400,13 @@ static void ui_draw_modeSel(UIState *s)
   }
   nvgFillColor(s->vg, nColor);  
   ui_print( s, x_pos, y_pos+80, str_msg );
+
+              
+  int cruiseSwState = cruiseState.getCruiseSwState();
+  if( cruiseSwState )
+  {
+    reset_time(s);
+  }
 }
 
 
