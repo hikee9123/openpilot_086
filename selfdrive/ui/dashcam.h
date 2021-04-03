@@ -544,7 +544,7 @@ void update_dashcam(UIState *s)
     s->scene.mouse.touched = 0; 
 
 
-    s->scene.autoScreenOff = get_param("OpkrAutoScreenOff"));
+    s->scene.autoScreenOff = get_param("OpkrAutoScreenOff");
     s->scene.brightness = get_param("OpkrUIBrightness");    
     printf("touched:(%d,%d) %d  %d \n", touch_x, touch_y, touched, s->sidebar_collapsed);
 
