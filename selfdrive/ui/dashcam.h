@@ -536,16 +536,6 @@ void update_dashcam(UIState *s, int draw_vision)
   //int touch_cnt = s->scene.mouse.touch_cnt;
 
   
-  if( s->scene.scr.nTime > 0 )
-  {
-     s->scene.scr.nTime--;
-
-     if( s->scene.scr.nTime == 0)
-     {
-       ui_state.awake = 0;
-     }
-  }
-
 
   if ( program_start )
   {
@@ -562,6 +552,16 @@ void update_dashcam(UIState *s, int draw_vision)
     s->scene.mouse.touched = 0; 
     printf("touched:(%d,%d) %d  %d \n", touch_x, touch_y, touched, s->sidebar_collapsed);
 
+  }
+
+  if( s->scene.scr.nTime > 0 )
+  {
+     s->scene.scr.nTime--;
+
+     if( s->scene.scr.autoScreenOff && s->scene.scr.nTime == 0)
+     {
+       ui_state.awake = 0;
+     }
   }
 
   if (!draw_vision) return;
