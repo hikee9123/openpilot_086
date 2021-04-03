@@ -21,7 +21,7 @@ class GLWindow : public QOpenGLWidget, protected QOpenGLFunctions {
 public:
   using QOpenGLWidget::QOpenGLWidget;
   explicit GLWindow(QWidget* parent = 0);
-  void wake();
+  static void wake();
   ~GLWindow();
 
   inline static UIState ui_state = {0};

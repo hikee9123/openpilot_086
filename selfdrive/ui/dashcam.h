@@ -4,6 +4,7 @@
 #include <sys/stat.h>
 
 #include "common/params.h"
+#include "home.hpp"
 
 #define CAPTURE_STATE_NONE 0
 #define CAPTURE_STATE_CAPTURING 1
@@ -80,7 +81,8 @@ struct tm get_time_struct()
 
 void reset_time(UIState *s)
 {
-   s->scene.scr.nTime = s->scene.scr.autoScreenOff * 60 * 30;
+  GLWindow::wake();
+  //s->scene.scr.nTime = s->scene.scr.autoScreenOff * 60 * 30;
 }
     
 
@@ -570,11 +572,6 @@ void update_dashcam(UIState *s, int draw_vision)
   if( s->scene.scr.nTime > 0 )
   {
      s->scene.scr.nTime--;
-
-     if( s->scene.scr.autoScreenOff && s->scene.scr.nTime == 0)
-     {
-       s->awake = 0;
-     }
   }
 
   if (!draw_vision) return;

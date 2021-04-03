@@ -209,7 +209,12 @@ static void handle_display_state(UIState* s, bool user_input) {
   static float accel_prev = 0., gyro_prev = 0.;
 
   bool should_wake = s->scene.started || s->scene.ignition || user_input;
-  if( !user_input && s->scene.scr.autoScreenOff && s->scene.scr.nTime == 0)
+
+  if( user_input )
+  {
+     s->scene.scr.nTime = s->scene.scr.autoScreenOff * 60 * 30;
+  }
+  else if( s->scene.scr.autoScreenOff && s->scene.scr.nTime == 0)
   {
     should_wake = false;
   }  
