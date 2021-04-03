@@ -248,7 +248,7 @@ static void handle_display_state(UIState* s, bool user_input) {
     s->awake = should_wake;
 
     if( should_wake == 0 )
-      s->scene.scene.scr.nCurBrightness = 0;
+      s->scene.scr.nCurBrightness = 0;
 
     //Hardware::set_display_power(s->awake);
     LOGD("setting display power %d", s->awake);
