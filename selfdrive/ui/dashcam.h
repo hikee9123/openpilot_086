@@ -78,6 +78,12 @@ struct tm get_time_struct()
   return tm;
 }
 
+void reset_time(UIState *s)
+{
+   s->scene.scr.nTime = s->scene.scr.autoScreenOff * 60 * 30;
+}
+    
+
 void remove_file(char *videos_dir, char *filename)
 {
   if (filename[0] == '\0')
@@ -532,11 +538,7 @@ int get_param( const std::string &key )
     return value;
 }
 
-void reset_time(UIState *s)
-{
-   s->scene.scr.nTime = s->scene.scr.autoScreenOff * 60 * 30;
-}
-    
+
 
 void update_dashcam(UIState *s, int draw_vision)
 {
