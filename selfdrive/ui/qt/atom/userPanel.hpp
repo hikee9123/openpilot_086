@@ -21,7 +21,8 @@ public:
   explicit CUserPanel(QWidget* parent = nullptr);
 
 private:
-   
+
+
 protected:
   void showEvent(QShowEvent *event) override;
 

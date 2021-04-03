@@ -18,8 +18,10 @@
 #include "userPanel.hpp"
 
 
+
 CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
 {
+  //UIState* ui_state = &glWindow->ui_state;
   QVBoxLayout *main_layout = new QVBoxLayout(this);
   main_layout->setMargin(100);
   setLayout(main_layout);
@@ -83,6 +85,7 @@ void CUserPanel::showEvent(QShowEvent *event)
 
 BrightnessControl::BrightnessControl() : AbstractControl("EON 밝기 조절(%)", "EON화면의 밝기를 조절합니다.", "../assets/offroad/icon_shell.png") 
 {
+  UIState* ui_state = &glWindow->ui_state;
 
   label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
   label.setStyleSheet("color: #e0e879");
@@ -117,6 +120,8 @@ BrightnessControl::BrightnessControl() : AbstractControl("EON 밝기 조절(%)",
       value = 0;
     } else {
     }
+
+    ui_state->scene.brightness = value;
     QString values = QString::number(value);
     Params().put("OpkrUIBrightness", values.toStdString());
     refresh();
@@ -130,6 +135,8 @@ BrightnessControl::BrightnessControl() : AbstractControl("EON 밝기 조절(%)",
       value = 100;
     } else {
     }
+
+    ui_state->scene.brightness = value;
     QString values = QString::number(value);
     Params().put("OpkrUIBrightness", values.toStdString());
     refresh();
