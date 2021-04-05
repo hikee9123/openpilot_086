@@ -406,6 +406,8 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w )
 
   float  gpsAccuracyUblox = scene->gpsLocationExternal.getAccuracy();
   float  altitudeUblox = scene->gpsLocationExternal.getAltitude();
+  float  bearingUblox = scene->gpsLocationExternal.getBearingDeg();
+
   //float  bearingUblox = scene.gpsLocationExternal.getBearing();    
   //float  latitudeUblox = scene.gpsLocationExternal.getLatitude();
   //float  longitudeUblox = scene.gpsLocationExternal.getLongitude();
@@ -504,6 +506,15 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w )
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize );
     bb_ry = bb_y + bb_h;
+
+
+    //draw compass by opkr
+    const int compass_x = s->viz_rect.x + s->viz_rect.w - 167 - (bdr_s);
+    const int compass_y = (s->viz_rect.y + (bdr_s)) + 713;
+    const int direction_x = compass_x + 74;
+    const int direction_y = compass_y + 74;
+    ui_draw_image(s, {compass_x, compass_y, 150, 150}, "compass", 0.6f);
+    ui_draw_circle_image(s, direction_x, direction_y - (bdr_s+7), 90, "direction", nvgRGBA(0x0, 0x0, 0x0, 0x0), 0.6f, -bearingUblox);
   }
 
 
