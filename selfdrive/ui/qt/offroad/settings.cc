@@ -96,7 +96,7 @@ DevicePanel::DevicePanel(QWidget* parent) : QWidget(parent) {
                                     ));
 
   offroad_btns.append(new ButtonControl("Reset Calibration", "RESET",
-                                   "openpilot requires the device to be mounted within 4째 left or right and within 5째 up or down. openpilot is continuously calibrating, resetting is rarely required.", [=]() {
+                                   "openpilot requires the device to be mounted within 4° left or right and within 5° up or down. openpilot is continuously calibrating, resetting is rarely required.", [=]() {
     if (ConfirmationDialog::confirm("Are you sure you want to reset calibration?")) {
       Params().remove("CalibrationParams");
     }
