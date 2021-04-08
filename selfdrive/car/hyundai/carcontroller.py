@@ -212,9 +212,13 @@ class CarController():
     return  param, dst_steer
 
   def acc_active(self, kph_vEgo):
+    acc_flag = False
     if kph_vEgo != self.kph_vEgo_old:
       self.timer2.startTime( 5000 )
     elif self.timer2.endTime():
+      acc_flag = True
+
+    return  acc_flag
     
 
 
@@ -303,8 +307,10 @@ class CarController():
       else:
         self.resume_cnt = 0
     else:
-      self.acc_active( kph_vEgo):
-      str_log2 = 'LKAS={:.0f}  steer={:5.0f}'.format( CS.lkas_button_on,  CS.out.steeringTorque )
+      acc_flag = self.acc_active( kph_vEgo):
+      if acc_flag:
+         can_sends.append(create_clu11(self.packer, self.resume_cnt, CS.clu11, Buttons.RES_ACCEL, kph_vEgo ))
+      str_log2 = 'LKAS={:.0f}  steer={:5.0f}  acc_flag={:0.f}'.format( CS.lkas_button_on,  CS.out.steeringTorque, acc_flag )
       trace1.printf2( '{}'.format( str_log2 ) )    
 
     # 20 Hz LFA MFA message
