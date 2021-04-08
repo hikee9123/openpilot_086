@@ -49,7 +49,8 @@ class CarController():
     self.vRel = 0
 
     self.movAvg = moveavg1.MoveAvg()
-    self.timer1 = tm.CTime1000("time")
+    self.timer1 = tm.CTime1000("time1")
+    self.timer2 = tm.CTime1000("time2")
     self.model_speed = 0
     self.curve_speed = 0
 
@@ -65,6 +66,8 @@ class CarController():
 
     self.SC = SpdctrlSlow()
     self.traceCC = trace1.Loger("CarController")
+
+    self.kph_vEgo_old = 0
 
 
   def limit_ctrl(self, value, limit, offset ):
@@ -208,6 +211,12 @@ class CarController():
 
     return  param, dst_steer
 
+  def acc_active(self, kph_vEgo):
+    if kph_vEgo != self.kph_vEgo_old:
+      self.timer2.startTime( 5000 )
+    elif self.timer2.endTime():
+    
+
 
   def update(self, c, CS, frame, sm, CP ):
     if self.CP != CP:
@@ -265,19 +274,11 @@ class CarController():
     str_log2 = 'limit={:.0f} tm={:.1f} gap={:.0f}  gas={:.1f}'.format( apply_steer_limit, self.timer1.sampleTime(), CS.cruiseGapSet, CS.out.gas  )
     trace1.printf( '{} {}'.format( str_log1, str_log2 ) )
 
-
-    #str_log1 = 'Navi=S:{} P:{:.1f} CA:{} CS:{}'.format( CS.ACC_ObjStatus, CS.ACC_ObjLatPos, CS.Navi_SCC_Camera_Act, CS.Navi_SCC_Camera_Status )
-    #trace1.printf( '{}'.format( str_log1 ) )
-
     run_speed_ctrl = CS.acc_active and self.SC != None
-    #if not run_speed_ctrl:
-    #  str_log2 = 'LKAS={:.0f}  steer={:5.0f}'.format( CS.lkas_button_on,  CS.out.steeringTorque )
-    #  trace1.printf2( '{}'.format( str_log2 ) )
-
 
     if pcm_cancel_cmd:
       can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.CANCEL))
-    if CS.out.cruiseState.standstill:
+    elif CS.out.cruiseState.standstill:
       # run only first time when the car stopped
       if self.last_lead_distance == 0:  
         # get the lead distance from the Radar
@@ -301,6 +302,10 @@ class CarController():
         self.resume_cnt += 1
       else:
         self.resume_cnt = 0
+    else:
+      self.acc_active( kph_vEgo):
+      str_log2 = 'LKAS={:.0f}  steer={:5.0f}'.format( CS.lkas_button_on,  CS.out.steeringTorque )
+      trace1.printf2( '{}'.format( str_log2 ) )    
 
     # 20 Hz LFA MFA message
     if frame % 5 == 0 and self.car_fingerprint in FEATURES["use_lfa_mfa"]:
