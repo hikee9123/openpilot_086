@@ -310,6 +310,7 @@ class CarController():
       acc_flag = self.acc_active( kph_vEgo):
       if acc_flag:
          can_sends.append(create_clu11(self.packer, self.resume_cnt, CS.clu11, Buttons.RES_ACCEL, kph_vEgo ))
+         self.resume_cnt += 1
       str_log2 = 'LKAS={:.0f}  steer={:5.0f}  acc_flag={:0.f}'.format( CS.lkas_button_on,  CS.out.steeringTorque, acc_flag )
       trace1.printf2( '{}'.format( str_log2 ) )    
 
