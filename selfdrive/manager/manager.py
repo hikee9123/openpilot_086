@@ -1,5 +1,4 @@
-﻿#!/usr/bin/env python3
-import datetime
+﻿import datetime
 import os
 import signal
 import subprocess
