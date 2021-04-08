@@ -1,4 +1,4 @@
-import os
+﻿import os
 
 from cffi import FFI
 from common.ffi_wrapper import suffix
@@ -22,8 +22,8 @@ typedef struct {
     double cost;
 } log_t;
 
-void init(double pathCost, double headingCost, double steerRateCost);
-void init_weights(double pathCost, double headingCost, double steerRateCost);
+void init();
+void set_weights(double pathCost, double headingCost, double steerRateCost);
 int run_mpc(state_t * x0, log_t * solution,
              double v_ego, double rotation_radius,
              double target_y[N+1], double target_psi[N+1]);

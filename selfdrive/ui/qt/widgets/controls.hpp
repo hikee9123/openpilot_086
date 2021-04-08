@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <QFrame>
 #include <QHBoxLayout>
@@ -13,6 +13,14 @@ QFrame *horizontal_line(QWidget *parent = nullptr);
 
 class AbstractControl : public QFrame {
   Q_OBJECT
+
+public:
+  void setDescription(const QString &desc) {
+    if(description) description->setText(desc);
+  }
+
+signals:
+  void showDescription();
 
 protected:
   AbstractControl(const QString &title, const QString &desc = "", const QString &icon = "", QWidget *parent = nullptr);

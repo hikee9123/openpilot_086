@@ -1,4 +1,4 @@
-from libcpp.string cimport string
+﻿from libcpp.string cimport string
 from libcpp cimport bool
 
 cdef extern from "selfdrive/common/params.cc":
@@ -12,5 +12,7 @@ cdef extern from "selfdrive/common/params.h":
     Params(bool)
     Params(string)
     string get(string, bool) nogil
+    bool getBool(string)
     int remove(string)
     int put(string, string)
+    int putBool(string, bool)

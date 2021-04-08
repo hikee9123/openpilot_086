@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 import datetime
 import os
 import time
@@ -335,8 +335,8 @@ def thermald_thread():
       set_offroad_alert_if_changed("Offroad_ConnectivityNeeded", False)
       set_offroad_alert_if_changed("Offroad_ConnectivityNeededPrompt", False)
 
-    startup_conditions["up_to_date"] = params.get("Offroad_ConnectivityNeeded") is None or params.get("DisableUpdates") == b"1"
-    startup_conditions["not_uninstalling"] = not params.get("DoUninstall") == b"1"
+    startup_conditions["up_to_date"] = params.get("Offroad_ConnectivityNeeded") is None or params.get_bool("DisableUpdates")
+    startup_conditions["not_uninstalling"] = not params.get_bool("DoUninstall")
     startup_conditions["accepted_terms"] = params.get("HasAcceptedTerms") == terms_version
 
     panda_signature = params.get("PandaFirmware")
@@ -347,20 +347,15 @@ def thermald_thread():
     startup_conditions["free_space"] = msg.deviceState.freeSpacePercent > 2
     startup_conditions["completed_training"] = params.get("CompletedTrainingVersion") == training_version or \
                                                (current_branch in ['dashcam', 'dashcam-staging'])
-    startup_conditions["not_driver_view"] = not params.get("IsDriverViewEnabled") == b"1"
-    startup_conditions["not_taking_snapshot"] = not params.get("IsTakingSnapshot") == b"1"
+    startup_conditions["not_driver_view"] = not params.get_bool("IsDriverViewEnabled")
+    startup_conditions["not_taking_snapshot"] = not params.get_bool("IsTakingSnapshot")
     # if any CPU gets above 107 or the battery gets above 63, kill all processes
     # controls will warn with CPU above 95 or battery above 60
     startup_conditions["device_temp_good"] = thermal_status < ThermalStatus.danger
     set_offroad_alert_if_changed("Offroad_TemperatureTooHigh", (not startup_conditions["device_temp_good"]))
 
     # Handle offroad/onroad transition
-    is_rhd_region = int(Params().get("IsOpenpilotViewEnabled"))  # IsRHD
-    if is_rhd_region:
-      should_start = True   # user video
-    else:
-      should_start = all(startup_conditions.values())    
-    #should_start = all(startup_conditions.values())
+    should_start = all(startup_conditions.values())
     if should_start:
       if not should_start_prev:
         params.delete("IsOffroad")
@@ -376,7 +371,7 @@ def thermald_thread():
         cloudlog.event("Startup blocked", startup_conditions=startup_conditions)
 
       if should_start_prev or (count == 0):
-        params.put("IsOffroad", "1")
+        params.put_bool("IsOffroad", True)
         if TICI and DISABLE_LTE_ONROAD:
           os.system("sudo systemctl start --no-block lte")
 

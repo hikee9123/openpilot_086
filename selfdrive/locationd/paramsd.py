@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 import math
 
 import json
@@ -166,6 +166,7 @@ def main(sm=None, pm=None):
 
       x = learner.kf.x
 
+      # atom
       actuatorDelayCV = CP.steerActuatorDelay
       steerRatioCV = float(x[States.STEER_RATIO])
       angle_offset_fast = math.degrees(x[States.ANGLE_OFFSET_FAST])

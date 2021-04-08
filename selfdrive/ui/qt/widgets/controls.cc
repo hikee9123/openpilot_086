@@ -1,4 +1,4 @@
-#include "controls.hpp"
+﻿#include "controls.hpp"
 
 QFrame *horizontal_line(QWidget *parent) {
   QFrame *line = new QFrame(parent);
@@ -48,6 +48,9 @@ AbstractControl::AbstractControl(const QString &title, const QString &desc, cons
     vlayout->addWidget(description);
 
     connect(title_label, &QPushButton::clicked, [=]() {
+      if (!description->isVisible()) {
+        emit showDescription();
+      }
       description->setVisible(!description->isVisible());
     });
   }

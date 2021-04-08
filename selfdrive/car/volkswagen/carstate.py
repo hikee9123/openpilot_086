@@ -1,4 +1,4 @@
-import numpy as np
+﻿import numpy as np
 from cereal import car
 from selfdrive.config import Conversions as CV
 from selfdrive.car.interfaces import CarStateBase
@@ -241,9 +241,6 @@ class CarState(CarStateBase):
       checks += [("Motor_14", 10)]  # From J623 Engine control module
 
     return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, CANBUS.pt)
-
-  # A single signal is monitored from the camera CAN bus, and then ignored,
-  # so the presence of CAN traffic can be verified with cam_cp.valid.
 
   @staticmethod
   def get_cam_can_parser(CP):

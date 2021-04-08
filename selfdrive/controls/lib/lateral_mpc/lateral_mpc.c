@@ -1,4 +1,4 @@
-#include "acado_common.h"
+﻿#include "acado_common.h"
 #include "acado_auxiliary_functions.h"
 #include "common/modeldata.h"
 #include <stdio.h>
@@ -29,7 +29,7 @@ typedef struct {
   double cost;
 } log_t;
 
-void init_weights(double pathCost, double headingCost, double steerRateCost){
+void set_weights(double pathCost, double headingCost, double steerRateCost){
   int    i;
   const int STEP_MULTIPLIER = 3.0;
 
@@ -44,7 +44,7 @@ void init_weights(double pathCost, double headingCost, double steerRateCost){
   acadoVariables.WN[(NYN+1)*1] = headingCost * STEP_MULTIPLIER;
 }
 
-void init(double pathCost, double headingCost, double steerRateCost){
+void init(){
   acado_initializeSolver();
   int    i;
 
@@ -58,8 +58,6 @@ void init(double pathCost, double headingCost, double steerRateCost){
 
   /* MPC: initialize the current state feedback. */
   for (i = 0; i < NX; ++i) acadoVariables.x0[ i ] = 0.0;
-
-  init_weights(pathCost, headingCost, steerRateCost);
 }
 
 int run_mpc(state_t * x0, log_t * solution, double v_ego,

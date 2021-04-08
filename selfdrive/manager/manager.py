@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 import datetime
 import os
 import signal
@@ -25,20 +25,12 @@ def manager_init():
   params.manager_start()
 
   default_params = [
-    ("CommunityFeaturesToggle", "0"),
-    ("EndToEndToggle", "0"),
     ("CompletedTrainingVersion", "0"),
-    ("IsRHD", "0"),
-    ("IsMetric", "0"),
-    ("RecordFront", "0"),
     ("HasAcceptedTerms", "0"),
-    ("HasCompletedSetup", "0"),
     ("IsUploadRawEnabled", "1"),
-    ("IsLdwEnabled", "0"),
     ("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')),
     ("OpenpilotEnabledToggle", "1"),
-    ("VisionRadarToggle", "0"),
-    ("IsDriverViewEnabled", "0"),
+
 
     ("IsOpenpilotViewEnabled", "0"),
     ("OpkrAutoResume", "0"),
@@ -49,8 +41,8 @@ def manager_init():
     ("OpkrUIBrightness", "0"),    
   ]
 
-  if params.get("RecordFrontLock", encoding='utf-8') == "1":
-    params.put("RecordFront", "1")
+  if params.get_bool("RecordFrontLock"):
+    params.put_bool("RecordFront", True)
 
   # set unset params
   for k, v in default_params:
@@ -151,7 +143,7 @@ def manager_thread():
       not_run.append("loggerd")
 
     started = sm['deviceState'].started
-    driverview = params.get("IsDriverViewEnabled") == b"1"
+    driverview = params.get_bool("IsDriverViewEnabled")
     ensure_running(managed_processes.values(), started, driverview, not_run)
 
     # trigger an update after going offroad
@@ -171,7 +163,7 @@ def manager_thread():
     pm.send('managerState', msg)
 
     # Exit main loop when uninstall is needed
-    if params.get("DoUninstall", encoding='utf8') == "1":
+    if params.get_bool("DoUninstall"):
       break
 
 
@@ -200,7 +192,7 @@ def main():
   finally:
     manager_cleanup()
 
-  if Params().get("DoUninstall", encoding='utf8') == "1":
+  if Params().get_bool("DoUninstall"):
     cloudlog.warning("uninstalling")
     HARDWARE.uninstall()
 

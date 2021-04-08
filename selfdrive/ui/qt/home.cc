@@ -1,4 +1,4 @@
-#include <cmath>
+﻿#include <cmath>
 #include <fstream>
 #include <iostream>
 #include <thread>
@@ -110,6 +110,7 @@ OffroadHome::OffroadHome(QWidget* parent) : QWidget(parent) {
   center_layout = new QStackedLayout();
 
   QHBoxLayout* statsAndSetup = new QHBoxLayout();
+  statsAndSetup->setMargin(0);
 
   DriveStats* drive = new DriveStats;
   drive->setFixedSize(800, 800);
@@ -242,10 +243,8 @@ static void handle_display_state(UIState* s, bool user_input) {
 
   // handle state transition
   if (s->awake != should_wake) {
-    printf("setting  user_input=%d  %d  %d\n", user_input, s->awake, should_wake);
     s->awake = should_wake;
-
-    //Hardware::set_display_power(s->awake);
+    Hardware::set_display_power(s->awake);
     LOGD("setting display power %d", s->awake);
   }
 }
