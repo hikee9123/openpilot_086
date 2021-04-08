@@ -77,6 +77,7 @@ class LateralPlanner():
     self.t_idxs = np.arange(TRAJECTORY_SIZE)
     self.y_pts = np.zeros(TRAJECTORY_SIZE)
 
+    # atom
     self.m_wait_time = 0
     self.log1 = trace1.Loger("LateralPlanner")
 
@@ -144,7 +145,7 @@ class LateralPlanner():
 
       lane_change_prob = self.LP.l_lane_change_prob + self.LP.r_lane_change_prob
 
-      # auto
+      # atom auto
       ll_probs = md.laneLineProbs   # 0,1,2,3
       # re_stds = md.roadEdges   # 0,1
 
