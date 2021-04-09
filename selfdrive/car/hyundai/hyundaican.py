@@ -1,4 +1,4 @@
-import crcmod
+﻿import crcmod
 from selfdrive.car.hyundai.values import CAR, CHECKSUM
 
 hyundai_checksum = crcmod.mkCrcFun(0x11D, initCrc=0xFD, rev=False, xorOut=0xdf)
@@ -74,15 +74,13 @@ def create_clu11(packer, frame, clu11, button, speed = None):
   return packer.make_can_msg("CLU11", 0, values)
 
 
-#def create_lfahda_mfc(packer, enabled, hda_set_speed=0):
-def create_lfahda_mfc( packer, enabled, CS ):
-  values = CS.lfahda_mfc
-  #values = {
-  #  "LFA_Icon_State": 2 if enabled else 0,
-  #  "HDA_Active": 1 if hda_set_speed else 0,
-  #  "HDA_Icon_State": 2 if hda_set_speed else 0,
-  #  "HDA_VSetReq": hda_set_speed,
-  #}
+def create_lfahda_mfc(packer, enabled, hda_set_speed=0):
+  values = {
+    "LFA_Icon_State": 2 if enabled else 0,
+    "HDA_Active": 1 if hda_set_speed else 0,
+    "HDA_Icon_State": 2 if hda_set_speed else 0,
+    "HDA_VSetReq": hda_set_speed,
+  }
   return packer.make_can_msg("LFAHDA_MFC", 0, values)
 
 def create_acc_commands(packer, enabled, accel, idx, lead_visible, set_speed, stopping):

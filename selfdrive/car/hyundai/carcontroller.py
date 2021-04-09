@@ -214,6 +214,7 @@ class CarController():
   def acc_active(self, kph_vEgo):
     acc_flag = False
     if kph_vEgo != self.kph_vEgo_old:
+      self.kph_vEgo_old = kph_vEgo
       self.timer2.startTime( 5000 )
     elif self.timer2.endTime():
       acc_flag = True
@@ -229,6 +230,7 @@ class CarController():
     enabled = c.enabled
     actuators = c.actuators
     pcm_cancel_cmd = c.cruiseControl.cancel
+    kph_vEgo = CS.out.vEgo * CV.MS_TO_KPH
 
     path_plan = sm['lateralPlan']
     self.dRel, self.vRel = SpdController.get_lead( sm )
@@ -316,7 +318,7 @@ class CarController():
 
     # 20 Hz LFA MFA message
     if frame % 5 == 0 and self.car_fingerprint in FEATURES["use_lfa_mfa"]:
-      can_sends.append(create_lfahda_mfc(self.packer, enabled, CS))
+      can_sends.append(create_lfahda_mfc(self.packer, enabled))
 
    # counter inc
     self.lkas11_cnt += 1

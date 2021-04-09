@@ -1,4 +1,4 @@
-import os
+﻿import os
 import shutil
 import subprocess
 import sys
@@ -140,6 +140,10 @@ elif GetOption('ubsan'):
 else:
   ccflags = []
   ldflags = []
+
+# no --as-needed on mac linker
+if arch != "Darwin":
+  ldflags += ["-Wl,--as-needed"]
 
 # change pythonpath to this
 lenv["PYTHONPATH"] = Dir("#").path

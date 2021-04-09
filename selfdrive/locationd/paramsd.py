@@ -143,7 +143,6 @@ def main(sm=None, pm=None):
   # Without a way to detect this we have to reset the stiffness every drive
   params['stiffnessFactor'] = 1.1
   params['angleOffsetAverageDeg'] = 0
-
   opkrLiveSteerRatio = int(params_reader.get("OpkrLiveSteerRatio"))
   
 
