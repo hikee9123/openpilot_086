@@ -317,7 +317,6 @@ static void update_params(UIState *s) {
   Params params;
   if (frame % (5*UI_FREQ) == 0) {
     scene.is_metric = params.getBool("IsMetric");
-    scene.end_to_end = params.getBool("EndToEndToggle");
   } else if (frame % (6*UI_FREQ) == 0) {
     scene.athenaStatus = NET_DISCONNECTED;
     if (auto last_ping = params.get<float>("LastAthenaPingTime"); last_ping) {

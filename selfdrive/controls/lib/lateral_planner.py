@@ -72,9 +72,6 @@ class LateralPlanner():
     self.t_idxs = np.arange(TRAJECTORY_SIZE)
     self.y_pts = np.zeros(TRAJECTORY_SIZE)
 
-    # atom
-    self.log1 = trace1.Loger("LateralPlanner")
-
   def setup_mpc(self):
     self.libmpc = libmpc_py.libmpc
     self.libmpc.init()
@@ -149,10 +146,6 @@ class LateralPlanner():
           torque_applied = True
 
 
-
-      str_log2 = 'll_probs={:.1f}{:.1f}  {:.2f}  {:.0f}'.format( ll_probs[0],ll_probs[3], lane_change_prob, blindspot_detected )
-      self.log1.add( str_log2 )
-
       # State transitions
       # off
       if cruiseState.cruiseSwState == Buttons.CANCEL:
@@ -191,7 +184,7 @@ class LateralPlanner():
         elif self.lane_change_ll_prob > 0.99:
           self.lane_change_state = LaneChangeState.off
 
-    if self.lane_change_state in [LaneChangeState.off, LaneChangeState.preLaneChange]:
+    if self.lane_change_state in [LaneChangeState.off]:    # atom
       self.lane_change_timer = 0.0
     else:
       self.lane_change_timer += DT_MDL
