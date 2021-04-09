@@ -30,15 +30,6 @@ def manager_init():
     ("IsUploadRawEnabled", "1"),
     ("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')),
     ("OpenpilotEnabledToggle", "1"),
-
-
-    ("IsOpenpilotViewEnabled", "0"),
-    ("OpkrAutoResume", "0"),
-    ("OpkrLiveSteerRatio", "0"),
-    ("OpkrTurnSteeringDisable", "0"),
-    ("OpkrPrebuilt", "0"),
-    ("OpkrAutoScreenOff", "0"),
-    ("OpkrUIBrightness", "0"),    
   ]
 
   if params.get_bool("RecordFrontLock"):
