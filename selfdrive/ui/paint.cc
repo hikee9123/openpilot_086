@@ -293,7 +293,7 @@ static void ui_draw_vision_event(UIState *s) {
   }
   else
   {
-    ui_draw_gear( s, center_x, center_y );
+    ui_draw_gear( s, center_x, center_y + radius);
   }  
 }
 
