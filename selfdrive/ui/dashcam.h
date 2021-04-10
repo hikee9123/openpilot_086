@@ -508,7 +508,7 @@ void ui_draw_gear( UIState *s, int center_x, int center_y )
     default: sprintf( str_msg, "N" ); nColor = nvgRGBA(255, 100, 100, 255); break;
   }
 
-  nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
+  //nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
   nvgFillColor(s->vg, nColor);
   ui_print( s, center_x, center_y, str_msg );
 }
