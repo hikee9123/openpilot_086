@@ -42,7 +42,7 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
   layout()->addWidget(horizontal_line());
 
   layout()->addWidget(
-    new ButtonControl("* PROGRAM DOWNLOAD<git pull>", "실행",
+    new ButtonControl("Git Pull 실행", "실행",
       "리모트 Git에서 변경사항이 있으면 로컬에 반영 됩니다. 로컬 파일이 변경된경우 리모트Git 내역을 반영 못할수도 있습니다. 참고바랍니다.", [=]() 
       {
           if (ConfirmationDialog::confirm("Are you sure you want to git pull?")) 
@@ -53,8 +53,8 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
     )
   ); 
 
-  layout()->addWidget(horizontal_line());
 
+  layout()->addWidget(horizontal_line());
   layout()->addWidget(new ParamControl("IsOpenpilotViewEnabled",
                                        "주행화면 미리보기",
                                        "오픈파일럿 주행화면을 미리보기 합니다.",
@@ -70,10 +70,17 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
 
   layout()->addWidget(horizontal_line());
 
+  layout()->addWidget(new CLongitudinalControlToggle() );
+
+  layout()->addWidget(horizontal_line());
+
   layout()->addWidget(new BrightnessControl());
   layout()->addWidget(new AutoScreenOff());
 
   layout()->addWidget(horizontal_line());
+
+
+
 
 
   const char* gitpull_cancel = "/data/openpilot/gitpull_cancel.sh ''";

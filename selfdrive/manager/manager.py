@@ -38,6 +38,7 @@ def manager_init():
     ("OpkrPrebuilt", "0"),
     ("OpkrAutoScreenOff", "0"),
     ("OpkrUIBrightness", "0"),
+    ("LongitudinalControl", "0"),
   ]
 
   if params.get_bool("RecordFrontLock"):

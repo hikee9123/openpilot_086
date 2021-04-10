@@ -291,7 +291,8 @@ class CarInterface(CarInterfaceBase):
 
     ret.enableCamera = True
 
-
+    
+    
     # stock ACC by neokil
     ret.enableCruise = True
     ret.minEnableSpeed = -1.  # enable is done by stock ACC, so ignore this
@@ -300,7 +301,7 @@ class CarInterface(CarInterfaceBase):
     ret.gasMaxV = [0.48, 0.32, 0.23, 0.14, 0.097]  # half max brake
     ret.brakeMaxBP = [0.]
     ret.brakeMaxV = [1.]
-    ret.openpilotLongitudinalControl = False
+    ret.openpilotLongitudinalControl = Params().getBool('LongitudinalControl')  #False
     ret.startAccel = 1.7
     ret.minSpeedCan = 0.3
     ret.stoppingBrakeRate = 0.2 # brake_travel/s while trying to stop
