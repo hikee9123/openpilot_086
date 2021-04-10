@@ -28,7 +28,7 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
 
   const char* gitpull = "/data/openpilot/gitpull.sh ''";
   layout()->addWidget(
-    new ButtonControl("* PROGRAM DOWNLOAD<git pull+reboot>", "실행",
+    new ButtonControl("* PROGRAM DOWNLOAD<reboot>", "실행",
       "리모트 Git에서 변경사항이 있으면 로컬에 반영 후 자동 재부팅 됩니다. 변경사항이 없으면 재부팅하지 않습니다. 로컬 파일이 변경된경우 리모트Git 내역을 반영 못할수도 있습니다. 참고바랍니다.", [=]() 
       {
           if (ConfirmationDialog::confirm("Are you sure you want to git pull?")) 
