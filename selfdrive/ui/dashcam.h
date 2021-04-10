@@ -226,14 +226,6 @@ bool screen_button_clicked(int touch_x, int touch_y, int x, int y, int cx, int c
 
 void draw_date_time(UIState *s)
 {
-  /*
-  if (captureState == CAPTURE_STATE_NOT_CAPTURING)
-  {
-    // Don't draw if we're not recording
-    return;
-  }
-  */
-
   // Get local time to display
   char now[50];
   struct tm tm = get_time_struct();
@@ -265,7 +257,7 @@ static void screen_draw_button(UIState *s, int touch_x, int touch_y)
 
     int btn_w = 150;
     int btn_h = 150;
-    int btn_x = 1950 - btn_w;
+    int btn_x = 1990 - btn_w;
     int btn_y = 1080 - btn_h;
     nvgBeginPath(s->vg);
     nvgRoundedRect(s->vg, btn_x - 110, btn_y - 45, btn_w, btn_h, 100);
@@ -339,7 +331,7 @@ static void screen_menu_button(UIState *s, int touch_x, int touch_y, int touched
 
     int btn_w = 150;
     int btn_h = 150;
-    int btn_x = 1630;// 1920 - btn_w;
+    int btn_x = 1700;// 1920 - btn_w;
     int btn_y = 1080 - btn_h;
 
 
