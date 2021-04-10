@@ -280,18 +280,19 @@ static void ui_draw_vision_speed(UIState *s) {
 }
 
 static void ui_draw_vision_event(UIState *s) {
+
+  const int radius = 96;
+  const int center_x = s->viz_rect.right() - radius - bdr_s * 2;
+  const int center_y = s->viz_rect.y + (radius / 2)  + (bdr_s * 1.5); 
+  
   if (s->scene.controls_state.getEngageable()) {
     // draw steering wheel
-    const int radius = 96;
-    const int center_x = s->viz_rect.right() - radius - bdr_s * 2;
-    const int center_y = s->viz_rect.y + (radius / 2)  + (bdr_s * 1.5);
-
     float angleSteers = s->scene.car_state.getSteeringAngleDeg();
     ui_draw_circle_image(s, center_x, center_y, radius, "wheel", bg_colors[s->status], 1.0f, angleSteers);
   }
   else
   {
-    ui_draw_gear( s );
+    ui_draw_gear( s, center_x, center_y );
   }  
 }
 

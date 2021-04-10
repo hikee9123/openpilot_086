@@ -487,7 +487,7 @@ static void ui_draw_debug(UIState *s)
   brake @7;
   eco @8;
 */
-void ui_draw_gear( UIState *s )
+void ui_draw_gear( UIState *s, int center_x, int center_y )
 {
   UIScene &scene = s->scene;
   NVGcolor nColor = COLOR_WHITE;
@@ -497,9 +497,9 @@ void ui_draw_gear( UIState *s )
   int  ngetGearShifter = int(getGearShifter);
   char str_msg[512];
 
-  const int radius = 96;
-  const int center_x = s->viz_rect.right() - radius - bdr_s * 2;
-  const int center_y = s->viz_rect.y + (radius / 2)  + (bdr_s * 1.5);
+  //const int radius = 96;
+  //const int center_x = s->viz_rect.right() - radius - bdr_s * 2;
+  //const int center_y = s->viz_rect.y + (radius / 2)  + (bdr_s * 1.5);
 
   nvgFontSize(s->vg, 150 );
   switch( ngetGearShifter )
@@ -512,6 +512,7 @@ void ui_draw_gear( UIState *s )
     default: sprintf( str_msg, "-" ); break;
   }
 
+  nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
   nvgFillColor(s->vg, nColor);
   ui_print( s, center_x, center_y, str_msg );
 }
