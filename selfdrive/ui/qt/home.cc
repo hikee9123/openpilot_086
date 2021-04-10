@@ -63,19 +63,20 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
     emit openSettings();
   }
 
-  // Handle sidebar collapsing
-  if (ui_state->scene.started && (e->x() >= ui_state->viz_rect.x - bdr_s)) {
-    ui_state->sidebar_collapsed = !ui_state->sidebar_collapsed;
-  }
-
-  
   // atom  mouse
   int e_x = e->x();
   int e_y = e->y();
   int e_button= e->button();
-
   // 1400, 820
-  if( e_x > 1400 || e_y > 820 ) return;
+  if( e_x < 1000 || e_y < 820 ) 
+  {
+    // Handle sidebar collapsing
+    if (ui_state->scene.started && (e->x() >= ui_state->viz_rect.x - bdr_s)) {
+      ui_state->sidebar_collapsed = !ui_state->sidebar_collapsed;
+    }
+  }
+  
+
   ui_state->scene.mouse.touch_x = e_x;
   ui_state->scene.mouse.touch_y = e_y;
   ui_state->scene.mouse.touched = e_button;
