@@ -70,9 +70,15 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
 
   
   // atom  mouse
-  ui_state->scene.mouse.touch_x = e->x();
-  ui_state->scene.mouse.touch_y = e->y();
-  ui_state->scene.mouse.touched = e->button();
+  int e_x = e->x();
+  int e_y = e->y();
+  int e_button= e->button();
+
+  // 1400, 820
+  if( e_x > 1400 || e_y > 820 ) return;
+  ui_state->scene.mouse.touch_x = e_x;
+  ui_state->scene.mouse.touch_y = e_y;
+  ui_state->scene.mouse.touched = e_button;
   ui_state->scene.mouse.touch_cnt++;
 }
 
