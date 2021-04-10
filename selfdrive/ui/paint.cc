@@ -57,7 +57,7 @@ static void draw_chevron(UIState *s, float x, float y, float sz, NVGcolor fillCo
 static void ui_draw_circle_image(const UIState *s, int center_x, int center_y, int radius, const char *image, NVGcolor color, float img_alpha,  float angleSteers = 0) {
   const int img_size = radius * 1.5;
   float img_rotation =  angleSteers/180*3.141592;
-  int ct_pos = -size * 0.75;
+  int ct_pos = -radius * 0.75;
 
   nvgBeginPath(s->vg);
   nvgCircle(s->vg, center_x, center_y + (bdr_s * 1.5), radius);
