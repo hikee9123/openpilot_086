@@ -289,6 +289,10 @@ static void ui_draw_vision_event(UIState *s) {
     float angleSteers = s->scene.car_state.getSteeringAngleDeg();
     ui_draw_circle_image(s, center_x, center_y, radius, "wheel", bg_colors[s->status], 1.0f, angleSteers);
   }
+  else
+  {
+    ui_draw_gear( s );
+  }  
 }
 
 static void ui_draw_vision_face(UIState *s) {
@@ -512,7 +516,7 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w )
     //draw compass by opkr
     const int radian = 74;
     const int compass_x = bb_rx - radian;// s->viz_rect.x + s->viz_rect.w - 167 - (bdr_s);
-    const int compass_y = bb_ry + 20;// (s->viz_rect.y + (bdr_s)) + 710;
+    const int compass_y = bb_ry + 22;// (s->viz_rect.y + (bdr_s)) + 710;
     const int direction_x = compass_x + radian;
     const int direction_y = compass_y + radian;
     ui_draw_image(s, {compass_x, compass_y, 150, 150}, "compass", 0.6f);
