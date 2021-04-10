@@ -512,7 +512,7 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w )
     //draw compass by opkr
     const int radian = 74;
     const int compass_x = bb_rx - radian;// s->viz_rect.x + s->viz_rect.w - 167 - (bdr_s);
-    const int compass_y = bb_ry + 10;// (s->viz_rect.y + (bdr_s)) + 710;
+    const int compass_y = bb_ry + 20;// (s->viz_rect.y + (bdr_s)) + 710;
     const int direction_x = compass_x + radian;
     const int direction_y = compass_y + radian;
     ui_draw_image(s, {compass_x, compass_y, 150, 150}, "compass", 0.6f);
@@ -687,8 +687,8 @@ static void bb_ui_draw_UI(UIState *s)
   const int bb_dml_y = (bdr_s + (bdr_s * 1.5)) + 220;
 
   const int bb_dmr_w = 170;
-  const int bb_dmr_x = s->viz_rect.x + s->viz_rect.w - bb_dmr_w - (bdr_s * 2);
-  const int bb_dmr_y = (bdr_s + (bdr_s * 1.5)) + 220;
+  const int bb_dmr_x = s->viz_rect.x + s->viz_rect.w - (bb_dmr_w/2) - (bdr_s * 2);
+  const int bb_dmr_y = (bdr_s + (bdr_s * 1.5)) + 200;
 
   bb_ui_draw_measures_right(s, bb_dml_x, bb_dml_y, bb_dml_w);
   bb_ui_draw_measures_left(s, bb_dmr_x, bb_dmr_y, bb_dmr_w);
