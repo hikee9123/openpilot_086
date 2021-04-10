@@ -167,32 +167,9 @@ typedef struct UIState {
   bool sidebar_collapsed;
   Rect video_rect, viz_rect;
   float car_space_transform[6];
+  bool wide_camera;
+  float zoom;
 } UIState;
 
 void ui_init(UIState *s);
 void ui_update(UIState *s);
-
-int write_param_float(float param, const char* param_name, bool persistent_param = false);
-template <class T>
-int read_param(T* param, const char *param_name, bool persistent_param = false){
-  T param_orig = *param;
-  char *value;
-  size_t sz;
-
-  int result = Params(persistent_param).read_db_value(param_name, &value, &sz);
-  if (result == 0){
-    std::string s = std::string(value, sz); // value is not null terminated
-    free(value);
-
-    // Parse result
-    std::istringstream iss(s);
-    iss >> *param;
-
-    // Restore original value if parsing failed
-    if (iss.fail()) {
-      *param = param_orig;
-      result = -1;
-    }
-  }
-  return result;
-}
