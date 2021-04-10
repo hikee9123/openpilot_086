@@ -284,7 +284,7 @@ static void ui_draw_vision_event(UIState *s) {
   const int radius = 96;
   const int center_x = s->viz_rect.right() - radius;// - bdr_s * 1.5;
   const int center_y = s->viz_rect.y + (radius / 2)  + (bdr_s * 0.9); 
-  int engageable = 1;//s->scene.controls_state.getEngageable();
+  int engageable = s->scene.controls_state.getEngageable();
 
   if (engageable) {
     // draw steering wheel
