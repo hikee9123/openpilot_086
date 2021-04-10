@@ -30,6 +30,7 @@ def manager_init():
     ("IsUploadRawEnabled", "1"),
     ("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')),
     ("OpenpilotEnabledToggle", "1"),
+    ("IsOpenpilotViewEnabled", "0"),
   ]
 
   if params.get_bool("RecordFrontLock"):
@@ -91,7 +92,7 @@ def manager_thread():
   cloudlog.info({"environ": os.environ})
 
   # save boot log
-  subprocess.call("./bootlog", cwd=os.path.join(BASEDIR, "selfdrive/loggerd"))
+  #subprocess.call("./bootlog", cwd=os.path.join(BASEDIR, "selfdrive/loggerd"))
 
   ignore = []
   if os.getenv("NOBOARD") is not None:
@@ -103,6 +104,26 @@ def manager_thread():
 
   started_prev = False
   params = Params()
+
+
+#params = Params()
+  enableLogger = params.get_bool("RecordFront")
+  
+  if not enableLogger:
+    ignore.append("loggerd")
+    ignore.append("logcatd")
+    ignore.append("logmessaged")
+    ignore.append("uploader")
+    ignore.append("updated")
+    ignore.append("deleter")
+    ignore.append("tombstoned")
+  else:
+    # save boot log
+    subprocess.call("./bootlog", cwd=os.path.join(BASEDIR, "selfdrive/loggerd"))
+
+
+
+
   sm = messaging.SubMaster(['deviceState'])
   pm = messaging.PubMaster(['managerState'])
 

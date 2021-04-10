@@ -11,13 +11,20 @@ from selfdrive.config import Conversions as CV
 import cereal.messaging as messaging
 from cereal import log
 
+
+#atom
+from common.numpy_fast import interp
+from selfdrive.car.hyundai.values import Buttons
+import common.log as trace1
+
 LaneChangeState = log.LateralPlan.LaneChangeState
 LaneChangeDirection = log.LateralPlan.LaneChangeDirection
 
 LOG_MPC = os.environ.get('LOG_MPC', False)
 
-LANE_CHANGE_SPEED_MIN = 30 * CV.MPH_TO_MS
+LANE_CHANGE_SPEED_MIN = 30 * CV.KPH_TO_MS
 LANE_CHANGE_TIME_MAX = 10.
+LANE_CHANGE_AUTO_TIME = 1.0
 # this corresponds to 80deg/s and 20deg/s steering angle in a toyota corolla
 MAX_CURVATURE_RATES = [0.03762194918267951, 0.003441203371932992]
 MAX_CURVATURE_RATE_SPEEDS = [0, 35]
@@ -88,6 +95,14 @@ class LateralPlanner():
     active = sm['controlsState'].active
     measured_curvature = sm['controlsState'].curvature
 
+    # atom
+    cruiseState  = sm['carState'].cruiseState
+    if sm['liveParameters'].valid:
+      steerActuatorDelayCV = sm['liveParameters'].steerActuatorDelayCV
+    else:
+      steerActuatorDelayCV = CP.steerActuatorDelay
+    
+
     md = sm['modelV2']
     self.LP.parse_model(sm['modelV2'])
     if len(md.position.x) == TRAJECTORY_SIZE and len(md.orientation.x) == TRAJECTORY_SIZE:
@@ -119,9 +134,27 @@ class LateralPlanner():
 
       lane_change_prob = self.LP.l_lane_change_prob + self.LP.r_lane_change_prob
 
+      # atom auto
+      ll_probs = md.laneLineProbs   # 0,1,2,3
+      # re_stds = md.roadEdges   # 0,1
+
+      if torque_applied or self.lane_change_timer < LANE_CHANGE_AUTO_TIME:
+        pass
+      elif self.lane_change_direction == LaneChangeDirection.left:
+        if ll_probs[0] > 0.5:
+          torque_applied = True
+      elif self.lane_change_direction == LaneChangeDirection.right:
+        if ll_probs[3] > 0.5:
+          torque_applied = True
+
+
       # State transitions
       # off
-      if self.lane_change_state == LaneChangeState.off and one_blinker and not self.prev_one_blinker and not below_lane_change_speed:
+      if cruiseState.cruiseSwState == Buttons.CANCEL:
+        self.lane_change_state = LaneChangeState.off
+        self.lane_change_ll_prob = 1.0
+
+      elif self.lane_change_state == LaneChangeState.off and one_blinker and not self.prev_one_blinker and not below_lane_change_speed:
         self.lane_change_state = LaneChangeState.preLaneChange
         self.lane_change_ll_prob = 1.0
 
@@ -135,7 +168,11 @@ class LateralPlanner():
       # starting
       elif self.lane_change_state == LaneChangeState.laneChangeStarting:
         # fade out over .5s
-        self.lane_change_ll_prob = max(self.lane_change_ll_prob - 2*DT_MDL, 0.0)
+        v_ego_kph = v_ego * CV.MS_TO_KPH
+        xp = [40,80]
+        fp2 = [1,2]
+        lane_time = interp( v_ego_kph, xp, fp2 )        
+        self.lane_change_ll_prob = max(self.lane_change_ll_prob - lane_time*DT_MDL, 0.0)
         # 98% certainty
         if lane_change_prob < 0.02 and self.lane_change_ll_prob < 0.01:
           self.lane_change_state = LaneChangeState.laneChangeFinishing
@@ -149,7 +186,7 @@ class LateralPlanner():
         elif self.lane_change_ll_prob > 0.99:
           self.lane_change_state = LaneChangeState.off
 
-    if self.lane_change_state in [LaneChangeState.off, LaneChangeState.preLaneChange]:
+    if self.lane_change_state in [LaneChangeState.off]:    # atom
       self.lane_change_timer = 0.0
     else:
       self.lane_change_timer += DT_MDL
@@ -189,7 +226,7 @@ class LateralPlanner():
     self.cur_state.curvature = interp(DT_MDL, self.t_idxs[:MPC_N + 1], self.mpc_solution.curvature)
 
     # TODO this needs more thought, use .2s extra for now to estimate other delays
-    delay = CP.steerActuatorDelay + .2
+    delay = steerActuatorDelayCV + .1
     current_curvature = self.mpc_solution.curvature[0]
     psi = interp(delay, self.t_idxs[:MPC_N + 1], self.mpc_solution.psi)
     next_curvature_rate = self.mpc_solution.curvature_rate[0]

@@ -21,7 +21,7 @@ class GLWindow : public QOpenGLWidget, protected QOpenGLFunctions {
 public:
   using QOpenGLWidget::QOpenGLWidget;
   explicit GLWindow(QWidget* parent = 0);
-  void wake();
+  static void wake();
   ~GLWindow();
 
   inline static UIState ui_state = {0};
@@ -49,6 +49,9 @@ private:
   float brightness_m = 0;
   float last_brightness = 0;
   FirstOrderFilter brightness_filter;
+
+private:  // atom
+  void ScreenAwake();
 
 public slots:
   void timerUpdate();
