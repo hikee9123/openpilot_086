@@ -380,7 +380,7 @@ static void ui_draw_modeSel(UIState *s)
   int ui_viz_rx = s->viz_rect.x;
   int ui_viz_rw = s->viz_rect.w; 
   const int viz_speed_x = ui_viz_rx+((ui_viz_rw/2)-(280/2));
-  int x_pos = viz_speed_x + 450;
+  int x_pos = viz_speed_x + 430;
   int y_pos = 120;
 
 
@@ -405,6 +405,7 @@ static void ui_draw_debug(UIState *s)
 {
   UIScene &scene = s->scene;
 
+  ui_draw_modeSel(s);
   if( scene.dash_menu_no == 0 ) return;
   
 
@@ -474,7 +475,6 @@ static void ui_draw_debug(UIState *s)
 
     ui_print( s, 0, 1020, "%s", scene.alert.text1 );
     ui_print( s, 0, 1078, "%s", scene.alert.text2 );
-    ui_draw_modeSel(s);
 }
 
 /*
