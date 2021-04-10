@@ -335,7 +335,7 @@ static void screen_menu_button(UIState *s, int touch_x, int touch_y, int touched
     int btn_y = 1080 - btn_h;
 
 
-    if( touched && screen_button_clicked(touch_x, touch_y, btn_x, btn_y, 100, 100) )
+    if( touched && screen_button_clicked(touch_x, touch_y, btn_x, btn_y, btn_w, btn_h) )
     {
       scene.dash_menu_no++;
       if( scene.dash_menu_no > 2 )
@@ -497,10 +497,6 @@ void ui_draw_gear( UIState *s, int center_x, int center_y )
   int  ngetGearShifter = int(getGearShifter);
   char str_msg[512];
 
-  //const int radius = 96;
-  //const int center_x = s->viz_rect.right() - radius - bdr_s * 2;
-  //const int center_y = s->viz_rect.y + (radius / 2)  + (bdr_s * 1.5);
-
   nvgFontSize(s->vg, 150 );
   switch( ngetGearShifter )
   {
@@ -509,7 +505,7 @@ void ui_draw_gear( UIState *s, int center_x, int center_y )
     case 3 : strcpy( str_msg, "N" ); nColor = COLOR_WHITE; break;
     case 4 : strcpy( str_msg, "R" ); nColor = COLOR_RED;  break;
     case 7 : strcpy( str_msg, "B" ); break;
-    default: sprintf( str_msg, "-" ); break;
+    default: sprintf( str_msg, "N" ); nColor = nvgRGBA(255, 100, 100, 255); break;
   }
 
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
