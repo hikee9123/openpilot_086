@@ -77,12 +77,16 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
 
 
   const char* gitpull_cancel = "/data/openpilot/gitpull_cancel.sh ''";
-  layout()->addWidget(new ButtonControl("Git Pull 취소", "실행", "Git Pull을 취소하고 이전상태로 되돌립니다. 커밋내역이 여러개인경우 최신커밋 바로 이전상태로 되돌립니다.",
-                                      [=]() { 
-                                        if (ConfirmationDialog::confirm("GitPull 이전 상태로 되돌립니다. 진행하시겠습니까?")){
-                                          std::system(gitpull_cancel);
-                                        }
-                                      }));  
+  layout()->addWidget(
+    new ButtonControl("Git Pull 취소", "실행", 
+      "Git Pull을 취소하고 이전상태로 되돌립니다. 커밋내역이 여러개인경우 최신커밋 바로 이전상태로 되돌립니다.",[=]()
+      { 
+        if (ConfirmationDialog::confirm("GitPull 이전 상태로 되돌립니다. 진행하시겠습니까?")){
+          std::system(gitpull_cancel);
+        }
+      }
+    )
+  );  
 }
 
 void CUserPanel::showEvent(QShowEvent *event) 
