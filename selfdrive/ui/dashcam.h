@@ -331,7 +331,7 @@ static void screen_menu_button(UIState *s, int touch_x, int touch_y, int touched
 
     int btn_w = 150;
     int btn_h = 150;
-    int btn_x = 1700;// 1920 - btn_w;
+    int btn_x = 1650;// 1920 - btn_w;
     int btn_y = 1080 - btn_h;
 
 
@@ -558,9 +558,14 @@ void update_dashcam(UIState *s, int draw_vision)
   if (!s->scene.started) return;
   if (s->scene.driver_view) return;
 
+    int btn_w = 150;
+    int btn_h = 150;
+    int btn_x = 1990 - btn_w;
+    int btn_y = 1080 - btn_h;
+
   screen_draw_button(s, touch_x, touch_y);
   screen_menu_button(s, touch_x, touch_y, touched);
-  if (screen_button_clicked(touch_x, touch_y, 1700, 1000, 100, 100) )
+  if ( touched && screen_button_clicked(touch_x, touch_y, btn_x, btn_y, btn_w, btn_h) )
   {
     click_elapsed_time = get_time() - click_time;
 
