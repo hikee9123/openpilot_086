@@ -84,7 +84,7 @@ class CLongitudinalControlToggle : public ToggleControl {
   Q_OBJECT
 
 public:
-  CPrebuiltToggle() : ToggleControl("Longitudinal Control", "가감속 제어를 오픈파일럿에서 제어 합니다.", "../assets/offroad/icon_shell.png", Params().getBool("LongitudinalControl")) {
+  CLongitudinalControlToggle() : ToggleControl("Longitudinal Control", "가감속 제어를 오픈파일럿에서 제어 합니다.", "../assets/offroad/icon_shell.png", Params().getBool("LongitudinalControl")) {
     QObject::connect(this, &CLongitudinalControlToggle::toggleFlipped, [=](int state) {
       Params().putBool("LongitudinalControl", (bool)state);
     });
