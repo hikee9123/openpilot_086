@@ -380,7 +380,7 @@ static void ui_draw_modeSel(UIState *s)
   int ui_viz_rx = s->viz_rect.x;
   int ui_viz_rw = s->viz_rect.w; 
   const int viz_speed_x = ui_viz_rx+((ui_viz_rw/2)-(280/2));
-  int x_pos = viz_speed_x + 500;
+  int x_pos = viz_speed_x + 450;
   int y_pos = 120;
 
 
@@ -495,9 +495,11 @@ void ui_draw_gear( UIState *s )
   cereal::CarState::GearShifter  getGearShifter = scene.car_state.getGearShifter();
 
   int  ngetGearShifter = int(getGearShifter);
-  int  x_pos = 1700;
-  int  y_pos = 200;
   char str_msg[512];
+
+  const int radius = 96;
+  const int center_x = s->viz_rect.right() - radius - bdr_s * 2;
+  const int center_y = s->viz_rect.y + (radius / 2)  + (bdr_s * 1.5);
 
   nvgFontSize(s->vg, 150 );
   switch( ngetGearShifter )
@@ -511,7 +513,7 @@ void ui_draw_gear( UIState *s )
   }
 
   nvgFillColor(s->vg, nColor);
-  ui_print( s, x_pos, y_pos, str_msg );
+  ui_print( s, center_x, center_y, str_msg );
 }
 
 int get_param( const std::string &key )
