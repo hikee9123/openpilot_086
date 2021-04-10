@@ -40,7 +40,6 @@ class CarController():
 
 
     self.nBlinker = 0
-    #self.lane_change_torque_lower = 0
     self.steer_torque_over_timer = 0
     self.steer_torque_ratio = 1
     self.steer_torque_ratio_dir = 1
@@ -65,8 +64,6 @@ class CarController():
     self.params = Params()
 
     self.SC = SpdctrlSlow()
-    self.traceCC = trace1.Loger("CarController")
-
     self.kph_vEgo_old = 0
 
 
@@ -142,8 +139,7 @@ class CarController():
     UP  = interp( v_ego_kph, self.cv_KPH, self.steerdUP )
     DN  = interp( v_ego_kph, self.cv_KPH, self.steerdDN )
 
-    #str_log1 = 'ego={:.1f} /{:.1f}/{:.1f}/{:.1f} {}'.format(v_ego_kph,  MAX, UP, DN, self.steerMAX )
-    #trace1.printf2( '{}'.format( str_log1 ) )      
+     
     return MAX, UP, DN    
 
 
@@ -211,7 +207,7 @@ class CarController():
 
     return  param, dst_steer
 
-  def acc_active(self, kph_vEgo):
+  def acc_auto_active(self, kph_vEgo):
     acc_flag = False
     if kph_vEgo != self.kph_vEgo_old:
       self.kph_vEgo_old = kph_vEgo
@@ -276,8 +272,11 @@ class CarController():
     if steer_req:
       can_sends.append( create_mdps12(self.packer, frame, CS.mdps12) )
 
-    str_log1 = 'torg:{:5.0f} dn={:.1f} up={:.1f}'.format( apply_steer, param.STEER_DELTA_DOWN, param.STEER_DELTA_UP   )
-    str_log2 = 'limit={:.0f} tm={:.1f} gap={:.0f}  gas={:.1f}'.format( apply_steer_limit, self.timer1.sampleTime(), CS.cruiseGapSet, CS.out.gas  )
+      
+    
+    str_log1 = 'torg:{:5.0f}'.format( apply_steer )
+    str_log2 =  'aeb={:.1f} fcw={:.1f} hold={:.1f} err={:.1f}'.format( CS.stockAebR,  CS.stockFcwR, CS.brake_hold, CS.brake_error  )
+    #str_log2 = 'limit={:.0f} tm={:.1f} gap={:.0f}  gas={:.1f}'.format( apply_steer_limit, self.timer1.sampleTime(), CS.cruiseGapSet, CS.out.gas  )
     trace1.printf( '{} {}'.format( str_log1, str_log2 ) )
 
     run_speed_ctrl = CS.acc_active and self.SC != None
@@ -309,10 +308,13 @@ class CarController():
       else:
         self.resume_cnt = 0
     else:
-      acc_flag = self.acc_active( kph_vEgo)
+      acc_flag = self.acc_auto_active( kph_vEgo)
       if acc_flag:
          can_sends.append(create_clu11(self.packer, self.resume_cnt, CS.clu11, Buttons.RES_ACCEL, kph_vEgo ))
          self.resume_cnt += 1
+      else:
+         self.resume_cnt = 0
+
       str_log2 = 'LKAS={:.0f}  steer={:5.0f}'.format( CS.lkas_button_on,  CS.out.steeringTorque )
       trace1.printf2( '{}'.format( str_log2 ) )    
 

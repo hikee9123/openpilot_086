@@ -48,7 +48,6 @@ class CarState(CarStateBase):
 
     self.SC = SpdController()
 
-    #self.sm = messaging.SubMaster(['liveMapData'])
 
 
   def update(self, cp, cp_cam):
@@ -170,6 +169,10 @@ class CarState(CarStateBase):
       ret.stockAeb = cp.vl["SCC12"]['AEB_CmdAct'] != 0
       ret.stockFcw = cp.vl["SCC12"]['CF_VSM_Warn'] == 2
 
+    #test
+    self.stockAebR = cp.vl["SCC12"]['AEB_CmdAct']
+    self.stockFcwR = cp.vl["SCC12"]['CF_VSM_Warn']
+
     #TPMS
     ret.tpms.fl = cp.vl["TPMS11"]['PRESSURE_FL']
     ret.tpms.fr = cp.vl["TPMS11"]['PRESSURE_FR']
@@ -187,16 +190,13 @@ class CarState(CarStateBase):
     self.clu11 = copy.copy(cp.vl["CLU11"])
     self.mdps12 = copy.copy(cp.vl["MDPS12"])
     self.lfahda_mfc = copy.copy(cp.vl["LFAHDA_MFC"])
-    #self.park_brake = cp.vl["TCS13"]['PBRAKE_ACT'] == 1
-    self.park_brake = cp.vl["CGW1"]['CF_Gway_ParkBrakeSw']
+    self.park_brake = cp.vl["TCS13"]['PBRAKE_ACT'] == 1
+    #self.park_brake = cp.vl["CGW1"]['CF_Gway_ParkBrakeSw']
     self.steer_state = cp.vl["MDPS12"]['CF_Mdps_ToiActive']  # 0 NOT ACTIVE, 1 ACTIVE
     self.lead_distance = cp.vl["SCC11"]['ACC_ObjDist']
-    #self.brake_hold = cp.vl["TCS15"]['AVH_LAMP'] == 2 # 0 OFF, 1 ERROR, 2 ACTIVE, 3 READY
-    #self.brake_error = cp.vl["TCS13"]['ACCEnable'] != 0 # 0 ACC CONTROL ENABLED, 1-3 ACC CONTROL DISABLED
-    #self.prev_cruise_buttons = self.cruise_buttons
-    #self.cruise_buttons = cp.vl["CLU11"]["CF_Clu_CruiseSwState"]
 
-
+    self.brake_hold = cp.vl["TCS15"]['AVH_LAMP'] # 0 OFF, 1 ERROR, 2 ACTIVE, 3 READY
+    self.brake_error = cp.vl["TCS13"]['ACCEnable'] # 0 ACC CONTROL ENABLED, 1-3 ACC CONTROL DISABLED
     return ret
 
 
