@@ -340,7 +340,7 @@ static void screen_menu_button(UIState *s, int touch_x, int touch_y, int touched
 
     int btn_w = 150;
     int btn_h = 150;
-    int btn_x = 1530;// 1920 - btn_w;
+    int btn_x = 1630;// 1920 - btn_w;
     int btn_y = 1080 - btn_h;
 
 
@@ -389,7 +389,7 @@ static void ui_draw_modeSel(UIState *s)
   int ui_viz_rx = s->viz_rect.x;
   int ui_viz_rw = s->viz_rect.w; 
   const int viz_speed_x = ui_viz_rx+((ui_viz_rw/2)-(280/2));
-  int x_pos = viz_speed_x + 300;
+  int x_pos = viz_speed_x + 500;
   int y_pos = 120;
 
 
@@ -398,11 +398,11 @@ static void ui_draw_modeSel(UIState *s)
   nvgFontSize(s->vg, 80);
   switch( modeSel  )
   {
-    case 0: strcpy( str_msg, "0.OP" ); nColor = COLOR_WHITE; break;
-    case 1: strcpy( str_msg, "1.CURVE" );    nColor = nvgRGBA(200, 200, 255, 255);  break;
-    case 2: strcpy( str_msg, "2.FWD CAR" );  nColor = nvgRGBA(200, 255, 255, 255);  break;
-    case 3: strcpy( str_msg, "3.HYUNDAI" );  nColor = nvgRGBA(200, 255, 255, 255);  break;
-    case 4: strcpy( str_msg, "4.CURVATURE" );   nColor = nvgRGBA(200, 255, 255, 255);  break;
+    case 0: strcpy( str_msg, "0.OPM" ); nColor = COLOR_WHITE; break;
+    case 1: strcpy( str_msg, "1.CVS" );    nColor = nvgRGBA(200, 200, 255, 255);  break;
+    case 2: strcpy( str_msg, "2.FCAR" );  nColor = nvgRGBA(200, 255, 255, 255);  break;
+    case 3: strcpy( str_msg, "3.HYUN" );  nColor = nvgRGBA(200, 255, 255, 255);  break;
+    case 4: strcpy( str_msg, "4.CURV" );   nColor = nvgRGBA(200, 255, 255, 255);  break;
     default :  sprintf( str_msg, "%d.NORMAL", modeSel ); nColor = COLOR_WHITE;  break;
   }
   nvgFillColor(s->vg, nColor);  
