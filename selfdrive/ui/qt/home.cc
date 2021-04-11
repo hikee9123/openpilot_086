@@ -249,7 +249,7 @@ static void handle_display_state(UIState* s, bool user_input) {
   if (s->awake != should_wake) {
     s->awake = should_wake;
     // Hardware::set_display_power(s->awake);
-    LOGD("setting display power %d", s->awake);
+    LOGD("setting display power %d \n", s->awake);
   }
 }
 
@@ -301,7 +301,7 @@ void GLWindow::backlightUpdate() {
   static  int old_awake = -1;
   if( old_awake != ui_state.awake )
   {
-    LOGW("backlightUpdate: awake=%d", ui_state.awake);
+    LOGW("backlightUpdate: awake=%d\n", ui_state.awake);
     old_awake = ui_state.awake;
     Hardware::set_display_power( ui_state.awake);
   }
