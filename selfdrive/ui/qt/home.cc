@@ -297,16 +297,8 @@ void GLWindow::backlightUpdate() {
 
 
   int brightness = brightness_filter.update(clipped_brightness);
-
-  static  int old_awake = -1;
-  if( old_awake != ui_state.awake )
-  {
-    LOGW("backlightUpdate: awake=%d\n", ui_state.awake);
-    old_awake = ui_state.awake;
-   // Hardware::set_display_power( ui_state.awake);
-  }
-
   if (!ui_state.awake) {
+    LOGW("backlightUpdate: screen_shutoff   brightness = %d \n", brightness);    
     brightness = 0;
     emit screen_shutoff();
   }
