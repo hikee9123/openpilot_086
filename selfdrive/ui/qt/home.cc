@@ -296,12 +296,22 @@ void GLWindow::backlightUpdate() {
     clipped_brightness = BACKLIGHT_OFFROAD;
   }
 
-
+  static  int old_awake = -1;
   int brightness = brightness_filter.update(clipped_brightness);
+
+  if( old_awake != ui_state.awake )
+  {
+    old_awake = ui_state.awake;    
+    LOGW("backlightUpdate: screen_shutoff old_awake = %d  brightness = %d \n", old_awake, brightness);  
+
+
+    if( !old_awake )
+      emit screen_shutoff();
+  }
+
   if (!ui_state.awake) {
-    LOGW("backlightUpdate: screen_shutoff   brightness = %d \n", brightness);    
-    brightness = 0;
-    emit screen_shutoff();
+    //brightness = 0;
+    //emit screen_shutoff();
   }
   else if( ui_state.scene.scr.brightness )
   {
