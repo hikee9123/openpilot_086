@@ -17,7 +17,10 @@ class TestCarInterfaces(unittest.TestCase):
   def test_car_interfaces(self):
     all_cars = all_known_cars()
 
-    for car_name in  CAR.GRANDEUR_HEV_19:  # all_cars:
+    for car_name in  all_cars:
+      if car_name != CAR.GRANDEUR_HEV_19:
+         continue
+
       print(car_name)
       fingerprint = FINGERPRINTS[car_name][0]
 
