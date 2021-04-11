@@ -303,12 +303,12 @@ void GLWindow::backlightUpdate() {
   {
     LOGW("backlightUpdate: awake=%d\n", ui_state.awake);
     old_awake = ui_state.awake;
-    Hardware::set_display_power( ui_state.awake);
+   // Hardware::set_display_power( ui_state.awake);
   }
 
   if (!ui_state.awake) {
-    //brightness = 0;
-    //emit screen_shutoff();
+    brightness = 0;
+    emit screen_shutoff();
   }
   else if( ui_state.scene.scr.brightness )
   {
