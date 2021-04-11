@@ -238,7 +238,7 @@ static void handle_display_state(UIState* s, bool user_input) {
     gyro_prev = s->scene.gyro_sensor;
     accel_prev = (accel_prev * (accel_samples - 1) + s->scene.accel_sensor) / accel_samples;
 
-    if( awake_timeout && (awake_timeout % 20) == 0 )
+    if( awake_timeout && (awake_timeout % UI_FREQ) == 0 )
       printf("handle_display_state awake = %d  user_input = %d  awake_timeout=%d \n", s->awake, user_input, awake_timeout);      
   }
 
@@ -312,7 +312,7 @@ void GLWindow::backlightUpdate() {
   }
 
   if (!ui_state.awake) {
-    //brightness = 0;
+    brightness = 0;
     //emit screen_shutoff();
   }
   else if( ui_state.scene.scr.brightness )
