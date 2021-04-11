@@ -6,6 +6,7 @@ from selfdrive.car.car_helpers import interfaces
 from selfdrive.car.fingerprints import _FINGERPRINTS as FINGERPRINTS
 
 from cereal import car
+
 from selfdrive.car.hyundai.values import Buttons, CarControllerParams, CAR, FEATURES
 import cereal.messaging as messaging
 

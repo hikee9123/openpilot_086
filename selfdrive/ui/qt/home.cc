@@ -238,7 +238,7 @@ static void handle_display_state(UIState* s, bool user_input) {
     bool gyro_trigger = abs(s->scene.gyro_sensor - gyro_prev) > 0.15;
     should_wake = accel_trigger && gyro_trigger;
     gyro_prev = s->scene.gyro_sensor;
-    accel_prev = (accel_prev * (accel_samples - 1) + s->scene.accel_sensor) / accel_samples; 
+    accel_prev = (accel_prev * (accel_samples - 1) + s->scene.accel_sensor) / accel_samples;
   }
 
   if (should_wake) {
