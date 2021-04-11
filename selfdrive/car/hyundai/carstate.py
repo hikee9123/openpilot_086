@@ -169,6 +169,11 @@ class CarState(CarStateBase):
       ret.stockAeb = cp.vl["SCC12"]['AEB_CmdAct'] != 0
       ret.stockFcw = cp.vl["SCC12"]['CF_VSM_Warn'] == 2
 
+    # test
+    self.TCS13_ACCEnable = cp.vl["TCS13"]['ACCEnable']
+    self.TCS13_ACC_REQ = cp.vl["TCS13"]['ACC_REQ']
+    self.TCS13_StandStill = cp.vl["TCS13"]['StandStill']
+
     #TPMS
     ret.tpms.fl = cp.vl["TPMS11"]['PRESSURE_FL']
     ret.tpms.fr = cp.vl["TPMS11"]['PRESSURE_FR']
