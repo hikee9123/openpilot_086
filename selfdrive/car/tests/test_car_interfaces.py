@@ -6,7 +6,7 @@ from selfdrive.car.car_helpers import interfaces
 from selfdrive.car.fingerprints import _FINGERPRINTS as FINGERPRINTS
 
 from cereal import car
-
+from selfdrive.car.hyundai.values import Buttons, CarControllerParams, CAR, FEATURES
 import cereal.messaging as messaging
 
 
@@ -17,7 +17,7 @@ class TestCarInterfaces(unittest.TestCase):
   def test_car_interfaces(self):
     all_cars = all_known_cars()
 
-    for car_name in all_cars:
+    for car_name in  CAR.GRANDEUR_HEV_19:  # all_cars:
       print(car_name)
       fingerprint = FINGERPRINTS[car_name][0]
 
