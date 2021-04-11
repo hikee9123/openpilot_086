@@ -294,6 +294,7 @@ class CarInterface(CarInterfaceBase):
     
     
     # stock ACC by neokil
+    ret.openpilotLongitudinalControl = Params().get('LongitudinalControl') == b'1'  #False
     ret.enableCruise = True
     ret.minEnableSpeed = -1.  # enable is done by stock ACC, so ignore this
     ret.steerRatioRear = 0.  # no rear steering, at least on the listed cars aboveA
@@ -301,7 +302,6 @@ class CarInterface(CarInterfaceBase):
     ret.gasMaxV = [0.48, 0.32, 0.23, 0.14, 0.097]  # half max brake
     ret.brakeMaxBP = [0.]
     ret.brakeMaxV = [1.]
-    ret.openpilotLongitudinalControl = Params().get('LongitudinalControl') == b'1'  #False
     ret.startAccel = 1.7
     ret.minSpeedCan = 0.3
     ret.stoppingBrakeRate = 0.2 # brake_travel/s while trying to stop

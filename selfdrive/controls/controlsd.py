@@ -418,6 +418,9 @@ class Controls:
     # Gas/Brake PID loop
     if self.CP.openpilotLongitudinalControl:
       actuators.gas, actuators.brake = self.LoC.update(self.active, CS, v_acc_sol, long_plan.vTargetFuture, a_acc_sol, self.CP)
+    else:
+      actuators.gas = 0
+      actuators.brake = 0
 
     # Steering PID loop and lateral MPC
     actuators.steer, actuators.steeringAngleDeg, lac_log = self.LaC.update(self.active, CS, self.CP, self.VM, params, lat_plan)

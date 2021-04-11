@@ -276,7 +276,7 @@ class CarController():
 
       
     
-    str_log1 = 'torg:{:5.0f} long={:.1f}'.format( apply_steer , self.CP.openpilotLongitudinalControl )
+    str_log1 = 'torg:{:5.0f} gas={:.3f} brake={:.3f}'.format( apply_steer, actuators.gas, actuators.brake   )
     str_log2 =  'hold={:.1f} err={:.1f}'.format(  CS.brake_hold, CS.brake_error  )
     #str_log2 = 'limit={:.0f} tm={:.1f} gap={:.0f}  gas={:.1f}'.format( apply_steer_limit, self.timer1.sampleTime(), CS.cruiseGapSet, CS.out.gas  )
     trace1.printf( '{} {}'.format( str_log1, str_log2 ) )
