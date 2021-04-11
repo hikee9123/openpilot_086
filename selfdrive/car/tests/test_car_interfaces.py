@@ -76,8 +76,8 @@ class TestCarInterfaces(unittest.TestCase):
         radar_interface._update([radar_interface.trigger_msg])
 
 if __name__ == "__main__":
-  unittest.main()
-  #CI = TestCarInterfaces()
+  #unittest.main()
+  CI = TestCarInterfaces()
 
-  #CI.test_car_interfaces()
+  CI.test_car_interfaces()
 
