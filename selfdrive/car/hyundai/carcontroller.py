@@ -209,7 +209,9 @@ class CarController():
 
   def acc_auto_active(self, kph_vEgo):
     acc_flag = False
-    if kph_vEgo != self.kph_vEgo_old:
+    if kph_vEgo < 60:
+      acc_flag = False
+    elif kph_vEgo != self.kph_vEgo_old:
       self.kph_vEgo_old = kph_vEgo
       self.timer2.startTime( 5000 )
     elif self.timer2.endTime():
