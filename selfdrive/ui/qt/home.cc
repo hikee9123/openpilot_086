@@ -252,7 +252,10 @@ static void handle_display_state(UIState* s, bool user_input) {
     printf("setting display power %d \n", s->awake);
   }
 
-    if( awake_timeout && (awake_timeout % (2*UI_FREQ)) == 0 )
+   static int  time_disp = 0;
+
+   time_disp++;
+  if( (time_disp % (2*UI_FREQ)) == 0 )
       printf("handle_display_state awake = %d  user_input = %d  awake_timeout=%d \n", s->awake, user_input, awake_timeout);       
 }
 
