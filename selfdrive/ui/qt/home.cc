@@ -251,7 +251,9 @@ static void handle_display_state(UIState* s, bool user_input) {
     // Hardware::set_display_power(s->awake);
     printf("setting display power %d \n", s->awake);
   }
-  printf("handle_display_state awake = %d  user_input = %d \n", s->awake, user_input);  
+
+  if( (awake_timeout % 5) == 0 )
+      printf("handle_display_state awake = %d  user_input = %d  awake_timeout=%d \n", s->awake, user_input, awake_timeout);  
 }
 
 GLWindow::GLWindow(QWidget* parent) : brightness_filter(BACKLIGHT_OFFROAD, BACKLIGHT_TS, BACKLIGHT_DT), QOpenGLWidget(parent) {
