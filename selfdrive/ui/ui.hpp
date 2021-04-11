@@ -161,8 +161,8 @@ typedef struct UIScene {
 
   struct _STATUS_
   {
-      char text1[512];
-      char text2[512];
+      std::string alertTextMsg1;
+      std::string alertTextMsg2;      
   } alert;
 } UIScene;
 

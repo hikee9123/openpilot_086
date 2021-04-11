@@ -81,6 +81,8 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
   ui_state->scene.mouse.touch_y = e_y;
   ui_state->scene.mouse.touched = e_button;
   ui_state->scene.mouse.touch_cnt++;
+
+  printf("mousePressEvent %d,%d  %d \n", e_x, e_y, e_button);
 }
 
 
@@ -223,7 +225,7 @@ static void handle_display_state(UIState* s, bool user_input) {
 
   if( user_input )
   {
-     //printf("touched  user_input=%d  %d  %d\n", user_input, s->awake, should_wake);
+     //printf("touched  user_input=%d  awake=%d  should_wake=%d\n", user_input, s->awake, should_wake);
      s->scene.scr.nTime = s->scene.scr.autoScreenOff * 60 * 20;
   }
   else if( s->scene.scr.autoScreenOff && s->scene.scr.nTime == 0)
@@ -248,9 +250,10 @@ static void handle_display_state(UIState* s, bool user_input) {
   // handle state transition
   if (s->awake != should_wake) {
     s->awake = should_wake;
-    Hardware::set_display_power(s->awake);
-    LOGD("setting display power %d", s->awake);
+    //Hardware::set_display_power(s->awake);
+    printf("setting display power %d \n", s->awake);
   }
+     
 }
 
 GLWindow::GLWindow(QWidget* parent) : brightness_filter(BACKLIGHT_OFFROAD, BACKLIGHT_TS, BACKLIGHT_DT), QOpenGLWidget(parent) {
@@ -295,10 +298,14 @@ void GLWindow::backlightUpdate() {
     clipped_brightness = BACKLIGHT_OFFROAD;
   }
 
+
+  ScreenAwake();
+
+
   int brightness = brightness_filter.update(clipped_brightness);
   if (!ui_state.awake) {
     brightness = 0;
-    emit screen_shutoff();
+    //emit screen_shutoff();
   }
   else if( ui_state.scene.scr.brightness )
   {
@@ -353,8 +360,6 @@ void GLWindow::paintGL() {
     LOGW("slow frame(%llu) time: %.2f", ui_state.sm->frame, dt);
   }
   prev_draw_t = cur_draw_t;
-
-  ScreenAwake();
 }
 
 void GLWindow::wake() {
@@ -367,15 +372,17 @@ void GLWindow::ScreenAwake()
 {
   const bool draw_alerts = ui_state.scene.started;
   //const bool draw_vision = draw_alerts && ui_state.vipc_client->connected;
-
-  
+ 
   int  cur_key = ui_state.scene.scr.awake;
-
   if (draw_alerts && ui_state.scene.alert_size != cereal::ControlsState::AlertSize::NONE) 
   {
       cur_key += 1;
   }
 
+   static int  time_disp = 0;
+   time_disp++;
+  if( (time_disp % (2*UI_FREQ)) == 0 )
+      printf("ScreenAwake awake = %d draw_alerts = %d   time=%d\n", cur_key, draw_alerts, time_disp );  
 
   static int old_key;
   if( cur_key != old_key )
@@ -383,5 +390,7 @@ void GLWindow::ScreenAwake()
     old_key = cur_key;
     if(cur_key)
         GLWindow::wake();
-  }     
+    else
+        emit screen_shutoff();
+  } 
 }

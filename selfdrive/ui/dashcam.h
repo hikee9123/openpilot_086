@@ -55,6 +55,13 @@ void ui_print(UIState *s, int x, int y,  const char* fmt, ... )
   nvgText(s->vg, x, y, msg_buf, NULL);
 }
 
+static void ui_draw_text1(const UIState *s, float x, float y, const char* string, float size, NVGcolor color, const char *font_name)
+{
+  nvgFontFace(s->vg, font_name);
+  nvgFontSize(s->vg, size);
+  nvgFillColor(s->vg, color);
+  nvgText(s->vg, x, y, string, NULL);
+}
 
 int get_time()
 {
@@ -401,15 +408,20 @@ static void ui_draw_modeSel(UIState *s)
 }
 
 
-static void ui_draw_debug(UIState *s) 
+static void ui_draw_debug1(UIState *s) 
 {
   UIScene &scene = s->scene;
-
-  ui_draw_modeSel(s);
-  if( scene.dash_menu_no == 0 ) return;
   
+  nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
+  ui_draw_text1(s, 0, 1035, scene.alert.alertTextMsg1.c_str(), 40, COLOR_WHITE_ALPHA(125), "sans-semibold");
+  ui_draw_text1(s, 0, 1078, scene.alert.alertTextMsg2.c_str(), 40, COLOR_WHITE_ALPHA(125), "sans-semibold");
+}
 
 
+static void ui_draw_debug2(UIState *s) 
+{
+  UIScene &scene = s->scene;
+  
   int  ui_viz_rx = s->viz_rect.x;
   int  y_pos = ui_viz_rx + 300;
   int  x_pos = 100+250; 
@@ -452,8 +464,8 @@ static void ui_draw_debug(UIState *s)
 
     
 
-    //float  dPoly = scene.pathPlan.lPoly + scene.pathPlan.rPoly;
-    //ui_print( s, x_pos, y_pos+300, "Poly:%.2f, %.2f = %.2f", scene.pathPlan.lPoly, scene.pathPlan.rPoly, dPoly );
+  //float  dPoly = scene.pathPlan.lPoly + scene.pathPlan.rPoly;
+  //ui_print( s, x_pos, y_pos+300, "Poly:%.2f, %.2f = %.2f", scene.pathPlan.lPoly, scene.pathPlan.rPoly, dPoly );
   // ui_print( s, x_pos, y_pos+350, "map:%d,cam:%d", scene.live.map_valid, scene.live.speedlimitahead_valid  );
 
 
@@ -464,8 +476,21 @@ static void ui_draw_debug(UIState *s)
     float rl = tpms.getRl();
     float rr = tpms.getRr();
     ui_print( s, x_pos, y_pos+350, "tpms:%.0f,%.0f,%.0f,%.0f", fl, fr, rl, rr );
+}
 
+static void ui_draw_debug(UIState *s) 
+{
+  UIScene &scene = s->scene;
 
+  ui_draw_modeSel(s);
+
+  if( scene.dash_menu_no == 0 ) return;
+  ui_draw_debug1(s);
+  
+  if( scene.dash_menu_no == 2 ) 
+  {
+    ui_draw_debug2(s);
+  }
 
    // int  lensPos = scene.frame.getLensPos();
    // int  lensTruePos = scene.frame.getLensTruePos();
@@ -473,9 +498,10 @@ static void ui_draw_debug(UIState *s)
   //  ui_print( s, x_pos, y_pos+400, "frame:%d,%d", lensPos, lensTruePos );
 
 
-    ui_print( s, 0, 1020, "%s", scene.alert.text1 );
-    ui_print( s, 0, 1078, "%s", scene.alert.text2 );
+   // ui_print( s, 0, 1020, "%s", scene.alert.text1 );
+   // ui_print( s, 0, 1078, "%s", scene.alert.text2 );
 }
+
 
 /*
   park @1;
@@ -546,7 +572,7 @@ void update_dashcam(UIState *s, int draw_vision)
   else if ( touched  ) 
   {
     s->scene.mouse.touched = 0; 
-    printf("touched:(%d,%d) %d  %d \n", touch_x, touch_y, touched, s->sidebar_collapsed);
+    //printf("touched:(%d,%d) %d  %d \n", touch_x, touch_y, touched, s->sidebar_collapsed);
   }
 
 

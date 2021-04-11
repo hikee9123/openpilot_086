@@ -7,39 +7,23 @@ from selfdrive.car.fingerprints import _FINGERPRINTS as FINGERPRINTS
 
 from cereal import car
 
-
+from selfdrive.car.hyundai.values import Buttons, CarControllerParams, CAR, FEATURES
 import cereal.messaging as messaging
-from selfdrive.car.hyundai.spdctrlSlow  import SpdctrlSlow
-
-class TestSpdCtrl:
-  def __init__(self):  
-    self.SC = SpdctrlSlow()
-
-    self.sm = messaging.SubMaster(['modelV2'])
-
-
-  def test(self):
-      #self.sm.update()
-
-      #model = self.sm['modelV2']
-      #lane_lines = model.laneLines
-      #lane_line_probs = model.laneLineProbs
-      nLimit = 100
-      while nLimit > 0:
-        nLimit -= 1
-        model_speed = self.SC.cal_model_speed( self.sm,  30  )
-        #self.prob = list(model.path.poly)
-        #model_speed = self.SC.calc_laneProb(  self.prob, 30  )
-        print( 'model_speed = {}   '.format( model_speed) )
-
 
 
 class TestCarInterfaces(unittest.TestCase):
+  def __init__(self):  
+      self.sm = messaging.SubMaster(['modelV2','lateralPlan','radarState'])
+      
   def test_car_interfaces(self):
     all_cars = all_known_cars()
 
-    for car_name in all_cars:
-      print(car_name)
+    for car_name in  all_cars:
+     
+      if car_name != CAR.GRANDEUR_HEV_19:
+         continue
+
+      print(car_name) 
       fingerprint = FINGERPRINTS[car_name][0]
 
       CarInterface, CarController, CarState = interfaces[car_name]
@@ -69,18 +53,18 @@ class TestCarInterfaces(unittest.TestCase):
           self.assertTrue(len(car_params.lateralTuning.indi.outerLoopGainV))
 
       # Run car interface
-      #CC = car.CarControl.new_message()
-      #for _ in range(10):
-      #  car_interface.update(CC, [])
-      #  car_interface.apply(CC)
-      #  car_interface.apply(CC)
+      CC = car.CarControl.new_message()
+      for _ in range(10):
+        car_interface.update(CC, [])
+        car_interface.apply(CC, self.sm, car_params)
+        #car_interface.apply(CC, self.sm, car_params)
 
-      #CC = car.CarControl.new_message()
-      #CC.enabled = True
-      #for _ in range(10):
-      #  car_interface.update(CC, [])
-      #  car_interface.apply(CC)
-      #  car_interface.apply(CC)
+      CC = car.CarControl.new_message()
+      CC.enabled = True
+      for _ in range(10):
+        car_interface.update(CC, [])
+        car_interface.apply(CC, self.sm, car_params)
+        #car_interface.apply(CC, self.sm, car_params)
 
       # Test radar interface
       RadarInterface = importlib.import_module('selfdrive.car.%s.radar_interface' % car_params.carName).RadarInterface
@@ -94,6 +78,7 @@ class TestCarInterfaces(unittest.TestCase):
 
 if __name__ == "__main__":
   #unittest.main()
+  CI = TestCarInterfaces()
 
-  spdCtrl = TestSpdCtrl()
-  spdCtrl.test()  
+  CI.test_car_interfaces()
+

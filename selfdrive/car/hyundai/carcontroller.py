@@ -1,11 +1,11 @@
 from cereal import car, log
 from common.realtime import DT_CTRL
 from selfdrive.car import apply_std_steer_torque_limits
-from selfdrive.car.hyundai.hyundaican import create_lkas11, create_clu11, create_lfahda_mfc, create_mdps12
+from selfdrive.car.hyundai.hyundaican import create_lkas11, create_clu11, create_lfahda_mfc, create_mdps12, create_acc_commands
 from selfdrive.car.hyundai.values import Buttons, CarControllerParams, CAR, FEATURES
 from opendbc.can.packer import CANPacker
 from selfdrive.config import Conversions as CV
-from common.numpy_fast import interp
+from common.numpy_fast import clip, interp
 
 # speed controller
 from selfdrive.car.hyundai.spdcontroller  import SpdController
@@ -20,6 +20,7 @@ import copy
 
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 LaneChangeState = log.LateralPlan.LaneChangeState
+
 
 
 
@@ -40,7 +41,6 @@ class CarController():
 
 
     self.nBlinker = 0
-    #self.lane_change_torque_lower = 0
     self.steer_torque_over_timer = 0
     self.steer_torque_ratio = 1
     self.steer_torque_ratio_dir = 1
@@ -65,9 +65,28 @@ class CarController():
     self.params = Params()
 
     self.SC = SpdctrlSlow()
-    self.traceCC = trace1.Loger("CarController")
-
     self.kph_vEgo_old = 0
+
+    # ascc
+    self.accel_steady = 0
+
+
+  def accel_hysteresis( self, accel, accel_steady):
+    # for small accel oscillations within ACCEL_HYST_GAP, don't change the accel command
+    if accel > accel_steady + self.p.ACCEL_HYST_GAP:
+      accel_steady = accel - self.p.ACCEL_HYST_GAP
+    elif accel < accel_steady - self.p.ACCEL_HYST_GAP:
+      accel_steady = accel + self.p.ACCEL_HYST_GAP
+    accel = accel_steady
+
+    return accel, accel_steady
+
+  def accel_applay( self, actuators):
+    # gas and brake
+    apply_accel = actuators.gas - actuators.brake
+    apply_accel, self.accel_steady = self.accel_hysteresis(apply_accel, self.accel_steady)
+    apply_accel = clip(apply_accel * self.p.ACCEL_SCALE, self.p.ACCEL_MIN, self.p.ACCEL_MAX)
+    return  apply_accel
 
 
   def limit_ctrl(self, value, limit, offset ):
@@ -142,8 +161,7 @@ class CarController():
     UP  = interp( v_ego_kph, self.cv_KPH, self.steerdUP )
     DN  = interp( v_ego_kph, self.cv_KPH, self.steerdDN )
 
-    #str_log1 = 'ego={:.1f} /{:.1f}/{:.1f}/{:.1f} {}'.format(v_ego_kph,  MAX, UP, DN, self.steerMAX )
-    #trace1.printf2( '{}'.format( str_log1 ) )      
+     
     return MAX, UP, DN    
 
 
@@ -168,7 +186,7 @@ class CarController():
 
 
              
-    if abs(CS.out.steeringAngleDeg) >= CS.CP.maxSteeringAngleDeg: # and CS.out.steeringPressed:
+    if abs(CS.out.steeringAngleDeg) >= CP.maxSteeringAngleDeg: # and CS.out.steeringPressed:
       sec_mval = 0.5  # 오파 => 운전자.  (sec)
       sec_pval = 10   #  운전자 => 오파  (sec)
       self.timer1.startTime( 5000 )
@@ -211,9 +229,12 @@ class CarController():
 
     return  param, dst_steer
 
-  def acc_active(self, kph_vEgo):
+  def acc_auto_active(self, kph_vEgo):
     acc_flag = False
-    if kph_vEgo != self.kph_vEgo_old:
+    delta = abs(kph_vEgo - self.kph_vEgo_old)
+    if kph_vEgo < 60:
+      acc_flag = False
+    elif kph_vEgo != self.kph_vEgo_old:
       self.kph_vEgo_old = kph_vEgo
       self.timer2.startTime( 5000 )
     elif self.timer2.endTime():
@@ -243,7 +264,7 @@ class CarController():
 
 
     # Steering Torque
-    param, dst_steer = self.steerParams_torque( CS, c.actuators, path_plan )
+    param, dst_steer = self.steerParams_torque( CS, actuators, path_plan )
     new_steer = actuators.steer * param.STEER_MAX
     apply_steer = apply_std_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, param)
     self.steer_rate_limited = new_steer != apply_steer
@@ -255,7 +276,7 @@ class CarController():
 
 
     # disable if steer angle reach 90 deg, otherwise mdps fault in some models
-    lkas_active = enabled   #and abs(CS.out.steeringAngleDeg) < CS.CP.maxSteeringAngleDeg
+    lkas_active = enabled   #and abs(CS.out.steeringAngleDeg) < CP.maxSteeringAngleDeg
 
     if not lkas_active:
       apply_steer = 0
@@ -276,8 +297,13 @@ class CarController():
     if steer_req:
       can_sends.append( create_mdps12(self.packer, frame, CS.mdps12) )
 
-    str_log1 = 'torg:{:5.0f} dn={:.1f} up={:.1f}'.format( apply_steer, param.STEER_DELTA_DOWN, param.STEER_DELTA_UP   )
-    str_log2 = 'limit={:.0f} tm={:.1f} gap={:.0f}  gas={:.1f}'.format( apply_steer_limit, self.timer1.sampleTime(), CS.cruiseGapSet, CS.out.gas  )
+      
+     
+    
+    
+    str_log1 = 'torg:{:5.0f} gas={:.3f} brake={:.3f}'.format( apply_steer, actuators.gas, actuators.brake   )
+    str_log2 = 'acc enable={:.0f} req={:.0f} still={:.0f}'.format( CS.TCS13_ACCEnable, CS.TCS13_ACC_REQ, CS.TCS13_StandStill  )
+    #str_log2 = 'limit={:.0f} tm={:.1f} gap={:.0f}  gas={:.1f}'.format( apply_steer_limit, self.timer1.sampleTime(), CS.cruiseGapSet, CS.out.gas  )
     trace1.printf( '{} {}'.format( str_log1, str_log2 ) )
 
     run_speed_ctrl = CS.acc_active and self.SC != None
@@ -301,6 +327,13 @@ class CarController():
     # reset lead distnce after the car starts moving
     elif self.last_lead_distance != 0:
       self.last_lead_distance = 0
+    elif CP.openpilotLongitudinalControl:
+      # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
+      apply_accel = self.accel_applay(  actuators )
+      set_speed = c.hudControl.setSpeed
+      lead_visible = c.hudControl.leadVisible
+      stopping = kph_vEgo <= 0
+      can_sends.append(create_acc_commands(self.packer, enabled, apply_accel, frame, lead_visible, set_speed, stopping ))
     elif run_speed_ctrl and self.SC != None:
       is_sc_run = self.SC.update( CS, sm, self )
       if is_sc_run:
@@ -309,12 +342,17 @@ class CarController():
       else:
         self.resume_cnt = 0
     else:
-      acc_flag = self.acc_active( kph_vEgo)
+      acc_flag = self.acc_auto_active( kph_vEgo)
       if acc_flag:
          can_sends.append(create_clu11(self.packer, self.resume_cnt, CS.clu11, Buttons.RES_ACCEL, kph_vEgo ))
          self.resume_cnt += 1
+      else:
+         self.resume_cnt = 0
+
       str_log2 = 'LKAS={:.0f}  steer={:5.0f}'.format( CS.lkas_button_on,  CS.out.steeringTorque )
       trace1.printf2( '{}'.format( str_log2 ) )    
+
+
 
     # 20 Hz LFA MFA message
     if frame % 5 == 0 and self.car_fingerprint in FEATURES["use_lfa_mfa"]:

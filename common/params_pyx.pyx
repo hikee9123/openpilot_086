@@ -91,6 +91,7 @@ keys = {
   b"OpkrPrebuilt": [TxType.PERSISTENT],
   b"OpkrAutoScreenOff": [TxType.PERSISTENT],
   b"OpkrUIBrightness": [TxType.PERSISTENT],
+  b"LongitudinalControl": [TxType.PERSISTENT],
 }
 
 def ensure_bytes(v):
