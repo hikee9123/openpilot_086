@@ -298,19 +298,11 @@ void GLWindow::backlightUpdate() {
     clipped_brightness = BACKLIGHT_OFFROAD;
   }
 
-  static  int old_awake = -1;
+
+  ScreenAwake();
+
+
   int brightness = brightness_filter.update(clipped_brightness);
-
-  if( old_awake != ui_state.awake )
-  {
-    old_awake = ui_state.awake;    
-    LOGW("backlightUpdate: screen_shutoff old_awake = %d  brightness = %d \n", old_awake, brightness);  
-
-
-    if( !old_awake )
-      emit screen_shutoff();
-  }
-
   if (!ui_state.awake) {
     brightness = 0;
     //emit screen_shutoff();
@@ -368,8 +360,6 @@ void GLWindow::paintGL() {
     LOGW("slow frame(%llu) time: %.2f", ui_state.sm->frame, dt);
   }
   prev_draw_t = cur_draw_t;
-
-  ScreenAwake();
 }
 
 void GLWindow::wake() {
@@ -382,10 +372,8 @@ void GLWindow::ScreenAwake()
 {
   const bool draw_alerts = ui_state.scene.started;
   //const bool draw_vision = draw_alerts && ui_state.vipc_client->connected;
-
-  
+ 
   int  cur_key = ui_state.scene.scr.awake;
-
   if (draw_alerts && ui_state.scene.alert_size != cereal::ControlsState::AlertSize::NONE) 
   {
       cur_key += 1;
@@ -393,7 +381,7 @@ void GLWindow::ScreenAwake()
 
    static int  time_disp = 0;
    time_disp++;
-  if( (time_disp % (2*UI_FREQ)) == 0 )
+  if( (time_disp % (5*UI_FREQ)) == 0 )
       printf("ScreenAwake awake = %d draw_alerts = %d \n", cur_key, draw_alerts );  
 
   static int old_key;
@@ -402,5 +390,7 @@ void GLWindow::ScreenAwake()
     old_key = cur_key;
     if(cur_key)
         GLWindow::wake();
+    else
+        emit screen_shutoff();
   } 
 }
