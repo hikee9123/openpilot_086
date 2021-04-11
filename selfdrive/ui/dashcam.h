@@ -572,7 +572,7 @@ void update_dashcam(UIState *s, int draw_vision)
   else if ( touched  ) 
   {
     s->scene.mouse.touched = 0; 
-    printf("touched:(%d,%d) %d  %d \n", touch_x, touch_y, touched, s->sidebar_collapsed);
+    //printf("touched:(%d,%d) %d  %d \n", touch_x, touch_y, touched, s->sidebar_collapsed);
   }
 
 

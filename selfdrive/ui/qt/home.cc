@@ -82,7 +82,7 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
   ui_state->scene.mouse.touched = e_button;
   ui_state->scene.mouse.touch_cnt++;
 
-  printf("mousePressEvent %d,%d \n", e_x, e_y);
+  printf("mousePressEvent %d,%d  %d \n", e_x, e_y, e_button);
 }
 
 
@@ -250,7 +250,7 @@ static void handle_display_state(UIState* s, bool user_input) {
   // handle state transition
   if (s->awake != should_wake) {
     s->awake = should_wake;
-    Hardware::set_display_power(s->awake);
+    //Hardware::set_display_power(s->awake);
     printf("setting display power %d \n", s->awake);
   }
      
