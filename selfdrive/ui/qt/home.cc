@@ -81,6 +81,8 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
   ui_state->scene.mouse.touch_y = e_y;
   ui_state->scene.mouse.touched = e_button;
   ui_state->scene.mouse.touch_cnt++;
+
+  printf("mousePressEvent %d,%d \n", e_x, e_y);
 }
 
 
