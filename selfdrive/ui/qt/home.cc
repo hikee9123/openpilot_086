@@ -223,7 +223,7 @@ static void handle_display_state(UIState* s, bool user_input) {
 
   if( user_input )
   {
-     //printf("touched  user_input=%d  %d  %d\n", user_input, s->awake, should_wake);
+     printf("touched  user_input=%d  awake=%d  should_wake=%d\n", user_input, s->awake, should_wake);
      s->scene.scr.nTime = s->scene.scr.autoScreenOff * 60 * 20;
   }
   else if( s->scene.scr.autoScreenOff && s->scene.scr.nTime == 0)
@@ -249,9 +249,9 @@ static void handle_display_state(UIState* s, bool user_input) {
   if (s->awake != should_wake) {
     s->awake = should_wake;
     // Hardware::set_display_power(s->awake);
-    LOGD("setting display power %d \n", s->awake);
+    printf("setting display power %d \n", s->awake);
   }
-  LOGD("handle_display_state awake = %d  user_input = %d \n", s->awake, user_input);  
+  printf("handle_display_state awake = %d  user_input = %d \n", s->awake, user_input);  
 }
 
 GLWindow::GLWindow(QWidget* parent) : brightness_filter(BACKLIGHT_OFFROAD, BACKLIGHT_TS, BACKLIGHT_DT), QOpenGLWidget(parent) {
