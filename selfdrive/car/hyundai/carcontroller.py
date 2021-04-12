@@ -37,7 +37,8 @@ class CarController():
     self.last_lead_distance = 0
 
     self.resume_cnt = 0
-    self.lkas11_cnt = 0 
+    self.lkas11_cnt = 0
+    self.scc12_cnt = 0
 
 
     self.nBlinker = 0
@@ -96,7 +97,7 @@ class CarController():
     lead_visible = c.hudControl.leadVisible
     stopping = kph_vEgo <= 1
     apply_accel = self.accel_applay(  actuators )
-    can_send = create_acc_commands(self.packer, enabled, apply_accel, frame, lead_visible, set_speed, stopping )
+    can_send = create_acc_commands(self.packer, enabled, apply_accel, frame, lead_visible, set_speed, stopping, self.scc12_cnt )
 
     str_log2 = 'accel={:.0f}  speed={:.0f} lead={} stop={:.0f}'.format( apply_accel, set_speed,  lead_visible, stopping )
     trace1.printf2( '{}'.format( str_log2 ) )     
@@ -301,6 +302,7 @@ class CarController():
 
     if frame == 0: # initialize counts from last received count signals
       self.lkas11_cnt = CS.lkas11["CF_Lkas_MsgCount"] + 1
+      self.scc12_cnt = CS.scc12["CR_VSM_Alive"] + 1 
     self.lkas11_cnt %= 0x10
 
     can_sends = []
