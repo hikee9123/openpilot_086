@@ -170,10 +170,6 @@ class CarState(CarStateBase):
       ret.stockAeb = cp.vl["SCC12"]['AEB_CmdAct'] != 0
       ret.stockFcw = cp.vl["SCC12"]['CF_VSM_Warn'] == 2
 
-    # test
-    self.TCS13_ACCEnable = cp.vl["TCS13"]['ACCEnable']
-    self.TCS13_ACC_REQ = cp.vl["TCS13"]['ACC_REQ']
-    self.TCS13_StandStill = cp.vl["TCS13"]['StandStill']
 
     #TPMS
     ret.tpms.fl = cp.vl["TPMS11"]['PRESSURE_FL']
@@ -191,7 +187,7 @@ class CarState(CarStateBase):
     self.lkas11 = copy.copy(cp_cam.vl["LKAS11"])
     self.clu11 = copy.copy(cp.vl["CLU11"])
     self.mdps12 = copy.copy(cp.vl["MDPS12"])
-    self.lfahda_mfc = copy.copy(cp.vl["LFAHDA_MFC"])
+    #self.lfahda_mfc = copy.copy(cp.vl["LFAHDA_MFC"])
     self.park_brake = cp.vl["TCS13"]['PBRAKE_ACT'] == 1
     #self.park_brake = cp.vl["CGW1"]['CF_Gway_ParkBrakeSw']
     self.steer_state = cp.vl["MDPS12"]['CF_Mdps_ToiActive']  # 0 NOT ACTIVE, 1 ACTIVE
@@ -474,29 +470,6 @@ class CarState(CarStateBase):
       ("PRESSURE_RL", "TPMS11", 0),
       ("PRESSURE_RR", "TPMS11", 0),
 
-      # 1157
-      ("HDA_USM", "LFAHDA_MFC", 0),
-      ("HDA_Active","LFAHDA_MFC", 0),
-      ("HDA_Icon_State","LFAHDA_MFC", 0),
-      ("HDA_Chime","LFAHDA_MFC", 0),
-      ("HDA_VSetReq","LFAHDA_MFC", 0),
-      ("HDA_SysWarning","LFAHDA_MFC", 0),
-      ("LFA_USM","LFAHDA_MFC", 0),
-      ("LFA_SysWarning","LFAHDA_MFC", 0),
-      ("LFA_Icon_State","LFAHDA_MFC", 0),
-      ("NEW_SIGNAL_1","LFAHDA_MFC", 0),
-
-      # 1156
-      ("Counter","HDA11_MFC", 0),
-      ("NEW_SIGNAL_1","HDA11_MFC", 0),
-      ("NEW_SIGNAL_2","HDA11_MFC", 0),
-      ("NEW_SIGNAL_3","HDA11_MFC", 0),
-      ("NEW_SIGNAL_4","HDA11_MFC", 0),
-      ("NEW_SIGNAL_5","HDA11_MFC", 0),
-      ("NEW_SIGNAL_6","HDA11_MFC", 0),
-      ("NEW_SIGNAL_7","HDA11_MFC", 0),
-      ("NEW_SIGNAL_8","HDA11_MFC", 0),
-      ("NEW_SIGNAL_9","HDA11_MFC", 0),
     ]
 
     checks = [
@@ -510,8 +483,6 @@ class CarState(CarStateBase):
       ("CGW4", 5),
       ("WHL_SPD11", 50),
       ("SAS11", 100),
-      #("HDA11_MFC", 50),
-      #("LFAHDA_MFC", 10),
     ]
 
     if not CP.openpilotLongitudinalControl:

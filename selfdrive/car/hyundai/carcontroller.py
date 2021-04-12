@@ -52,7 +52,6 @@ class CarController():
     self.timer1 = tm.CTime1000("time1")
     self.timer2 = tm.CTime1000("time2")
     self.model_speed = 0
-    self.curve_speed = 0
 
     
     # hud
@@ -89,6 +88,20 @@ class CarController():
     return  apply_accel
 
 
+  def accel_candatamake( self, enabled, c,  frame ):
+    # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
+    apply_accel = self.accel_applay(  actuators )    
+    actuators = c.actuators
+    set_speed = c.hudControl.setSpeed
+    lead_visible = c.hudControl.leadVisible
+    stopping = kph_vEgo <= 1
+    can_send = create_acc_commands(self.packer, enabled, apply_accel, frame, lead_visible, set_speed, stopping )
+
+    str_log2 = 'accel={:.0f}  speed={:.0f} lead={} stop={:.0f}'.format( apply_accel, set_speed,  lead_visible, stopping )
+    trace1.printf2( '{}'.format( str_log2 ) )     
+    return can_send
+
+
   def limit_ctrl(self, value, limit, offset ):
     p_limit = offset + limit
     m_limit = offset - limit
@@ -121,7 +134,6 @@ class CarController():
 
     # initialize to no line visible
     sys_state = 1
-
     if self.hud_timer_left and self.hud_timer_right or sys_warning:  # HUD alert only display when LKAS status is active
       if (self.steer_torque_ratio > 0.7) and (enabled or sys_warning):
         sys_state = 3
@@ -253,17 +265,17 @@ class CarController():
     pcm_cancel_cmd = c.cruiseControl.cancel
     kph_vEgo = CS.out.vEgo * CV.MS_TO_KPH
 
-    path_plan = sm['lateralPlan']
+
     self.dRel, self.vRel = SpdController.get_lead( sm )
     if self.SC is not None:
       self.model_speed = self.SC.cal_model_speed(  sm, CS.out.vEgo  )
-      self.curve_speed = self.SC.cal_curve_speed( sm, CS.out.vEgo, frame)
     else:
       self.model_speed =  0
-      self.curve_speed = 0
+
 
 
     # Steering Torque
+    path_plan = sm['lateralPlan']    
     param, dst_steer = self.steerParams_torque( CS, actuators, path_plan )
     new_steer = actuators.steer * param.STEER_MAX
     apply_steer = apply_std_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, param)
@@ -297,13 +309,9 @@ class CarController():
     if steer_req:
       can_sends.append( create_mdps12(self.packer, frame, CS.mdps12) )
 
-      
-     
-    
     
     str_log1 = 'torg:{:5.0f} gas={:.3f} brake={:.3f}'.format( apply_steer, actuators.gas, actuators.brake   )
-    str_log2 = 'acc enable={:.0f} req={:.0f} still={:.0f}'.format( CS.TCS13_ACCEnable, CS.TCS13_ACC_REQ, CS.TCS13_StandStill  )
-    #str_log2 = 'limit={:.0f} tm={:.1f} gap={:.0f}  gas={:.1f}'.format( apply_steer_limit, self.timer1.sampleTime(), CS.cruiseGapSet, CS.out.gas  )
+    str_log2 = 'limit={:.0f} tm={:.1f} gap={:.0f}  gas={:.1f}'.format( apply_steer_limit, self.timer1.sampleTime(), CS.cruiseGapSet, CS.out.gas  )
     trace1.printf( '{} {}'.format( str_log1, str_log2 ) )
 
     run_speed_ctrl = CS.acc_active and self.SC != None
@@ -329,14 +337,9 @@ class CarController():
       self.last_lead_distance = 0
     elif CP.openpilotLongitudinalControl and CS.acc_active:
       # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
-      apply_accel = self.accel_applay(  actuators )
-      set_speed = c.hudControl.setSpeed
-      lead_visible = c.hudControl.leadVisible
-      stopping = kph_vEgo <= 0
-      can_sends.append(create_acc_commands(self.packer, enabled, apply_accel, frame, lead_visible, set_speed, stopping ))
-
-      str_log2 = 'accel={:.0f}  speed={:.0f} lead={} stop={:.0f}'.format( apply_accel, set_speed,  lead_visible, stopping )
-      trace1.printf2( '{}'.format( str_log2 ) )          
+      if  frame % 2 == 0:
+        data = self.accel_candatamake( CS.acc_active, c, frame )
+        can_sends.append( data )        
     elif run_speed_ctrl and self.SC != None:
       is_sc_run = self.SC.update( CS, sm, self )
       if is_sc_run:
@@ -351,7 +354,6 @@ class CarController():
          self.resume_cnt += 1
       else:
          self.resume_cnt = 0
-
       str_log2 = 'LKAS={:.0f}  steer={:5.0f}'.format( CS.lkas_button_on,  CS.out.steeringTorque )
       trace1.printf2( '{}'.format( str_log2 ) )    
 

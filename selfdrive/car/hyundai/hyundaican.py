@@ -88,15 +88,16 @@ def create_acc_commands(packer, enabled, accel, idx, lead_visible, set_speed, st
 
   scc11_values = {
     "MainMode_ACC": 1,
-    "TauGapSet": 4,
+    "TauGapSet": 4,       # -> not xx979xxx
     "VSetDis": set_speed if enabled else 0,
     "AliveCounterACC": idx % 0x10,
+    #   "ObjValid": 1 if enabled else 0
   }
   commands.append(packer.make_can_msg("SCC11", 0, scc11_values))
 
   scc12_values = {
     "ACCMode": 1 if enabled else 0,
-    "StopReq": 1 if stopping else 0,
+    "StopReq": 1 if stopping else 0,     # -> not xx979xxx
     "aReqRaw": accel if enabled else 0,
     "aReqValue": accel if enabled else 0, # stock ramps up at 1.0/s and down at 0.5/s until it reaches aReqRaw
     "CR_VSM_Alive": idx % 0xF,
@@ -112,10 +113,11 @@ def create_acc_commands(packer, enabled, accel, idx, lead_visible, set_speed, st
     "JerkUpperLimit": 3.2 if enabled else 0, # stock usually is 1.0 but sometimes uses higher values
     "JerkLowerLimit": 0.1 if enabled else 0, # stock usually is 0.5 but sometimes uses higher values
     "ACCMode": 1 if enabled else 4, # stock will always be 4 instead of 0 after first disengage
-    "ObjGap": 3 if lead_visible else 0, # TODO: 1-5 based on distance to lead vehicle
+    "ObjGap": 3 if lead_visible else 0, # TODO: 1-5 based on distance to lead vehicle    -> not xx979xxx
   }
   commands.append(packer.make_can_msg("SCC14", 0, scc14_values))
 
+  """
   fca11_values = {
     # seems to count 2,1,0,3,2,1,0,3,2,1,0,3,2,1,0,repeat...
     # (where first value is aligned to Supplemental_Counter == 0)
@@ -125,7 +127,8 @@ def create_acc_commands(packer, enabled, accel, idx, lead_visible, set_speed, st
   }
   fca11_dat = packer.make_can_msg("FCA11", 0, fca11_values)[2]
   fca11_values["CR_FCA_ChkSum"] = 0x10 - sum([sum(divmod(i, 16)) for i in fca11_dat]) % 0x10
-  #commands.append(packer.make_can_msg("FCA11", 0, fca11_values))
+  commands.append(packer.make_can_msg("FCA11", 0, fca11_values))
+  """
 
   return commands
 
