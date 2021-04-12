@@ -464,6 +464,7 @@ class CarState(CarStateBase):
       ("Navi_SCC_Camera_Act", "SCC11", 0),
       ("Navi_SCC_Camera_Status", "SCC11", 0),
       ("ACCMode", "SCC12", 1),
+      ("CR_VSM_Alive", "SCC12", 0),
 
       ("PRESSURE_FL", "TPMS11", 0),
       ("PRESSURE_FR", "TPMS11", 0),
