@@ -90,7 +90,7 @@ class CarController():
     return  apply_accel
 
 
-  def accel_candatamake( self, enabled, c,  frame, kph_vEgo ):
+  def accel_candatamake( self, enabled, c,  kph_vEgo ):
     # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
         
     actuators = c.actuators
@@ -98,7 +98,7 @@ class CarController():
     lead_visible = c.hudControl.leadVisible
     stopping = kph_vEgo <= 1
     apply_accel = self.accel_applay(  actuators )
-    can_send = create_acc_commands(self.packer, enabled, apply_accel, self.scc11_cnt, lead_visible, set_speed, stopping, self.scc12_cnt )
+    can_send = create_acc_commands(self.packer, enabled, apply_accel, self.scc12_cnt, lead_visible, set_speed, stopping  )
 
     str_log2 = 'accel={:.0f}  speed={:.0f} lead={} stop={:.0f}'.format( apply_accel, set_speed,  lead_visible, stopping )
     trace1.printf2( '{}'.format( str_log2 ) )     
@@ -343,7 +343,7 @@ class CarController():
     elif CP.openpilotLongitudinalControl and CS.acc_active:
       # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
       if  frame % 2 == 0:
-        data = self.accel_candatamake( CS.acc_active, c, frame, kph_vEgo )
+        data = self.accel_candatamake( CS.acc_active, c,  kph_vEgo )
         can_sends.append( data )
         self.scc12_cnt += 1
         self.scc11_cnt += 1
