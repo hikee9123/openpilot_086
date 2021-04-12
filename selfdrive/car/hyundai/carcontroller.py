@@ -343,7 +343,7 @@ class CarController():
     elif CP.openpilotLongitudinalControl and CS.acc_active:
       # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
       if  frame % 2 == 0:
-        data = self.accel_candatamake( CS.acc_active, c, frame )
+        data = self.accel_candatamake( CS.acc_active, c, frame, kph_vEgo )
         can_sends.append( data )
         self.scc12_cnt += 1
         self.scc11_cnt += 1
