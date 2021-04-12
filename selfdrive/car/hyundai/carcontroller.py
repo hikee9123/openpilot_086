@@ -38,6 +38,7 @@ class CarController():
 
     self.resume_cnt = 0
     self.lkas11_cnt = 0
+    self.scc11_cnt = 0
     self.scc12_cnt = 0
 
 
@@ -97,7 +98,7 @@ class CarController():
     lead_visible = c.hudControl.leadVisible
     stopping = kph_vEgo <= 1
     apply_accel = self.accel_applay(  actuators )
-    can_send = create_acc_commands(self.packer, enabled, apply_accel, frame, lead_visible, set_speed, stopping, self.scc12_cnt )
+    can_send = create_acc_commands(self.packer, enabled, apply_accel, self.scc11_cnt, lead_visible, set_speed, stopping, self.scc12_cnt )
 
     str_log2 = 'accel={:.0f}  speed={:.0f} lead={} stop={:.0f}'.format( apply_accel, set_speed,  lead_visible, stopping )
     trace1.printf2( '{}'.format( str_log2 ) )     
@@ -303,6 +304,7 @@ class CarController():
     if frame == 0: # initialize counts from last received count signals
       self.lkas11_cnt = CS.lkas11["CF_Lkas_MsgCount"] + 1
       self.scc12_cnt = CS.scc12["CR_VSM_Alive"] + 1 
+      self.scc11_cnt = 0
     self.lkas11_cnt %= 0x10
 
     can_sends = []
@@ -342,7 +344,9 @@ class CarController():
       # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
       if  frame % 2 == 0:
         data = self.accel_candatamake( CS.acc_active, c, frame )
-        can_sends.append( data )        
+        can_sends.append( data )
+        self.scc12_cnt += 1
+        self.scc11_cnt += 1
     elif run_speed_ctrl and self.SC != None:
       is_sc_run = self.SC.update( CS, sm, self )
       if is_sc_run:
