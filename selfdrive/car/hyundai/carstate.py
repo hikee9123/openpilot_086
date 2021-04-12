@@ -187,6 +187,8 @@ class CarState(CarStateBase):
     self.lkas11 = copy.copy(cp_cam.vl["LKAS11"])
     self.clu11 = copy.copy(cp.vl["CLU11"])
     self.mdps12 = copy.copy(cp.vl["MDPS12"])
+    self.scc11 = copy.copy(cp.vl["SCC11"])
+    self.scc12 = copy.copy(cp.vl["SCC12"])
     #self.lfahda_mfc = copy.copy(cp.vl["LFAHDA_MFC"])
     self.park_brake = cp.vl["TCS13"]['PBRAKE_ACT'] == 1
     #self.park_brake = cp.vl["CGW1"]['CF_Gway_ParkBrakeSw']
