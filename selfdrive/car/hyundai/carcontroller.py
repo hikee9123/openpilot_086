@@ -90,7 +90,7 @@ class CarController():
     return  apply_accel
 
 
-  def accel_candatamake( self, enabled, c,  frame ):
+  def accel_candatamake( self, enabled, c,  frame, kph_vEgo ):
     # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
         
     actuators = c.actuators
