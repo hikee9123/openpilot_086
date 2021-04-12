@@ -104,7 +104,8 @@ class CarState(CarStateBase):
 
     # cruise state
     if self.CP.openpilotLongitudinalControl:
-      self.main_on = cp.vl["TCS13"]['ACCEnable'] == 0
+      #self.main_on = cp.vl["TCS13"]['ACCEnable'] == 0
+      self.main_on = (cp.vl["SCC11"]["MainMode_ACC"] != 0)
       self.acc_active = cp.vl["TCS13"]['ACC_REQ'] == 1
       ret.cruiseState.standstill = cp.vl["TCS13"]['StandStill'] == 1
     else:    
@@ -117,11 +118,11 @@ class CarState(CarStateBase):
     self.update_atom( cp, cp_cam )
 
     if self.time_delay_int <= 0:
-      if self.gearShifter != GearShifter.drive or ret.doorOpen  or ret.seatbeltUnlatched:
-        self.time_delay_int = 200
+      if self.gearShifter != GearShifter.drive or ret.doorOpen  or ret.seatbeltUnlatched or self.cruiseState_modeSel == 3:
+        self.time_delay_int = 500
         ret.cruiseState.available = False
       else:
-       ret.cruiseState.available = self.main_on and self.cruiseState_modeSel != 3
+       ret.cruiseState.available = self.main_on
     else:
       self.time_delay_int -= 1
       ret.cruiseState.available = False
