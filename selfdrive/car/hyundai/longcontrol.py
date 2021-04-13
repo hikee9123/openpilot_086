@@ -22,10 +22,10 @@ class CLongControl():
     def accel_hysteresis( self, accel, accel_steady):
         # for small accel oscillations within ACCEL_HYST_GAP, don't change the accel command
         if accel > accel_steady + self.p.ACCEL_HYST_GAP:
-        accel_steady = accel - self.p.ACCEL_HYST_GAP
+          accel_steady = accel - self.p.ACCEL_HYST_GAP
         elif accel < accel_steady - self.p.ACCEL_HYST_GAP:
-        accel_steady = accel + self.p.ACCEL_HYST_GAP
-        accel = accel_steady
+          accel_steady = accel + self.p.ACCEL_HYST_GAP
+          accel = accel_steady
 
         return accel, accel_steady
 
