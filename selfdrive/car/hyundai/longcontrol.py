@@ -15,7 +15,7 @@ import common.log as trace1
 
 class CLongControl():
     def __init__(self, p ):
-    self.p = p
+        self.p = p
         
 
 
