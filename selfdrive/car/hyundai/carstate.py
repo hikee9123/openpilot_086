@@ -177,11 +177,7 @@ class CarState(CarStateBase):
     ret.tpms.rl = cp.vl["TPMS11"]['PRESSURE_RL']
     ret.tpms.rr = cp.vl["TPMS11"]['PRESSURE_RR']
 
-    self.ACC_ObjStatus = cp.vl["SCC11"]['ACC_ObjStatus']
-    self.ACC_ObjLatPos = cp.vl["SCC11"]['ACC_ObjLatPos']
 
-    self.Navi_SCC_Camera_Act = cp.vl["SCC11"]['Navi_SCC_Camera_Act']
-    self.Navi_SCC_Camera_Status = cp.vl["SCC11"]['Navi_SCC_Camera_Status']
 
     # save the entire LKAS11 and CLU11
     self.lkas11 = copy.copy(cp_cam.vl["LKAS11"])
@@ -189,12 +185,10 @@ class CarState(CarStateBase):
     self.mdps12 = copy.copy(cp.vl["MDPS12"])
     self.scc11 = copy.copy(cp.vl["SCC11"])
     self.scc12 = copy.copy(cp.vl["SCC12"])
-    #self.lfahda_mfc = copy.copy(cp.vl["LFAHDA_MFC"])
+  
     self.park_brake = cp.vl["TCS13"]['PBRAKE_ACT'] == 1
-    #self.park_brake = cp.vl["CGW1"]['CF_Gway_ParkBrakeSw']
     self.steer_state = cp.vl["MDPS12"]['CF_Mdps_ToiActive']  # 0 NOT ACTIVE, 1 ACTIVE
     self.lead_distance = cp.vl["SCC11"]['ACC_ObjDist']
-
     self.brake_hold = cp.vl["TCS15"]['AVH_LAMP'] # 0 OFF, 1 ERROR, 2 ACTIVE, 3 READY
     self.brake_error = cp.vl["TCS13"]['ACCEnable'] # 0 ACC CONTROL ENABLED, 1-3 ACC CONTROL DISABLED
     return ret
@@ -465,8 +459,42 @@ class CarState(CarStateBase):
       ("TauGapSet", "SCC11", 4),
       ("Navi_SCC_Camera_Act", "SCC11", 0),
       ("Navi_SCC_Camera_Status", "SCC11", 0),
-      ("ACCMode", "SCC12", 1),
+      ("AliveCounterACC", "SCC11", 0),  # xx
+      ("ObjValid", "SCC11", 0),   # xx
+      ("DriverAlertDisplay", "SCC11", 0),  # xx
+
+
+      ("ACCMode", "SCC12", 0),
+      ("CF_VSM_Prefill", "SCC12", 0),
+      ("CF_VSM_DecCmdAct", "SCC12", 0),
+      ("CF_VSM_HBACmd", "SCC12", 0),
+      ("CF_VSM_Warn", "SCC12", 0),
+      ("CF_VSM_Stat", "SCC12", 0),
+      ("CF_VSM_BeltCmd", "SCC12", 0),
+      ("ACCFailInfo", "SCC12", 0),
+      ("StopReq", "SCC12", 0),
+      ("CR_VSM_DecCmd", "SCC12", 0),
+      ("aReqRaw", "SCC12", 0), #aReqMax
+      ("TakeOverReq", "SCC12", 0),
+      ("PreFill", "SCC12", 0),
+      ("aReqValue", "SCC12", 0), #aReqMin
+      ("CF_VSM_ConfMode", "SCC12", 1),
+      ("AEB_Failinfo", "SCC12", 0),
+      ("AEB_Status", "SCC12", 2),
+      ("AEB_CmdAct", "SCC12", 0),
+      ("AEB_StopReq", "SCC12", 0),
       ("CR_VSM_Alive", "SCC12", 0),
+      ("CR_VSM_ChkSum", "SCC12", 0),
+
+      ("SCCDrvModeRValue", "SCC13", 2),
+      ("SCC_Equip", "SCC13", 1),
+      ("AebDrvSetStatus", "SCC13", 0),
+
+      ("JerkUpperLimit", "SCC14", 0),
+      ("JerkLowerLimit", "SCC14", 0),
+      ("SCCMode2", "SCC14", 0),
+      ("ComfortBandUpper", "SCC14", 0),
+      ("ComfortBandLower", "SCC14", 0),
 
       ("PRESSURE_FL", "TPMS11", 0),
       ("PRESSURE_FR", "TPMS11", 0),

@@ -12,6 +12,9 @@ from selfdrive.car.hyundai.spdcontroller  import SpdController
 from selfdrive.car.hyundai.spdctrlSlow  import SpdctrlSlow
 from selfdrive.car.hyundai.spdctrlNormal  import SpdctrlNormal
 
+# long controller
+from selfdrive.car.hyundai.longcontrol  import CLongControl
+
 from common.params import Params
 import common.log as trace1
 import common.CTime1000 as tm
@@ -38,7 +41,6 @@ class CarController():
 
     self.resume_cnt = 0
     self.lkas11_cnt = 0
-    self.scc11_cnt = 0
     self.scc12_cnt = 0
 
 
@@ -68,41 +70,10 @@ class CarController():
     self.SC = SpdctrlSlow()
     self.kph_vEgo_old = 0
 
-    # ascc
-    self.accel_steady = 0
+    # long control
+    self.longCtrl = CLongControl(self.p)
 
 
-  def accel_hysteresis( self, accel, accel_steady):
-    # for small accel oscillations within ACCEL_HYST_GAP, don't change the accel command
-    if accel > accel_steady + self.p.ACCEL_HYST_GAP:
-      accel_steady = accel - self.p.ACCEL_HYST_GAP
-    elif accel < accel_steady - self.p.ACCEL_HYST_GAP:
-      accel_steady = accel + self.p.ACCEL_HYST_GAP
-    accel = accel_steady
-
-    return accel, accel_steady
-
-  def accel_applay( self, actuators):
-    # gas and brake
-    apply_accel = actuators.gas - actuators.brake
-    apply_accel, self.accel_steady = self.accel_hysteresis(apply_accel, self.accel_steady)
-    apply_accel = clip(apply_accel * self.p.ACCEL_SCALE, self.p.ACCEL_MIN, self.p.ACCEL_MAX)
-    return  apply_accel
-
-
-  def accel_candatamake( self, enabled, c,  kph_vEgo ):
-    # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
-        
-    actuators = c.actuators
-    set_speed = c.hudControl.setSpeed
-    lead_visible = c.hudControl.leadVisible
-    stopping = kph_vEgo <= 1
-    apply_accel = self.accel_applay(  actuators )
-    can_send = create_acc_commands(self.packer, enabled, apply_accel, self.scc12_cnt, lead_visible, set_speed, stopping  )
-
-    str_log2 = 'accel={:.0f}  speed={:.0f} lead={} stop={:.0f}'.format( apply_accel, set_speed,  lead_visible, stopping )
-    trace1.printf2( '{}'.format( str_log2 ) )     
-    return can_send
 
 
   def limit_ctrl(self, value, limit, offset ):
@@ -175,10 +146,7 @@ class CarController():
     MAX = interp( v_ego_kph, self.cv_KPH, self.steerMAX )
     UP  = interp( v_ego_kph, self.cv_KPH, self.steerdUP )
     DN  = interp( v_ego_kph, self.cv_KPH, self.steerdDN )
-
-     
     return MAX, UP, DN    
-
 
 
   def steerParams_torque(self, CS, actuators, path_plan ):
@@ -304,8 +272,9 @@ class CarController():
     if frame == 0: # initialize counts from last received count signals
       self.lkas11_cnt = CS.lkas11["CF_Lkas_MsgCount"] + 1
       self.scc12_cnt = CS.scc12["CR_VSM_Alive"] + 1 
-      self.scc11_cnt = 0
+
     self.lkas11_cnt %= 0x10
+    self.scc12_cnt %= 0xF
 
     can_sends = []
     can_sends.append( create_lkas11(self.packer, self.lkas11_cnt, self.car_fingerprint, apply_steer, steer_req,
@@ -343,10 +312,9 @@ class CarController():
     elif CP.openpilotLongitudinalControl and CS.acc_active:
       # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
       if  frame % 2 == 0:
-        data = self.accel_candatamake( CS.acc_active, c,  kph_vEgo )
+        data = self.longCtrl.update( CS.acc_active, c,  kph_vEgo, frame, self.scc12_cnt )
         can_sends.append( data )
         self.scc12_cnt += 1
-        self.scc11_cnt += 1
     elif run_speed_ctrl and self.SC != None:
       is_sc_run = self.SC.update( CS, sm, self )
       if is_sc_run:

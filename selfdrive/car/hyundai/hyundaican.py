@@ -83,30 +83,31 @@ def create_lfahda_mfc(packer, enabled, hda_set_speed=0):
   }
   return packer.make_can_msg("LFAHDA_MFC", 0, values)
 
-def create_acc_commands(packer, enabled, accel, idx, lead_visible, set_speed, stopping ):
+def create_acc_commands(packer, enabled, accel, idx, lead_visible, set_speed, stopping, scc12_cnt ):
   commands = []
 
   scc11_values = {
     "MainMode_ACC": 1,
-    "TauGapSet": 4,       # -> not xx979xxx
+    #"TauGapSet": 4,       # -> not xx979xxx
     "VSetDis": set_speed if enabled else 0,
     "AliveCounterACC": idx % 0x10,
-    #   "ObjValid": 1 if enabled else 0
+    "ObjValid": 1 if enabled else 0   # -> xx979xx 
   }
   commands.append(packer.make_can_msg("SCC11", 0, scc11_values))
 
   scc12_values = {
     "ACCMode": 1 if enabled else 0,
-    "StopReq": 1 if stopping else 0,     # -> not xx979xxx
+    #"StopReq": 1 if stopping else 0,     # -> not xx979xxx
     "aReqRaw": accel if enabled else 0,
     "aReqValue": accel if enabled else 0, # stock ramps up at 1.0/s and down at 0.5/s until it reaches aReqRaw
-    "CR_VSM_Alive": idx % 0xF,
+    "CR_VSM_Alive": scc12_cnt % 0xF,
   }
   scc12_dat = packer.make_can_msg("SCC12", 0, scc12_values)[2]
   scc12_values["CR_VSM_ChkSum"] = 0x10 - sum([sum(divmod(i, 16)) for i in scc12_dat]) % 0x10
 
   commands.append(packer.make_can_msg("SCC12", 0, scc12_values))
 
+  """
   scc14_values = {
     "ComfortBandUpper": 0.24, # stock usually is 0 but sometimes uses higher values
     "ComfortBandLower": 0.24, # stock usually is 0 but sometimes uses higher values
@@ -117,7 +118,6 @@ def create_acc_commands(packer, enabled, accel, idx, lead_visible, set_speed, st
   }
   commands.append(packer.make_can_msg("SCC14", 0, scc14_values))
 
-  """
   fca11_values = {
     # seems to count 2,1,0,3,2,1,0,3,2,1,0,3,2,1,0,repeat...
     # (where first value is aligned to Supplemental_Counter == 0)
