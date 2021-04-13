@@ -38,14 +38,14 @@ class CLongControl():
         return  apply_accel
 
 
-    def update( self, enabled, c, kph_vEgo, frame, scc12_cnt ):
+    def update( self, packer, enabled, c, kph_vEgo, frame, scc12_cnt ):
         # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
         actuators = c.actuators
         set_speed = c.hudControl.setSpeed
         lead_visible = c.hudControl.leadVisible
         stopping = kph_vEgo <= 1
         apply_accel = self.accel_applay(  actuators )
-        can_send = create_acc_commands(self.packer, enabled, apply_accel, frame, lead_visible, set_speed, stopping, scc12_cnt  )
+        can_send = create_acc_commands( packer, enabled, apply_accel, frame, lead_visible, set_speed, stopping, scc12_cnt  )
 
         str_log2 = 'accel={:.0f}  speed={:.0f} lead={} stop={:.0f}'.format( apply_accel, set_speed,  lead_visible, stopping )
         trace1.printf2( '{}'.format( str_log2 ) )     
