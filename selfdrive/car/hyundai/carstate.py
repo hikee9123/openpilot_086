@@ -177,7 +177,9 @@ class CarState(CarStateBase):
     ret.tpms.rl = cp.vl["TPMS11"]['PRESSURE_RL']
     ret.tpms.rr = cp.vl["TPMS11"]['PRESSURE_RR']
 
-
+    # test
+    self.aReqRaw = cp.vl["SCC12"]["aReqRaw"]
+    self.aReqValue = cp.vl["SCC12"]["aReqValue"]
 
     # save the entire LKAS11 and CLU11
     self.lkas11 = copy.copy(cp_cam.vl["LKAS11"])
@@ -191,6 +193,10 @@ class CarState(CarStateBase):
     self.lead_distance = cp.vl["SCC11"]['ACC_ObjDist']
     self.brake_hold = cp.vl["TCS15"]['AVH_LAMP'] # 0 OFF, 1 ERROR, 2 ACTIVE, 3 READY
     self.brake_error = cp.vl["TCS13"]['ACCEnable'] # 0 ACC CONTROL ENABLED, 1-3 ACC CONTROL DISABLED
+
+
+
+
     return ret
 
 

@@ -367,7 +367,7 @@ void GLWindow::wake() {
 }
 
 
-
+//  atom
 void GLWindow::ScreenAwake() 
 {
   const bool draw_alerts = ui_state.scene.started;

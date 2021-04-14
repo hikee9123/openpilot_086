@@ -41,7 +41,7 @@ class CarController():
 
     self.resume_cnt = 0
     self.lkas11_cnt = 0
-    self.scc12_cnt = 0
+
 
 
     self.nBlinker = 0
@@ -271,10 +271,10 @@ class CarController():
 
     if frame == 0: # initialize counts from last received count signals
       self.lkas11_cnt = CS.lkas11["CF_Lkas_MsgCount"] + 1
-      self.scc12_cnt = CS.scc12["CR_VSM_Alive"] + 1 
+      self.longCtrl.reset(CS)
 
     self.lkas11_cnt %= 0x10
-    self.scc12_cnt %= 0xF
+
 
     can_sends = []
     can_sends.append( create_lkas11(self.packer, self.lkas11_cnt, self.car_fingerprint, apply_steer, steer_req,
@@ -286,7 +286,9 @@ class CarController():
     
     str_log1 = 'torg:{:5.0f} gas={:.3f} brake={:.3f}'.format( apply_steer, actuators.gas, actuators.brake   )
     str_log2 = 'limit={:.0f} tm={:.1f} gap={:.0f}  gas={:.1f}'.format( apply_steer_limit, self.timer1.sampleTime(), CS.cruiseGapSet, CS.out.gas  )
-    trace1.printf( '{} {}'.format( str_log1, str_log2 ) )
+    str_log3 = '{:.2f} {:.2f}'.format( CS.aReqRaw, CS.aReqValue )
+
+    trace1.printf( '{} {} {}'.format( str_log1, str_log2, str_log3 ) )
 
     run_speed_ctrl = CS.acc_active and self.SC != None
 
@@ -312,9 +314,9 @@ class CarController():
     elif CP.openpilotLongitudinalControl and CS.acc_active:
       # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
       if  frame % 2 == 0:
-        data = self.longCtrl.update( self.packer, CS.acc_active, c,  kph_vEgo, frame, self.scc12_cnt )
+        data = self.longCtrl.update( self.packer, CS, c, frame )
         can_sends.append( data )
-        self.scc12_cnt += 1
+
     elif run_speed_ctrl and self.SC != None:
       is_sc_run = self.SC.update( CS, sm, self )
       if is_sc_run:
