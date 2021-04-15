@@ -1,4 +1,4 @@
-﻿import binascii
+import binascii
 import itertools
 import os
 import re

@@ -1,4 +1,4 @@
-﻿"""Install exception handler for process crash."""
+"""Install exception handler for process crash."""
 import os
 import sys
 import threading

@@ -1,4 +1,4 @@
-﻿#include "messaging.hpp"
+#include "messaging.hpp"
 #include "common/util.h"
 #include "common/swaglog.h"
 

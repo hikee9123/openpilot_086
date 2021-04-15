@@ -1,4 +1,4 @@
-﻿import random
+import random
 
 from cereal import log
 from selfdrive.hardware.base import HardwareBase, ThermalConfig
