@@ -248,7 +248,7 @@ static void ui_draw_world(UIState *s) {
 }
 
 static void ui_draw_vision_maxspeed(UIState *s) {
-  const int SET_SPEED_NA = 255;
+  //const int SET_SPEED_NA = 255;
   float maxspeed = s->scene.controls_state.getVCruise();
   //const bool is_cruise_set = maxspeed != 0 && maxspeed != SET_SPEED_NA;
   auto cruiseState = s->scene.car_state.getCruiseState();
