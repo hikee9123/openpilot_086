@@ -4,7 +4,7 @@ import numpy as np
 
 
 from selfdrive.config import Conversions as CV
-from selfdrive.car.hyundai.hyundaican import create_acc_commands, create_scc11, create_scc12
+from selfdrive.car.hyundai.hyundaican import create_scc11, create_scc12
 from common.numpy_fast import clip, interp
 
 
@@ -41,6 +41,7 @@ class CLongControl():
     return  apply_accel
 
 
+
   def update( self, packer, CS, c, frame ):
     enabled = CS.acc_active
     kph_vEgo = CS.out.vEgo * CV.MS_TO_KPH    
@@ -51,7 +52,6 @@ class CLongControl():
     stopping = kph_vEgo <= 1
     apply_accel = self.accel_applay(  actuators )
     scc_live = True
-    #can_send = create_acc_commands( packer, enabled, apply_accel, frame, lead_visible, set_speed, stopping, self.scc12_cnt  )
 
     can_sends = create_scc12(packer, apply_accel, enabled, self.scc12_cnt, scc_live, CS.scc12)
     can_sends.append( create_scc11(packer, frame, enabled, set_speed, lead_visible, scc_live, CS.scc11) )

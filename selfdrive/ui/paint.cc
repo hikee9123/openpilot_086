@@ -97,10 +97,14 @@ static void draw_lead(UIState *s, int idx) {
     fillAlpha = (int)(fmin(fillAlpha, 255));
   }
 
+  NVGcolor color = COLOR_YELLOW;
+  if(lead.getRadar())
+    color = nvgRGBA(112, 128, 255, 255);
+
   float sz = std::clamp((25 * 30) / (d_rel / 3 + 30), 15.0f, 30.0f) * s->zoom;
   x = std::clamp(x, 0.f, s->viz_rect.right() - sz / 2);
   y = std::fmin(s->viz_rect.bottom() - sz * .6, y);
-  draw_chevron(s, x, y, sz, nvgRGBA(201, 34, 49, fillAlpha), COLOR_YELLOW);
+  draw_chevron(s, x, y, sz, nvgRGBA(201, 34, 49, fillAlpha), color);
 }
 
 static void ui_draw_line(UIState *s, const line_vertices_data &vd, NVGcolor *color, NVGpaint *paint) {

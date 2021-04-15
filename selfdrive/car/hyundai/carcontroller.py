@@ -1,7 +1,7 @@
-from cereal import car, log
+﻿from cereal import car, log
 from common.realtime import DT_CTRL
 from selfdrive.car import apply_std_steer_torque_limits
-from selfdrive.car.hyundai.hyundaican import create_lkas11, create_clu11, create_lfahda_mfc, create_mdps12, create_acc_commands
+from selfdrive.car.hyundai.hyundaican import create_lkas11, create_clu11, create_lfahda_mfc, create_mdps12
 from selfdrive.car.hyundai.values import Buttons, CarControllerParams, CAR, FEATURES
 from opendbc.can.packer import CANPacker
 from selfdrive.config import Conversions as CV
@@ -283,12 +283,15 @@ class CarController():
     if steer_req:
       can_sends.append( create_mdps12(self.packer, frame, CS.mdps12) )
 
+    if not CP.openpilotLongitudinalControl:
+      accel_applay = self.longCtrl.accel_applay( self, actuators):
+    else:
+      accel_applay = 0
     
-    str_log1 = 'torg:{:5.0f} gas={:.3f} brake={:.3f}'.format( apply_steer, actuators.gas, actuators.brake   )
-    str_log2 = 'limit={:.0f} tm={:.1f} gap={:.0f}  gas={:.1f}'.format( apply_steer_limit, self.timer1.sampleTime(), CS.cruiseGapSet, CS.out.gas  )
-    str_log3 = '{:.2f} {:.2f}'.format( CS.aReqRaw, CS.aReqValue )
+    str_log1 = 'torg:{:5.0f} gas={:.3f} brake={:.3f}'.format( apply_steer,  actuators.gas, actuators.brake   )
+    str_log2 = '{:.3f} {:.3f}'.format( accel_applay, CS.aReqValue )
 
-    trace1.printf( '{} {} {}'.format( str_log1, str_log2, str_log3 ) )
+    trace1.printf( '{} {}'.format( str_log1, str_log2 ) )
 
     run_speed_ctrl = CS.acc_active and self.SC != None
 
@@ -331,8 +334,9 @@ class CarController():
          self.resume_cnt += 1
       else:
          self.resume_cnt = 0
-      str_log2 = 'LKAS={:.0f}  steer={:5.0f}'.format( CS.lkas_button_on,  CS.out.steeringTorque )
-      trace1.printf2( '{}'.format( str_log2 ) )    
+      str_log1 = 'LKAS={:.0f}  steer={:5.0f}'.format( CS.lkas_button_on,  CS.out.steeringTorque )
+      str_log2 = 'limit={:.0f} tm={:.1f} gap={:.0f}  gas={:.1f}'.format( apply_steer_limit, self.timer1.sampleTime(), CS.cruiseGapSet, CS.out.gas  )               
+      trace1.printf2( '{} {}'.format( str_log1, str_log2 ) )    
 
 
 
