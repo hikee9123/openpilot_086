@@ -251,8 +251,8 @@ static void ui_draw_vision_maxspeed(UIState *s) {
   const int SET_SPEED_NA = 255;
   float maxspeed = s->scene.controls_state.getVCruise();
   //const bool is_cruise_set = maxspeed != 0 && maxspeed != SET_SPEED_NA;
-
-  bool is_cruise_set = s->scene.controls_state.getAccActive();
+  auto cruiseState = s->scene.car_state.getCruiseState();
+  bool is_cruise_set = cruiseState.getAccActive();
 
   if (is_cruise_set && !s->scene.is_metric) { maxspeed *= 0.6225; }
 
