@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-﻿def phone(String ip, String step_label, String cmd) {
-=======
 def phone(String ip, String step_label, String cmd) {
->>>>>>> e1971ed10f0a8d09d76d258271bc608eaf4488c2
   withCredentials([file(credentialsId: 'id_rsa', variable: 'key_file')]) {
     def ssh_cmd = """
 ssh -tt -o StrictHostKeyChecking=no -i ${key_file} -p 8022 'comma@${ip}' /usr/bin/bash <<'EOF'
@@ -131,12 +127,7 @@ pipeline {
                 stage('Devel Tests') {
                   steps {
                     phone_steps("eon-build", [
-<<<<<<< HEAD
                       ["build devel", "cd release && SCONS_CACHE=1 DEVEL_TEST=1 ./build_devel.sh"],
-=======
-                      ["build", "SCONS_CACHE=1 scons -j4"],
-                      ["test athena", "nosetests -s selfdrive/athena/tests/test_athenad_old.py"],
->>>>>>> e1971ed10f0a8d09d76d258271bc608eaf4488c2
                       ["test manager", "python selfdrive/manager/test/test_manager.py"],
                       ["onroad tests", "cd selfdrive/test/ && ./test_onroad.py"],
                       ["test car interfaces", "cd selfdrive/car/tests/ && ./test_car_interfaces.py"],

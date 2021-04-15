@@ -25,8 +25,6 @@ from selfdrive.version import get_git_branch, terms_version, training_version
 
 FW_SIGNATURE = get_expected_signature()
 
-DISABLE_LTE_ONROAD = os.path.exists("/persist/disable_lte_onroad") or TICI
-
 ThermalStatus = log.DeviceState.ThermalStatus
 NetworkType = log.DeviceState.NetworkType
 NetworkStrength = log.DeviceState.NetworkStrength
@@ -363,7 +361,7 @@ def thermald_thread():
       should_start = all(startup_conditions.values())
 
     if should_start != should_start_prev or (count == 0):
-          params.put_bool("IsOffroad", not should_start)
+      params.put_bool("IsOffroad", not should_start)
       HARDWARE.set_power_save(not should_start)
       if TICI:
         fxn = "stop" if should_start else "start"

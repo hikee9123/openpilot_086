@@ -170,7 +170,7 @@ class CarController():
 
              
     if abs(CS.out.steeringAngleDeg) >= CS.CP.maxSteeringAngleDeg: # and CS.out.steeringPressed:
-          sec_mval = 0.5  # 오파 => 운전자.  (sec)
+      sec_mval = 0.5  # 오파 => 운전자.  (sec)
       sec_pval = 10   #  운전자 => 오파  (sec)
       self.timer1.startTime( 5000 )
       self.steer_torque_over_timer = 50
@@ -312,7 +312,7 @@ class CarController():
     elif self.last_lead_distance != 0:
       self.last_lead_distance = 0
     elif CP.openpilotLongitudinalControl and CS.acc_active:
-          # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
+      # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
       if  frame % 2 == 0:
         data = self.longCtrl.update( self.packer, CS, c, frame )
         can_sends.append( data )

@@ -119,7 +119,7 @@ class CarState(CarStateBase):
 
     if self.time_delay_int <= 0:
       if self.gearShifter != GearShifter.drive or ret.doorOpen  or ret.seatbeltUnlatched or self.cruiseState_modeSel == 3:
-            self.time_delay_int = 500
+        self.time_delay_int = 500
         ret.cruiseState.available = False
       else:
        ret.cruiseState.available = self.main_on
@@ -520,8 +520,6 @@ class CarState(CarStateBase):
       ("CGW4", 5),
       ("WHL_SPD11", 50),
       ("SAS11", 100),
-      #("HDA11_MFC", 50),
-      #("LFAHDA_MFC", 10),
     ]
 
     if not CP.openpilotLongitudinalControl:

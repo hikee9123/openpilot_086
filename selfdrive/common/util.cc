@@ -3,8 +3,6 @@
 
 #include "common/util.h"
 
-#include "common/util.h"
-
 #ifdef __linux__
 #include <sys/prctl.h>
 #include <sys/syscall.h>
