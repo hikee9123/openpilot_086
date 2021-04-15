@@ -213,7 +213,8 @@ struct CarState {
     nonAdaptive @5 :Bool;
 
     modeSel @6 :Int16;
-    cruiseSwState @7 :Int16;    
+    cruiseSwState @7 :Int16;
+    accActive @ :Int16;
   }
 
   enum GearShifter {
