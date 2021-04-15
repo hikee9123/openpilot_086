@@ -20,6 +20,12 @@ class CarControllerParams:
     self.STEER_DRIVER_FACTOR = 1
 
 
+    # Accel limits
+    self.ACCEL_HYST_GAP = 0.02  # don't change accel command for small oscilalitons within this value
+    self.ACCEL_MAX = 1.5  # 1.5 m/s2
+    self.ACCEL_MIN = -3.9  # 3   m/s2
+    self.ACCEL_SCALE = 3.0
+
 class CAR:
   # Hyundai
   ELANTRA = "HYUNDAI ELANTRA LIMITED ULTIMATE 2017"
@@ -277,11 +283,11 @@ FW_VERSIONS = {
     ],
     (Ecu.engine, 0x7e0, None): [
       b'\xf1\x81606G3051\x00\x00\x00\x00\x00\x00\x00\x00',
-      b'\xf1\x81606EA051\x00\x00\x00\x00\x00\x00\x00\x00',      
+      b'\xf1\x81606EA051\x00\x00\x00\x00\x00\x00\x00\x00',
     ],
     (Ecu.eps, 0x7d4, None): [
       b'\xf1\x00TM  MDPS C 1.00 1.01 56340-S2000 9129',
-      b'\xf1\x00TM  MDPS C 1.00 1.00 56340-S2000 8409',      
+      b'\xf1\x00TM  MDPS C 1.00 1.00 56340-S2000 8409',
     ],
     (Ecu.fwdCamera, 0x7c4, None): [
       b'\xf1\x00TM  MFC  AT USA LHD 1.00 1.00 99211-S2000 180409',

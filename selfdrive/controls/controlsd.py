@@ -50,7 +50,7 @@ EventName = car.CarEvent.EventName
 
 class Controls:
   def __init__(self, sm=None, pm=None, can_sock=None):
-    config_realtime_process(3, Priority.CTRL_HIGH)
+    config_realtime_process(4 if TICI else 3, Priority.CTRL_HIGH)
 
     # Setup sockets
     self.pm = pm
@@ -60,8 +60,8 @@ class Controls:
 
     self.sm = sm
     if self.sm is None:
-      ignore = ['ubloxRaw', 'driverCameraState', 'managerState'] if SIMULATION else None
-      self.sm = messaging.SubMaster(['deviceState', 'pandaState', 'modelV2', 'liveCalibration', 'ubloxRaw',
+      ignore = ['driverCameraState', 'managerState'] if SIMULATION else None
+      self.sm = messaging.SubMaster(['deviceState', 'pandaState', 'modelV2', 'liveCalibration',
                                      'driverMonitoringState', 'longitudinalPlan', 'lateralPlan', 'liveLocationKalman',
                                      'roadCameraState', 'driverCameraState', 'managerState', 'liveParameters', 'radarState'], ignore_alive=ignore)
 
@@ -416,8 +416,7 @@ class Controls:
     v_acc_sol = long_plan.vStart + dt * (a_acc_sol + long_plan.aStart) / 2.0
 
     # Gas/Brake PID loop
-    if self.CP.openpilotLongitudinalControl:
-      actuators.gas, actuators.brake = self.LoC.update(self.active, CS, v_acc_sol, long_plan.vTargetFuture, a_acc_sol, self.CP)
+    actuators.gas, actuators.brake = self.LoC.update(self.active, CS, v_acc_sol, long_plan.vTargetFuture, a_acc_sol, self.CP)
 
     # Steering PID loop and lateral MPC
     actuators.steer, actuators.steeringAngleDeg, lac_log = self.LaC.update(self.active, CS, self.CP, self.VM, params, lat_plan)

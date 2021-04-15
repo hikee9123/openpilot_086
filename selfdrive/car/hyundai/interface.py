@@ -291,6 +291,28 @@ class CarInterface(CarInterfaceBase):
 
     ret.enableCamera = True
 
+    
+    
+    # stock ACC by neokil
+    ret.openpilotLongitudinalControl = Params().get('LongitudinalControl') == b'1'  #False
+    ret.enableCruise = True
+    ret.minEnableSpeed = -1.  # enable is done by stock ACC, so ignore this
+    ret.steerRatioRear = 0.  # no rear steering, at least on the listed cars aboveA
+    ret.gasMaxBP = [0., 10.*CV.KPH_TO_MS, 20.*CV.KPH_TO_MS, 70.*CV.KPH_TO_MS, 130.*CV.KPH_TO_MS ]
+    ret.gasMaxV = [0.48, 0.32, 0.23, 0.14, 0.097]  # half max brake
+    ret.brakeMaxBP = [0.]
+    ret.brakeMaxV = [1.]
+    ret.startAccel = 1.7
+    ret.minSpeedCan = 0.3
+    ret.stoppingBrakeRate = 0.2 # brake_travel/s while trying to stop
+    ret.startingBrakeRate = 0.8 # brake_travel/s while releasing on restart
+    ret.stoppingControl = False
+    ret.longitudinalTuning.deadzoneBP = [0., 100.*CV.KPH_TO_MS]
+    ret.longitudinalTuning.deadzoneV = [0., 0.015]
+    ret.longitudinalTuning.kpBP = [0., 10. * CV.KPH_TO_MS, 20. * CV.KPH_TO_MS, 40. * CV.KPH_TO_MS, 100. * CV.KPH_TO_MS]
+    ret.longitudinalTuning.kpV = [0.97, 0.82, 0.63, 0.58, 0.43]
+    ret.longitudinalTuning.kiBP = [0.]
+    ret.longitudinalTuning.kiV = [0.015]
     return ret
 
 

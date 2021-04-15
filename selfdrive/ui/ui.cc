@@ -50,10 +50,10 @@ void ui_init(UIState *s) {
   s->sm = new SubMaster({
     "modelV2", "controlsState", "liveCalibration", "radarState", "deviceState", "liveLocationKalman",
     "pandaState", "carParams", "driverState", "driverMonitoringState", "sensorEvents", "carState", "ubloxGnss",
-//#ifdef QCOM2
-    "roadCameraState",
-//#endif
     "liveParameters","lateralPlan","carControl","gpsLocationExternal",
+#ifdef QCOM2
+    "roadCameraState",
+#endif
   });
 
   s->scene.started = false;
@@ -141,24 +141,21 @@ static void update_model(UIState *s, const cereal::ModelDataV2::Reader &model) {
   update_line_data(s, model_position, 0.5, 1.22, &scene.track_vertices, max_idx);
 }
 
-static void update_sockets(UIState *s) {
+static void update_sockets(UIState *s){
   SubMaster &sm = *(s->sm);
-  if (sm.update(0) == 0) return;
+  sm.update(0);
+}
+
+static void update_state(UIState *s) {
+  SubMaster &sm = *(s->sm);
 
   UIScene &scene = s->scene;
   if (scene.started && sm.updated("controlsState")) {
     scene.controls_state = sm["controlsState"].getControlsState();
 
 // debug Message
-    std::string user_text1 = scene.controls_state.getAlertTextMsg1();
-    std::string user_text2 = scene.controls_state.getAlertTextMsg2();
-    const char* va_text1 = user_text1.c_str();
-    const char* va_text2 = user_text2.c_str();    
-    if (va_text1) snprintf(scene.alert.text1, sizeof(scene.alert.text1), "%s", va_text1);
-    else  scene.alert.text1[0] = '\0';
-
-    if (va_text2) snprintf(scene.alert.text2, sizeof(scene.alert.text2), "%s", va_text2);
-    else scene.alert.text2[0] = '\0';    
+  scene.alert.alertTextMsg1 = scene.controls_state.getAlertTextMsg1();
+  scene.alert.alertTextMsg2 = scene.controls_state.getAlertTextMsg2();
   }
   if (sm.updated("carState")) {
     scene.car_state = sm["carState"].getCarState();
@@ -245,13 +242,13 @@ static void update_sockets(UIState *s) {
       }
     }
   }
-//#ifdef QCOM2
+#ifdef QCOM2
   if (sm.updated("roadCameraState")) {
     scene.camera_state = sm["roadCameraState"].getRoadCameraState();
     float gain = scene.camera_state.getGainFrac() * (scene.camera_state.getGlobalGain() > 100 ? 2.5 : 1.0) / 10.0;
     scene.light_sensor = std::clamp<float>((1023.0 / 1757.0) * (1757.0 - scene.camera_state.getIntegLines()) * (1.0 - gain), 0.0, 1023.0);
   }
-//#endif
+#endif
   scene.started = scene.deviceState.getStarted() || scene.driver_view;
 
 
@@ -381,6 +378,7 @@ static void update_status(UIState *s) {
 void ui_update(UIState *s) {
   update_params(s);
   update_sockets(s);
+  update_state(s);
   update_status(s);
   update_alert(s);
   update_vision(s);

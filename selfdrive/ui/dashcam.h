@@ -1,4 +1,4 @@
-#include <time.h>
+﻿#include <time.h>
 #include <dirent.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -55,6 +55,13 @@ void ui_print(UIState *s, int x, int y,  const char* fmt, ... )
   nvgText(s->vg, x, y, msg_buf, NULL);
 }
 
+static void ui_draw_text1(const UIState *s, float x, float y, const char* string, float size, NVGcolor color, const char *font_name)
+{
+  nvgFontFace(s->vg, font_name);
+  nvgFontSize(s->vg, size);
+  nvgFillColor(s->vg, color);
+  nvgText(s->vg, x, y, string, NULL);
+}
 
 int get_time()
 {
@@ -226,14 +233,6 @@ bool screen_button_clicked(int touch_x, int touch_y, int x, int y, int cx, int c
 
 void draw_date_time(UIState *s)
 {
-  /*
-  if (captureState == CAPTURE_STATE_NOT_CAPTURING)
-  {
-    // Don't draw if we're not recording
-    return;
-  }
-  */
-
   // Get local time to display
   char now[50];
   struct tm tm = get_time_struct();
@@ -260,13 +259,12 @@ static void rotate_video()
 static void screen_draw_button(UIState *s, int touch_x, int touch_y)
 {
   // Set button to bottom left of screen
-  //  if (s->vision_connected && s->plus_state == 0) {
+
   nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
-  //if (s->vision_connected)
-  //{
+
     int btn_w = 150;
     int btn_h = 150;
-    int btn_x = 1920 - btn_w;
+    int btn_x = 1990 - btn_w;
     int btn_y = 1080 - btn_h;
     nvgBeginPath(s->vg);
     nvgRoundedRect(s->vg, btn_x - 110, btn_y - 45, btn_w, btn_h, 100);
@@ -292,7 +290,7 @@ static void screen_draw_button(UIState *s, int touch_x, int touch_y)
       nvgFillColor(s->vg, nvgRGBA(255, 150, 150, 200));
     }
     nvgText(s->vg, btn_x - 75, btn_y + 50, "REC", NULL);
- // }
+
 
   if (captureState == CAPTURE_STATE_CAPTURING)
   {
@@ -340,11 +338,11 @@ static void screen_menu_button(UIState *s, int touch_x, int touch_y, int touched
 
     int btn_w = 150;
     int btn_h = 150;
-    int btn_x = 1530;// 1920 - btn_w;
+    int btn_x = 1650;// 1920 - btn_w;
     int btn_y = 1080 - btn_h;
 
 
-    if( touched && screen_button_clicked(touch_x, touch_y, btn_x, btn_y, 100, 100) )
+    if( touched && screen_button_clicked(touch_x, touch_y, btn_x, btn_y, btn_w, btn_h) )
     {
       scene.dash_menu_no++;
       if( scene.dash_menu_no > 2 )
@@ -389,7 +387,7 @@ static void ui_draw_modeSel(UIState *s)
   int ui_viz_rx = s->viz_rect.x;
   int ui_viz_rw = s->viz_rect.w; 
   const int viz_speed_x = ui_viz_rx+((ui_viz_rw/2)-(280/2));
-  int x_pos = viz_speed_x + 300;
+  int x_pos = viz_speed_x + 430;
   int y_pos = 120;
 
 
@@ -398,11 +396,11 @@ static void ui_draw_modeSel(UIState *s)
   nvgFontSize(s->vg, 80);
   switch( modeSel  )
   {
-    case 0: strcpy( str_msg, "0.OP" ); nColor = COLOR_WHITE; break;
-    case 1: strcpy( str_msg, "1.CURVE" );    nColor = nvgRGBA(200, 200, 255, 255);  break;
-    case 2: strcpy( str_msg, "2.FWD CAR" );  nColor = nvgRGBA(200, 255, 255, 255);  break;
-    case 3: strcpy( str_msg, "3.HYUNDAI" );  nColor = nvgRGBA(200, 255, 255, 255);  break;
-    case 4: strcpy( str_msg, "4.CURVATURE" );   nColor = nvgRGBA(200, 255, 255, 255);  break;
+    case 0: strcpy( str_msg, "0.OPM" ); nColor = COLOR_WHITE; break;
+    case 1: strcpy( str_msg, "1.CVS" );    nColor = nvgRGBA(200, 200, 255, 255);  break;
+    case 2: strcpy( str_msg, "2.FCAR" );  nColor = nvgRGBA(200, 255, 255, 255);  break;
+    case 3: strcpy( str_msg, "3.HYUN" );  nColor = nvgRGBA(200, 255, 255, 255);  break;
+    case 4: strcpy( str_msg, "4.CURV" );   nColor = nvgRGBA(200, 255, 255, 255);  break;
     default :  sprintf( str_msg, "%d.NORMAL", modeSel ); nColor = COLOR_WHITE;  break;
   }
   nvgFillColor(s->vg, nColor);  
@@ -410,14 +408,20 @@ static void ui_draw_modeSel(UIState *s)
 }
 
 
-static void ui_draw_debug(UIState *s) 
+static void ui_draw_debug1(UIState *s) 
 {
   UIScene &scene = s->scene;
-
-  if( scene.dash_menu_no == 0 ) return;
   
+  nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
+  ui_draw_text1(s, 0, 1035, scene.alert.alertTextMsg1.c_str(), 45, COLOR_WHITE, "sans-semibold");
+  ui_draw_text1(s, 0, 1078, scene.alert.alertTextMsg2.c_str(), 45, COLOR_WHITE, "sans-semibold");
+}
 
 
+static void ui_draw_debug2(UIState *s) 
+{
+  UIScene &scene = s->scene;
+  
   int  ui_viz_rx = s->viz_rect.x;
   int  y_pos = ui_viz_rx + 300;
   int  x_pos = 100+250; 
@@ -460,8 +464,8 @@ static void ui_draw_debug(UIState *s)
 
     
 
-    //float  dPoly = scene.pathPlan.lPoly + scene.pathPlan.rPoly;
-    //ui_print( s, x_pos, y_pos+300, "Poly:%.2f, %.2f = %.2f", scene.pathPlan.lPoly, scene.pathPlan.rPoly, dPoly );
+  //float  dPoly = scene.pathPlan.lPoly + scene.pathPlan.rPoly;
+  //ui_print( s, x_pos, y_pos+300, "Poly:%.2f, %.2f = %.2f", scene.pathPlan.lPoly, scene.pathPlan.rPoly, dPoly );
   // ui_print( s, x_pos, y_pos+350, "map:%d,cam:%d", scene.live.map_valid, scene.live.speedlimitahead_valid  );
 
 
@@ -472,8 +476,21 @@ static void ui_draw_debug(UIState *s)
     float rl = tpms.getRl();
     float rr = tpms.getRr();
     ui_print( s, x_pos, y_pos+350, "tpms:%.0f,%.0f,%.0f,%.0f", fl, fr, rl, rr );
+}
 
+static void ui_draw_debug(UIState *s) 
+{
+  UIScene &scene = s->scene;
 
+  ui_draw_modeSel(s);
+
+  if( scene.dash_menu_no == 0 ) return;
+  ui_draw_debug1(s);
+  
+  if( scene.dash_menu_no == 2 ) 
+  {
+    ui_draw_debug2(s);
+  }
 
    // int  lensPos = scene.frame.getLensPos();
    // int  lensTruePos = scene.frame.getLensTruePos();
@@ -481,10 +498,10 @@ static void ui_draw_debug(UIState *s)
   //  ui_print( s, x_pos, y_pos+400, "frame:%d,%d", lensPos, lensTruePos );
 
 
-    ui_print( s, 0, 1020, "%s", scene.alert.text1 );
-    ui_print( s, 0, 1078, "%s", scene.alert.text2 );
-    ui_draw_modeSel(s);
+   // ui_print( s, 0, 1020, "%s", scene.alert.text1 );
+   // ui_print( s, 0, 1078, "%s", scene.alert.text2 );
 }
+
 
 /*
   park @1;
@@ -496,7 +513,7 @@ static void ui_draw_debug(UIState *s)
   brake @7;
   eco @8;
 */
-void ui_draw_gear( UIState *s )
+void ui_draw_gear( UIState *s, int center_x, int center_y )
 {
   UIScene &scene = s->scene;
   NVGcolor nColor = COLOR_WHITE;
@@ -504,8 +521,6 @@ void ui_draw_gear( UIState *s )
   cereal::CarState::GearShifter  getGearShifter = scene.car_state.getGearShifter();
 
   int  ngetGearShifter = int(getGearShifter);
-  int  x_pos = 1700;
-  int  y_pos = 200;
   char str_msg[512];
 
   nvgFontSize(s->vg, 150 );
@@ -516,11 +531,12 @@ void ui_draw_gear( UIState *s )
     case 3 : strcpy( str_msg, "N" ); nColor = COLOR_WHITE; break;
     case 4 : strcpy( str_msg, "R" ); nColor = COLOR_RED;  break;
     case 7 : strcpy( str_msg, "B" ); break;
-    default: sprintf( str_msg, "-" ); break;
+    default: sprintf( str_msg, "N" ); nColor = nvgRGBA(255, 100, 100, 255); break;
   }
 
+  //nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
   nvgFillColor(s->vg, nColor);
-  ui_print( s, x_pos, y_pos, str_msg );
+  ui_print( s, center_x, center_y, str_msg );
 }
 
 int get_param( const std::string &key )
@@ -556,7 +572,7 @@ void update_dashcam(UIState *s, int draw_vision)
   else if ( touched  ) 
   {
     s->scene.mouse.touched = 0; 
-    printf("touched:(%d,%d) %d  %d \n", touch_x, touch_y, touched, s->sidebar_collapsed);
+    //printf("touched:(%d,%d) %d  %d \n", touch_x, touch_y, touched, s->sidebar_collapsed);
   }
 
 
@@ -564,9 +580,14 @@ void update_dashcam(UIState *s, int draw_vision)
   if (!s->scene.started) return;
   if (s->scene.driver_view) return;
 
+    int btn_w = 150;
+    int btn_h = 150;
+    int btn_x = 1990 - btn_w;
+    int btn_y = 1080 - btn_h;
+
   screen_draw_button(s, touch_x, touch_y);
   screen_menu_button(s, touch_x, touch_y, touched);
-  if (screen_button_clicked(touch_x, touch_y, 1700, 1000, 100, 100) )
+  if ( touched && screen_button_clicked(touch_x, touch_y, btn_x, btn_y, btn_w, btn_h) )
   {
     click_elapsed_time = get_time() - click_time;
 

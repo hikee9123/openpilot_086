@@ -1,4 +1,4 @@
-from abc import abstractmethod
+﻿from abc import abstractmethod
 from collections import namedtuple
 
 ThermalConfig = namedtuple('ThermalConfig', ['cpu', 'gpu', 'mem', 'bat', 'ambient'])
@@ -104,4 +104,8 @@ class HardwareBase:
 
   @abstractmethod
   def set_screen_brightness(self, percentage):
+    pass
+
+  @abstractmethod
+  def set_power_save(self, enabled):
     pass

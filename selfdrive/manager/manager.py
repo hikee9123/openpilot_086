@@ -30,6 +30,15 @@ def manager_init():
     ("IsUploadRawEnabled", "1"),
     ("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')),
     ("OpenpilotEnabledToggle", "1"),
+
+    ("IsOpenpilotViewEnabled", "0"),
+    ("OpkrAutoResume", "0"),
+    ("OpkrLiveSteerRatio", "0"),
+    ("OpkrTurnSteeringDisable", "0"),
+    ("OpkrPrebuilt", "0"),
+    ("OpkrAutoScreenOff", "0"),
+    ("OpkrUIBrightness", "0"),
+    ("LongitudinalControl", "0"),
   ]
 
   if params.get_bool("RecordFrontLock"):
@@ -42,7 +51,7 @@ def manager_init():
 
   # is this dashcam?
   if os.getenv("PASSIVE") is not None:
-    params.put("Passive", str(int(os.getenv("PASSIVE"))))
+    params.put_bool("Passive", bool(int(os.getenv("PASSIVE"))))
 
   if params.get("Passive") is None:
     raise Exception("Passive must be set to continue")
@@ -106,9 +115,9 @@ def manager_thread():
 
 
 #params = Params()
-  EnableLogger = int(params.get("RecordFront"))
+  enableLogger = params.get_bool("RecordFront")
   
-  if not EnableLogger:
+  if not enableLogger:
     ignore.append("loggerd")
     ignore.append("logcatd")
     ignore.append("logmessaged")
@@ -153,6 +162,7 @@ def manager_thread():
     msg.managerState.processes = [p.get_process_state_msg() for p in managed_processes.values()]
     pm.send('managerState', msg)
 
+    # TODO: let UI handle this
     # Exit main loop when uninstall is needed
     if params.get_bool("DoUninstall"):
       break
@@ -163,7 +173,7 @@ def main():
 
   manager_init()
 
-  # Start ui early so prepare can happen in the background
+  # Start UI early so prepare can happen in the background
   if not prepare_only:
     managed_processes['ui'].start()
 

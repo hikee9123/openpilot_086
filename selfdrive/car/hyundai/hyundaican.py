@@ -83,36 +83,66 @@ def create_lfahda_mfc(packer, enabled, hda_set_speed=0):
   }
   return packer.make_can_msg("LFAHDA_MFC", 0, values)
 
-def create_acc_commands(packer, enabled, accel, idx, lead_visible, set_speed, stopping):
+
+def create_scc11(packer, frame, enabled, set_speed, lead_visible, scc_live, scc11):
+  values = scc11
+  values["AliveCounterACC"] = frame % 0x10
+  if not scc_live:
+    values["MainMode_ACC"] = 1
+    values["VSetDis"] = set_speed
+    values["ObjValid"] = 1 if enabled else 0
+#  values["ACC_ObjStatus"] = lead_visible
+
+  return packer.make_can_msg("SCC11", 0, values)
+
+def create_scc12(packer, apply_accel, enabled, cnt, scc_live, scc12):
+  values = scc12
+  values["aReqRaw"] = apply_accel if enabled else 0 #aReqMax
+  values["aReqValue"] = apply_accel if enabled else 0 #aReqMin
+  values["CR_VSM_Alive"] = cnt % 0xF  
+  values["CR_VSM_ChkSum"] = 0
+  if not scc_live:
+    values["ACCMode"] = 1  if enabled else 0 # 2 if gas padel pressed
+
+  dat = packer.make_can_msg("SCC12", 0, values)[2]
+  values["CR_VSM_ChkSum"] = 16 - sum([sum(divmod(i, 16)) for i in dat]) % 16
+
+  return packer.make_can_msg("SCC12", 0, values)
+
+
+
+def create_acc_commands(packer, enabled, accel, idx, lead_visible, set_speed, stopping, scc12_cnt ):
   commands = []
 
   scc11_values = {
     "MainMode_ACC": 1,
-    "TauGapSet": 4,
+    #"TauGapSet": 4,       # -> not xx979xxx
     "VSetDis": set_speed if enabled else 0,
     "AliveCounterACC": idx % 0x10,
+    "ObjValid": 1 if enabled else 0   # -> xx979xx 
   }
   commands.append(packer.make_can_msg("SCC11", 0, scc11_values))
 
   scc12_values = {
     "ACCMode": 1 if enabled else 0,
-    "StopReq": 1 if stopping else 0,
-    "aReqRaw": accel,
-    "aReqValue": accel, # stock ramps up at 1.0/s and down at 0.5/s until it reaches aReqRaw
-    "CR_VSM_Alive": idx % 0xF,
+    #"StopReq": 1 if stopping else 0,     # -> not xx979xxx
+    "aReqRaw": accel if enabled else 0,
+    "aReqValue": accel if enabled else 0, # stock ramps up at 1.0/s and down at 0.5/s until it reaches aReqRaw
+    "CR_VSM_Alive": scc12_cnt % 0xF,
   }
   scc12_dat = packer.make_can_msg("SCC12", 0, scc12_values)[2]
   scc12_values["CR_VSM_ChkSum"] = 0x10 - sum([sum(divmod(i, 16)) for i in scc12_dat]) % 0x10
 
   commands.append(packer.make_can_msg("SCC12", 0, scc12_values))
 
+  """
   scc14_values = {
-    "ComfortBandUpper": 0.0, # stock usually is 0 but sometimes uses higher values
-    "ComfortBandLower": 0.0, # stock usually is 0 but sometimes uses higher values
-    "JerkUpperLimit": 1.0 if enabled else 0, # stock usually is 1.0 but sometimes uses higher values
-    "JerkLowerLimit": 0.5 if enabled else 0, # stock usually is 0.5 but sometimes uses higher values
+    "ComfortBandUpper": 0.24, # stock usually is 0 but sometimes uses higher values
+    "ComfortBandLower": 0.24, # stock usually is 0 but sometimes uses higher values
+    "JerkUpperLimit": 3.2 if enabled else 0, # stock usually is 1.0 but sometimes uses higher values
+    "JerkLowerLimit": 0.1 if enabled else 0, # stock usually is 0.5 but sometimes uses higher values
     "ACCMode": 1 if enabled else 4, # stock will always be 4 instead of 0 after first disengage
-    "ObjGap": 3 if lead_visible else 0, # TODO: 1-5 based on distance to lead vehicle
+    "ObjGap": 3 if lead_visible else 0, # TODO: 1-5 based on distance to lead vehicle    -> not xx979xxx
   }
   commands.append(packer.make_can_msg("SCC14", 0, scc14_values))
 
@@ -126,6 +156,7 @@ def create_acc_commands(packer, enabled, accel, idx, lead_visible, set_speed, st
   fca11_dat = packer.make_can_msg("FCA11", 0, fca11_values)[2]
   fca11_values["CR_FCA_ChkSum"] = 0x10 - sum([sum(divmod(i, 16)) for i in fca11_dat]) % 0x10
   commands.append(packer.make_can_msg("FCA11", 0, fca11_values))
+  """
 
   return commands
 

@@ -54,23 +54,22 @@ static void draw_chevron(UIState *s, float x, float y, float sz, NVGcolor fillCo
   nvgFill(s->vg);
 }
 
-static void ui_draw_circle_image(const UIState *s, int x, int y, int size, const char *image, NVGcolor color, float img_alpha,  float angleSteers = 0) {
-  const int img_size = size * 1.5;
+static void ui_draw_circle_image(const UIState *s, int center_x, int center_y, int radius, const char *image, NVGcolor color, float img_alpha,  float angleSteers = 0) {
+  const int img_size = radius * 1.5;
   float img_rotation =  angleSteers/180*3.141592;
-  int ct_pos = -size * 0.75;
+  int ct_pos = -radius * 0.75;
 
   nvgBeginPath(s->vg);
-  nvgCircle(s->vg, x, y + (bdr_s * 1.5), size);
+  nvgCircle(s->vg, center_x, center_y + (bdr_s * 1.5), radius);
   nvgFillColor(s->vg, color);
   nvgFill(s->vg);
-  //ui_draw_image(s, {x - (img_size / 2), img_y ? img_y : y - (size / 4), img_size, img_size}, image, img_alpha);
+
 
   nvgSave( s->vg );
-  nvgTranslate(s->vg,x,(y + (bdr_s*1.5)));
+  nvgTranslate(s->vg,center_x,(center_y + (bdr_s*1.5)));
   nvgRotate(s->vg,-img_rotation);  
 
   ui_draw_image(s, {ct_pos, ct_pos, img_size, img_size}, image, img_alpha);
-  //ui_draw_image(vg, x - (img_size / 2), img_y ? img_y : y - (size / 4), img_size, img_size, image, img_alpha);
   nvgRestore(s->vg); 
 }
 
@@ -281,13 +280,21 @@ static void ui_draw_vision_speed(UIState *s) {
 }
 
 static void ui_draw_vision_event(UIState *s) {
-  if (s->scene.controls_state.getEngageable()) {
+
+  const int radius = 96;
+  const int center_x = s->viz_rect.right() - radius;// - bdr_s * 1.5;
+  const int center_y = s->viz_rect.y + (radius / 2)  + (bdr_s * 0.9); 
+  int engageable = s->scene.controls_state.getEngageable();
+
+  if (engageable) {
     // draw steering wheel
-    const int radius = 96;
-    const int center_x = s->viz_rect.right() - radius - bdr_s * 2;
-    const int center_y = s->viz_rect.y + radius  + (bdr_s * 1.5);
-    ui_draw_circle_image(s, center_x, center_y, radius, "wheel", bg_colors[s->status], 1.0f);
+    float angleSteers = s->scene.car_state.getSteeringAngleDeg();
+    ui_draw_circle_image(s, center_x, center_y, radius, "wheel", bg_colors[s->status], 1.0f, angleSteers);
   }
+  else
+  {
+    ui_draw_gear( s, center_x, center_y + radius);
+  }  
 }
 
 static void ui_draw_vision_face(UIState *s) {
@@ -504,18 +511,19 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w )
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize );
     bb_ry = bb_y + bb_h;
+  }
 
-
+    //add compass
+  if (true) {
     //draw compass by opkr
-    const int compass_x = s->viz_rect.x + s->viz_rect.w - 167 - (bdr_s);
-    const int compass_y = (s->viz_rect.y + (bdr_s)) + 713;
-    const int direction_x = compass_x + 74;
-    const int direction_y = compass_y + 74;
+    const int radian = 74;
+    const int compass_x = bb_rx - radian;// s->viz_rect.x + s->viz_rect.w - 167 - (bdr_s);
+    const int compass_y = bb_ry + 22;// (s->viz_rect.y + (bdr_s)) + 710;
+    const int direction_x = compass_x + radian;
+    const int direction_y = compass_y + radian;
     ui_draw_image(s, {compass_x, compass_y, 150, 150}, "compass", 0.6f);
     ui_draw_circle_image(s, direction_x, direction_y - (bdr_s+7), 90, "direction", nvgRGBA(0x0, 0x0, 0x0, 0x0), 0.6f, -bearingUblox);
   }
-
-
 
   //finally draw the frame
   bb_h += 20;
@@ -684,9 +692,9 @@ static void bb_ui_draw_UI(UIState *s)
   const int bb_dml_x = (s->viz_rect.x + (bdr_s * 2));
   const int bb_dml_y = (bdr_s + (bdr_s * 1.5)) + 220;
 
-  const int bb_dmr_w = 180;
-  const int bb_dmr_x = s->viz_rect.x + s->viz_rect.w - bb_dmr_w - (bdr_s * 2);
-  const int bb_dmr_y = (bdr_s + (bdr_s * 1.5)) + 220;
+  const int bb_dmr_w = 170;
+  const int bb_dmr_x = s->viz_rect.x + s->viz_rect.w - (bb_dmr_w/1.5) - (bdr_s * 2);
+  const int bb_dmr_y = (bdr_s + (bdr_s * 1.5)) + 200;
 
   bb_ui_draw_measures_right(s, bb_dml_x, bb_dml_y, bb_dml_w);
   bb_ui_draw_measures_left(s, bb_dmr_x, bb_dmr_y, bb_dmr_w);
@@ -702,9 +710,7 @@ static void ui_draw_vision_header(UIState *s) {
 
   ui_fill_rect(s->vg, {s->viz_rect.x, s->viz_rect.y, s->viz_rect.w, header_h}, gradient);
 
-  if (s->scene.longitudinal_control) {
-    ui_draw_vision_maxspeed(s);
-  }
+  ui_draw_vision_maxspeed(s);
   ui_draw_vision_speed(s);
   ui_draw_vision_event(s);
 
@@ -964,6 +970,8 @@ void ui_nvg_init(UIState *s) {
       {"network_3", "../assets/images/network_3.png"},
       {"network_4", "../assets/images/network_4.png"},
       {"network_5", "../assets/images/network_5.png"},
+      {"compass", "../assets/compass/img_compass.png"},
+      {"direction", "../assets/compass/img_direction.png"},
   };
   for (auto [name, file] : images) {
     s->images[name] = nvgCreateImage(s->vg, file, 1);

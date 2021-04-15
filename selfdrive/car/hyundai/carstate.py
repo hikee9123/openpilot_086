@@ -1,4 +1,4 @@
-import copy
+﻿import copy
 from cereal import car
 from selfdrive.car.hyundai.values import DBC, STEER_THRESHOLD, FEATURES, EV_HYBRID
 from selfdrive.car.interfaces import CarStateBase
@@ -48,7 +48,6 @@ class CarState(CarStateBase):
 
     self.SC = SpdController()
 
-    #self.sm = messaging.SubMaster(['liveMapData'])
 
 
   def update(self, cp, cp_cam):
@@ -105,7 +104,8 @@ class CarState(CarStateBase):
 
     # cruise state
     if self.CP.openpilotLongitudinalControl:
-      self.main_on = cp.vl["TCS13"]['ACCEnable'] == 0
+      #self.main_on = cp.vl["TCS13"]['ACCEnable'] == 0
+      self.main_on = (cp.vl["SCC11"]["MainMode_ACC"] != 0)
       self.acc_active = cp.vl["TCS13"]['ACC_REQ'] == 1
       ret.cruiseState.standstill = cp.vl["TCS13"]['StandStill'] == 1
     else:    
@@ -118,11 +118,11 @@ class CarState(CarStateBase):
     self.update_atom( cp, cp_cam )
 
     if self.time_delay_int <= 0:
-      if self.gearShifter != GearShifter.drive or ret.doorOpen  or ret.seatbeltUnlatched:
-        self.time_delay_int = 200
+      if self.gearShifter != GearShifter.drive or ret.doorOpen  or ret.seatbeltUnlatched or self.cruiseState_modeSel == 3:
+        self.time_delay_int = 500
         ret.cruiseState.available = False
       else:
-       ret.cruiseState.available = self.main_on and self.cruiseState_modeSel != 3
+       ret.cruiseState.available = self.main_on
     else:
       self.time_delay_int -= 1
       ret.cruiseState.available = False
@@ -170,31 +170,31 @@ class CarState(CarStateBase):
       ret.stockAeb = cp.vl["SCC12"]['AEB_CmdAct'] != 0
       ret.stockFcw = cp.vl["SCC12"]['CF_VSM_Warn'] == 2
 
+
     #TPMS
     ret.tpms.fl = cp.vl["TPMS11"]['PRESSURE_FL']
     ret.tpms.fr = cp.vl["TPMS11"]['PRESSURE_FR']
     ret.tpms.rl = cp.vl["TPMS11"]['PRESSURE_RL']
     ret.tpms.rr = cp.vl["TPMS11"]['PRESSURE_RR']
 
-    self.ACC_ObjStatus = cp.vl["SCC11"]['ACC_ObjStatus']
-    self.ACC_ObjLatPos = cp.vl["SCC11"]['ACC_ObjLatPos']
-
-    self.Navi_SCC_Camera_Act = cp.vl["SCC11"]['Navi_SCC_Camera_Act']
-    self.Navi_SCC_Camera_Status = cp.vl["SCC11"]['Navi_SCC_Camera_Status']
+    # test
+    self.aReqRaw = cp.vl["SCC12"]["aReqRaw"]
+    self.aReqValue = cp.vl["SCC12"]["aReqValue"]
 
     # save the entire LKAS11 and CLU11
     self.lkas11 = copy.copy(cp_cam.vl["LKAS11"])
     self.clu11 = copy.copy(cp.vl["CLU11"])
     self.mdps12 = copy.copy(cp.vl["MDPS12"])
-    self.lfahda_mfc = copy.copy(cp.vl["LFAHDA_MFC"])
-    #self.park_brake = cp.vl["TCS13"]['PBRAKE_ACT'] == 1
-    self.park_brake = cp.vl["CGW1"]['CF_Gway_ParkBrakeSw']
+    self.scc11 = copy.copy(cp.vl["SCC11"])
+    self.scc12 = copy.copy(cp.vl["SCC12"])
+  
+    self.park_brake = cp.vl["TCS13"]['PBRAKE_ACT'] == 1
     self.steer_state = cp.vl["MDPS12"]['CF_Mdps_ToiActive']  # 0 NOT ACTIVE, 1 ACTIVE
     self.lead_distance = cp.vl["SCC11"]['ACC_ObjDist']
-    #self.brake_hold = cp.vl["TCS15"]['AVH_LAMP'] == 2 # 0 OFF, 1 ERROR, 2 ACTIVE, 3 READY
-    #self.brake_error = cp.vl["TCS13"]['ACCEnable'] != 0 # 0 ACC CONTROL ENABLED, 1-3 ACC CONTROL DISABLED
-    #self.prev_cruise_buttons = self.cruise_buttons
-    #self.cruise_buttons = cp.vl["CLU11"]["CF_Clu_CruiseSwState"]
+    self.brake_hold = cp.vl["TCS15"]['AVH_LAMP'] # 0 OFF, 1 ERROR, 2 ACTIVE, 3 READY
+    self.brake_error = cp.vl["TCS13"]['ACCEnable'] # 0 ACC CONTROL ENABLED, 1-3 ACC CONTROL DISABLED
+
+
 
 
     return ret
@@ -465,36 +465,48 @@ class CarState(CarStateBase):
       ("TauGapSet", "SCC11", 4),
       ("Navi_SCC_Camera_Act", "SCC11", 0),
       ("Navi_SCC_Camera_Status", "SCC11", 0),
-      ("ACCMode", "SCC12", 1),
+      ("AliveCounterACC", "SCC11", 0),  # xx
+      ("ObjValid", "SCC11", 0),   # xx
+      ("DriverAlertDisplay", "SCC11", 0),  # xx
+
+
+      ("ACCMode", "SCC12", 0),
+      ("CF_VSM_Prefill", "SCC12", 0),
+      ("CF_VSM_DecCmdAct", "SCC12", 0),
+      ("CF_VSM_HBACmd", "SCC12", 0),
+      ("CF_VSM_Warn", "SCC12", 0),
+      ("CF_VSM_Stat", "SCC12", 0),
+      ("CF_VSM_BeltCmd", "SCC12", 0),
+      ("ACCFailInfo", "SCC12", 0),
+      ("StopReq", "SCC12", 0),
+      ("CR_VSM_DecCmd", "SCC12", 0),
+      ("aReqRaw", "SCC12", 0), #aReqMax
+      ("TakeOverReq", "SCC12", 0),
+      ("PreFill", "SCC12", 0),
+      ("aReqValue", "SCC12", 0), #aReqMin
+      ("CF_VSM_ConfMode", "SCC12", 1),
+      ("AEB_Failinfo", "SCC12", 0),
+      ("AEB_Status", "SCC12", 2),
+      ("AEB_CmdAct", "SCC12", 0),
+      ("AEB_StopReq", "SCC12", 0),
+      ("CR_VSM_Alive", "SCC12", 0),
+      ("CR_VSM_ChkSum", "SCC12", 0),
+
+      ("SCCDrvModeRValue", "SCC13", 2),
+      ("SCC_Equip", "SCC13", 1),
+      ("AebDrvSetStatus", "SCC13", 0),
+
+      ("JerkUpperLimit", "SCC14", 0),
+      ("JerkLowerLimit", "SCC14", 0),
+      ("SCCMode2", "SCC14", 0),
+      ("ComfortBandUpper", "SCC14", 0),
+      ("ComfortBandLower", "SCC14", 0),
 
       ("PRESSURE_FL", "TPMS11", 0),
       ("PRESSURE_FR", "TPMS11", 0),
       ("PRESSURE_RL", "TPMS11", 0),
       ("PRESSURE_RR", "TPMS11", 0),
 
-      # 1157
-      ("HDA_USM", "LFAHDA_MFC", 0),
-      ("HDA_Active","LFAHDA_MFC", 0),
-      ("HDA_Icon_State","LFAHDA_MFC", 0),
-      ("HDA_Chime","LFAHDA_MFC", 0),
-      ("HDA_VSetReq","LFAHDA_MFC", 0),
-      ("HDA_SysWarning","LFAHDA_MFC", 0),
-      ("LFA_USM","LFAHDA_MFC", 0),
-      ("LFA_SysWarning","LFAHDA_MFC", 0),
-      ("LFA_Icon_State","LFAHDA_MFC", 0),
-      ("NEW_SIGNAL_1","LFAHDA_MFC", 0),
-
-      # 1156
-      ("Counter","HDA11_MFC", 0),
-      ("NEW_SIGNAL_1","HDA11_MFC", 0),
-      ("NEW_SIGNAL_2","HDA11_MFC", 0),
-      ("NEW_SIGNAL_3","HDA11_MFC", 0),
-      ("NEW_SIGNAL_4","HDA11_MFC", 0),
-      ("NEW_SIGNAL_5","HDA11_MFC", 0),
-      ("NEW_SIGNAL_6","HDA11_MFC", 0),
-      ("NEW_SIGNAL_7","HDA11_MFC", 0),
-      ("NEW_SIGNAL_8","HDA11_MFC", 0),
-      ("NEW_SIGNAL_9","HDA11_MFC", 0),
     ]
 
     checks = [
@@ -508,8 +520,6 @@ class CarState(CarStateBase):
       ("CGW4", 5),
       ("WHL_SPD11", 50),
       ("SAS11", 100),
-      #("HDA11_MFC", 50),
-      #("LFAHDA_MFC", 10),
     ]
 
     if not CP.openpilotLongitudinalControl:
