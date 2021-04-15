@@ -1,4 +1,4 @@
-﻿#include <QLabel>
+#include <QLabel>
 #include <QPainter>
 #include <QVBoxLayout>
 #include <QQuickWidget>
