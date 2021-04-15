@@ -284,7 +284,7 @@ class CarController():
       can_sends.append( create_mdps12(self.packer, frame, CS.mdps12) )
 
     if not CP.openpilotLongitudinalControl:
-      accel_applay = self.longCtrl.accel_applay( self, actuators):
+      accel_applay = self.longCtrl.accel_applay( self, actuators)
     else:
       accel_applay = 0
     
