@@ -1,4 +1,4 @@
-import binascii
+﻿import binascii
 import itertools
 import os
 import re
@@ -353,7 +353,8 @@ class Android(HardwareBase):
     with open("/sys/class/leds/lcd-backlight/brightness", "w") as f:
       f.write(str(int(percentage * 2.55)))
 
-
+  def set_power_save(self, enabled):
+    pass
 
   def get_ip_address(self):
 
