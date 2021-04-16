@@ -101,10 +101,10 @@ class LateralPlanner():
     if lanelines:
       return lanelines
 
-    dRel = radarState.leadOne.dRel
-    vEgo_kph = carState.vEgo * CV.MS_TO_KPH
-    if vEgo_kph < 20:  #or dRel < 25:
-      lanelines = True
+    #dRel = radarState.leadOne.dRel
+    #vEgo_kph = carState.vEgo * CV.MS_TO_KPH
+    #if vEgo_kph < 20:  #or dRel < 25:
+    #  lanelines = True
     return lanelines
     
 
