@@ -811,6 +811,9 @@ struct LateralPlan @0xe1e9318e2ae8b51e {
   rawCurvature @24 :Float32;
   rawCurvatureRate @25 :Float32;
 
+  # atom
+  laneLess @26 :Bool;
+
   enum Desire {
     none @0;
     turnLeft @1;
