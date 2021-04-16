@@ -292,7 +292,7 @@ class SpdController():
             set_speed, target_set_speed, CS.VSetDis, CS.driverAcc_time, long_wait_cmd, self.long_curv_timer, self.seq_step_debug, CS.driverOverride )
         str4 = ' CS={:.1f}/{:.1f} '.format(  CS.lead_distance, CS.lead_objspd )
         str5 = str3 +  str4
-        trace1.printf2( str5 )
+        trace1.printf3( str5 )
 
     def lead_control(self, CS, sm, CC ):
         dRel = CC.dRel

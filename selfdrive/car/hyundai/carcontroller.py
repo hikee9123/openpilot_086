@@ -52,9 +52,7 @@ class CarController():
     self.dRel = 0
     self.vRel = 0
 
-    self.movAvg = moveavg1.MoveAvg()
     self.timer1 = tm.CTime1000("time1")
-    self.timer2 = tm.CTime1000("time2")
     self.model_speed = 0
 
     
@@ -212,19 +210,7 @@ class CarController():
 
     return  param, dst_steer
 
-  def acc_auto_active(self, kph_vEgo):
-    acc_flag = False
-    delta = abs(kph_vEgo - self.kph_vEgo_old)
-    if kph_vEgo < 60:
-      acc_flag = False
-    elif kph_vEgo != self.kph_vEgo_old:
-      self.kph_vEgo_old = kph_vEgo
-      self.timer2.startTime( 5000 )
-    elif self.timer2.endTime():
-      acc_flag = True
-
-    return  acc_flag
-    
+  
 
 
   def update(self, c, CS, frame, sm, CP ):
@@ -314,13 +300,7 @@ class CarController():
     # reset lead distnce after the car starts moving
     elif self.last_lead_distance != 0:
       self.last_lead_distance = 0
-    elif CP.openpilotLongitudinalControl and CS.acc_active:
-      # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
-      if  frame % 2 == 0:
-        data = self.longCtrl.update( self.packer, CS, c, frame )
-        can_sends.append( data )
-
-    elif run_speed_ctrl and self.SC != None:
+    elif not CP.openpilotLongitudinalControl and run_speed_ctrl and self.SC != None:
       is_sc_run = self.SC.update( CS, sm, self )
       if is_sc_run:
         can_sends.append(create_clu11(self.packer, self.resume_cnt, CS.clu11, self.SC.btn_type, self.SC.sc_clu_speed ))
@@ -328,17 +308,14 @@ class CarController():
       else:
         self.resume_cnt = 0
     else:
-      acc_flag = self.acc_auto_active( kph_vEgo)
-      if acc_flag:
-         can_sends.append(create_clu11(self.packer, self.resume_cnt, CS.clu11, Buttons.RES_ACCEL, kph_vEgo ))
-         self.resume_cnt += 1
-      else:
-         self.resume_cnt = 0
       str_log1 = 'LKAS={:.0f}  steer={:5.0f}'.format( CS.lkas_button_on,  CS.out.steeringTorque )
       str_log2 = 'limit={:.0f} tm={:.1f} gap={:.0f}  gas={:.1f}'.format( apply_steer_limit, self.timer1.sampleTime(), CS.cruiseGapSet, CS.out.gas  )               
-      trace1.printf2( '{} {}'.format( str_log1, str_log2 ) )    
+      trace1.printf3( '{} {}'.format( str_log1, str_log2 ) )    
 
-
+    if CP.openpilotLongitudinalControl and frame % 2 == 0:  # and CS.acc_active:
+      # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
+      data = self.longCtrl.update( self.packer, CS, c, frame )
+      can_sends.append( data )
 
     # 20 Hz LFA MFA message
     if frame % 5 == 0 and self.car_fingerprint in FEATURES["use_lfa_mfa"]:

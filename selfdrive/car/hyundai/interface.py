@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from cereal import car
 from selfdrive.config import Conversions as CV
-from selfdrive.car.hyundai.values import CAR
+from selfdrive.car.hyundai.values import CAR, Buttons
 from selfdrive.car import STD_CARGO_KG, scale_rot_inertia, scale_tire_stiffness, gen_empty_fingerprint
 from selfdrive.car.interfaces import CarInterfaceBase, MAX_CTRL_SPEED
 
@@ -271,7 +271,7 @@ class CarInterface(CarInterfaceBase):
 
 
     # set safety_hyundai_community only for non-SCC, MDPS harrness or SCC harrness cars or cars that have unknown issue
-    if ret.radarOffCan or ret.openpilotLongitudinalControl or Params().get('CommunityFeaturesToggle') == b'1':
+    if ret.radarOffCan  or Params().get('CommunityFeaturesToggle') == b'1':
       ret.safetyModel = car.CarParams.SafetyModel.hyundaiCommunity
     # these cars require a special panda safety mode due to missing counters and checksums in the messages
     elif candidate in [CAR.HYUNDAI_GENESIS, CAR.IONIQ_EV_2020, CAR.IONIQ_EV_LTD, CAR.IONIQ, CAR.KONA_EV, CAR.KIA_SORENTO, CAR.SONATA_LF,
@@ -320,7 +320,6 @@ class CarInterface(CarInterfaceBase):
   def live_tune(CP, read=False):
     global ATOMC 
 
-
     if read:
       ATOMC.read_tune()
 
@@ -333,8 +332,34 @@ class CarInterface(CarInterfaceBase):
 
     CP.atomTuning.cvsteerRatioV = ATOMC.cv_steerRatioV
     CP.atomTuning.cvsteerActuatorDelayV = ATOMC.cv_ActuatorDelayV
-     
-    return CP    
+    return CP
+
+  def button_event( self, CS ):
+    buttonEvents = []
+    if CS.cruise_buttons != CS.prev_cruise_buttons:
+      be = car.CarState.ButtonEvent.new_message()
+      be.pressed = self.CS.cruise_buttons != 0
+      but = CS.cruise_buttons if be.pressed else CS.prev_cruise_buttons
+      if but == Buttons.RES_ACCEL:
+        be.type = ButtonType.accelCruise
+      elif but == Buttons.SET_DECEL:
+        be.type = ButtonType.decelCruise
+      elif but == Buttons.GAP_DIST:
+        be.type = ButtonType.gapAdjustCruise
+      elif but == Buttons.CANCEL:
+        be.type = ButtonType.cancel
+      else:
+        be.type = ButtonType.unknown
+      buttonEvents.append(be)
+
+    if self.CS.cruise_main_button != self.CS.prev_cruise_main_button:
+      be = car.CarState.ButtonEvent.new_message()
+      be.type = ButtonType.altButton3
+      be.pressed = bool(self.CS.cruise_main_button)
+      buttonEvents.append(be)
+
+    return buttonEvents
+
 
   def update(self, c, can_strings):
     self.cp.update_strings(can_strings)
@@ -343,6 +368,7 @@ class CarInterface(CarInterfaceBase):
     ret = self.CS.update(self.cp, self.cp_cam)
     ret.canValid = self.cp.can_valid and self.cp_cam.can_valid
     ret.steeringRateLimited = self.CC.steer_rate_limited if self.CC is not None else False
+    ret.buttonEvents = self.button_event( self.CS )
 
     events = self.create_common_events(ret)
     # TODO: addd abs(self.CS.angle_steers) > 90 to 'steerTempUnavailable' event

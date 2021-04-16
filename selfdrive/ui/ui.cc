@@ -156,6 +156,7 @@ static void update_state(UIState *s) {
 // debug Message
   scene.alert.alertTextMsg1 = scene.controls_state.getAlertTextMsg1();
   scene.alert.alertTextMsg2 = scene.controls_state.getAlertTextMsg2();
+  scene.alert.alertTextMsg3 = scene.controls_state.getAlertTextMsg3();
   }
   if (sm.updated("carState")) {
     scene.car_state = sm["carState"].getCarState();

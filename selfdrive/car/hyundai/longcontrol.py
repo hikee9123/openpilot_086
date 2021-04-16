@@ -57,6 +57,6 @@ class CLongControl():
     can_sends.append( create_scc11(packer, frame, enabled, set_speed, lead_visible, scc_live, CS.scc11) )
 
     self.scc12_cnt += 1
-    str_log2 = 'accel={:.0f}  speed={:.0f} lead={} stop={:.0f}'.format( apply_accel, set_speed,  lead_visible, stopping )
+    str_log2 = 'accel={:.3f}  speed={:.0f} lead={} stop={:.0f}'.format( apply_accel, set_speed,  lead_visible, stopping )
     trace1.printf2( '{}'.format( str_log2 ) )
     return can_sends

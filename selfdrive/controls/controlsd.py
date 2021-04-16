@@ -450,6 +450,7 @@ class Controls:
     global trace1
     log_alertTextMsg1 = trace1.global_alertTextMsg1
     log_alertTextMsg2 = trace1.global_alertTextMsg2
+    log_alertTextMsg3 = trace1.global_alertTextMsg3
 
 
     CC = car.CarControl.new_message()
@@ -552,6 +553,7 @@ class Controls:
     controlsState.output = float(lac_log.output)
     controlsState.alertTextMsg1 = str(log_alertTextMsg1)
     controlsState.alertTextMsg2 = str(log_alertTextMsg2)
+    controlsState.alertTextMsg3 = str(log_alertTextMsg3)
     controlsState.modelSpeed = float(self.model_speed) 
 
 

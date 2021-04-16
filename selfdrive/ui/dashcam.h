@@ -414,8 +414,9 @@ static void ui_draw_debug1(UIState *s)
   
   nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
   //  1035, 1078
-  ui_draw_text1(s, 0, 30, scene.alert.alertTextMsg1.c_str(), 45, COLOR_WHITE, "sans-semibold");
-  ui_draw_text1(s, 0, 75, scene.alert.alertTextMsg2.c_str(), 45, COLOR_WHITE, "sans-semibold");
+  ui_draw_text1(s, 0, 30, scene.alert.alertTextMsg1.c_str(), 45, COLOR_WHITE, "sans-regular");
+  ui_draw_text1(s, 0, 1040, scene.alert.alertTextMsg2.c_str(), 45, COLOR_WHITE, "sans-regular");
+  ui_draw_text1(s, 0, 1078, scene.alert.alertTextMsg3.c_str(), 45, COLOR_WHITE, "sans-regular");
 }
 
 

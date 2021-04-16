@@ -525,7 +525,8 @@ struct ControlsState @0x97ff69c53601abf1 {
   output @59 :Float32;
   alertTextMsg1  @60 :Text;
   alertTextMsg2  @61 :Text;
-  modelSpeed @62 :Float32;
+  alertTextMsg3  @62 :Text;
+  modelSpeed @63 :Float32;
 
   lateralControlState :union {
     indiState @52 :LateralINDIState;
