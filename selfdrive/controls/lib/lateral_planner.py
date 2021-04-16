@@ -218,7 +218,7 @@ class LateralPlanner():
       self.LP.lll_prob *= self.lane_change_ll_prob
       self.LP.rll_prob *= self.lane_change_ll_prob
     #if self.use_lanelines:
-    self.use_laneless = self.auto_laneless( sm['carState'], sm['radarState'] ):
+    self.use_laneless = self.auto_laneless( sm['carState'], sm['radarState'] )
     if self.use_laneless:
       d_path_xyz = self.LP.get_d_path(v_ego, self.t_idxs, self.path_xyz)
       self.libmpc.set_weights(MPC_COST_LAT.PATH, MPC_COST_LAT.HEADING, CP.steerRateCost)
