@@ -97,8 +97,8 @@ class LateralPlanner():
 
   # atom
   def auto_laneless(self, carState, radarState):
-    if self.use_lanelines:
-      return True
+    #if self.use_lanelines:
+    #  return True
  
     lanelines = False
     #dRel = radarState.leadOne.dRel
