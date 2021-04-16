@@ -261,6 +261,7 @@ static void update_state(UIState *s) {
    {
     scene.lateralPlan = sm["lateralPlan"].getLateralPlan();
     scene.end_to_end = scene.lateralPlan.getLaneLess();
+    print("end to end = %d \n", scene.end_to_end );
    } 
    if (sm.updated("carControl"))
    {
