@@ -413,7 +413,8 @@ static void ui_draw_debug1(UIState *s)
   UIScene &scene = s->scene;
   
   nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
-  ui_draw_text1(s, 0, 1035, scene.alert.alertTextMsg1.c_str(), 45, COLOR_WHITE, "sans-semibold");
+  //  1035
+  ui_draw_text1(s, 0, 0, scene.alert.alertTextMsg1.c_str(), 45, COLOR_WHITE, "sans-semibold");
   ui_draw_text1(s, 0, 1078, scene.alert.alertTextMsg2.c_str(), 45, COLOR_WHITE, "sans-semibold");
 }
 
