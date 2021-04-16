@@ -98,13 +98,9 @@ class LateralPlanner():
   # atom
   def auto_laneless(self, carState, radarState):
     if self.use_lanelines:
-      lanelines = 1
-    else:
-      lanelines = 0
-      
-    if lanelines:
-      return lanelines
-
+      return 1
+ 
+    lanelines = 0
     #dRel = radarState.leadOne.dRel
     vEgo_kph = carState.vEgo * CV.MS_TO_KPH
     if vEgo_kph < 20:  #or dRel < 25:
