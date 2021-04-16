@@ -77,7 +77,7 @@ class LateralPlanner():
     self.y_pts = np.zeros(TRAJECTORY_SIZE)
 
     # atom
-    self.use_laneless = use_lanelines
+    self.use_laneless = 0
 
   def setup_mpc(self):
     self.libmpc = libmpc_py.libmpc
@@ -97,14 +97,18 @@ class LateralPlanner():
 
   # atom
   def auto_laneless(self, carState, radarState):
-    lanelines = self.use_lanelines
+    if self.use_lanelines:
+      lanelines = 1
+    else:
+      lanelines = 0
+      
     if lanelines:
       return lanelines
 
     #dRel = radarState.leadOne.dRel
-    #vEgo_kph = carState.vEgo * CV.MS_TO_KPH
-    #if vEgo_kph < 20:  #or dRel < 25:
-    #  lanelines = True
+    vEgo_kph = carState.vEgo * CV.MS_TO_KPH
+    if vEgo_kph < 20:  #or dRel < 25:
+      lanelines = 1
     return lanelines
     
 
