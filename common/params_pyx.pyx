@@ -92,6 +92,7 @@ keys = {
   b"OpkrPrebuilt": [TxType.PERSISTENT],
   b"OpkrAutoScreenOff": [TxType.PERSISTENT],
   b"OpkrUIBrightness": [TxType.PERSISTENT],
+  b"OpkrUIVolumeBoost": [TxType.PERSISTENT],  
   b"LongitudinalControl": [TxType.PERSISTENT],
   b"OpkrSSHLegacy": [TxType.PERSISTENT],  
 }

@@ -21,6 +21,7 @@
 
 CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
 {
+   layout()->addWidget(horizontal_line()); 
   //  UIState* ui_state = &GLWindow::ui_state;
   QVBoxLayout *main_layout = new QVBoxLayout(this);
   main_layout->setMargin(100);
@@ -39,7 +40,6 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
     )
   ); 
 
-  layout()->addWidget(horizontal_line());
 
   layout()->addWidget(new GitHash());
   layout()->addWidget(
@@ -53,7 +53,9 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
       }
     )
   ); 
-
+  layout()->addWidget(horizontal_line());
+  
+  layout()->addWidget(new SshLegacyToggle());
 
   layout()->addWidget(horizontal_line());
   layout()->addWidget(new ParamControl("IsOpenpilotViewEnabled",
@@ -61,9 +63,7 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
                                        "오픈파일럿 주행화면을 미리보기 합니다.",
                                        "../assets/offroad/icon_eon.png"
                                        ));
-  layout()->addWidget(horizontal_line());
-  
-  layout()->addWidget(new SshLegacyToggle());
+
 
   layout()->addWidget(horizontal_line());
 
@@ -79,6 +79,7 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
   layout()->addWidget(horizontal_line());
 
   layout()->addWidget(new BrightnessControl());
+  layout()->addWidget(new CVolumeControl());  
   layout()->addWidget(new AutoScreenOff());
 
   layout()->addWidget(horizontal_line());
@@ -185,6 +186,77 @@ void BrightnessControl::refresh()
 }
 
 
+CVolumeControl::CVolumeControl() : AbstractControl("EON 볼륨 조절(%)", "EON의 볼륨을 조절합니다. 안드로이드 기본값/수동설정", "../assets/offroad/icon_shell.png") {
+
+  label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
+  label.setStyleSheet("color: #e0e879");
+  hlayout->addWidget(&label);
+
+  btnminus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnplus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnminus.setFixedSize(150, 100);
+  btnplus.setFixedSize(150, 100);
+  hlayout->addWidget(&btnminus);
+  hlayout->addWidget(&btnplus);
+
+  QObject::connect(&btnminus, &QPushButton::released, [=]() {
+    auto str = QString::fromStdString(Params().get("OpkrUIVolumeBoost"));
+    int value = str.toInt();
+    value = value - 10;
+    if (value <= -10 ) {
+      value = -10;
+    } else {
+    }
+    QString values = QString::number(value);
+    GLWindow::ui_state.scene.scr.nVolumeBoost = value;
+    Params().put("OpkrUIVolumeBoost", values.toStdString());
+    refresh();
+    GLWindow::ui_state.sound->play(AudibleAlert::CHIME_WARNING1);
+  });
+  
+  QObject::connect(&btnplus, &QPushButton::released, [=]() {
+    auto str = QString::fromStdString(Params().get("OpkrUIVolumeBoost"));
+    int value = str.toInt();
+    value = value + 10;
+    if (value >= 100 ) {
+      value = 100;
+    } else {
+    }
+    QString values = QString::number(value);
+    GLWindow::ui_state.scene.scr.nVolumeBoost = value;
+    Params().put("OpkrUIVolumeBoost", values.toStdString());
+    refresh();
+    GLWindow::ui_state.sound->play(AudibleAlert::CHIME_WARNING1);
+  });
+  refresh();
+}
+
+void CVolumeControl::refresh() {
+  QString option = QString::fromStdString(Params().get("OpkrUIVolumeBoost"));
+  if (option == "0") {
+    label.setText(QString::fromStdString("기본값"));
+  } else if (option == "-10") {
+    label.setText(QString::fromStdString("음소거"));
+  } else {
+    label.setText(QString::fromStdString(Params().get("OpkrUIVolumeBoost")));
+  }
+  btnminus.setText("－");
+  btnplus.setText("＋");
+}
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 //  AutoScreenOff

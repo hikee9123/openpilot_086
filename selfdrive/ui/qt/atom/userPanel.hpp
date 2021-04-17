@@ -106,6 +106,20 @@ private:
   void refresh();
 };
 
+class CVolumeControl : public AbstractControl {
+  Q_OBJECT
+
+public:
+  CVolumeControl();
+
+private:
+  QPushButton btnplus;
+  QPushButton btnminus;
+  QLabel label;
+
+  void refresh();
+};
+
 
 class AutoScreenOff : public AbstractControl {
   Q_OBJECT

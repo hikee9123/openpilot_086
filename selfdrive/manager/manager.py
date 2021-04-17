@@ -42,6 +42,7 @@ def manager_init():
     ("OpkrPrebuilt", "0"),
     ("OpkrAutoScreenOff", "0"),
     ("OpkrUIBrightness", "0"),
+    ("OpkrUIVolumeBoost", "0"),    
     ("LongitudinalControl", "0"),
     ("OpkrSSHLegacy", "1"),    
   ]
