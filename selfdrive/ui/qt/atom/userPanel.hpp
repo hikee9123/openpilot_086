@@ -120,3 +120,33 @@ private:
 
   void refresh();
 };
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+//
+//  Git
+
+class GitHash : public AbstractControl {
+  Q_OBJECT
+
+public:
+  GitHash();
+
+private:
+  QLabel local_hash;
+  QLabel remote_hash;
+};
+
+
+
+class SshLegacyToggle : public ToggleControl {
+  Q_OBJECT
+
+public:
+  SshLegacyToggle() : ToggleControl("기존 공개KEY 사용", "SSH 접속시 기존 공개KEY(0.8.2이하)를 사용합니다.", "", Params().getBool("OpkrSSHLegacy")) {
+    QObject::connect(this, &SshLegacyToggle::toggleFlipped, [=](int state) {
+      char value = state ? '1' : '0';
+      Params().put("OpkrSSHLegacy", &value, 1);
+    });
+  }
+};

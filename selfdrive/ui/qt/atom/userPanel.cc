@@ -41,6 +41,7 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
 
   layout()->addWidget(horizontal_line());
 
+  layout()->addWidget(new GitHash());
   layout()->addWidget(
     new ButtonControl("Git Pull 실행", "실행",
       "리모트 Git에서 변경사항이 있으면 로컬에 반영 됩니다. 로컬 파일이 변경된경우 리모트Git 내역을 반영 못할수도 있습니다. 참고바랍니다.", [=]() 
@@ -60,6 +61,9 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
                                        "오픈파일럿 주행화면을 미리보기 합니다.",
                                        "../assets/offroad/icon_eon.png"
                                        ));
+  layout()->addWidget(horizontal_line());
+  
+  layout()->addWidget(new SshLegacyToggle());
 
   layout()->addWidget(horizontal_line());
 
@@ -256,4 +260,30 @@ void AutoScreenOff::refresh()
   }
   btnminus.setText("－");
   btnplus.setText("＋");
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+//
+//  Git
+
+
+GitHash::GitHash() : AbstractControl("커밋(로컬/리모트)", "", "") {
+
+  QString lhash = QString::fromStdString(Params().get("GitCommit").substr(0, 10));
+  QString rhash = QString::fromStdString(Params().get("GitCommitRemote").substr(0, 10));
+  hlayout->addStretch(1);
+  
+  local_hash.setText(QString::fromStdString(Params().get("GitCommit").substr(0, 10)));
+  remote_hash.setText(QString::fromStdString(Params().get("GitCommitRemote").substr(0, 10)));
+  //local_hash.setAlignment(Qt::AlignVCenter);
+  remote_hash.setAlignment(Qt::AlignVCenter);
+  local_hash.setStyleSheet("color: #aaaaaa");
+  if (lhash == rhash) {
+    remote_hash.setStyleSheet("color: #aaaaaa");
+  } else {
+    remote_hash.setStyleSheet("color: #0099ff");
+  }
+  hlayout->addWidget(&local_hash);
+  hlayout->addWidget(&remote_hash);
 }
