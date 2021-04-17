@@ -21,7 +21,7 @@
 
 CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
 {
-   layout()->addWidget(horizontal_line()); 
+
   //  UIState* ui_state = &GLWindow::ui_state;
   QVBoxLayout *main_layout = new QVBoxLayout(this);
   main_layout->setMargin(100);
@@ -40,7 +40,8 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
     )
   ); 
 
-
+   layout()->addWidget(horizontal_line()); 
+   
   layout()->addWidget(new GitHash());
   layout()->addWidget(
     new ButtonControl("Git Pull 실행", "실행",

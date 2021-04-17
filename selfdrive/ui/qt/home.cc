@@ -336,15 +336,15 @@ void GLWindow::timerUpdate() {
   handle_display_state(&ui_state, false);
 
   // scale volume with speed
- // int nVolumeBoost = ui_state.scene.scr.nVolumeBoost;
- // if (nVolumeBoost > 0) {
- //   sound.volume = nVolumeBoost * 0.01;
- // } else if (nVolumeBoost < 0) {
-//    sound.volume = 0.0;
- // } else {  
+  int nVolumeBoost = ui_state.scene.scr.nVolumeBoost;
+  if (nVolumeBoost > 0) {
+    sound.volume = nVolumeBoost * 0.01;
+  } else if (nVolumeBoost < 0) {
+    sound.volume = 0.0;
+  } else {  
     sound.volume = util::map_val(ui_state.scene.car_state.getVEgo(), 0.f, 20.f,
                                Hardware::MIN_VOLUME, Hardware::MAX_VOLUME);
-  //}
+  }
 
   ui_update(&ui_state);
   if(GLWindow::ui_state.awake){
