@@ -336,7 +336,7 @@ void GLWindow::timerUpdate() {
   handle_display_state(&ui_state, false);
 
   // scale volume with speed
-  nVolumeBoost = ui_state.scene.scr.nVolumeBoost;
+  int nVolumeBoost = ui_state.scene.scr.nVolumeBoost;
   if (nVolumeBoost > 0) {
     sound.volume = nVolumeBoost * 0.01;
   } else if (nVolumeBoost < 0) {
