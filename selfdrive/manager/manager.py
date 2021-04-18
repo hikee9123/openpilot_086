@@ -12,7 +12,7 @@ from common.basedir import BASEDIR
 from common.params import Params
 from common.text_window import TextWindow
 from selfdrive.boardd.set_time import set_time
-from selfdrive.hardware import HARDWARE
+from selfdrive.hardware import HARDWARE, TICI
 from selfdrive.manager.helpers import unblock_stdout
 from selfdrive.manager.process import ensure_running
 from selfdrive.manager.process_config import managed_processes
@@ -46,6 +46,9 @@ def manager_init():
     ("LongitudinalControl", "0"),
     ("OpkrSSHLegacy", "1"),    
   ]
+
+  if TICI:
+    default_params.append(("IsUploadRawEnabled", "1"))
 
   if params.get_bool("RecordFrontLock"):
     params.put_bool("RecordFront", True)

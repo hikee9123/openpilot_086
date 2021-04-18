@@ -285,8 +285,6 @@ void fill_model(cereal::ModelDataV2::Builder &framed, const ModelDataRaw &net_ou
   }
 
   fill_path(framed.initPath(), best_plan, 1.0, valid_len, valid_len_idx, 0);
-
-
 }
 
 void model_publish(PubMaster &pm, uint32_t vipc_frame_id, uint32_t frame_id, float frame_drop,
