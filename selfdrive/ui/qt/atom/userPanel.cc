@@ -218,14 +218,14 @@ CVolumeControl::CVolumeControl() : AbstractControl("EON 볼륨 조절(%)", "EON�
     auto str = QString::fromStdString(Params().get("OpkrUIVolumeBoost"));
     int value = str.toInt();
     value = value - 10;
-    if (value <= -10 ) {
-      value = -10;
-    } else {
-    }
+    if (value < 0 ) {
+      value = 0;
+    } 
     QString values = QString::number(value);
     GLWindow::ui_state.scene.scr.nVolumeBoost = value;
     Params().put("OpkrUIVolumeBoost", values.toStdString());
     refresh();
+    GLWindow::ui_state.sound->volume = value * 0.005;
     GLWindow::ui_state.sound->play(AudibleAlert::CHIME_WARNING1);
   });
   
@@ -233,14 +233,14 @@ CVolumeControl::CVolumeControl() : AbstractControl("EON 볼륨 조절(%)", "EON�
     auto str = QString::fromStdString(Params().get("OpkrUIVolumeBoost"));
     int value = str.toInt();
     value = value + 10;
-    if (value >= 100 ) {
+    if (value > 100 ) {
       value = 100;
-    } else {
-    }
+    } 
     QString values = QString::number(value);
     GLWindow::ui_state.scene.scr.nVolumeBoost = value;
     Params().put("OpkrUIVolumeBoost", values.toStdString());
     refresh();
+    GLWindow::ui_state.sound->volume = value * 0.005;
     GLWindow::ui_state.sound->play(AudibleAlert::CHIME_WARNING1);
   });
   refresh();
@@ -250,8 +250,6 @@ void CVolumeControl::refresh() {
   QString option = QString::fromStdString(Params().get("OpkrUIVolumeBoost"));
   if (option == "0") {
     label.setText(QString::fromStdString("기본값"));
-  } else if (option == "-10") {
-    label.setText(QString::fromStdString("음소거"));
   } else {
     label.setText(QString::fromStdString(Params().get("OpkrUIVolumeBoost")));
   }

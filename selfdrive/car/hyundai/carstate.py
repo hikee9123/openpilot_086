@@ -119,8 +119,11 @@ class CarState(CarStateBase):
     self.update_atom( cp, cp_cam )
 
     if self.time_delay_int <= 0:
-      if self.gearShifter != GearShifter.drive or ret.doorOpen  or ret.seatbeltUnlatched or self.cruiseState_modeSel == 3:
-        self.time_delay_int = 500
+      if self.gearShifter != GearShifter.drive:
+        self.time_delay_int = 1000
+        ret.cruiseState.available = False
+      elif ret.doorOpen  or ret.seatbeltUnlatched or self.cruiseState_modeSel == 3:
+        self.time_delay_int = 200
         ret.cruiseState.available = False
       else:
        ret.cruiseState.available = self.main_on
