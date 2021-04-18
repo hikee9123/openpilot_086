@@ -309,7 +309,7 @@ void GLWindow::backlightUpdate() {
   }
   else if( ui_state.scene.scr.brightness )
   {
-    brightness = 255 * (ui_state.scene.scr.brightness * 0.001);
+    brightness = 255 * (ui_state.scene.scr.brightness * 0.002);
   }
 
   if (brightness != last_brightness) {
@@ -338,7 +338,7 @@ void GLWindow::timerUpdate() {
   // scale volume with speed
   int nVolumeBoost = ui_state.scene.scr.nVolumeBoost;
   if (nVolumeBoost > 0) {
-    sound.volume = nVolumeBoost * 0.001;
+    sound.volume = nVolumeBoost * 0.005;
   } else if (nVolumeBoost < 0) {
     sound.volume = 0.0;
   } else {  
