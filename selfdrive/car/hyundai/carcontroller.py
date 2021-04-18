@@ -43,11 +43,8 @@ class CarController():
     self.lkas11_cnt = 0
 
 
-
-    self.nBlinker = 0
     self.steer_torque_over_timer = 0
     self.steer_torque_ratio = 1
-    self.steer_torque_ratio_dir = 1
 
     self.dRel = 0
     self.vRel = 0
@@ -61,12 +58,10 @@ class CarController():
     self.hud_timer_right = 0
     self.hud_sys_state = 0
 
-    self.command_cnt = 0
-    self.command_load = 0
-    self.params = Params()
 
+    self.params = Params()
     self.SC = SpdctrlSlow()
-    self.kph_vEgo_old = 0
+
 
     # long control
     self.longCtrl = CLongControl(self.p)
