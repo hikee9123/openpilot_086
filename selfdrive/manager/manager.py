@@ -20,6 +20,7 @@ from selfdrive.registration import register
 from selfdrive.swaglog import cloudlog, add_file_handler
 from selfdrive.version import dirty, version
 
+from common.spinner import Spinner
 
 def manager_init():
 
@@ -177,23 +178,25 @@ def manager_thread():
       break
 
 
-def main():
+def main(spinner):
   prepare_only = os.getenv("PREPAREONLY") is not None
 
   manager_init()
-
+  spinner.update_progress(1, 100.)
   # Start UI early so prepare can happen in the background
   if not prepare_only:
     managed_processes['ui'].start()
 
+  spinner.update_progress(20, 100.)
   manager_prepare()
 
+  spinner.update_progress(30, 100.)
   if prepare_only:
     return
 
   # SystemExit on sigterm
   signal.signal(signal.SIGTERM, lambda signum, frame: sys.exit(1))
-
+  spinner.update_progress(50, 100.)
   try:
     manager_thread()
   except Exception:
@@ -208,10 +211,12 @@ def main():
 
 
 if __name__ == "__main__":
+  spinner = Spinner()
+  spinner.update_progress(0, 100)    
   unblock_stdout()
 
   try:
-    main()
+    main(spinner)
   except Exception:
     add_file_handler(cloudlog)
     cloudlog.exception("Manager failed to start")
@@ -223,6 +228,6 @@ if __name__ == "__main__":
       t.wait_for_exit()
 
     raise
-
+  spinner.close()
   # manual exit because we are forked
   sys.exit(0)
