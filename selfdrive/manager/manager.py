@@ -208,7 +208,7 @@ def main():
 
 if __name__ == "__main__":
   spinner = Spinner()
-  spinner.update_progress(50, 100)    
+  spinner.update_progress(90, 100)    
   unblock_stdout()
 
   try:
