@@ -452,8 +452,8 @@ static void ui_draw_debug2(UIState *s)
 
     //ui_print( s, ui_viz_rx+10, 50, "S:%d",  s->awake_timeout );
 
-    x_pos = ui_viz_rx + 200;
-    y_pos = 250; 
+    x_pos = ui_viz_rx + 300;
+    y_pos = 200; 
 
     ui_print( s, x_pos, y_pos+0,   "sR:%.2f, %.2f", steerRatio,  steerRatioCV );
     ui_print( s, x_pos, y_pos+50,   "SC:%.2f, SD:%.2f", steerRateCostCV,  steerActuatorDelayCV );
