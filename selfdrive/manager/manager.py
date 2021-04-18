@@ -179,24 +179,22 @@ def manager_thread():
 
 
 def main(spinner):
+  spinner.update_progress(50, 100.)
   prepare_only = os.getenv("PREPAREONLY") is not None
 
   manager_init()
-  spinner.update_progress(1, 100.)
+  spinner.update_progress(90, 100.)
   # Start UI early so prepare can happen in the background
   if not prepare_only:
     managed_processes['ui'].start()
 
-  spinner.update_progress(20, 100.)
   manager_prepare()
 
-  spinner.update_progress(30, 100.)
   if prepare_only:
     return
 
   # SystemExit on sigterm
   signal.signal(signal.SIGTERM, lambda signum, frame: sys.exit(1))
-  spinner.update_progress(50, 100.)
   try:
     manager_thread()
   except Exception:
