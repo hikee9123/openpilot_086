@@ -56,21 +56,21 @@ class CarInterface(CarInterfaceBase):
     if candidate == CAR.GRANDEUR_HEV_19:
       ret.mass = 1675. + STD_CARGO_KG
       ret.wheelbase = 2.845
-      ret.steerRatio = 13.96  #13.96   #12.5
-      ret.steerMaxBP = [0.]
-      ret.steerMaxV = [1.0]
+      ret.steerRatio = 13.27  #13.96   #12.5
+      ret.steerMaxBP = [1.,8.]
+      ret.steerMaxV = [0.1,1.0]
       ret.steerRateCost = 1.2
 
       ret.lateralTuning.pid.kf = 0.000005
       ret.lateralTuning.pid.kpBP, ret.lateralTuning.pid.kpV = [[0.], [0.20]]
       ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kiV = [[0.], [0.02]]
-      #ret.lateralTuning.pid.kdBP, ret.lateralTuning.pid.kdV = [[0.],[2.5]]
+
 
       
       ret.lateralTuning.init('lqr')
-      ret.lateralTuning.lqr.scale = 1700.0
+      ret.lateralTuning.lqr.scale = 1800.0
       ret.lateralTuning.lqr.ki = 0.01
-      ret.lateralTuning.lqr.dcGain = 0.0027
+      ret.lateralTuning.lqr.dcGain = 0.0028
 
       ret.lateralTuning.lqr.a = [0., 1., -0.22619643, 1.21822268]
       ret.lateralTuning.lqr.b = [-1.92006585e-04, 3.95603032e-05]
@@ -266,7 +266,8 @@ class CarInterface(CarInterfaceBase):
     ret.atomTuning.cvsdDnV  = ATOMC.cv_sdDNV
 
     ret.atomTuning.cvsteerRatioV = ATOMC.cv_steerRatioV
-    ret.atomTuning.cvsteerActuatorDelayV = ATOMC.cv_ActuatorDelayV    
+    ret.atomTuning.cvsteerActuatorDelayV = ATOMC.cv_ActuatorDelayV
+    ret.atomTuning.cvSteerRateCostV = ATOMC.cv_SteerRateCostV
     # atom  END
 
 
@@ -332,6 +333,7 @@ class CarInterface(CarInterfaceBase):
 
     CP.atomTuning.cvsteerRatioV = ATOMC.cv_steerRatioV
     CP.atomTuning.cvsteerActuatorDelayV = ATOMC.cv_ActuatorDelayV
+    CP.atomTuning.cvSteerRateCostV = ATOMC.cv_SteerRateCostV
     return CP
 
   def button_event( self, CS ):

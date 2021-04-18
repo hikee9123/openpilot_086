@@ -47,19 +47,22 @@ class ParamsLearner:
     self.cv_ActuatorDelayV = atomTuning.cvsteerActuatorDelayV
     self.cv_ActuatorDelay = []
 
+    self.cv_SteerRateCostV = atomTuning.cvSteerRateCostV
+    self.cv_SteerRateCost = []
 
     nPos = 0
     for steerRatio in self.cv_BPV:  # steerRatio
       self.cv_SteerRatio.append( interp( cv_value, steerRatio, self.cv_steerRatioV[nPos] ) )
       self.cv_ActuatorDelay.append( interp( cv_value, steerRatio, self.cv_ActuatorDelayV[nPos] ) )
+      self.cv_SteerRateCost.append( interp( cv_value, steerRatio, self.cv_SteerRateCostV[nPos] ) )
       nPos += 1
       if nPos > 20:
         break
 
     steerRatio = interp( v_ego_kph, self.cv_KPH, self.cv_SteerRatio )
     actuatorDelay = interp( v_ego_kph, self.cv_KPH, self.cv_ActuatorDelay )
-
-    return steerRatio, actuatorDelay
+    steerRateCost = interp( v_ego_kph, self.cv_KPH, self.cv_SteerRateCost )
+    return steerRatio, actuatorDelay, steerRateCost
 
    
 
@@ -182,7 +185,7 @@ def main(sm=None, pm=None):
         cv_value = sm['controlsState'].modelSpeed
         if cv_value <= 10: 
           cv_value = 255
-        steerRatioCV, actuatorDelayCV = learner.atom_tune( v_ego_kph, cv_value,  atomTuning )
+        steerRatioCV, actuatorDelayCV, steerRateCostCV = learner.atom_tune( v_ego_kph, cv_value,  atomTuning )
 
 
       if v_ego_kph < 50:  # 50 km/h
@@ -192,6 +195,7 @@ def main(sm=None, pm=None):
 
       msg.liveParameters.steerRatioCV = steerRatioCV
       msg.liveParameters.steerActuatorDelayCV = actuatorDelayCV
+      msg.liveParameters.steerRateCostCV = steerRateCostCV
       msg.liveParameters.steerRatio = float(x[States.STEER_RATIO])
       msg.liveParameters.stiffnessFactor = float(x[States.STIFFNESS])
       msg.liveParameters.angleOffsetAverageDeg = math.degrees(x[States.ANGLE_OFFSET])

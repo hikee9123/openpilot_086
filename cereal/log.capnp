@@ -1238,6 +1238,7 @@ struct LiveParametersData {
   # atom
   steerRatioCV @10 :Float32;
   steerActuatorDelayCV @11 :Float32;
+  steerRateCostCV @12 :Float32;
 }
 
 struct LiveMapDataDEPRECATED {

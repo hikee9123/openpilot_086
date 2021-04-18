@@ -442,6 +442,7 @@ struct CarParams {
     cvsdDnV @4 :List(List(Float32));
     cvsteerRatioV @5 :List(List(Float32));
     cvsteerActuatorDelayV @6 :List(List(Float32));
+    cvSteerRateCostV @7 :List(List(Float32));
   }
 
   struct LateralParams {
