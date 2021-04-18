@@ -178,12 +178,10 @@ def manager_thread():
       break
 
 
-def main(spinner):
-  spinner.update_progress(50, 100.)
+def main():
   prepare_only = os.getenv("PREPAREONLY") is not None
 
   manager_init()
-  spinner.update_progress(90, 100.)
   # Start UI early so prepare can happen in the background
   if not prepare_only:
     managed_processes['ui'].start()
@@ -210,11 +208,11 @@ def main(spinner):
 
 if __name__ == "__main__":
   spinner = Spinner()
-  spinner.update_progress(0, 100)    
+  spinner.update_progress(50, 100)    
   unblock_stdout()
 
   try:
-    main(spinner)
+    main()
   except Exception:
     add_file_handler(cloudlog)
     cloudlog.exception("Manager failed to start")
