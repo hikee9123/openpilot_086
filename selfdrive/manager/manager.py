@@ -182,6 +182,7 @@ def main():
   prepare_only = os.getenv("PREPAREONLY") is not None
 
   manager_init()
+
   # Start UI early so prepare can happen in the background
   if not prepare_only:
     managed_processes['ui'].start()
@@ -193,6 +194,7 @@ def main():
 
   # SystemExit on sigterm
   signal.signal(signal.SIGTERM, lambda signum, frame: sys.exit(1))
+
   try:
     manager_thread()
   except Exception:
@@ -208,7 +210,7 @@ def main():
 
 if __name__ == "__main__":
   spinner = Spinner()
-  spinner.update_progress(90, 100)    
+  spinner.update_progress(99, 100)    
   unblock_stdout()
 
   try:
