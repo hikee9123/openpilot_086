@@ -29,8 +29,6 @@ LANE_CHANGE_AUTO_TIME = 1.0
 MAX_CURVATURE_RATES = [0.03762194918267951, 0.003441203371932992]
 MAX_CURVATURE_RATE_SPEEDS = [0, 35]
 
-
-
 DESIRES = {
   LaneChangeDirection.none: {
     LaneChangeState.off: log.LateralPlan.Desire.none,

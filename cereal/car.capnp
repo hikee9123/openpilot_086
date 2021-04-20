@@ -88,6 +88,7 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     startupNoCar @76;
     startupNoControl @77;
     startupMaster @78;
+    startupFuzzyFingerprint @97;
     fcw @79;
     steerSaturated @80;
     belowEngageSpeed @84;
@@ -102,8 +103,8 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     dashcamMode @96;
 
     # atom
-    steerTorqueOver @97;
-    steerTorqueLow @98;
+    steerTorqueOver @98;
+    steerTorqueLow @99;
 
 
     radarCanErrorDEPRECATED @15;
@@ -364,6 +365,7 @@ struct CarControl {
 struct CarParams {
   carName @0 :Text;
   carFingerprint @1 :Text;
+  fuzzyFingerprint @55 :Bool;
 
   enableGasInterceptor @2 :Bool;
   enableCruise @3 :Bool;
@@ -425,6 +427,7 @@ struct CarParams {
   dashcamOnly @41: Bool;
   transmissionType @43 :TransmissionType;
   carFw @44 :List(CarFw);
+
   radarTimeStep @45: Float32 = 0.05;  # time delta between radar updates, 20Hz is very standard
   communityFeature @46: Bool;  # true if a community maintained feature is detected
   fingerprintSource @49: FingerprintSource;
@@ -432,7 +435,7 @@ struct CarParams {
 
 
   # atom
-  atomTuning @55 :AtomTuning;
+  atomTuning @56 :AtomTuning;
 
   struct AtomTuning {
     cvKPH @0 :List(Float32);
