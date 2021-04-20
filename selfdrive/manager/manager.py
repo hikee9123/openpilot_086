@@ -209,8 +209,6 @@ def main():
 
 
 if __name__ == "__main__":
-  spinner = Spinner()
-  spinner.update_progress(99, 100)    
   unblock_stdout()
 
   try:
@@ -226,6 +224,6 @@ if __name__ == "__main__":
       t.wait_for_exit()
 
     raise
-  spinner.close()
+
   # manual exit because we are forked
   sys.exit(0)
