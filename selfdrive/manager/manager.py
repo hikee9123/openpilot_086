@@ -20,7 +20,6 @@ from selfdrive.registration import register
 from selfdrive.swaglog import cloudlog, add_file_handler
 from selfdrive.version import dirty, version
 
-from common.spinner import Spinner
 
 def manager_init():
 
@@ -126,7 +125,6 @@ def manager_thread():
 
 #params = Params()
   enableLogger = params.get_bool("RecordFront")
-  
   if not enableLogger:
     ignore.append("loggerd")
     ignore.append("logcatd")
@@ -138,8 +136,6 @@ def manager_thread():
   else:
     # save boot log
     subprocess.call("./bootlog", cwd=os.path.join(BASEDIR, "selfdrive/loggerd"))
-
-
 
 
   sm = messaging.SubMaster(['deviceState'])

@@ -443,8 +443,8 @@ def thermald_thread():
     if usb_power:
       power_monitor.charging_ctrl( msg, ts, 60, 40 )    
 
-    # report to server once per minute
-    if (count % int(60. / DT_TRML)) == 0:
+    # report to server once every 10 minutes
+    if (count % int(600. / DT_TRML)) == 0:
       location = messaging.recv_sock(location_sock)
       cloudlog.event("STATUS_PACKET",
                      count=count,
