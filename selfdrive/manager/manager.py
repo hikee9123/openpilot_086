@@ -117,7 +117,7 @@ def manager_thread():
 
   # save boot log
   #subprocess.call("./bootlog", cwd=os.path.join(BASEDIR, "selfdrive/loggerd"))
-
+  params = Params()
   ignore = []
   if params.get("DongleId") is None:
     ignore += ["uploader", "manage_athenad"]
@@ -129,7 +129,7 @@ def manager_thread():
   ensure_running(managed_processes.values(), started=False, not_run=ignore)
 
   started_prev = False
-  params = Params()
+
 
 
 #params = Params()
