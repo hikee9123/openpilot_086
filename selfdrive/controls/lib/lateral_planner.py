@@ -187,7 +187,7 @@ class LateralPlanner():
         # fade out over .5s
         v_ego_kph = v_ego * CV.MS_TO_KPH
         xp = [40,80]
-        fp2 = [1,2]
+        fp2 = [1,1.5]
         lane_time = interp( v_ego_kph, xp, fp2 )        
         self.lane_change_ll_prob = max(self.lane_change_ll_prob - lane_time*DT_MDL, 0.0)
         # 98% certainty

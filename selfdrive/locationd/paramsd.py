@@ -189,8 +189,8 @@ def main(sm=None, pm=None):
         steerRatioCV, actuatorDelayCV, steerRateCostCV = learner.atom_tune( v_ego_kph, cv_value,  atomTuning )
 
 
-      if v_ego_kph < 50:  # 50 km/h
-         v_ego_BP = [10,50]
+      if v_ego_kph < 20:  # 30 km/h
+         v_ego_BP = [5,20]
          angle_rate = [0,1]
          angle_offset_fast *= interp( v_ego_kph, v_ego_BP, angle_rate )
 

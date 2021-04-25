@@ -473,7 +473,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, Callable[[Any, messaging.SubMaster, boo
       "TAKE CONTROL",
       "Auto-Steering Pauses",
       AlertStatus.userPrompt, AlertSize.mid,
-      Priority.LOW, VisualAlert.steerRequired, AudibleAlert.chimePrompt, 0, 0, .3),
+      Priority.LOW, VisualAlert.steerRequired, AudibleAlert.chimePrompt, 0, 0, .1),
   },
   
   EventName.steerTorqueLow: {

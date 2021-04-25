@@ -187,9 +187,14 @@ class PowerMonitoring:
 
     should_shutdown = False
     # Wait until we have shut down charging before powering down
-    should_shutdown |= (not panda_charging and self.should_disable_charging(pandaState, offroad_timestamp))
-    should_shutdown |= ((HARDWARE.get_battery_capacity() < BATT_PERC_OFF) and (not HARDWARE.get_battery_charging()) and ((now - offroad_timestamp) > 10))
-    should_shutdown &= started_seen
+    if (now - offroad_timestamp) < 10:
+      pass
+    elif HARDWARE.get_battery_capacity() < 5:
+      should_shutdown = True
+    else:
+      should_shutdown |= (not panda_charging and self.should_disable_charging(pandaState, offroad_timestamp))
+      should_shutdown |= (HARDWARE.get_battery_capacity() < BATT_PERC_OFF)
+      should_shutdown &= started_seen
     return should_shutdown
 
 
