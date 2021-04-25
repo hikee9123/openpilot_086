@@ -101,7 +101,7 @@ class LateralPlanner():
     lanelines = True
     #dRel = radarState.leadOne.dRel
     vEgo_kph = carState.vEgo * CV.MS_TO_KPH
-    if vEgo_kph < 30:  #or dRel < 25:
+    if vEgo_kph < 50:  #or dRel < 25:
       lanelines = False
     return lanelines
     
@@ -112,6 +112,7 @@ class LateralPlanner():
     measured_curvature = sm['controlsState'].curvature
 
     # atom
+    steeringTorqueAbs = abs(sm['carState'].steeringTorque)
     cruiseState  = sm['carState'].cruiseState
     if sm['liveParameters'].valid:
       steerActuatorDelayCV = sm['liveParameters'].steerActuatorDelayCV
@@ -142,7 +143,7 @@ class LateralPlanner():
       self.lane_change_state = LaneChangeState.off
       self.lane_change_direction = LaneChangeDirection.none
     else:
-      torque_applied = sm['carState'].steeringPressed and \
+      torque_applied = steeringTorqueAbs > 90 and \
                        ((sm['carState'].steeringTorque > 0 and self.lane_change_direction == LaneChangeDirection.left) or
                         (sm['carState'].steeringTorque < 0 and self.lane_change_direction == LaneChangeDirection.right))
 
@@ -167,8 +168,9 @@ class LateralPlanner():
 
       # State transitions
       # off
-      if cruiseState.cruiseSwState == Buttons.CANCEL:
+      if cruiseState.cruiseSwState == Buttons.CANCEL or steeringTorqueAbs > 300:
         self.lane_change_state = LaneChangeState.off
+        self.lane_change_direction = LaneChangeDirection.none
         self.lane_change_ll_prob = 1.0
 
       elif self.lane_change_state == LaneChangeState.off and one_blinker and not self.prev_one_blinker and not below_lane_change_speed:
@@ -191,7 +193,7 @@ class LateralPlanner():
         lane_time = interp( v_ego_kph, xp, fp2 )        
         self.lane_change_ll_prob = max(self.lane_change_ll_prob - lane_time*DT_MDL, 0.0)
         # 98% certainty
-        if lane_change_prob < 0.02 and self.lane_change_ll_prob < 0.01:
+        if lane_change_prob < 0.02 and self.lane_change_ll_prob < 0.1:  #0.01
           self.lane_change_state = LaneChangeState.laneChangeFinishing
 
       # finishing
