@@ -442,7 +442,7 @@ class CarState(CarStateBase):
       ("AVH_LAMP", "TCS15", 0),
 
       ("DriverOverride", "TCS13", 0),
-      ("CF_Lvr_GearInf", "LVR11", 0),        # Transmission Gear (0 = N or P, 1-8 = Fwd, 14 = Rev)
+      #("CF_Lvr_GearInf", "LVR11", 0),        # Transmission Gear (0 = N or P, 1-8 = Fwd, 14 = Rev)
 
       ("CR_Mdps_StrColTq", "MDPS12", 0),
       ("CF_Mdps_ToiActive", "MDPS12", 0),
@@ -495,21 +495,10 @@ class CarState(CarStateBase):
       ("CR_VSM_Alive", "SCC12", 0),
       ("CR_VSM_ChkSum", "SCC12", 0),
 
-      ("SCCDrvModeRValue", "SCC13", 2),
-      ("SCC_Equip", "SCC13", 1),
-      ("AebDrvSetStatus", "SCC13", 0),
-
-      ("JerkUpperLimit", "SCC14", 0),
-      ("JerkLowerLimit", "SCC14", 0),
-      ("SCCMode2", "SCC14", 0),
-      ("ComfortBandUpper", "SCC14", 0),
-      ("ComfortBandLower", "SCC14", 0),
-
       ("PRESSURE_FL", "TPMS11", 0),
       ("PRESSURE_FR", "TPMS11", 0),
       ("PRESSURE_RL", "TPMS11", 0),
       ("PRESSURE_RR", "TPMS11", 0),
-
     ]
 
     checks = [
