@@ -281,8 +281,9 @@ class CarInterface(CarInterfaceBase):
     if ret.radarOffCan  or Params().get('CommunityFeaturesToggle') == b'1':
       ret.safetyModel = car.CarParams.SafetyModel.hyundaiCommunity
     # these cars require a special panda safety mode due to missing counters and checksums in the messages
-    elif candidate in [CAR.HYUNDAI_GENESIS, CAR.IONIQ_EV_2020, CAR.IONIQ_EV_LTD, CAR.IONIQ, CAR.KONA_EV, CAR.KIA_SORENTO, CAR.SONATA_LF,
-                     CAR.KIA_NIRO_EV, CAR.KIA_OPTIMA, CAR.VELOSTER, CAR.KIA_STINGER, CAR.GENESIS_G70, CAR.GENESIS_G80, CAR.GRANDEUR_HEV_19]:
+    elif candidate in [CAR.HYUNDAI_GENESIS, CAR.IONIQ_EV_2020, CAR.IONIQ_EV_LTD, CAR.IONIQ, CAR.KONA_EV, CAR.KIA_SORENTO,
+                     CAR.SONATA_LF, CAR.KIA_NIRO_EV, CAR.KIA_OPTIMA, CAR.VELOSTER, CAR.KIA_STINGER, CAR.KIA_SELTOS,
+                     CAR.GENESIS_G70, CAR.GENESIS_G80, CAR.KIA_CEED, CAR.GRANDEUR_HEV_19]:
       ret.safetyModel = car.CarParams.SafetyModel.hyundaiLegacy
 
     ret.centerToFront = ret.wheelbase * 0.4
@@ -297,6 +298,7 @@ class CarInterface(CarInterfaceBase):
                                                                          tire_stiffness_factor=tire_stiffness_factor)
 
     ret.enableCamera = True
+    ret.enableBsm = 0x58b in fingerprint[0]
 
     
     

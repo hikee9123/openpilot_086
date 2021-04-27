@@ -20,7 +20,7 @@ def create_lkas11(packer, frame, car_fingerprint, apply_steer, steer_req,
   right_lane = CC.hudControl.rightLaneVisible
   enabled = CC.enabled
 
-  if car_fingerprint in [CAR.SONATA, CAR.PALISADE, CAR.KIA_NIRO_EV, CAR.SANTA_FE, CAR.IONIQ_EV_2020]:
+  if car_fingerprint in [CAR.SONATA, CAR.PALISADE, CAR.KIA_NIRO_EV, CAR.SANTA_FE, CAR.IONIQ_EV_2020, CAR.KIA_SELTOS]:
     values["CF_Lkas_LdwsActivemode"] = int(left_lane) + (int(right_lane) << 1)
     values["CF_Lkas_LdwsOpt_USM"] = 2
 

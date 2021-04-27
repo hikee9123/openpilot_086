@@ -4,9 +4,9 @@ from selfdrive.car.hyundai.values import DBC, STEER_THRESHOLD, FEATURES, EV_HYBR
 from selfdrive.car.interfaces import CarStateBase
 from opendbc.can.parser import CANParser
 from selfdrive.config import Conversions as CV
+
 from selfdrive.car.hyundai.spdcontroller  import SpdController
 from selfdrive.car.hyundai.values import Buttons
-
 import common.log as trace1
 
 GearShifter = car.CarState.GearShifter
@@ -198,9 +198,6 @@ class CarState(CarStateBase):
     self.brake_hold = cp.vl["TCS15"]['AVH_LAMP'] # 0 OFF, 1 ERROR, 2 ACTIVE, 3 READY
     self.brake_error = cp.vl["TCS13"]['ACCEnable'] # 0 ACC CONTROL ENABLED, 1-3 ACC CONTROL DISABLED
 
-
-
-
     return ret
 
 
@@ -299,7 +296,7 @@ class CarState(CarStateBase):
 
 
   def get_Blindspot(self, cp):
-    if self.CP.carFingerprint in FEATURES["use_bsm"]:
+    if self.CP.enableBsm:
       if cp.vl["LCA11"]['CF_Lca_IndLeft'] != 0:
         self.leftBlindspot_time = 200
       elif self.leftBlindspot_time:
@@ -356,7 +353,7 @@ class CarState(CarStateBase):
 
   @staticmethod
   def get_parser_ev_hybrid(CP, signals, checks):
-    if CP.carFingerprint in FEATURES["use_bsm"]:
+    if CP.enableBsm:
       signals += [
         ("CF_Lca_IndLeft", "LCA11", 0),
         ("CF_Lca_IndRight", "LCA11", 0),
@@ -435,26 +432,28 @@ class CarState(CarStateBase):
       ("CF_Clu_AliveCnt1", "CLU11", 0),
 
       ("ACCEnable", "TCS13", 0),
-      ("ACC_REQ", "TCS13", 0),           # append  082
+      ("ACC_REQ", "TCS13", 0),
       ("BrakeLight", "TCS13", 0),
       ("DriverBraking", "TCS13", 0),
-      ("StandStill", "TCS13", 0),        # append  082
-      ("PBRAKE_ACT", "TCS13", 0),        # append  082
-      ("DriverOverride", "TCS13", 0),
+      ("StandStill", "TCS13", 0),
+      ("PBRAKE_ACT", "TCS13", 0),
 
       ("ESC_Off_Step", "TCS15", 0),
-      ("AVH_LAMP", "TCS15", 0),          # append  082
+      ("AVH_LAMP", "TCS15", 0),
 
+      ("DriverOverride", "TCS13", 0),
       ("CF_Lvr_GearInf", "LVR11", 0),        # Transmission Gear (0 = N or P, 1-8 = Fwd, 14 = Rev)
 
       ("CR_Mdps_StrColTq", "MDPS12", 0),
       ("CF_Mdps_ToiActive", "MDPS12", 0),
       ("CF_Mdps_ToiUnavail", "MDPS12", 0),
+      ("CF_Mdps_ToiFlt", "MDPS12", 0),
+      ("CR_Mdps_OutTq", "MDPS12", 0),
+
       ("CF_Mdps_MsgCount2", "MDPS12", 0),  #
       ("CF_Mdps_Chksum2", "MDPS12", 0),    #
-     
       ("CF_Mdps_FailStat", "MDPS12", 0),
-      ("CR_Mdps_OutTq", "MDPS12", 0),
+
 
       ("SAS_Angle", "SAS11", 0),
       ("SAS_Speed", "SAS11", 0),
@@ -521,6 +520,7 @@ class CarState(CarStateBase):
       ("CLU11", 50),
       ("ESP12", 100),
       ("CGW1", 10),
+      ("CGW2", 5),
       ("CGW4", 5),
       ("WHL_SPD11", 50),
       ("SAS11", 100),
