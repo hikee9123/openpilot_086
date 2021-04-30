@@ -191,7 +191,7 @@ void Sidebar::update(const UIState &s){
 void Sidebar::draw_battery_icon(const UIState &s) 
 {
   //const char *battery_img = s.scene.deviceState.getBatteryStatus() == "Charging" ? "battery_charging" : "battery";
-  const QRect rect = {160, 255, 76, 36};
+  const Rect rect = {160, 255, 76, 36};
 
   int batteryPercent = s.scene.deviceState.getBatteryPercent();
 
@@ -202,14 +202,14 @@ void Sidebar::draw_battery_icon(const UIState &s)
               int((rect.w - 19) * batteryPercent * 0.01), rect.h - 11}, COLOR_WHITE);
   //ui_draw_image(s, rect, battery_img, 1.0f);
 
-  QImage  *pimg = s.scene.deviceState.getBatteryStatus() == "Charging" ? &image_battery_charging : &image_battery;
+  QImage  &img = s.scene.deviceState.getBatteryStatus() == "Charging" ? image_battery_charging : image_battery;
 
-  QRect rcimg(pimg->rect());
+  QRect rcimg(img.rect());
   rcimg.moveCenter(rect.center());
   QPainter painter(this);  
-  painter.drawImage(rcimg.topLeft(), *pimg);
+  painter.drawImage(rcimg.topLeft(), img);
 
   char temp_value_str1[32];
   snprintf(temp_value_str1, sizeof(temp_value_str1), "%d", batteryPercent );
-  nvgTextBox(s.vg, rect.x, rect.y - 2, rect.w, temp_value_str1, NULL);   
+  //nvgTextBox(s.vg, rect.x, rect.y - 2, rect.w, temp_value_str1, NULL);   
 }
