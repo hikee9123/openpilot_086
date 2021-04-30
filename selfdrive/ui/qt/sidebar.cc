@@ -204,10 +204,10 @@ void Sidebar::draw_battery_icon(const UIState &s)
 
   QImage  &img = s.scene.deviceState.getBatteryStatus() == "Charging" ? image_battery_charging : image_battery;
 
-  QRect rcimg(img.rect());
-  rcimg.moveCenter(bg.center());
-  QPainter painter(this);  
-  painter.drawImage(rcimg.topLeft(), img);
+ // QRect rcimg(img.rect());
+ // rcimg.moveCenter(bg.center());
+ // QPainter painter(this);  
+ // painter.drawImage(rcimg.topLeft(), img);
 
   char temp_value_str1[32];
   snprintf(temp_value_str1, sizeof(temp_value_str1), "%d", batteryPercent );
