@@ -51,6 +51,11 @@ class Sidebar : public QFrame {
 public:
   explicit Sidebar(QWidget* parent = 0);
 
+private:
+  QImage image_battery;
+  QImage image_battery_charging;
+  void  draw_battery_icon(UIState *s);
+
 signals:
   void openSettings();
 

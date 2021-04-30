@@ -1013,8 +1013,6 @@ void ui_nvg_init(UIState *s) {
   std::vector<std::pair<const char *, const char *>> images = {
     {"wheel", "../assets/img_chffr_wheel.png"},
     {"driver_face", "../assets/img_driver_face.png"},
-    {"battery", "../assets/images/battery.png"},
-    {"battery_charging", "../assets/images/battery_charging.png"},
     {"compass", "../assets/compass/img_compass.png"},
     {"direction", "../assets/compass/img_direction.png"},
   };

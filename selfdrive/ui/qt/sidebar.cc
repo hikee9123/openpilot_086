@@ -125,7 +125,16 @@ Sidebar::Sidebar(QWidget* parent) : QFrame(parent) {
     }
   )");
   setLayout(layout);
+
+
+  image_battery.load("../assets/images/battery.png");
+  image_battery_charging.load("../assets/images/battery_charging.png");
+  //{"battery", "../assets/images/battery.png"},
+  //{"battery_charging", "../assets/images/battery_charging.png"},
 }
+
+
+
 
 void Sidebar::update(const UIState &s){
   static std::map<NetStatus, std::pair<QString, QColor>> connectivity_map = {
@@ -161,6 +170,8 @@ void Sidebar::update(const UIState &s){
   const int img_idx = s.scene.deviceState.getNetworkType() == cereal::DeviceState::NetworkType::NONE ? 0 : network_strength_map[s.scene.deviceState.getNetworkStrength()];
   signal->update(network_type, img_idx);
 
+  draw_battery_icon( s );
+
   QColor panda_color = COLOR_GOOD;
   QString panda_message = "VEHICLE\nONLINE";
   if (s.scene.pandaType == cereal::PandaState::PandaType::UNKNOWN) {
@@ -174,4 +185,31 @@ void Sidebar::update(const UIState &s){
   }
 #endif
   panda->update(panda_message, "", panda_color);
+}
+
+
+void Sidebar::draw_battery_icon(const UIState &s) 
+{
+  //const char *battery_img = s.scene.deviceState.getBatteryStatus() == "Charging" ? "battery_charging" : "battery";
+  const QRect bg = {160, 255, 76, 36};
+
+  int batteryPercent = s.scene.deviceState.getBatteryPercent();
+
+  if( batteryPercent <= 0)
+     batteryPercent = 50;
+
+  ui_fill_rect(s.vg, {rect.x + 6, rect.y + 5,
+              int((rect.w - 19) * batteryPercent * 0.01), rect.h - 11}, COLOR_WHITE);
+  //ui_draw_image(s, rect, battery_img, 1.0f);
+
+  QImage  *pimg = s.scene.deviceState.getBatteryStatus() == "Charging" ? &image_battery_charging : &image_battery;
+
+  QRect rect(pimg->rect());
+  rect.moveCenter(bg.center());
+  QPainter painter(this);  
+  painter.drawImage(rect.topLeft(), *pimg);
+
+  char temp_value_str1[32];
+  snprintf(temp_value_str1, sizeof(temp_value_str1), "%d", batteryPercent );
+  nvgTextBox(s.vg, rect.x, rect.y - 2, rect.w, temp_value_str1, NULL);   
 }
