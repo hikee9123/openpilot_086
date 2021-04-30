@@ -85,9 +85,13 @@ def manager_init():
   params.put("GitRemote", get_git_remote(default=""))
 
   # set dongle id
-  dongle_id = register(show_spinner=True)
-  if dongle_id is not None:
-    os.environ['DONGLE_ID'] = dongle_id  # Needed for swaglog
+  reg_res = register(show_spinner=True)
+  if reg_res:
+    dongle_id = reg_res
+  else:
+    serial = params.get("HardwareSerial")
+    raise Exception(f"Registration failed for device {serial}")
+  os.environ['DONGLE_ID'] = dongle_id  # Needed for swaglog
 
   if not dirty:
     os.environ['CLEAN'] = '1'
@@ -95,7 +99,7 @@ def manager_init():
   cloudlog.bind_global(dongle_id=dongle_id, version=version, dirty=dirty,
                        device=HARDWARE.get_device_type())
 
-  if not (dongle_id is None or os.getenv("NOLOG") or os.getenv("NOCRASH") or PC):
+  if not (os.getenv("NOLOG") or os.getenv("NOCRASH") or PC):
     crash.init()
   crash.bind_user(id=dongle_id)
   crash.bind_extra(dirty=dirty, origin=origin, branch=branch, commit=commit,
@@ -123,8 +127,6 @@ def manager_thread():
   params = Params()
 
   ignore = []
-  if params.get("DongleId") is None:
-    ignore += ["uploader", "manage_athenad"]
   if os.getenv("NOBOARD") is not None:
     ignore.append("pandad")
   if os.getenv("BLOCK") is not None:
@@ -135,8 +137,8 @@ def manager_thread():
   started_prev = False
 
 
-
-#params = Params()
+  # atom
+  #params = Params()
   enableLogger = params.get_bool("RecordFront")
   if not enableLogger:
     ignore.append("loggerd")

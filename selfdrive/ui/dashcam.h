@@ -86,12 +86,6 @@ struct tm get_time_struct()
   return tm;
 }
 
-void reset_time(UIState *s)
-{
-  GLWindow::wake();
-}
-    
-
 void remove_file(char *videos_dir, char *filename)
 {
   if (filename[0] == '\0')
@@ -570,14 +564,12 @@ void update_dashcam(UIState *s, int draw_vision)
     program_start = 0;
     s->scene.scr.autoScreenOff = get_param("OpkrAutoScreenOff");
     s->scene.scr.brightness = get_param("OpkrUIBrightness");
-        
-    reset_time(s);
+
     printf("autoScreenOff=%d, brightness=%d \n", s->scene.scr.autoScreenOff, s->scene.scr.brightness);       
   }
   else if ( touched  ) 
   {
     s->scene.mouse.touched = 0; 
-    //printf("touched:(%d,%d) %d  %d \n", touch_x, touch_y, touched, s->sidebar_collapsed);
   }
 
 
