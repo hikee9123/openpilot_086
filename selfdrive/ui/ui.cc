@@ -447,7 +447,7 @@ void Device::updateBrightness(const UIState &s) {
   }
 #endif
 
-  ScreenAwake(s);
+  ScreenAwake();
 
   int brightness = brightness_filter.update(clipped_brightness);
   if (!awake) {
@@ -482,9 +482,10 @@ void Device::updateWakefulness(const UIState &s) {
 
 
 //  atom
-void Device::ScreenAwake( UIState &s) 
+void Device::ScreenAwake() 
 {
   const bool draw_alerts = s.scene.started;
+  UIState &s = &QUIState::ui_state;
 
   if( s.scene.scr.nTime > 0 )
   {
