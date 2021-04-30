@@ -191,7 +191,7 @@ void Sidebar::update(const UIState &s){
 void Sidebar::draw_battery_icon(const UIState &s) 
 {
   //const char *battery_img = s.scene.deviceState.getBatteryStatus() == "Charging" ? "battery_charging" : "battery";
-  const QRect bg = {160, 255, 76, 36};
+  const QRect rect = {160, 255, 76, 36};
 
   int batteryPercent = s.scene.deviceState.getBatteryPercent();
 
@@ -204,10 +204,10 @@ void Sidebar::draw_battery_icon(const UIState &s)
 
   QImage  *pimg = s.scene.deviceState.getBatteryStatus() == "Charging" ? &image_battery_charging : &image_battery;
 
-  QRect rect(pimg->rect());
-  rect.moveCenter(bg.center());
+  QRect rcimg(pimg->rect());
+  rcimg.moveCenter(rect.center());
   QPainter painter(this);  
-  painter.drawImage(rect.topLeft(), *pimg);
+  painter.drawImage(rcimg.topLeft(), *pimg);
 
   char temp_value_str1[32];
   snprintf(temp_value_str1, sizeof(temp_value_str1), "%d", batteryPercent );
