@@ -436,6 +436,7 @@ void Device::setAwake(bool on, bool reset) {
   if (reset) {
     awake_timeout = 30 * UI_FREQ;
     QUIState::ui_state.scene.scr.nTime = QUIState::ui_state.scene.scr.autoScreenOff * 60 * UI_FREQ;
+    printf("Device::setAwake=%d \n", QUIState::ui_state.scene.scr.nTime);
   }
 }
 
