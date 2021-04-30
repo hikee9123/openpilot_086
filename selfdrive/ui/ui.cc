@@ -449,7 +449,7 @@ void Device::updateBrightness(const UIState &s) {
   }
 #endif
 
-  ScreenAwake();
+
 
   int brightness = brightness_filter.update(clipped_brightness);
   if (!awake) {
@@ -477,6 +477,12 @@ void Device::updateWakefulness(const UIState &s) {
     should_wake = accel_trigger && gyro_trigger;
     gyro_prev = s.scene.gyro_sensor;
     accel_prev = (accel_prev * (accel_samples - 1) + s.scene.accel_sensor) / accel_samples;
+  }
+
+  ScreenAwake();
+  if( s.scene.scr.nTime > 0 )
+  {
+    awake_timeout = 30 * UI_FREQ;
   }
 
   setAwake(awake_timeout, should_wake);
