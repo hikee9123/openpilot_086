@@ -482,7 +482,7 @@ void Device::updateWakefulness(const UIState &s) {
 
 
 //  atom
-void Device::ScreenAwake(const UIState &s) 
+void Device::ScreenAwake( const UIState &s) 
 {
   const bool draw_alerts = s.scene.started;
 
