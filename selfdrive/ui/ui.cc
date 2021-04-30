@@ -447,7 +447,7 @@ void Device::updateBrightness(const UIState &s) {
   }
 #endif
 
-  ScreenAwake();
+  ScreenAwake(s);
 
   int brightness = brightness_filter.update(clipped_brightness);
   if (!awake) {
@@ -482,17 +482,21 @@ void Device::updateWakefulness(const UIState &s) {
 
 
 //  atom
-void Device::ScreenAwake() 
+void Device::ScreenAwake(const UIState &s) 
 {
-  const bool draw_alerts = QUIState::ui_state.scene.started;
+  const bool draw_alerts = s.scene.started;
 
-  if( QUIState::ui_state.scene.scr.nTime > 0 )
+  if( s.scene.scr.nTime > 0 )
   {
-     QUIState::ui_state.scene.scr.nTime--;
+     s.scene.scr.nTime--;
   }
- 
-  int  cur_key = QUIState::ui_state.scene.scr.awake;
-  if (draw_alerts && QUIState::ui_state.scene.alert_size != cereal::ControlsState::AlertSize::NONE) 
+  else if( s.scene.scr.autoScreenOff && s.scene.scr.nTime == 0)
+  {
+    awake = false;
+  }
+
+  int  cur_key = s.scene.scr.awake;
+  if (draw_alerts && s.scene.alert_size != cereal::ControlsState::AlertSize::NONE) 
   {
       cur_key += 1;
   }
