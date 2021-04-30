@@ -507,7 +507,7 @@ void Device::ScreenAwake()
    static int  time_disp = 0;
    time_disp++;
   if( (time_disp % (2*UI_FREQ)) == 0 )
-      printf("ScreenAwake awake = %d draw_alerts = %d   time=%d\n", cur_key, draw_alerts, time_disp );  
+      printf("ScreenAwake awake = %d draw_alerts = %d  scr.nTime=%d  time=%d\n", cur_key, draw_alerts, s.scene.scr.nTime, time_disp );  
 
   static int old_key;
   if( cur_key != old_key )
