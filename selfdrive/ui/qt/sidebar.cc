@@ -192,7 +192,7 @@ void Sidebar::draw_battery_icon(const UIState &s)
 {
   //const char *battery_img = s.scene.deviceState.getBatteryStatus() == "Charging" ? "battery_charging" : "battery";
   //const Rect rect = {160, 255, 76, 36};
-  QRect bg(160, 255, 76, 36);
+  //QRect bg(160, 255, 76, 36);
   int batteryPercent = s.scene.deviceState.getBatteryPercent();
 
   if( batteryPercent <= 0)
@@ -202,7 +202,7 @@ void Sidebar::draw_battery_icon(const UIState &s)
  //             int((rect.w - 19) * batteryPercent * 0.01), rect.h - 11}, COLOR_WHITE);
   //ui_draw_image(s, rect, battery_img, 1.0f);
 
-  QImage  &img = s.scene.deviceState.getBatteryStatus() == "Charging" ? image_battery_charging : image_battery;
+ // QImage  &img = s.scene.deviceState.getBatteryStatus() == "Charging" ? image_battery_charging : image_battery;
 
  // QRect rcimg(img.rect());
  // rcimg.moveCenter(bg.center());
