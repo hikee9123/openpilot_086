@@ -482,13 +482,13 @@ void Device::updateWakefulness(const UIState &s) {
 
 
 //  atom
-void Device::ScreenAwake( const UIState &s) 
+void Device::ScreenAwake( UIState &s) 
 {
   const bool draw_alerts = s.scene.started;
 
   if( s.scene.scr.nTime > 0 )
   {
-    // s.scene.scr.nTime -= 1;
+    s.scene.scr.nTime--;
   }
   else if( s.scene.scr.autoScreenOff && s.scene.scr.nTime == 0)
   {
