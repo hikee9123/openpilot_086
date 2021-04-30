@@ -488,7 +488,7 @@ void Device::ScreenAwake( const UIState &s)
 
   if( s.scene.scr.nTime > 0 )
   {
-     s.scene.scr.nTime--;
+     s.scene.scr.nTime -= 1;
   }
   else if( s.scene.scr.autoScreenOff && s.scene.scr.nTime == 0)
   {
