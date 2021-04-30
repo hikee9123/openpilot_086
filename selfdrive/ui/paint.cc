@@ -298,12 +298,12 @@ static void ui_draw_vision_speed(UIState *s) {
 
 static void ui_draw_vision_event(UIState *s) {
   int engageable = s->scene.controls_state.getEngageable();
+  const int radius = 96;
+  const int center_x = s->viz_rect.right() - radius;// - bdr_s * 1.5;
+  const int center_y = s->viz_rect.y + (radius / 2)  + (bdr_s * 0.9); 
 
   if (engageable) {
     // draw steering wheel
-    const int radius = 96;
-    const int center_x = s->viz_rect.right() - radius;// - bdr_s * 1.5;
-    const int center_y = s->viz_rect.y + (radius / 2)  + (bdr_s * 0.9); 
     float angleSteers = s->scene.car_state.getSteeringAngleDeg();
     ui_draw_circle_image(s, center_x, center_y, radius, "wheel", bg_colors[s->status], 1.0f, angleSteers);
   }
