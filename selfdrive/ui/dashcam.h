@@ -561,10 +561,12 @@ void update_dashcam(UIState *s, int draw_vision)
 
   if ( program_start )
   {
+
     program_start = 0;
     s->scene.scr.autoScreenOff = get_param("OpkrAutoScreenOff");
     s->scene.scr.brightness = get_param("OpkrUIBrightness");
 
+    s->scene.scr.nTime = s->scene.scr.autoScreenOff * 60 * UI_FREQ;
     printf("autoScreenOff=%d, brightness=%d \n", s->scene.scr.autoScreenOff, s->scene.scr.brightness);       
   }
   else if ( touched  ) 
