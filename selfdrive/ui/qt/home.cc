@@ -66,10 +66,10 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
   int e_button= e->button();
   // 1400, 820
 
-  ui_state->scene.mouse.touch_x = e_x;
-  ui_state->scene.mouse.touch_y = e_y;
-  ui_state->scene.mouse.touched = e_button;
-  ui_state->scene.mouse.touch_cnt++;
+  QUIState::ui_state.scene.mouse.touch_x = e_x;
+  QUIState::ui_state.scene.mouse.touch_y = e_y;
+  QUIState::ui_state.scene.mouse.touched = e_button;
+  QUIState::ui_state.scene.mouse.touch_cnt++;
   printf("mousePressEvent %d,%d  %d \n", e_x, e_y, e_button);
 }
 
