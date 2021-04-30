@@ -484,8 +484,9 @@ void Device::updateWakefulness(const UIState &s) {
 //  atom
 void Device::ScreenAwake() 
 {
+  UIState &s = &QUIState::ui_state;  
   const bool draw_alerts = s.scene.started;
-  UIState &s = &QUIState::ui_state;
+
 
   if( s.scene.scr.nTime > 0 )
   {
