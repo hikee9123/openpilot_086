@@ -13,7 +13,7 @@
 
 #include "common/params.h"
 #include "common/util.h"
-#include "home.hpp"
+#include "ui.hpp"
 
 #include "userPanel.hpp"
 
@@ -22,7 +22,7 @@
 CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
 {
 
-  //  UIState* ui_state = &GLWindow::ui_state;
+  //  UIState* ui_state = &QUIState::ui_state;
   QVBoxLayout *main_layout = new QVBoxLayout(this);
   main_layout->setMargin(100);
   setLayout(main_layout);
@@ -154,7 +154,7 @@ BrightnessControl::BrightnessControl() : AbstractControl("EON 밝기 조절(%)",
     } else {
     }
 
-    GLWindow::ui_state.scene.scr.brightness = value;
+    QUIState::ui_state.scene.scr.brightness = value;
     QString values = QString::number(value);
     Params().put("OpkrUIBrightness", values.toStdString());
     refresh();
@@ -169,7 +169,7 @@ BrightnessControl::BrightnessControl() : AbstractControl("EON 밝기 조절(%)",
     } else {
     }
 
-    GLWindow::ui_state.scene.scr.brightness = value;
+    QUIState::ui_state.scene.scr.brightness = value;
     QString values = QString::number(value);
     Params().put("OpkrUIBrightness", values.toStdString());
     refresh();
@@ -225,11 +225,11 @@ CVolumeControl::CVolumeControl() : AbstractControl("EON 볼륨 조절(%)", "EON�
       value = 0;
     } 
     QString values = QString::number(value);
-    GLWindow::ui_state.scene.scr.nVolumeBoost = value;
+    QUIState::ui_state.scene.scr.nVolumeBoost = value;
     Params().put("OpkrUIVolumeBoost", values.toStdString());
     refresh();
-    GLWindow::ui_state.sound->volume = value * 0.005;
-    GLWindow::ui_state.sound->play(AudibleAlert::CHIME_WARNING1);
+    QUIState::ui_state.sound->volume = value * 0.005;
+    QUIState::ui_state.sound->play(AudibleAlert::CHIME_WARNING1);
   });
   
   QObject::connect(&btnplus, &QPushButton::released, [=]() {
@@ -240,11 +240,11 @@ CVolumeControl::CVolumeControl() : AbstractControl("EON 볼륨 조절(%)", "EON�
       value = 100;
     } 
     QString values = QString::number(value);
-    GLWindow::ui_state.scene.scr.nVolumeBoost = value;
+    QUIState::ui_state.scene.scr.nVolumeBoost = value;
     Params().put("OpkrUIVolumeBoost", values.toStdString());
     refresh();
-    GLWindow::ui_state.sound->volume = value * 0.005;
-    GLWindow::ui_state.sound->play(AudibleAlert::CHIME_WARNING1);
+    QUIState::ui_state.sound->volume = value * 0.005;
+    QUIState::ui_state.sound->play(AudibleAlert::CHIME_WARNING1);
   });
   refresh();
 }
@@ -301,7 +301,7 @@ AutoScreenOff::AutoScreenOff() : AbstractControl("EON 화면 끄기(분)", "주�
     } else {
     }
 
-    GLWindow::ui_state.scene.scr.autoScreenOff = value;
+    QUIState::ui_state.scene.scr.autoScreenOff = value;
     QString values = QString::number(value);
     Params().put("OpkrAutoScreenOff", values.toStdString());
     refresh();
@@ -316,7 +316,7 @@ AutoScreenOff::AutoScreenOff() : AbstractControl("EON 화면 끄기(분)", "주�
     } else {
     }
 
-    GLWindow::ui_state.scene.scr.autoScreenOff = value;
+    QUIState::ui_state.scene.scr.autoScreenOff = value;
     QString values = QString::number(value);
     Params().put("OpkrAutoScreenOff", values.toStdString());
     refresh();
