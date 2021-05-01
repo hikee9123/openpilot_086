@@ -69,6 +69,8 @@ SignalWidget::SignalWidget(QString text, int strength, QWidget* parent) : QFrame
   label_ip.setStyleSheet(R"(font-size: 27px; font-weight: 400;)");
   layout.addWidget(&label_ip, 0, Qt::AlignLeft);
 
+  image_bty.load("../assets/images/battery.png");
+
   setFixedWidth(177);
   setLayout(&layout);
 }
@@ -145,7 +147,6 @@ Sidebar::Sidebar(QWidget* parent) : QFrame(parent) {
   layout->addWidget(connect, 0, Qt::AlignTop);
 
 
-  image_bty.load("../assets/images/battery.png");
 
   QImage image = QImageReader("../assets/images/button_home.png").read();
   QLabel *comma = new QLabel(this);
