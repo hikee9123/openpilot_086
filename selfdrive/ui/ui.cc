@@ -428,9 +428,13 @@ void Device::update(const UIState &s) {
 void Device::setAwake(bool on, bool reset) {
   if (on != awake) {
     awake = on;
-    Hardware::set_display_power(awake);
-    LOGD("setting display power %d", awake);
-    emit displayPowerChanged(awake);
+
+    if( QUIState::ui_state.scene.ignition || !s.scene.scr.autoScreenOff )
+    {
+      Hardware::set_display_power(awake);
+      LOGD("setting display power %d", awake);
+      emit displayPowerChanged(awake);
+    }
   }
 
   if (reset) {
@@ -469,10 +473,10 @@ void Device::updateBrightness(const UIState &s) {
 void Device::updateWakefulness(const UIState &s) {
   awake_timeout = std::max(awake_timeout - 1, 0);
 
-  bool should_wake = s.scene.ignition;
+  bool should_wake = false;
   if( !s.scene.scr.autoScreenOff )
   {
-    should_wake = s.scene.started || should_wake;
+    should_wake = s.scene.started || s.scene.ignition;
     if (!should_wake ) {
       // tap detection while display is off
       bool accel_trigger = abs(s.scene.accel_sensor - accel_prev) > 0.2;
