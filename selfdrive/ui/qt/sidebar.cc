@@ -92,18 +92,15 @@ void SignalWidget::paintEvent(QPaintEvent *e){
     p.drawEllipse(QRectF(_dotspace * i, _top, _dia, _dia));
   }
 
-  //QRect font_rect(1, 1, 100, 40);      // area to show text
-  //p.drawText(font_rect, Qt::AlignLeft, "I love Qt.");
-  // QPainter painter(this);
-
- // QRect bg(0, 0, p.device()->width(), p.device()->height());
- // ui_fill_rect(s.vg, {rect.x + 6, rect.y + 5,
- //             int((rect.w - 19) * batteryPercent * 0.01), rect.h - 11}, COLOR_WHITE);
-  QRect rect(90, _dia+15, 76, 36);
+  QRect  rect(90, _dia+18, 76, 36);
   QRect  bq(rect.left() + 6, rect.top() + 5, int((rect.width() - 19) * m_batteryPercent * 0.01), rect.height() - 11 );
   QBrush bgBrush("#FFFFFF");
   p.fillRect(bq, bgBrush);  
   p.drawImage(rect, image_bty);
+
+  char temp_value_str1[32];
+  snprintf(temp_value_str1, sizeof(temp_value_str1), "%d", m_batteryPercent );  
+  p.drawText(rect, Qt::AlignCenter, temp_value_str1);
 }
 
 void SignalWidget::update( QString text, int strength, const UIScene &scene )
@@ -127,7 +124,6 @@ void SignalWidget::update( QString text, int strength, const UIScene &scene )
       image_bty.load("../assets/images/battery_charging.png");
     else
       image_bty.load("../assets/images/battery.png");
-
   }
 
 
