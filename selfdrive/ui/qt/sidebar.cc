@@ -106,8 +106,30 @@ void SignalWidget::paintEvent(QPaintEvent *e){
   p.drawImage(rect, image_bty);
 }
 
-void SignalWidget::update( QString text, int strength, std::string ip, int batteryPercent){
+void SignalWidget::update( QString text, int strength, UIScene &scene )
+{
+  int batteryPercent = scene.deviceState.getBatteryPercent();
+  if( batteryPercent <= 0)
+     batteryPercent = 50;
+
+  std::string ip = scene.deviceState.getWifiIpAddress();
+
+  QString  txt(ip.c_str());
+  label_ip.setText(txt);
+
   int reDraw = 0;
+  int battery_img = s.scene.deviceState.getBatteryStatus() == "Charging" ? 1 : 0;
+  if( m_battery_img != battery_img )
+  {
+    m_battery_img = battery_img;
+    if( battery_img )
+      image_bty.load("../assets/images/battery_charging.png");
+    else
+      image_bty.load("../assets/images/battery.png");
+    reDraw = 1;
+  }
+
+
   label.setText(text);
   if( _strength != strength )
   {
@@ -124,12 +146,6 @@ void SignalWidget::update( QString text, int strength, std::string ip, int batte
   {
     repaint();
   }
-
-  //char temp_value_str1[32];
-  //snprintf(temp_value_str1, sizeof(temp_value_str1), "%d", batteryPercent );
-
-  QString  txt(ip.c_str());
-  label_ip.setText(txt);
 }
 
 Sidebar::Sidebar(QWidget* parent) : QFrame(parent) {
@@ -212,14 +228,8 @@ void Sidebar::update(const UIState &s){
       {cereal::DeviceState::NetworkStrength::GREAT, 5}};
   const int img_idx = s.scene.deviceState.getNetworkType() == cereal::DeviceState::NetworkType::NONE ? 0 : network_strength_map[s.scene.deviceState.getNetworkStrength()];
 
-  int batteryPercent = s.scene.deviceState.getBatteryPercent();
-  if( batteryPercent <= 0)
-     batteryPercent = 50;
+  signal->update(network_type, img_idx, s.scene);
 
-  std::string ip = s.scene.deviceState.getWifiIpAddress();
-  signal->update(network_type, img_idx, ip, batteryPercent);
-
-  //draw_battery_icon( s );
 
   QColor panda_color = COLOR_GOOD;
   QString panda_message = "VEHICLE\nONLINE";
@@ -260,5 +270,5 @@ void Sidebar::draw_battery_icon(const UIState &s)
 
   char temp_value_str1[32];
   snprintf(temp_value_str1, sizeof(temp_value_str1), "%d", batteryPercent );
-  nvgTextBox(s.vg, rect.x, rect.y - 2, rect.w, temp_value_str1, NULL);   
+ // nvgTextBox(s.vg, rect.x, rect.y - 2, rect.w, temp_value_str1, NULL);   
 }
