@@ -101,7 +101,7 @@ void SignalWidget::paintEvent(QPaintEvent *e){
 
   p.setPen(Qt::yellow);
   QFont font = p.font();
-  font.setPixelSize(27);
+  font.setPixelSize(20);
   p.setFont(font);
 
   char temp_value_str1[32];
