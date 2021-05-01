@@ -284,7 +284,7 @@ static void screen_draw_button(UIState *s, int touch_x, int touch_y, int touched
     int btn_x = bb_dmr_x - btn_w;
     int btn_y = 1080 - btn_h;    
 
-  touch_x += s->viz_rect.x;
+  touch_x -= s->viz_rect.x;
   if ( touched && screen_button_clicked(touch_x, touch_y, btn_x, btn_y, btn_w, btn_h) )
   {
     click_elapsed_time = get_time() - click_time;
@@ -363,7 +363,7 @@ static void screen_menu_button(UIState *s, int touch_x, int touch_y, int touched
     int bb_dmr_x = s->viz_rect.x + s->viz_rect.w + 100 - 170;
     int btn_x = bb_dmr_x - btn_w;
     int btn_y = 1080 - btn_h;
-
+    touch_x -= s->viz_rect.x;
     if( touched && screen_button_clicked(touch_x, touch_y, btn_x, btn_y, btn_w, btn_h) )
     {
       scene.dash_menu_no++;
