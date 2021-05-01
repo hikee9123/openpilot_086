@@ -77,6 +77,11 @@ SignalWidget::SignalWidget(QString text, int strength, QWidget* parent) : QFrame
 
 void SignalWidget::paintEvent(QPaintEvent *e){
   QPainter p(this);
+
+  QRect bg(0, 0, p.device()->width(), p.device()->height());
+  QBrush bgBrush("#000000");
+  p.fillRect(bg, bgBrush);
+
   p.setRenderHint(QPainter::Antialiasing, true);
   p.setPen(Qt::NoPen);
   p.setBrush(Qt::white);
@@ -94,11 +99,9 @@ void SignalWidget::paintEvent(QPaintEvent *e){
 
  // QPainter painter(this);
 
-  QRect bg(0, 0, p.device()->width(), p.device()->height());
-  QBrush bgBrush("#000000");
-  p.fillRect(bg, bgBrush);
 
-  QRect rect(image_bty.rect());
+
+  QRect rect(160, 255, 76, 36);
  // rect.moveCenter(bg.center());
   p.drawImage(rect, image_bty);
   //imageCorner = rect.topLeft();  
