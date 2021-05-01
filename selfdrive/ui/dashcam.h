@@ -250,16 +250,45 @@ static void rotate_video()
 }
 
 
-static void screen_draw_button(UIState *s, int touch_x, int touch_y)
+void screen_toggle_record_state()
+{
+  //if (captureState == CAPTURE_STATE_CAPTURING)
+  if( lock_current_video == true )
+  {
+    stop_capture();
+    lock_current_video = false;
+  }
+  else
+  {
+    // start_capture();
+    lock_current_video = true;
+  }
+}
+
+
+static void screen_draw_button(UIState *s, int touch_x, int touch_y, int touched)
 {
   // Set button to bottom left of screen
-
   nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
 
     int btn_w = 150;
     int btn_h = 150;
     int btn_x = 1990 - btn_w;
     int btn_y = 1080 - btn_h;
+
+  if ( touched && screen_button_clicked(touch_x, touch_y, btn_x, btn_y, btn_w, btn_h) )
+  {
+    click_elapsed_time = get_time() - click_time;
+
+    printf( "screen_button_clicked %d  captureState = %d \n", click_elapsed_time, captureState );
+    if (click_elapsed_time > 0)
+    {
+      click_time = get_time() + 1;
+      screen_toggle_record_state();
+    }
+  }  
+
+
     nvgBeginPath(s->vg);
     nvgRoundedRect(s->vg, btn_x - 110, btn_y - 45, btn_w, btn_h, 100);
     nvgStrokeColor(s->vg, nvgRGBA(255, 255, 255, 80));
@@ -306,21 +335,6 @@ static void screen_draw_button(UIState *s, int touch_x, int touch_y)
   }
 }
 
-void screen_toggle_record_state()
-{
-  //if (captureState == CAPTURE_STATE_CAPTURING)
-  if( lock_current_video == true )
-  {
-    stop_capture();
-    lock_current_video = false;
-  }
-  else
-  {
-    // start_capture();
-    lock_current_video = true;
-  }
-}
-
 
 
 static void screen_menu_button(UIState *s, int touch_x, int touch_y, int touched)
@@ -330,11 +344,16 @@ static void screen_menu_button(UIState *s, int touch_x, int touch_y, int touched
 
   nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
 
+    //int btn_w = 150;
+    //int btn_h = 150;
+    //int btn_x = 1650;// 1920 - btn_w;
+    //int btn_y = 1080 - btn_h;
+
     int btn_w = 150;
     int btn_h = 150;
-    int btn_x = 1650;// 1920 - btn_w;
+    int bb_dmr_x = s->viz_rect.x + s->viz_rect.w - 170;
+    int btn_x = bb_dmr_x - btn_w;
     int btn_y = 1080 - btn_h;
-
 
     if( touched && screen_button_clicked(touch_x, touch_y, btn_x, btn_y, btn_w, btn_h) )
     {
@@ -579,27 +598,10 @@ void update_dashcam(UIState *s, int draw_vision)
   if (!s->scene.started) return;
   if (s->scene.driver_view) return;
 
-    int btn_w = 150;
-    int btn_h = 150;
-    int bb_dmr_x = s->viz_rect.x + s->viz_rect.w - 170;
-    int btn_x = bb_dmr_x - btn_w;
-    int btn_y = 1080 - btn_h;
 
-  screen_draw_button(s, touch_x, touch_y);
+  screen_draw_button(s, touch_x, touch_y, touched);
   screen_menu_button(s, touch_x, touch_y, touched);
-  if ( touched && screen_button_clicked(touch_x, touch_y, btn_x, btn_y, btn_w, btn_h) )
-  {
-    click_elapsed_time = get_time() - click_time;
 
-    printf( "screen_button_clicked %d  captureState = %d \n", click_elapsed_time, captureState );
-    if (click_elapsed_time > 0)
-    {
-      click_time = get_time() + 1;
-      screen_toggle_record_state();
-    }
-  }
-
- 
 
   if( lock_current_video == true  )
   {
