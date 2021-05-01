@@ -101,7 +101,7 @@ void SignalWidget::paintEvent(QPaintEvent *e){
 
 
 
-  QRect rect(160, 255, 76, 36);
+  QRect rect(60, 0, 76, 36);
  // rect.moveCenter(bg.center());
   p.drawImage(rect, image_bty);
   //imageCorner = rect.topLeft();  
