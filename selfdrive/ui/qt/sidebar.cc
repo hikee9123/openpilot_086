@@ -75,8 +75,8 @@ void SignalWidget::paintEvent(QPaintEvent *e){
   QPainter p(this);
   p.setRenderHint(QPainter::Antialiasing, true);
   p.setPen(Qt::NoPen);
-  //p.setBrush(Qt::white);
-  p.setBrush(Qt::red);
+  p.setBrush(Qt::white);
+  //p.setBrush(Qt::red);
   for (int i = 0; i < 5 ; i++){
     if(i == _strength){
       p.setPen(Qt::NoPen);
@@ -91,7 +91,12 @@ void SignalWidget::paintEvent(QPaintEvent *e){
 
 void SignalWidget::update( QString text, int strength, int batteryPercent){
   label.setText(text);
-  _strength = strength;
+  if( _strength != strength )
+  {
+    _strength = strength;
+    repaint();
+  }
+  
 
   char temp_value_str1[32];
   snprintf(temp_value_str1, sizeof(temp_value_str1), "%d", batteryPercent );
