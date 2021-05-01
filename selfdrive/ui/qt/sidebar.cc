@@ -63,7 +63,7 @@ SignalWidget::SignalWidget(QString text, int strength, QWidget* parent) : QFrame
   layout.addWidget(&label, 0, Qt::AlignLeft);
   label.setStyleSheet(R"(font-size: 35px; font-weight: 400;)");
 
-  move( 100,0);
+  //move( 100,0);
  // layout.insertSpacing(2, 8);
   label_ip.setText(text);
   label_ip.setStyleSheet(R"(font-size: 27px; font-weight: 400;)");
@@ -110,7 +110,7 @@ void SignalWidget::update( QString text, int strength, std::string ip, int batte
 Sidebar::Sidebar(QWidget* parent) : QFrame(parent) {
   QVBoxLayout* layout = new QVBoxLayout();
   layout->setContentsMargins(25, 50, 25, 50);
-  layout->setSpacing(35);
+  layout->setSpacing(30);
   setFixedSize(300, vwp_h);
 
   QPushButton *s_btn = new QPushButton;
