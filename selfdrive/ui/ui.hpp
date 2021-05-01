@@ -236,7 +236,7 @@ private:
   const float accel_samples = 5*UI_FREQ;
 
   bool awake;
-  int awake_timeout = 0;
+  int awake_timeout = 300;
   float accel_prev = 0;
   float gyro_prev = 0;
   float brightness_b = 0;
