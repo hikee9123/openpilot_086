@@ -367,11 +367,11 @@ CarSelectCombo::CarSelectCombo(QWidget * parent)
      :QComboBox ( parent )
 {
   setStyleSheet(R"(
-    padding: 0;
     border-radius: 550px;
     font-size: 70px;
     font-weight: 500;
     color: #E4E4E4;
+    count: 20;
     background-color: #393939;
   )");
 
