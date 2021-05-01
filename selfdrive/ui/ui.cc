@@ -469,17 +469,21 @@ void Device::updateBrightness(const UIState &s) {
 void Device::updateWakefulness(const UIState &s) {
   awake_timeout = std::max(awake_timeout - 1, 0);
 
-  bool should_wake = s.scene.started || s.scene.ignition;
-  if (!should_wake && !s.scene.scr.autoScreenOff) {
-    // tap detection while display is off
-    bool accel_trigger = abs(s.scene.accel_sensor - accel_prev) > 0.2;
-    bool gyro_trigger = abs(s.scene.gyro_sensor - gyro_prev) > 0.15;
-    should_wake = accel_trigger && gyro_trigger;
-    gyro_prev = s.scene.gyro_sensor;
-    accel_prev = (accel_prev * (accel_samples - 1) + s.scene.accel_sensor) / accel_samples;
+  bool should_wake = s.scene.ignition;
+  if( !s.scene.scr.autoScreenOff )
+  {
+    should_wake = s.scene.started || should_wake;
+    if (!should_wake ) {
+      // tap detection while display is off
+      bool accel_trigger = abs(s.scene.accel_sensor - accel_prev) > 0.2;
+      bool gyro_trigger = abs(s.scene.gyro_sensor - gyro_prev) > 0.15;
+      should_wake = accel_trigger && gyro_trigger;
+      gyro_prev = s.scene.gyro_sensor;
+      accel_prev = (accel_prev * (accel_samples - 1) + s.scene.accel_sensor) / accel_samples;
+    }
   }
 
-  printf("updateWakefulness started = %d  ignition=%d \n", s.scene.started, s.scene.ignition );  
+ // printf("updateWakefulness started = %d  ignition=%d \n", s.scene.started, s.scene.ignition );  
   ScreenAwake();
   setAwake(awake_timeout, should_wake);
 }
