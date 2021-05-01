@@ -13,7 +13,7 @@ class SignalWidget : public QFrame {
 
 public:
   SignalWidget(QString text, int strength, QWidget* parent = 0);
-  void update(QString text, int strength,  UIScene &scene);
+  void update(QString text, int strength, const UIScene &scene);
   QLabel label;
   int _strength = 0;
 

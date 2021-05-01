@@ -106,7 +106,7 @@ void SignalWidget::paintEvent(QPaintEvent *e){
   p.drawImage(rect, image_bty);
 }
 
-void SignalWidget::update( QString text, int strength, UIScene &scene )
+void SignalWidget::update( QString text, int strength, const UIScene &scene )
 {
   int batteryPercent = scene.deviceState.getBatteryPercent();
   if( batteryPercent <= 0)
@@ -118,7 +118,7 @@ void SignalWidget::update( QString text, int strength, UIScene &scene )
   label_ip.setText(txt);
 
   int reDraw = 0;
-  int battery_img = s.scene.deviceState.getBatteryStatus() == "Charging" ? 1 : 0;
+  int battery_img = scene.deviceState.getBatteryStatus() == "Charging" ? 1 : 0;
   if( m_battery_img != battery_img )
   {
     reDraw = 1;    
@@ -251,12 +251,12 @@ void Sidebar::update(const UIState &s){
 void Sidebar::draw_battery_icon(const UIState &s) 
 {
   //const char *battery_img = s.scene.deviceState.getBatteryStatus() == "Charging" ? "battery_charging" : "battery";
-  const Rect rect = {160, 255, 76, 36};
+ // const Rect rect = {160, 255, 76, 36};
   //QRect bg(160, 255, 76, 36);
-  int batteryPercent = s.scene.deviceState.getBatteryPercent();
+ // int batteryPercent = s.scene.deviceState.getBatteryPercent();
 
-  if( batteryPercent <= 0)
-     batteryPercent = 50;
+  //if( batteryPercent <= 0)
+  //   batteryPercent = 50;
 
  // ui_fill_rect(s.vg, {rect.x + 6, rect.y + 5,
  //             int((rect.w - 19) * batteryPercent * 0.01), rect.h - 11}, COLOR_WHITE);
@@ -269,7 +269,7 @@ void Sidebar::draw_battery_icon(const UIState &s)
  // QPainter painter(this);  
  // painter.drawImage(rcimg.topLeft(), img);
 
-  char temp_value_str1[32];
-  snprintf(temp_value_str1, sizeof(temp_value_str1), "%d", batteryPercent );
+ // char temp_value_str1[32];
+ // snprintf(temp_value_str1, sizeof(temp_value_str1), "%d", batteryPercent );
  // nvgTextBox(s.vg, rect.x, rect.y - 2, rect.w, temp_value_str1, NULL);   
 }
