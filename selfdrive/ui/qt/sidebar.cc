@@ -64,7 +64,7 @@ SignalWidget::SignalWidget(QString text, int strength, QWidget* parent) : QFrame
   label.setStyleSheet(R"(font-size: 35px; font-weight: 400;)");
 
   labelBattery.setText(text);
-  labelBattery.setStyleSheet(R"(font-size: 13px; font-weight: 400;)");
+  labelBattery.setStyleSheet(R"(font-size: 18px; font-weight: 400;)");
   layout.addWidget(&labelBattery, 0, Qt::AlignLeft);
 
   setFixedWidth(177);
@@ -78,7 +78,7 @@ void SignalWidget::paintEvent(QPaintEvent *e){
   p.setBrush(Qt::white);
   //p.setBrush(Qt::red);
   for (int i = 0; i < 5 ; i++){
-    if(i == _strength){
+    if(i >= _strength){
       p.setPen(Qt::NoPen);
       p.setBrush(Qt::darkGray);
     }
@@ -89,7 +89,7 @@ void SignalWidget::paintEvent(QPaintEvent *e){
   p.drawText(font_rect, Qt::AlignLeft, "I love Qt.");
 }
 
-void SignalWidget::update( QString text, int strength, int batteryPercent){
+void SignalWidget::update( QString text, int strength, QString ip, int batteryPercent){
   label.setText(text);
   if( _strength != strength )
   {
@@ -101,7 +101,7 @@ void SignalWidget::update( QString text, int strength, int batteryPercent){
   char temp_value_str1[32];
   snprintf(temp_value_str1, sizeof(temp_value_str1), "%d", batteryPercent );
   QString  txtBattery(temp_value_str1);
-  labelBattery.setText(txtBattery);
+  labelBattery.setText(ip);
 }
 
 Sidebar::Sidebar(QWidget* parent) : QFrame(parent) {
@@ -183,10 +183,11 @@ void Sidebar::update(const UIState &s){
   const int img_idx = s.scene.deviceState.getNetworkType() == cereal::DeviceState::NetworkType::NONE ? 0 : network_strength_map[s.scene.deviceState.getNetworkStrength()];
 
   int batteryPercent = s.scene.deviceState.getBatteryPercent();
-
   if( batteryPercent <= 0)
-     batteryPercent = 50;    
-  signal->update(network_type, img_idx, batteryPercent);
+     batteryPercent = 50;
+
+  QString ip = s->scene.deviceState.getWifiIpAddress();
+  signal->update(network_type, img_idx, ip, batteryPercent);
 
   //draw_battery_icon( s );
 
