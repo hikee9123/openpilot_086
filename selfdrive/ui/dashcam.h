@@ -556,7 +556,7 @@ void update_dashcam(UIState *s, int draw_vision)
   int touch_y = s->scene.mouse.touch_y;
   int touched = s->scene.mouse.touched;
   //int touch_cnt = s->scene.mouse.touch_cnt;
-
+  
   
 
   if ( program_start )
@@ -581,7 +581,8 @@ void update_dashcam(UIState *s, int draw_vision)
 
     int btn_w = 150;
     int btn_h = 150;
-    int btn_x = 1990 - btn_w;
+    int bb_dmr_x = s->viz_rect.x + s->viz_rect.w - 170;
+    int btn_x = bb_dmr_x - btn_w;
     int btn_y = 1080 - btn_h;
 
   screen_draw_button(s, touch_x, touch_y);

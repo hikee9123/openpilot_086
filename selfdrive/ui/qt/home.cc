@@ -55,16 +55,20 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
     return;
   }
 
-  // Handle sidebar collapsing
-  if (childAt(e->pos()) == onroad) {
-    sidebar->setVisible(!sidebar->isVisible());
-  }
+
 
   // atom  mouse
   int e_x = e->x();
   int e_y = e->y();
   int e_button= e->button();
   // 1400, 820
+  if( e_x < 1000 || e_y < 820 ) 
+  {
+    // Handle sidebar collapsing
+    if (childAt(e->pos()) == onroad) {
+      sidebar->setVisible(!sidebar->isVisible());
+    }
+  }
 
   QUIState::ui_state.scene.mouse.touch_x = e_x;
   QUIState::ui_state.scene.mouse.touch_y = e_y;
