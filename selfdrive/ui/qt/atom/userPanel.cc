@@ -364,7 +364,7 @@ GitHash::GitHash() : AbstractControl("커밋(로컬/리모트)", "", "") {
 //  Git
 
 CarSelectCombo::CarSelectCombo(QWidget * parent)
-     ::QComboBox ( parent )
+     :QComboBox ( parent )
 {
     addItem("Page1");
     addItem("Page2");
