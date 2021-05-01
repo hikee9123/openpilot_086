@@ -89,6 +89,17 @@ void SignalWidget::paintEvent(QPaintEvent *e){
 
   //QRect font_rect(1, 1, 100, 40);      // area to show text
   //p.drawText(font_rect, Qt::AlignLeft, "I love Qt.");
+
+ // QPainter painter(this);
+
+  QRect bg(0, 0, p.device()->width(), p.device()->height());
+  QBrush bgBrush("#000000");
+  p.fillRect(bg, bgBrush);
+
+  QRect rect(image_bty.rect());
+  rect.moveCenter(bg.center());
+  p.drawImage(rect.topLeft(), image_bty);
+  //imageCorner = rect.topLeft();  
 }
 
 void SignalWidget::update( QString text, int strength, std::string ip, int batteryPercent){
@@ -132,6 +143,9 @@ Sidebar::Sidebar(QWidget* parent) : QFrame(parent) {
 
   connect = new StatusWidget("CONNECT\nOFFLINE", "",  QColor(218, 202, 37), this);
   layout->addWidget(connect, 0, Qt::AlignTop);
+
+
+  image_bty.load("../assets/images/battery.png");
 
   QImage image = QImageReader("../assets/images/button_home.png").read();
   QLabel *comma = new QLabel(this);

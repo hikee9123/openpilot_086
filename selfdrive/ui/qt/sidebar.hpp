@@ -19,6 +19,8 @@ public:
 
   QLabel label_ip;
 
+  QImage image_bty;
+
 protected:
   void paintEvent(QPaintEvent*) override;
 
