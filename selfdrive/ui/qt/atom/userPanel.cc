@@ -361,14 +361,40 @@ GitHash::GitHash() : AbstractControl("커밋(로컬/리모트)", "", "") {
 
 ////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Git
+//  QComboBox
 
 CarSelectCombo::CarSelectCombo(QWidget * parent)
      :QComboBox ( parent )
 {
-    addItem("Page1");
-    addItem("Page2");
-    addItem("Page3");
+    addItem("HYUNDAI ELANTRA LIMITED ULTIMATE 2017");
+    addItem("HYUNDAI I30 N LINE 2019 & GT 2018 DCT");
+    addItem("HYUNDAI GENESIS 2015-2016");
+
+    addItem("HYUNDAI IONIQ ELECTRIC LIMITED 2019");
+    addItem("HYUNDAI IONIQ ELECTRIC 2020");
+    addItem("HYUNDAI KONA 2020");
+    addItem("HYUNDAI KONA ELECTRIC 2019");
+    addItem("HYUNDAI SANTA FE LIMITED 2019");
+    addItem("HYUNDAI SONATA 2020");
+    addItem("HYUNDAI SONATA 2019");
+    addItem("HYUNDAI PALISADE 2020");
+    addItem("HYUNDAI VELOSTER 2019");
+    addItem("HYUNDAI GRANDEUR HYBRID 2019");
+
+
+    addItem("KIA FORTE E 2018 & GT 2021");
+    addItem("KIA NIRO EV 2020");
+    addItem("KIA OPTIMA SX 2019 & 2016");
+    addItem("KIA OPTIMA HYBRID 2017 & SPORTS 2019");
+    addItem("KIA SELTOS 2021");
+    addItem("KIA SORENTO GT LINE 2018");
+    addItem("KIA STINGER GT2 2018");
+    addItem("KIA CEED INTRO ED 2019");
+
+
+    addItem("GENESIS G70 2018");
+    addItem("GENESIS G80 2017");
+    addItem("GENESIS G90 2017");
 }
 
 void CarSelectCombo::changeEvent( QEvent * e )
