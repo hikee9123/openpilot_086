@@ -20,6 +20,7 @@ public:
   QLabel label_ip;
 
   QImage image_bty;
+  int    m_batteryPercent;
 
 protected:
   void paintEvent(QPaintEvent*) override;

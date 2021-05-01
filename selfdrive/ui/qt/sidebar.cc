@@ -78,9 +78,7 @@ SignalWidget::SignalWidget(QString text, int strength, QWidget* parent) : QFrame
 void SignalWidget::paintEvent(QPaintEvent *e){
   QPainter p(this);
 
-  QRect bg(0, 0, p.device()->width(), p.device()->height());
-  QBrush bgBrush("#000000");
-  p.fillRect(bg, bgBrush);
+
 
   p.setRenderHint(QPainter::Antialiasing, true);
   p.setPen(Qt::NoPen);
@@ -96,28 +94,39 @@ void SignalWidget::paintEvent(QPaintEvent *e){
 
   //QRect font_rect(1, 1, 100, 40);      // area to show text
   //p.drawText(font_rect, Qt::AlignLeft, "I love Qt.");
+  // QPainter painter(this);
 
- // QPainter painter(this);
-
-
-
-  QRect rect(90, _dia+10, 76, 36);
- // rect.moveCenter(bg.center());
+ // QRect bg(0, 0, p.device()->width(), p.device()->height());
+ // ui_fill_rect(s.vg, {rect.x + 6, rect.y + 5,
+ //             int((rect.w - 19) * batteryPercent * 0.01), rect.h - 11}, COLOR_WHITE);
+  QRect rect(90, _dia+15, 76, 36);
+  QRect  bq(rect.x + 6, rect.y + 5, int((rect.w - 19) * m_batteryPercent * 0.01), rect.h - 11 );
+  QBrush bgBrush("#FFFFFF");
+  p.fillRect(bq, bgBrush);  
   p.drawImage(rect, image_bty);
-  //imageCorner = rect.topLeft();  
 }
 
 void SignalWidget::update( QString text, int strength, std::string ip, int batteryPercent){
+  int reDraw = 0;
   label.setText(text);
   if( _strength != strength )
   {
     _strength = strength;
-    repaint();
+    reDraw = 1;
+  }
+  if( m_batteryPercent != batteryPercent )
+  {
+    m_batteryPercent = batteryPercent;
+    reDraw = 1;
   }
   
+  if( reDraw )
+  {
+    repaint();
+  }
 
-  char temp_value_str1[32];
-  snprintf(temp_value_str1, sizeof(temp_value_str1), "%d", batteryPercent );
+  //char temp_value_str1[32];
+  //snprintf(temp_value_str1, sizeof(temp_value_str1), "%d", batteryPercent );
 
   QString  txt(ip.c_str());
   label_ip.setText(txt);
