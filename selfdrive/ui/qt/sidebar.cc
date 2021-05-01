@@ -64,7 +64,7 @@ SignalWidget::SignalWidget(QString text, int strength, QWidget* parent) : QFrame
   label.setStyleSheet(R"(font-size: 35px; font-weight: 400;)");
 
   labelBattery.setText(text);
-  labelBattery.setStyleSheet(R"(font-size: 10px; font-weight: 400;)");
+  labelBattery.setStyleSheet(R"(font-size: 13px; font-weight: 400;)");
   layout.addWidget(&labelBattery, 0, Qt::AlignLeft);
 
   setFixedWidth(177);
@@ -75,7 +75,8 @@ void SignalWidget::paintEvent(QPaintEvent *e){
   QPainter p(this);
   p.setRenderHint(QPainter::Antialiasing, true);
   p.setPen(Qt::NoPen);
-  p.setBrush(Qt::white);
+  //p.setBrush(Qt::white);
+  p.setBrush(Qt::red);
   for (int i = 0; i < 5 ; i++){
     if(i == _strength){
       p.setPen(Qt::NoPen);
@@ -85,7 +86,7 @@ void SignalWidget::paintEvent(QPaintEvent *e){
   }
 
   QRect font_rect(1, 1, 100, 40);      // area to show text
-  p.drawText(font_rect, Qt::AlignCenter, "I love Qt.");
+  p.drawText(font_rect, Qt::AlignLeft, "I love Qt.");
 }
 
 void SignalWidget::update( QString text, int strength, int batteryPercent){
