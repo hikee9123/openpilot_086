@@ -63,8 +63,13 @@ SignalWidget::SignalWidget(QString text, int strength, QWidget* parent) : QFrame
   layout.addWidget(&label, 0, Qt::AlignLeft);
   label.setStyleSheet(R"(font-size: 35px; font-weight: 400;)");
 
+  labelBattery.setText(text);
+  layout.addWidget(&labelBattery, 0, Qt::AlignLeft);
+
   setFixedWidth(177);
   setLayout(&layout);
+
+
 }
 
 void SignalWidget::paintEvent(QPaintEvent *e){
@@ -79,11 +84,19 @@ void SignalWidget::paintEvent(QPaintEvent *e){
     }
     p.drawEllipse(QRectF(_dotspace * i, _top, _dia, _dia));
   }
+
+  QRect font_rect(10, 150, 220, 180);      // area to show text
+  p.drawText(font_rect, Qt::AlignCenter, "I love Qt.");
 }
 
-void SignalWidget::update(QString text, int strength){
+void SignalWidget::update( QString text, int strength, int batteryPercent){
   label.setText(text);
   _strength = strength;
+
+  char temp_value_str1[32];
+  snprintf(temp_value_str1, sizeof(temp_value_str1), "%d", batteryPercent );
+  QString  txtBattery(temp_value_str1);
+  labelBattery.setText(txtBattery);
 }
 
 Sidebar::Sidebar(QWidget* parent) : QFrame(parent) {
@@ -163,9 +176,14 @@ void Sidebar::update(const UIState &s){
       {cereal::DeviceState::NetworkStrength::GOOD, 4},
       {cereal::DeviceState::NetworkStrength::GREAT, 5}};
   const int img_idx = s.scene.deviceState.getNetworkType() == cereal::DeviceState::NetworkType::NONE ? 0 : network_strength_map[s.scene.deviceState.getNetworkStrength()];
-  signal->update(network_type, img_idx);
 
-  draw_battery_icon( s );
+  int batteryPercent = s.scene.deviceState.getBatteryPercent();
+
+  if( batteryPercent <= 0)
+     batteryPercent = 50;    
+  signal->update(network_type, img_idx, batteryPercent);
+
+  //draw_battery_icon( s );
 
   QColor panda_color = COLOR_GOOD;
   QString panda_message = "VEHICLE\nONLINE";
@@ -186,7 +204,7 @@ void Sidebar::update(const UIState &s){
 void Sidebar::draw_battery_icon(const UIState &s) 
 {
   //const char *battery_img = s.scene.deviceState.getBatteryStatus() == "Charging" ? "battery_charging" : "battery";
-  //const Rect rect = {160, 255, 76, 36};
+  const Rect rect = {160, 255, 76, 36};
   //QRect bg(160, 255, 76, 36);
   int batteryPercent = s.scene.deviceState.getBatteryPercent();
 
@@ -206,5 +224,5 @@ void Sidebar::draw_battery_icon(const UIState &s)
 
   char temp_value_str1[32];
   snprintf(temp_value_str1, sizeof(temp_value_str1), "%d", batteryPercent );
-  //nvgTextBox(s.vg, rect.x, rect.y - 2, rect.w, temp_value_str1, NULL);   
+  nvgTextBox(s.vg, rect.x, rect.y - 2, rect.w, temp_value_str1, NULL);   
 }
