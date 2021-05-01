@@ -64,12 +64,11 @@ SignalWidget::SignalWidget(QString text, int strength, QWidget* parent) : QFrame
   label.setStyleSheet(R"(font-size: 35px; font-weight: 400;)");
 
   labelBattery.setText(text);
+  labelBattery.setStyleSheet(R"(font-size: 10px; font-weight: 400;)");
   layout.addWidget(&labelBattery, 0, Qt::AlignLeft);
 
   setFixedWidth(177);
   setLayout(&layout);
-
-
 }
 
 void SignalWidget::paintEvent(QPaintEvent *e){
@@ -85,7 +84,7 @@ void SignalWidget::paintEvent(QPaintEvent *e){
     p.drawEllipse(QRectF(_dotspace * i, _top, _dia, _dia));
   }
 
-  QRect font_rect(10, 150, 220, 180);      // area to show text
+  QRect font_rect(1, 1, 100, 40);      // area to show text
   p.drawText(font_rect, Qt::AlignCenter, "I love Qt.");
 }
 
