@@ -17,7 +17,7 @@ public:
   QLabel label;
   int _strength = 0;
 
-  QLabel labelBattery;
+  QLabel label_ip;
 
 protected:
   void paintEvent(QPaintEvent*) override;

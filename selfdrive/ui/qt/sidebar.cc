@@ -57,16 +57,16 @@ void StatusWidget::update(QString label, QString msg, QColor c) {
 SignalWidget::SignalWidget(QString text, int strength, QWidget* parent) : QFrame(parent), _strength(strength) {
   layout.setMargin(0);
   layout.setSpacing(0);
-  layout.insertSpacing(0, 45);
+  layout.insertSpacing(0, 40);
 
   label.setText(text);
   layout.addWidget(&label, 0, Qt::AlignLeft);
   label.setStyleSheet(R"(font-size: 35px; font-weight: 400;)");
 
-  layout.insertSpacing(2, 10);
-  labelBattery.setText(text);
-  labelBattery.setStyleSheet(R"(font-size: 27px; font-weight: 400;)");
-  layout.addWidget(&labelBattery, 0, Qt::AlignLeft);
+  layout.insertSpacing(2, 8);
+  label_ip.setText(text);
+  label_ip.setStyleSheet(R"(font-size: 27px; font-weight: 400;)");
+  layout.addWidget(&label_ip, 0, Qt::AlignLeft);
 
   setFixedWidth(177);
   setLayout(&layout);
@@ -101,8 +101,9 @@ void SignalWidget::update( QString text, int strength, std::string ip, int batte
 
   char temp_value_str1[32];
   snprintf(temp_value_str1, sizeof(temp_value_str1), "%d", batteryPercent );
-  QString  txtBattery(ip.c_str());
-  labelBattery.setText(txtBattery);
+
+  QString  txt(ip.c_str());
+  label_ip.setText(txt);
 }
 
 Sidebar::Sidebar(QWidget* parent) : QFrame(parent) {
