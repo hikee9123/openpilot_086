@@ -704,7 +704,7 @@ static void bb_ui_draw_UI(UIState *s)
 {
   //const UIScene *scene = &s->scene;
   const int bb_dml_w = 180;
-  const int bb_dml_x = (s->viz_rect.x + (bdr_s * 2));
+  const int bb_dml_x = (s->viz_rect.x + (bdr_s * 1.5));
   const int bb_dml_y = (bdr_s + (bdr_s * 1.5)) + 220;
 
   const int bb_dmr_w = 170;

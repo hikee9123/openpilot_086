@@ -440,7 +440,7 @@ void Device::setAwake(bool on, bool reset) {
   if (reset) {
     awake_timeout = 30 * UI_FREQ;
     scene.scr.nTime = scene.scr.autoScreenOff * 60 * UI_FREQ;
-    printf("Device::setAwake=%d \n", scene.scr.nTime);
+   // printf("Device::setAwake=%d \n", scene.scr.nTime);
   }
 }
 
