@@ -470,7 +470,7 @@ void Device::updateWakefulness(const UIState &s) {
   awake_timeout = std::max(awake_timeout - 1, 0);
 
   bool should_wake = s.scene.started || s.scene.ignition;
-  if (!should_wake) {
+  if (!should_wake && !s.scene.scr.autoScreenOff) {
     // tap detection while display is off
     bool accel_trigger = abs(s.scene.accel_sensor - accel_prev) > 0.2;
     bool gyro_trigger = abs(s.scene.gyro_sensor - gyro_prev) > 0.15;
@@ -479,12 +479,8 @@ void Device::updateWakefulness(const UIState &s) {
     accel_prev = (accel_prev * (accel_samples - 1) + s.scene.accel_sensor) / accel_samples;
   }
 
+  printf("updateWakefulness started = %d  ignition=%d \n", s.scene.started, s.scene.ignition );  
   ScreenAwake();
-  if( s.scene.scr.nTime > 0 )
-  {
-    awake_timeout = 30 * UI_FREQ;
-  }
-
   setAwake(awake_timeout, should_wake);
 }
 
@@ -498,11 +494,12 @@ void Device::ScreenAwake()
 
   if( s.scene.scr.nTime > 0 )
   {
+    awake_timeout = 30 * UI_FREQ;
     s.scene.scr.nTime--;
   }
   else if( s.scene.scr.autoScreenOff && s.scene.scr.nTime == 0)
   {
-    awake = false;
+   // awake = false;
   }
 
   int  cur_key = s.scene.scr.awake;

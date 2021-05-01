@@ -209,11 +209,13 @@ void start_capture()
 
 bool screen_button_clicked(int touch_x, int touch_y, int x, int y, int cx, int cy )
 {
-   int max_x = x + cx;
-   int max_y = y + cy;
-   int min_x = x - cx;
-   int min_y = y - cy;
+   int   cx_half = cx * 0.5;
+   int   cy_half = cy * 0.5;
 
+   int min_x = x - cx_half;
+   int min_y = y - cy_half;
+   int max_x = x + cx_half;
+   int max_y = y + cy_half;
 
   if (touch_x >= min_x && touch_x <= max_x)
   {
