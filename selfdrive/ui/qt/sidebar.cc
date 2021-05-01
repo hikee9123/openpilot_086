@@ -186,7 +186,7 @@ void Sidebar::update(const UIState &s){
   if( batteryPercent <= 0)
      batteryPercent = 50;
 
-  QString ip = s.scene.deviceState.getWifiIpAddress();
+  std::string ip = s.scene.deviceState.getWifiIpAddress();
   signal->update(network_type, img_idx, ip, batteryPercent);
 
   //draw_battery_icon( s );
