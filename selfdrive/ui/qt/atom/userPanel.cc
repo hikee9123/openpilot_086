@@ -366,6 +366,16 @@ GitHash::GitHash() : AbstractControl("커밋(로컬/리모트)", "", "") {
 CarSelectCombo::CarSelectCombo(QWidget * parent)
      :QComboBox ( parent )
 {
+  setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+
+
     addItem("HYUNDAI ELANTRA LIMITED 2017");
     addItem("HYUNDAI I30 N LINE 2019");
     addItem("HYUNDAI GENESIS 2015-2016");
