@@ -474,7 +474,7 @@ void Device::updateWakefulness(const UIState &s) {
   awake_timeout = std::max(awake_timeout - 1, 0);
 
   bool should_wake = false;
-  if( !s.scene.scr.autoScreenOff )
+  if( !s.scene.scr.autoScreenOff || !s.scene.ignition )
   {
     should_wake = s.scene.started || s.scene.ignition;
     if (!should_wake ) {
