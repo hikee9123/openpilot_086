@@ -63,8 +63,9 @@ SignalWidget::SignalWidget(QString text, int strength, QWidget* parent) : QFrame
   layout.addWidget(&label, 0, Qt::AlignLeft);
   label.setStyleSheet(R"(font-size: 35px; font-weight: 400;)");
 
+  layout.insertSpacing(1, 10);
   labelBattery.setText(text);
-  labelBattery.setStyleSheet(R"(font-size: 18px; font-weight: 400;)");
+  labelBattery.setStyleSheet(R"(font-size: 25px; font-weight: 400;)");
   layout.addWidget(&labelBattery, 0, Qt::AlignLeft);
 
   setFixedWidth(177);
@@ -85,8 +86,8 @@ void SignalWidget::paintEvent(QPaintEvent *e){
     p.drawEllipse(QRectF(_dotspace * i, _top, _dia, _dia));
   }
 
-  QRect font_rect(1, 1, 100, 40);      // area to show text
-  p.drawText(font_rect, Qt::AlignLeft, "I love Qt.");
+  //QRect font_rect(1, 1, 100, 40);      // area to show text
+  //p.drawText(font_rect, Qt::AlignLeft, "I love Qt.");
 }
 
 void SignalWidget::update( QString text, int strength, std::string ip, int batteryPercent){
