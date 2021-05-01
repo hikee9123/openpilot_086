@@ -429,7 +429,9 @@ void Device::setAwake(bool on, bool reset) {
   if (on != awake) {
     awake = on;
 
-    if( QUIState::ui_state.scene.ignition || !s.scene.scr.autoScreenOff )
+   UIScene  &scene = QUIState::ui_state.scene;
+
+    if( scene.ignition || !scene.scr.autoScreenOff )
     {
       Hardware::set_display_power(awake);
       LOGD("setting display power %d", awake);
@@ -439,8 +441,8 @@ void Device::setAwake(bool on, bool reset) {
 
   if (reset) {
     awake_timeout = 30 * UI_FREQ;
-    QUIState::ui_state.scene.scr.nTime = QUIState::ui_state.scene.scr.autoScreenOff * 60 * UI_FREQ;
-    printf("Device::setAwake=%d \n", QUIState::ui_state.scene.scr.nTime);
+    scene.scr.nTime = scene.scr.autoScreenOff * 60 * UI_FREQ;
+    printf("Device::setAwake=%d \n", scene.scr.nTime);
   }
 }
 
