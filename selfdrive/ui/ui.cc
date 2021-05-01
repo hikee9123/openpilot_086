@@ -498,12 +498,16 @@ void Device::ScreenAwake()
 {
   UIState &s = QUIState::ui_state;  
   const bool draw_alerts = s.scene.started;
-
+  const float speed = s.scene.car_state.getVEgo()
 
   if( s.scene.scr.nTime > 0 )
   {
     awake_timeout = 30 * UI_FREQ;
     s.scene.scr.nTime--;
+  }
+  else if(s.scene.ignition && (speed < 1))
+  {
+    awake_timeout = 30 * UI_FREQ;
   }
   else if( s.scene.scr.autoScreenOff && s.scene.scr.nTime == 0)
   {
