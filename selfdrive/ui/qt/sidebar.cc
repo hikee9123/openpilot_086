@@ -100,7 +100,7 @@ void SignalWidget::paintEvent(QPaintEvent *e){
  // ui_fill_rect(s.vg, {rect.x + 6, rect.y + 5,
  //             int((rect.w - 19) * batteryPercent * 0.01), rect.h - 11}, COLOR_WHITE);
   QRect rect(90, _dia+15, 76, 36);
-  QRect  bq(rect.x + 6, rect.y + 5, int((rect.w - 19) * m_batteryPercent * 0.01), rect.h - 11 );
+  QRect  bq(rect.left() + 6, rect.top() + 5, int((rect.width() - 19) * m_batteryPercent * 0.01), rect.height() - 11 );
   QBrush bgBrush("#FFFFFF");
   p.fillRect(bq, bgBrush);  
   p.drawImage(rect, image_bty);
@@ -121,25 +121,26 @@ void SignalWidget::update( QString text, int strength, UIScene &scene )
   int battery_img = s.scene.deviceState.getBatteryStatus() == "Charging" ? 1 : 0;
   if( m_battery_img != battery_img )
   {
+    reDraw = 1;    
     m_battery_img = battery_img;
     if( battery_img )
       image_bty.load("../assets/images/battery_charging.png");
     else
       image_bty.load("../assets/images/battery.png");
-    reDraw = 1;
+
   }
 
 
   label.setText(text);
   if( _strength != strength )
   {
+    reDraw = 1;    
     _strength = strength;
-    reDraw = 1;
   }
   if( m_batteryPercent != batteryPercent )
   {
+    reDraw = 1;    
     m_batteryPercent = batteryPercent;
-    reDraw = 1;
   }
   
   if( reDraw )
