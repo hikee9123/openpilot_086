@@ -77,13 +77,9 @@ SignalWidget::SignalWidget(QString text, int strength, QWidget* parent) : QFrame
 
 void SignalWidget::paintEvent(QPaintEvent *e){
   QPainter p(this);
-
-
-
   p.setRenderHint(QPainter::Antialiasing, true);
   p.setPen(Qt::NoPen);
   p.setBrush(Qt::white);
-  //p.setBrush(Qt::red);
   for (int i = 0; i < 5 ; i++){
     if(i >= _strength){
       p.setPen(Qt::NoPen);
@@ -177,8 +173,6 @@ Sidebar::Sidebar(QWidget* parent) : QFrame(parent) {
   connect = new StatusWidget("CONNECT\nOFFLINE", "",  QColor(218, 202, 37), this);
   layout->addWidget(connect, 0, Qt::AlignTop);
 
-
-
   QImage image = QImageReader("../assets/images/button_home.png").read();
   QLabel *comma = new QLabel(this);
   comma->setPixmap(QPixmap::fromImage(image));
@@ -247,31 +241,4 @@ void Sidebar::update(const UIState &s){
   }
 #endif
   panda->update(panda_message, "", panda_color);
-}
-
-
-void Sidebar::draw_battery_icon(const UIState &s) 
-{
-  //const char *battery_img = s.scene.deviceState.getBatteryStatus() == "Charging" ? "battery_charging" : "battery";
- // const Rect rect = {160, 255, 76, 36};
-  //QRect bg(160, 255, 76, 36);
- // int batteryPercent = s.scene.deviceState.getBatteryPercent();
-
-  //if( batteryPercent <= 0)
-  //   batteryPercent = 50;
-
- // ui_fill_rect(s.vg, {rect.x + 6, rect.y + 5,
- //             int((rect.w - 19) * batteryPercent * 0.01), rect.h - 11}, COLOR_WHITE);
-  //ui_draw_image(s, rect, battery_img, 1.0f);
-
- // QImage  &img = s.scene.deviceState.getBatteryStatus() == "Charging" ? image_battery_charging : image_battery;
-
- // QRect rcimg(img.rect());
- // rcimg.moveCenter(bg.center());
- // QPainter painter(this);  
- // painter.drawImage(rcimg.topLeft(), img);
-
- // char temp_value_str1[32];
- // snprintf(temp_value_str1, sizeof(temp_value_str1), "%d", batteryPercent );
- // nvgTextBox(s.vg, rect.x, rect.y - 2, rect.w, temp_value_str1, NULL);   
 }
