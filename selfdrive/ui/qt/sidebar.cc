@@ -46,7 +46,11 @@ void StatusWidget::paintEvent(QPaintEvent *e){
 void StatusWidget::update(QString label, QString msg, QColor c) {
   status.setText(label);
   substatus.setText(msg);
-  color = c;
+
+  if (color != c) {
+    color = c;
+    repaint();
+  }
   return;
 }
 
@@ -125,16 +129,7 @@ Sidebar::Sidebar(QWidget* parent) : QFrame(parent) {
     }
   )");
   setLayout(layout);
-
-
-  image_battery.load("../assets/images/battery.png");
-  image_battery_charging.load("../assets/images/battery_charging.png");
-  //{"battery", "../assets/images/battery.png"},
-  //{"battery_charging", "../assets/images/battery_charging.png"},
 }
-
-
-
 
 void Sidebar::update(const UIState &s){
   static std::map<NetStatus, std::pair<QString, QColor>> connectivity_map = {

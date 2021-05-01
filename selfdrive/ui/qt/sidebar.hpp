@@ -52,8 +52,6 @@ public:
   explicit Sidebar(QWidget* parent = 0);
 
 private:
-  QImage image_battery;
-  QImage image_battery_charging;
   void  draw_battery_icon(const UIState &s);
 
 signals:

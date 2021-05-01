@@ -228,6 +228,10 @@ EVENTS: Dict[int, Dict[str, Union[Alert, Callable[[Any, messaging.SubMaster, boo
       Priority.LOW, VisualAlert.none, AudibleAlert.none, .1, .1, .1),
   },
 
+  EventName.controlsInitializing: {
+    ET.NO_ENTRY: NoEntryAlert("Controls Initializing"),
+  },
+
   EventName.startup: {
     ET.PERMANENT: Alert(
       "Be ready to take over at any time",
@@ -241,7 +245,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, Callable[[Any, messaging.SubMaster, boo
       "WARNING: This branch is not tested",
       "Always keep hands on wheel and eyes on road",
       AlertStatus.userPrompt, AlertSize.mid,
-      Priority.LOWER, VisualAlert.none, AudibleAlert.none, 0., 0., 5.),
+      Priority.LOWER, VisualAlert.none, AudibleAlert.none, 0., 0., 15.),
   },
 
   EventName.startupNoControl: {

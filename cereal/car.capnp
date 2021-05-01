@@ -102,10 +102,11 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     gpsMalfunction @94;
     processNotRunning @95;
     dashcamMode @96;
+    controlsInitializing @98;
 
     # atom
-    steerTorqueOver @98;
-    steerTorqueLow @99;
+    steerTorqueOver @99;
+    steerTorqueLow @100;
 
 
     radarCanErrorDEPRECATED @15;

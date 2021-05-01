@@ -74,7 +74,7 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
 
     if (QUIState::ui_state.scene.mouse.sidebar )
     {
-      e_x -= QUIState::ui_state.viz_rect.x + (bdr_s * 2) - 100;
+      e_x -= QUIState::ui_state.viz_rect.x + (bdr_s * 2) + 170;
     }
   QUIState::ui_state.scene.mouse.touch_x = e_x;
   QUIState::ui_state.scene.mouse.touch_y = e_y;

@@ -101,7 +101,7 @@ class Controls:
     if self.read_only:
       self.CP.safetyModel = car.CarParams.SafetyModel.noOutput
 
-    # Write CarParams for radard and boardd safety mode
+    # Write CarParams for radard
     cp_bytes = self.CP.to_bytes()
     params.put("CarParams", cp_bytes)
     put_nonblocking("CarParamsCache", cp_bytes)
@@ -122,6 +122,7 @@ class Controls:
     elif self.CP.lateralTuning.which() == 'lqr':
       self.LaC = LatControlLQR(self.CP)
 
+    self.initialized = False
     self.state = State.disabled
     self.enabled = False
     self.active = False
@@ -139,11 +140,7 @@ class Controls:
     self.current_alert_types = [ET.PERMANENT]
     self.logged_comm_issue = False
 
-    self.sm['liveCalibration'].calStatus = Calibration.CALIBRATED
-    self.sm['deviceState'].freeSpacePercent = 100
-    self.sm['driverMonitoringState'].events = []
-    self.sm['driverMonitoringState'].awarenessStatus = 1.
-    self.sm['driverMonitoringState'].faceDetected = False
+    # TODO: no longer necessary, aside from process replay
     self.sm['liveParameters'].valid = True
 
     self.startup_event = get_startup_event(car_recognized, controller_available, fuzzy_fingerprint)
@@ -162,9 +159,7 @@ class Controls:
     self.prof = Profiler(False)  # off by default
 
     # atom
-    self.startup_event_init = None
     self.model_speed = 0
-
     self.hyundai_lkas = self.read_only  #read_only
     self.init_flag = True
 
@@ -181,8 +176,12 @@ class Controls:
     # Handle startup event
     if self.startup_event is not None:
       self.events.add(self.startup_event)
-      self.startup_event_init = self.startup_event
       self.startup_event = None
+
+    # Don't add any more events if not initialized
+    if not self.initialized:
+      self.events.add(EventName.controlsInitializing)
+      return
 
     # Create events for battery, temperature, disk space, and memory
     if self.sm['deviceState'].batteryPercent < 1 and self.sm['deviceState'].chargingError:
@@ -227,12 +226,11 @@ class Controls:
                                                  LaneChangeState.laneChangeFinishing]:
       self.events.add(EventName.laneChange)
 
-    if self.can_rcv_error or (not CS.canValid and self.sm.frame > 5 / DT_CTRL):
+    if self.can_rcv_error or not CS.canValid:
       self.events.add(EventName.canError)
 
-    safety_mismatch = self.sm['pandaState'].safetyModel != self.CP.safetyModel
-    safety_mismatch = safety_mismatch or self.sm['pandaState'].safetyParam != self.CP.safetyParam
-    if (safety_mismatch and self.sm.frame > 2 / DT_CTRL) or self.mismatch_counter >= 200:
+    safety_mismatch = self.sm['pandaState'].safetyModel != self.CP.safetyModel or self.sm['pandaState'].safetyParam != self.CP.safetyParam
+    if safety_mismatch or self.mismatch_counter >= 200:
       self.events.add(EventName.controlsMismatch)
 
     if not self.sm['liveParameters'].valid:
@@ -269,7 +267,7 @@ class Controls:
           (not TICI or self.enable_lte_onroad):
           # Not show in first 1 km to allow for driving out of garage. This event shows after 5 minutes
           self.events.add(EventName.noGps)
-      if not self.sm.all_alive(['roadCameraState', 'driverCameraState']) and (self.sm.frame > 5 / DT_CTRL):
+      if not self.sm.all_alive(['roadCameraState', 'driverCameraState']):
         self.events.add(EventName.cameraMalfunction)
       if self.sm['modelV2'].frameDropPerc > 20:
         self.events.add(EventName.modeldLagging)
@@ -292,6 +290,11 @@ class Controls:
     CS = self.CI.update(self.CC, can_strs)
 
     self.sm.update(0)
+
+    all_valid = CS.canValid and self.sm.all_alive_and_valid()
+    if not self.initialized and (all_valid or self.sm.frame * DT_CTRL > 2.0):
+      self.initialized = True
+      Params().put_bool("ControlsReady", True)
 
     # Check for CAN timeout
     if not can_strs:
