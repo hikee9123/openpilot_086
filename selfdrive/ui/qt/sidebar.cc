@@ -89,7 +89,7 @@ void SignalWidget::paintEvent(QPaintEvent *e){
   p.drawText(font_rect, Qt::AlignLeft, "I love Qt.");
 }
 
-void SignalWidget::update( QString text, int strength, QString ip, int batteryPercent){
+void SignalWidget::update( QString text, int strength, std::string ip, int batteryPercent){
   label.setText(text);
   if( _strength != strength )
   {
