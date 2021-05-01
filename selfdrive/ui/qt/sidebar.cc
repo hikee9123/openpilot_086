@@ -99,7 +99,7 @@ void SignalWidget::paintEvent(QPaintEvent *e){
   p.drawImage(rect, image_bty);
 
 
-  p.setPen(Qt::blue);
+  p.setPen(Qt::yellow);
   QFont font = p.font();
   font.setPixelSize(27);
   p.setFont(font);
