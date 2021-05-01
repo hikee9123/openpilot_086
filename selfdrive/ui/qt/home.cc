@@ -66,7 +66,7 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
   {
     // Handle sidebar collapsing
     if (childAt(e->pos()) == onroad) {
-      int sidebar = sidebar->isVisible();
+      bool sidebar = sidebar->isVisible();
       QUIState::ui_state.scene.mouse.sidebar = sidebar
       sidebar->setVisible(!sidebar);
     }
