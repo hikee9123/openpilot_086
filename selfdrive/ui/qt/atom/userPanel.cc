@@ -99,10 +99,7 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
   layout()->addWidget(horizontal_line());
 
 
-
-
-
-
+  layout()->addWidget( new CarSelectCombo() );
 }
 
 void CUserPanel::showEvent(QShowEvent *event) 
@@ -360,4 +357,21 @@ GitHash::GitHash() : AbstractControl("커밋(로컬/리모트)", "", "") {
   }
   hlayout->addWidget(&local_hash);
   hlayout->addWidget(&remote_hash);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+//
+//  Git
+
+CarSelectCombo::CarSelectCombo(QWidget * parent)
+     ::QComboBox ( parent )
+{
+    addItem("Page1");
+    addItem("Page2");
+    addItem("Page3");
+}
+
+void CarSelectCombo::changeEvent( QEvent * e )
+{
+
 }

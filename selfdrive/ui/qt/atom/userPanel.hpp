@@ -20,8 +20,6 @@ class CUserPanel : public QFrame
 public:
   explicit CUserPanel(QWidget* parent = nullptr);
 
-private:
-
 
 protected:
   void showEvent(QShowEvent *event) override;
@@ -163,4 +161,18 @@ public:
       Params().put("OpkrSSHLegacy", &value, 1);
     });
   }
+};
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+//
+//  Combo box
+class CarSelectCombo : public QComboBox 
+{
+  Q_OBJECT
+
+public:
+  CarSelectCombo( QWidget * parent = 0 );
+
+  void changeEvent ( QEvent * e );
 };
