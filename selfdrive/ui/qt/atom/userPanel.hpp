@@ -175,4 +175,5 @@ public:
   CarSelectCombo( QWidget * parent = 0 );
 
   void changeEvent ( QEvent * e );
+  void keyPressEvent ( QKeyEvent * e );
 };
