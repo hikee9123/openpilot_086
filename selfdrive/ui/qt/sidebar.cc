@@ -95,8 +95,8 @@ void SignalWidget::paintEvent(QPaintEvent *e){
   QRect  rect(90, _dia+18, 76, 36);
   QRect  bq(rect.left() + 6, rect.top() + 5, int((rect.width() - 19) * m_batteryPercent * 0.01), rect.height() - 11 );
   QBrush bgBrush("#FFFFFF");
-  p.fillRect(bq, bgBrush);  
- // p.drawImage(rect, image_bty);
+ // p.fillRect(bq, bgBrush);  
+  p.drawImage(rect, image_bty);
 
   char temp_value_str1[32];
   snprintf(temp_value_str1, sizeof(temp_value_str1), "%d", m_batteryPercent );  
