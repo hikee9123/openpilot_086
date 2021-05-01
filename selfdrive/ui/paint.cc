@@ -708,7 +708,7 @@ static void bb_ui_draw_UI(UIState *s)
   const int bb_dml_y = (bdr_s + (bdr_s * 1.5)) + 220;
 
   const int bb_dmr_w = 170;
-  const int bb_dmr_x = s->viz_rect.x + s->viz_rect.w - (bb_dmr_w/1.5) - (bdr_s * 2);
+  const int bb_dmr_x = s->viz_rect.x + s->viz_rect.w - (bb_dmr_w/1.5) - (bdr_s * 2.5);
   const int bb_dmr_y = (bdr_s + (bdr_s * 1.5)) + 200;
 
   bb_ui_draw_measures_right(s, bb_dml_x, bb_dml_y, bb_dml_w);
