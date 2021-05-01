@@ -63,7 +63,8 @@ SignalWidget::SignalWidget(QString text, int strength, QWidget* parent) : QFrame
   layout.addWidget(&label, 0, Qt::AlignLeft);
   label.setStyleSheet(R"(font-size: 35px; font-weight: 400;)");
 
-  layout.insertSpacing(2, 8);
+  move( 100,0);
+ // layout.insertSpacing(2, 8);
   label_ip.setText(text);
   label_ip.setStyleSheet(R"(font-size: 27px; font-weight: 400;)");
   layout.addWidget(&label_ip, 0, Qt::AlignLeft);
