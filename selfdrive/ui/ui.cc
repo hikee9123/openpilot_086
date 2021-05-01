@@ -426,11 +426,9 @@ void Device::update(const UIState &s) {
 }
 
 void Device::setAwake(bool on, bool reset) {
+  UIScene  &scene = QUIState::ui_state.scene;
   if (on != awake) {
     awake = on;
-
-   UIScene  &scene = QUIState::ui_state.scene;
-
     if( scene.ignition || !scene.scr.autoScreenOff )
     {
       Hardware::set_display_power(awake);
