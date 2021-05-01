@@ -100,8 +100,8 @@ void SignalWidget::update( QString text, int strength, std::string ip, int batte
 
   char temp_value_str1[32];
   snprintf(temp_value_str1, sizeof(temp_value_str1), "%d", batteryPercent );
-  QString  txtBattery(temp_value_str1);
-  labelBattery.setText(ip);
+  QString  txtBattery(ip.c_str());
+  labelBattery.setText(txtBattery);
 }
 
 Sidebar::Sidebar(QWidget* parent) : QFrame(parent) {
