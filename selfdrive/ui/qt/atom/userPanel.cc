@@ -483,7 +483,7 @@ CarSelectCombo::CarSelectCombo() : AbstractControl("Car", "Car select menu", "")
       int nIdx = combobox.currentIndex();
 
       QString str = combobox.currentText();
-      printf("changeEvent: %d  index = %d %s \n", nIdx, index, str.toStdString() );
+      printf("changeEvent: %d  index = %d %s \n", nIdx, index, str.toStdString().c_str() );
       refresh();
   });
 
