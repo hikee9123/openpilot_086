@@ -102,7 +102,7 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
     new ButtonControl("car interfaces 실행", "실행",
       "/data/openpiot/selfdrive/car/tests/test_car_interfaces.py 을 실행 합니다.", [=]() 
       {
-          if (ConfirmationDialog::confirm("Are you sure you want to exec?")) 
+          if (ConfirmationDialog::confirm("Are you sure you want to exec(test_car_interfaces.py)?")) 
           {
             std::system("python /data/openpiot/selfdrive/car/tests/test_car_interfaces.py");
           }
