@@ -395,7 +395,7 @@ CarSelectCombo::CarSelectCombo() : AbstractControl("Car", "Car select menu", "")
     selection-background-color: #111;
     selection-color: yellow;
     color: white;
-    background-color: 393939;
+    background-color: #393939;
     border-style: solid;
     border: 1px solid #1e1e1e;
     border-radius: 5;
