@@ -483,7 +483,7 @@ CarSelectCombo::CarSelectCombo() : AbstractControl("Car", "Car select menu", "")
       int nIdx = combobox.currentIndex();
 
       QString str = combobox.currentText();
-      printf("changeEvent: %d  index = %d %s \n", nIdx, index, str );
+      printf("changeEvent: %d  index = %d %s \n", nIdx, index, str.toStdString() );
       refresh();
   });
 
@@ -493,11 +493,8 @@ CarSelectCombo::CarSelectCombo() : AbstractControl("Car", "Car select menu", "")
 void CarSelectCombo::refresh() 
 {
    int nIdx = combobox.currentIndex();
-  if (nIdx == "0") {
-    label.setText(QString::fromStdString("항상"));
-  } else {
-    label.setText(QString::fromStdString(nIdx));
-  }
+  label.setText( QString::number(nIdx) );
+
   btnminus.setText("－");
   btnplus.setText("＋");
 }
