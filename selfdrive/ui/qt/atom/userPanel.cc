@@ -386,14 +386,21 @@ GitHash::GitHash() : AbstractControl("커밋(로컬/리모트)", "", "") {
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 //  QComboBox
-CarSelectCombo::CarSelectCombo() : AbstractControl("Car Select", "Car select menu", "../assets/offroad/icon_shell.png") 
+CarSelectCombo::CarSelectCombo() : AbstractControl("", "Car select menu", "../assets/offroad/icon_shell.png") 
 {
   combobox.setStyleSheet(R"(
     font-size: 50px;
-    font-weight: 500;
-    color: #E4E4E4;
-    count: 20;
-    background-color: #393939;
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    selection-background-color: #111;
+    selection-color: yellow;
+    color: white;
+    background-color: red;
+    border-style: solid;
+    border: 1px solid #1e1e1e;
+    border-radius: 5;
+    padding: 1px 0px 1px 20px;
+    QComboBox::drop-down {background: red;}
   )");
 
   btnminus.setStyleSheet(R"(
@@ -457,38 +464,27 @@ CarSelectCombo::CarSelectCombo() : AbstractControl("Car Select", "Car select men
 
 
 
-    QObject::connect(&btnminus, &QPushButton::released, [=]() {
-    auto str = QString::fromStdString(Params().get("OpkrAutoScreenOff"));
-    int value = str.toInt();
-    value = value - 1;
-    if (value <= 0 ) {
-      value = 0;
-    } 
+  QObject::connect(&btnminus, &QPushButton::released, [=]() 
+  {
 
-    QString values = QString::number(value);
-    Params().put("OpkrAutoScreenOff", values.toStdString());
     refresh();
   });
   
-  QObject::connect(&btnplus, &QPushButton::released, [=]() {
-    auto str = QString::fromStdString(Params().get("OpkrAutoScreenOff"));
-    int value = str.toInt();
-    value = value + 1;
-    if (value >= 10 ) {
-      value = 10;
-    } 
+  QObject::connect(&btnplus, &QPushButton::released, [=]() 
+  {
 
-    QString values = QString::number(value);
-    Params().put("OpkrAutoScreenOff", values.toStdString());
+
+
     refresh();
   });
 
-  QObject::connect(&combobox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [=](int index){
+  QObject::connect(&combobox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [=](int index)
+  {
       int nIdx = combobox.currentIndex();
 
       printf("changeEvent: %d  index = %d \n", nIdx, index );
       refresh();
-    });
+  });
 
 
 
