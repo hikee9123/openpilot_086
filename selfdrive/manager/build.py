@@ -74,7 +74,7 @@ def build(spinner, dirty=False):
         cloudlog.error("scons build failed\n" + error_s)
 
         # Show TextWindow
-        spinner.close()
+        #spinner.close()
         error_s = "\n \n".join(["\n".join(textwrap.wrap(e, 65)) for e in errors])
         with TextWindow("openpilot failed to build\n \n" + error_s) as t:
           t.wait_for_exit()
@@ -87,3 +87,4 @@ if __name__ == "__main__" and not PREBUILT:
   spinner = Spinner()
   spinner.update_progress(0, 100)
   build(spinner, dirty)
+  spinner.close()
