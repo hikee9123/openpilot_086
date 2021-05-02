@@ -167,15 +167,20 @@ public:
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 //  Combo box
-class CarSelectCombo : public QComboBox 
+class CarSelectCombo : public AbstractControl 
 {
   Q_OBJECT
 
 public:
-  CarSelectCombo( QWidget * parent = 0 );
-
+  CarSelectCombo();
 
 private:
-  virtual void changeEvent ( QEvent * e );
-  virtual void keyPressEvent ( QKeyEvent * e );
+  QPushButton btnplus;
+  QPushButton btnminus;
+  QLabel label;
+
+  QComboBox  combobox;
+
+  void refresh();
+
 };

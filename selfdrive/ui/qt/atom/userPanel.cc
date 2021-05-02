@@ -387,10 +387,9 @@ GitHash::GitHash() : AbstractControl("커밋(로컬/리모트)", "", "") {
 //
 //  QComboBox
 
-CarSelectCombo::CarSelectCombo(QWidget * parent)
-     :QComboBox ( parent )
+CarSelectCombo::CarSelectCombo()
 {
-  setStyleSheet(R"(
+  combobox.setStyleSheet(R"(
     font-size: 50px;
     font-weight: 500;
     color: #E4E4E4;
@@ -398,49 +397,111 @@ CarSelectCombo::CarSelectCombo(QWidget * parent)
     background-color: #393939;
   )");
 
-   addItem("HYUNDAI ELANTRA LIMITED 2017");
-    addItem("HYUNDAI I30 N LINE 2019");
-    addItem("HYUNDAI GENESIS 2015-2016");
+   combobox.addItem("HYUNDAI ELANTRA LIMITED 2017");
+    combobox.addItem("HYUNDAI I30 N LINE 2019");
+    combobox.addItem("HYUNDAI GENESIS 2015-2016");
 
-    addItem("HYUNDAI IONIQ ELECTRIC 2019");
-    addItem("HYUNDAI IONIQ ELECTRIC 2020");
-    addItem("HYUNDAI KONA 2020");
-    addItem("HYUNDAI KONA ELECTRIC 2019");
-    addItem("HYUNDAI SANTA FE LIMITED 2019");
-    addItem("HYUNDAI SONATA 2020");
-    addItem("HYUNDAI SONATA 2019");
-    addItem("HYUNDAI PALISADE 2020");
-    addItem("HYUNDAI VELOSTER 2019");
-    addItem("HYUNDAI GRANDEUR HYBRID 2019");
-
-
-    addItem("KIA FORTE E 2018 & GT 2021");
-    addItem("KIA NIRO EV 2020");
-    addItem("KIA OPTIMA SX 2019 & 2016");
-    addItem("KIA OPTIMA HYBRID 2017 2019");
-    addItem("KIA SELTOS 2021");
-    addItem("KIA SORENTO GT LINE 2018");
-    addItem("KIA STINGER GT2 2018");
-    addItem("KIA CEED INTRO ED 2019");
+    combobox.addItem("HYUNDAI IONIQ ELECTRIC 2019");
+    combobox.addItem("HYUNDAI IONIQ ELECTRIC 2020");
+    combobox.addItem("HYUNDAI KONA 2020");
+    combobox.addItem("HYUNDAI KONA ELECTRIC 2019");
+    combobox.addItem("HYUNDAI SANTA FE LIMITED 2019");
+    combobox.addItem("HYUNDAI SONATA 2020");
+    combobox.addItem("HYUNDAI SONATA 2019");
+    combobox.addItem("HYUNDAI PALISADE 2020");
+    combobox.addItem("HYUNDAI VELOSTER 2019");
+    combobox.addItem("HYUNDAI GRANDEUR HYBRID 2019");
 
 
-    addItem("GENESIS G70 2018");
-    addItem("GENESIS G80 2017");
-    addItem("GENESIS G90 2017");
+    combobox.addItem("KIA FORTE E 2018 & GT 2021");
+    combobox.addItem("KIA NIRO EV 2020");
+    combobox.addItem("KIA OPTIMA SX 2019 & 2016");
+    combobox.addItem("KIA OPTIMA HYBRID 2017 2019");
+    combobox.addItem("KIA SELTOS 2021");
+    combobox.addItem("KIA SORENTO GT LINE 2018");
+    combobox.addItem("KIA STINGER GT2 2018");
+    combobox.addItem("KIA CEED INTRO ED 2019");
 
 
+    combobox.addItem("GENESIS G70 2018");
+    combobox.addItem("GENESIS G80 2017");
+    combobox.addItem("GENESIS G90 2017");
+
+  hlayout->addWidget(&combobox);
+
+  label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
+  label.setStyleSheet("color: #e0e879");
+  hlayout->addWidget(&label);
+
+  btnminus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnplus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnminus.setFixedSize(150, 100);
+  btnplus.setFixedSize(150, 100);
+  hlayout->addWidget(&btnminus);
+  hlayout->addWidget(&btnplus);
+
+
+
+    QObject::connect(&btnminus, &QPushButton::released, [=]() {
+    auto str = QString::fromStdString(Params().get("OpkrAutoScreenOff"));
+    int value = str.toInt();
+    value = value - 1;
+    if (value <= 0 ) {
+      value = 0;
+    } 
+
+    QString values = QString::number(value);
+    Params().put("OpkrAutoScreenOff", values.toStdString());
+    refresh();
+  });
+  
+  QObject::connect(&btnplus, &QPushButton::released, [=]() {
+    auto str = QString::fromStdString(Params().get("OpkrAutoScreenOff"));
+    int value = str.toInt();
+    value = value + 1;
+    if (value >= 10 ) {
+      value = 10;
+    } 
+
+    QString values = QString::number(value);
+    Params().put("OpkrAutoScreenOff", values.toStdString());
+    refresh();
+  });
+
+  QObject::connect(comboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::activated), [=](int index){
+      int nIdx = combobox.currentIndex();
+
+      printf("changeEvent: %d  index = %d \n", nIdx, index );
+      refresh();
+    });
+
+
+
+  refresh();
 }
 
-
-void CarSelectCombo::changeEvent( QEvent * e )
+void CarSelectCombo::refresh() 
 {
-  int nIdx = currentIndex();
-
-  printf("changeEvent: %d \n", nIdx );
-}
-
-
-void CarSelectCombo::keyPressEvent ( QKeyEvent * e )
-{
-
+  QString option = QString::fromStdString(Params().get("OpkrAutoScreenOff"));
+  if (option == "0") {
+    label.setText(QString::fromStdString("항상켜기"));
+  } else {
+    label.setText(QString::fromStdString(Params().get("OpkrAutoScreenOff")));
+  }
+  btnminus.setText("－");
+  btnplus.setText("＋");
 }
