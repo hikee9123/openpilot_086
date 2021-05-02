@@ -403,7 +403,7 @@ CarSelectCombo::CarSelectCombo() : AbstractControl("Car", "자동차 모델을 �
 
     QScrollBar:vertical {
         min-height: 10px;
-        width: 123px;
+        width: 23px;
         background-color: yellow;        
     }    
   )");
