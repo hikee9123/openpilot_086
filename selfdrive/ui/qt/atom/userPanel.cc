@@ -386,10 +386,10 @@ GitHash::GitHash() : AbstractControl("커밋(로컬/리모트)", "", "") {
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 //  QComboBox
-CarSelectCombo::CarSelectCombo() : AbstractControl("", "Car select menu", "../assets/offroad/icon_shell.png") 
+CarSelectCombo::CarSelectCombo() : AbstractControl("Car", "Car select menu", "") 
 {
   combobox.setStyleSheet(R"(
-    font-size: 50px;
+    font-size: 30px;
     subcontrol-origin: padding;
     subcontrol-position: top right;
     selection-background-color: #111;
@@ -400,7 +400,7 @@ CarSelectCombo::CarSelectCombo() : AbstractControl("", "Car select menu", "../as
     border: 1px solid #1e1e1e;
     border-radius: 5;
     padding: 1px 0px 1px 20px;
-    QComboBox::drop-down {background: red;}
+    QComboBox::drop-down {background: #393939;}
   )");
 
   btnminus.setStyleSheet(R"(
