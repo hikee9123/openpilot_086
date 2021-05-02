@@ -95,14 +95,14 @@ void SignalWidget::paintEvent(QPaintEvent *e){
   p.drawImage(rect, image_bty);
 
 
-  p.setPen(Qt::yellow);
+  p.setPen(Qt::black);
   QFont font = p.font();
   font.setPixelSize(20);
   p.setFont(font);
 
   char temp_value_str1[32];
   snprintf(temp_value_str1, sizeof(temp_value_str1), "%d", m_batteryPercent );
-  p.drawText(rect, Qt::AlignCenter, temp_value_str1);
+  p.drawText(rect, Qt::AlignLeft, temp_value_str1);
 }
 
 void SignalWidget::update( QString text, int strength, const UIScene &scene )
