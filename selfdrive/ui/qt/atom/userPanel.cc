@@ -386,8 +386,7 @@ GitHash::GitHash() : AbstractControl("커밋(로컬/리모트)", "", "") {
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 //  QComboBox
-
-CarSelectCombo::CarSelectCombo()
+CarSelectCombo::CarSelectCombo() : AbstractControl("Car Select", "Car select menu", "../assets/offroad/icon_shell.png") 
 {
   combobox.setStyleSheet(R"(
     font-size: 50px;
@@ -482,7 +481,7 @@ CarSelectCombo::CarSelectCombo()
     refresh();
   });
 
-  QObject::connect(comboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::activated), [=](int index){
+  QObject::connect(comboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [=](int index){
       int nIdx = combobox.currentIndex();
 
       printf("changeEvent: %d  index = %d \n", nIdx, index );
