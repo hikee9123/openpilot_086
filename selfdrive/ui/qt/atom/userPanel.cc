@@ -429,72 +429,8 @@ CarSelectCombo::CarSelectCombo(QWidget * parent)
     addItem("GENESIS G90 2017");
 
 
-
-  btnminus.setStyleSheet(R"(
-    padding: 0;
-    border-radius: 50px;
-    font-size: 35px;
-    font-weight: 500;
-    color: #E4E4E4;
-    background-color: #393939;
-  )");
-  btnplus.setStyleSheet(R"(
-    padding: 0;
-    border-radius: 50px;
-    font-size: 35px;
-    font-weight: 500;
-    color: #E4E4E4;
-    background-color: #393939;
-  )");
-  
-  
-  btnminus.setFixedSize(150, 100);
-  btnplus.setFixedSize(150, 100);
-  layout()->addWidget(&btnminus);
-  layout()->addWidget(&btnplus);
-
-  QObject::connect(&btnminus, &QPushButton::released, [=]() {
-    auto str = QString::fromStdString(Params().get("OpkrAutoScreenOff"));
-    int value = str.toInt();
-    value = value - 1;
-    if (value <= 0 ) {
-      value = 0;
-    } else {
-    }
-
-
-    QString values = QString::number(value);
-    Params().put("OpkrAutoScreenOff", values.toStdString());
-    refresh();
-  });
-  
-  QObject::connect(&btnplus, &QPushButton::released, [=]() {
-    auto str = QString::fromStdString(Params().get("OpkrAutoScreenOff"));
-    int value = str.toInt();
-    value = value + 1;
-    if (value >= 10 ) {
-      value = 10;
-    } else {
-    }
-
-    QString values = QString::number(value);
-    Params().put("OpkrAutoScreenOff", values.toStdString());
-    refresh();
-  });   
 }
 
-
-void CarSelectCombo::refresh() 
-{
- // QString option = QString::fromStdString(Params().get("OpkrAutoScreenOff"));
- // if (option == "0") {
- //   label.setText(QString::fromStdString("항상켜기"));
- // } else {
- //   label.setText(QString::fromStdString(Params().get("OpkrAutoScreenOff")));
- // }
-  btnminus.setText("－");
-  btnplus.setText("＋");
-}
 
 void CarSelectCombo::changeEvent( QEvent * e )
 {

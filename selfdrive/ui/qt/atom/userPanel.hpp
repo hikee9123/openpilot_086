@@ -176,12 +176,6 @@ public:
 
 
 private:
-  QPushButton btnplus;
-  QPushButton btnminus;
-
-
-  void refresh();
-
-  void changeEvent ( QEvent * e );
-  void keyPressEvent ( QKeyEvent * e );
+  virtual void changeEvent ( QEvent * e );
+  virtual void keyPressEvent ( QKeyEvent * e );
 };
