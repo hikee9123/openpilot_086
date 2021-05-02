@@ -402,13 +402,13 @@ CarSelectCombo::CarSelectCombo() : AbstractControl("Car", "Car select menu", "")
     padding: 1px 0px 1px 10px;
 
     QScrollBar:horizontal {
-        min-width: 240px;
+        min-width: 140px;
         height: 13px;
 
     }
     QScrollBar:vertical {
-        min-height: 240px;
-        width: 13px;
+        min-height: 140px;
+        width: 23px;
         background-color: yellow;        
     }    
   )");
