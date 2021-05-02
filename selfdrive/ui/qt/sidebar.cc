@@ -90,7 +90,7 @@ void SignalWidget::paintEvent(QPaintEvent *e){
 
   QRect  rect(90, _dia+18, 76, 36);
   QRect  bq(rect.left() + 6, rect.top() + 5, int((rect.width() - 19) * m_batteryPercent * 0.01), rect.height() - 11 );
-  QBrush bgBrush("#A0A0A0");
+  QBrush bgBrush("#00F010");
   p.fillRect(bq, bgBrush);  
   p.drawImage(rect, image_bty);
 
