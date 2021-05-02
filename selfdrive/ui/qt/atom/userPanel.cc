@@ -114,7 +114,7 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
     new ButtonControl("build 실행", "실행",
       "/data/openpilot/selfdrive/manager/build.py 을 실행 합니다.", [=]() 
       {
-          if (ConfirmationDialog::confirm("Are you sure you want to exec(test_car_interfaces.py)?")) 
+          if (ConfirmationDialog::confirm("Are you sure you want to exec(build.py)?")) 
           {
             std::system("python /data/openpilot/selfdrive/manager/build.py");
           }
