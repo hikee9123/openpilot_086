@@ -386,7 +386,7 @@ GitHash::GitHash() : AbstractControl("커밋(로컬/리모트)", "", "") {
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 //  QComboBox
-CarSelectCombo::CarSelectCombo() : AbstractControl("Car", "Car select menu", "") 
+CarSelectCombo::CarSelectCombo() : AbstractControl("Car", "자동차 모델을 강제로 인식시키는 메뉴입니다.", "") 
 {
   combobox.setStyleSheet(R"(
     font-size: 30px;
@@ -402,13 +402,13 @@ CarSelectCombo::CarSelectCombo() : AbstractControl("Car", "Car select menu", "")
     padding: 1px 0px 1px 10px;
 
     QScrollBar:horizontal {
-        min-width: 140px;
+        min-width: 40px;
         height: 13px;
 
     }
     QScrollBar:vertical {
-        min-height: 140px;
-        width: 23px;
+        min-height: 40px;
+        width: 123px;
         background-color: yellow;        
     }    
   )");
@@ -421,6 +421,7 @@ CarSelectCombo::CarSelectCombo() : AbstractControl("Car", "Car select menu", "")
     color: #E4E4E4;
     background-color: #393939;
   )");
+
   btnplus.setStyleSheet(R"(
     padding: 0;
     border-radius: 50px;
