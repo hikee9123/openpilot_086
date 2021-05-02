@@ -389,7 +389,7 @@ GitHash::GitHash() : AbstractControl("커밋(로컬/리모트)", "", "") {
 CarSelectCombo::CarSelectCombo() : AbstractControl("Car", "자동차 모델을 강제로 인식시키는 메뉴입니다.", "") 
 {
   combobox.setStyleSheet(R"(
-    font-size: 30px;
+    font-size: 20px;
     subcontrol-origin: padding;
     subcontrol-position: top right;
     selection-background-color: #111;
@@ -399,15 +399,10 @@ CarSelectCombo::CarSelectCombo() : AbstractControl("Car", "자동차 모델을 �
     border-style: solid;
     border: 1px solid #1e1e1e;
     border-radius: 5;
-    padding: 1px 0px 1px 10px;
+    padding: 1px 0px 1px 5px;
 
-    QScrollBar:horizontal {
-        min-width: 40px;
-        height: 13px;
-
-    }
     QScrollBar:vertical {
-        min-height: 40px;
+        min-height: 10px;
         width: 123px;
         background-color: yellow;        
     }    
