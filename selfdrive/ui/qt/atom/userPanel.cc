@@ -395,12 +395,11 @@ CarSelectCombo::CarSelectCombo() : AbstractControl("Car", "Car select menu", "")
     selection-background-color: #111;
     selection-color: yellow;
     color: white;
-    background-color: red;
+    background-color: 393939;
     border-style: solid;
     border: 1px solid #1e1e1e;
     border-radius: 5;
-    padding: 1px 0px 1px 20px;
-    QComboBox::drop-down {background: #393939;}
+    padding: 1px 0px 1px 60px;
   )");
 
   btnminus.setStyleSheet(R"(
@@ -466,14 +465,21 @@ CarSelectCombo::CarSelectCombo() : AbstractControl("Car", "Car select menu", "")
 
   QObject::connect(&btnminus, &QPushButton::released, [=]() 
   {
-
+    int nIdx = combobox.currentIndex() - 1;
+    if( nIdx < 0 ) nIdx = 0;
+    combobox.setCurrentIndex( nIdx);
     refresh();
   });
   
   QObject::connect(&btnplus, &QPushButton::released, [=]() 
   {
+    int nMax = combobox.count();
+    int nIdx = combobox.currentIndex() + 1;
 
+    if( nIdx >=  nMax )
+      nIdx = nMax;
 
+    combobox.setCurrentIndex( nIdx);
 
     refresh();
   });
