@@ -87,3 +87,4 @@ if __name__ == "__main__" and not PREBUILT:
   spinner = Spinner()
   spinner.update_progress(0, 100)
   build(spinner, dirty)
+  spinner.close()

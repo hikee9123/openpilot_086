@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 import unittest
 import importlib
 from selfdrive.car.fingerprints import all_known_cars
@@ -14,16 +14,15 @@ import cereal.messaging as messaging
 class TestCarInterfaces(unittest.TestCase):
   def __init__(self):  
       self.sm = messaging.SubMaster(['modelV2','lateralPlan','radarState'])
-      
+
   def test_car_interfaces(self):
     all_cars = all_known_cars()
 
     for car_name in  all_cars:
-     
       if car_name != CAR.GRANDEUR_HEV_19:
          continue
 
-      print(car_name) 
+      print(car_name)
       fingerprint = FINGERPRINTS[car_name][0]
 
       CarInterface, CarController, CarState = interfaces[car_name]

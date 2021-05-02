@@ -1,4 +1,4 @@
-﻿import os
+import os
 import math
 import numpy as np
 from common.realtime import sec_since_boot, DT_MDL
@@ -28,8 +28,6 @@ LANE_CHANGE_AUTO_TIME = 1.0
 # this corresponds to 80deg/s and 20deg/s steering angle in a toyota corolla
 MAX_CURVATURE_RATES = [0.03762194918267951, 0.003441203371932992]
 MAX_CURVATURE_RATE_SPEEDS = [0, 35]
-
-
 
 DESIRES = {
   LaneChangeDirection.none: {
@@ -76,6 +74,10 @@ class LateralPlanner():
     self.t_idxs = np.arange(TRAJECTORY_SIZE)
     self.y_pts = np.zeros(TRAJECTORY_SIZE)
 
+    # atom
+    self.lanelines = True
+
+
   def setup_mpc(self):
     self.libmpc = libmpc_py.libmpc
     self.libmpc.init()
@@ -92,18 +94,40 @@ class LateralPlanner():
     self.desired_curvature_rate = 0.0
     self.safe_desired_curvature_rate = 0.0
 
+  # atom
+  def auto_lanelines(self, sm ):
+    if not self.use_lanelines:
+      return False
+ 
+    carState = sm['carState']
+    radarState = sm['radarState']
+    lanelines = True
+    #dRel = radarState.leadOne.dRel
+    vEgo_kph = carState.vEgo * CV.MS_TO_KPH
+
+    if self.lanelines:
+      if vEgo_kph < 40:  #or dRel < 25:
+        lanelines = False
+    else:
+      if vEgo_kph < 60:  #or dRel < 25:
+        lanelines = False      
+    return lanelines
+    
+
   def update(self, sm, CP):
     v_ego = sm['carState'].vEgo
     active = sm['controlsState'].active
     measured_curvature = sm['controlsState'].curvature
 
     # atom
+    steeringTorqueAbs = abs(sm['carState'].steeringTorque)
     cruiseState  = sm['carState'].cruiseState
     if sm['liveParameters'].valid:
       steerActuatorDelayCV = sm['liveParameters'].steerActuatorDelayCV
+      steerRateCostCV = sm['liveParameters'].steerRateCostCV
     else:
       steerActuatorDelayCV = CP.steerActuatorDelay
-    
+      steerRateCostCV = CP.steerRateCost
 
     md = sm['modelV2']
     self.LP.parse_model(sm['modelV2'])
@@ -118,16 +142,11 @@ class LateralPlanner():
     one_blinker = sm['carState'].leftBlinker != sm['carState'].rightBlinker
     below_lane_change_speed = v_ego < LANE_CHANGE_SPEED_MIN
 
-    if sm['carState'].leftBlinker:
-      self.lane_change_direction = LaneChangeDirection.left
-    elif sm['carState'].rightBlinker:
-      self.lane_change_direction = LaneChangeDirection.right
-
     if (not active) or (self.lane_change_timer > LANE_CHANGE_TIME_MAX):
       self.lane_change_state = LaneChangeState.off
       self.lane_change_direction = LaneChangeDirection.none
     else:
-      torque_applied = sm['carState'].steeringPressed and \
+      torque_applied = steeringTorqueAbs > 90 and \
                        ((sm['carState'].steeringTorque > 0 and self.lane_change_direction == LaneChangeDirection.left) or
                         (sm['carState'].steeringTorque < 0 and self.lane_change_direction == LaneChangeDirection.right))
 
@@ -152,11 +171,17 @@ class LateralPlanner():
 
       # State transitions
       # off
-      if cruiseState.cruiseSwState == Buttons.CANCEL:
+      if cruiseState.cruiseSwState == Buttons.CANCEL or steeringTorqueAbs > 300:
         self.lane_change_state = LaneChangeState.off
+        self.lane_change_direction = LaneChangeDirection.none
         self.lane_change_ll_prob = 1.0
 
       elif self.lane_change_state == LaneChangeState.off and one_blinker and not self.prev_one_blinker and not below_lane_change_speed:
+        if sm['carState'].leftBlinker:
+          self.lane_change_direction = LaneChangeDirection.left
+        elif sm['carState'].rightBlinker:
+          self.lane_change_direction = LaneChangeDirection.right
+
         self.lane_change_state = LaneChangeState.preLaneChange
         self.lane_change_ll_prob = 1.0
 
@@ -172,11 +197,11 @@ class LateralPlanner():
         # fade out over .5s
         v_ego_kph = v_ego * CV.MS_TO_KPH
         xp = [40,80]
-        fp2 = [1,2]
+        fp2 = [1,1.5]
         lane_time = interp( v_ego_kph, xp, fp2 )        
         self.lane_change_ll_prob = max(self.lane_change_ll_prob - lane_time*DT_MDL, 0.0)
         # 98% certainty
-        if lane_change_prob < 0.02 and self.lane_change_ll_prob < 0.01:
+        if lane_change_prob < 0.02 and self.lane_change_ll_prob < 0.1:  #0.01
           self.lane_change_state = LaneChangeState.laneChangeFinishing
 
       # finishing
@@ -201,15 +226,17 @@ class LateralPlanner():
     if self.desire == log.LateralPlan.Desire.laneChangeRight or self.desire == log.LateralPlan.Desire.laneChangeLeft:
       self.LP.lll_prob *= self.lane_change_ll_prob
       self.LP.rll_prob *= self.lane_change_ll_prob
-    if self.use_lanelines:
+    #if self.use_lanelines:
+    self.lanelines = self.auto_lanelines( sm )
+    if self.lanelines:
       d_path_xyz = self.LP.get_d_path(v_ego, self.t_idxs, self.path_xyz)
-      self.libmpc.set_weights(MPC_COST_LAT.PATH, MPC_COST_LAT.HEADING, CP.steerRateCost)
+      self.libmpc.set_weights(MPC_COST_LAT.PATH, MPC_COST_LAT.HEADING, steerRateCostCV)
     else:
       d_path_xyz = self.path_xyz
       path_cost = np.clip(abs(self.path_xyz[0,1]/self.path_xyz_stds[0,1]), 0.5, 5.0) * MPC_COST_LAT.PATH
       # Heading cost is useful at low speed, otherwise end of plan can be off-heading
       heading_cost = interp(v_ego, [5.0, 10.0], [MPC_COST_LAT.HEADING, 0.0])
-      self.libmpc.set_weights(path_cost, heading_cost, CP.steerRateCost)
+      self.libmpc.set_weights(path_cost, heading_cost, steerRateCostCV)
     y_pts = np.interp(v_ego * self.t_idxs[:MPC_N + 1], np.linalg.norm(d_path_xyz, axis=1), d_path_xyz[:,1])
     heading_pts = np.interp(v_ego * self.t_idxs[:MPC_N + 1], np.linalg.norm(self.path_xyz, axis=1), self.plan_yaw)
     self.y_pts = y_pts
@@ -285,6 +312,7 @@ class LateralPlanner():
     plan_send.lateralPlan.desire = self.desire
     plan_send.lateralPlan.laneChangeState = self.lane_change_state
     plan_send.lateralPlan.laneChangeDirection = self.lane_change_direction
+    plan_send.lateralPlan.laneLess = not self.lanelines
 
     pm.send('lateralPlan', plan_send)
 

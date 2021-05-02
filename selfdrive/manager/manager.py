@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 import datetime
 import os
 import signal
@@ -11,23 +11,28 @@ import selfdrive.crash as crash
 from common.basedir import BASEDIR
 from common.params import Params
 from common.text_window import TextWindow
-from selfdrive.hardware import HARDWARE
+from selfdrive.boardd.set_time import set_time
+from selfdrive.hardware import HARDWARE, PC, TICI
 from selfdrive.manager.helpers import unblock_stdout
 from selfdrive.manager.process import ensure_running
 from selfdrive.manager.process_config import managed_processes
-from selfdrive.registration import register
+from selfdrive.athena.registration import register
 from selfdrive.swaglog import cloudlog, add_file_handler
-from selfdrive.version import dirty, version
-
+from selfdrive.version import dirty, get_git_commit, version, origin, branch, commit, \
+                              terms_version, training_version, \
+                              get_git_branch, get_git_remote
 
 def manager_init():
+
+  # update system time from panda
+  set_time(cloudlog)
+
   params = Params()
   params.manager_start()
 
   default_params = [
     ("CompletedTrainingVersion", "0"),
     ("HasAcceptedTerms", "0"),
-    ("IsUploadRawEnabled", "1"),
     ("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')),
     ("OpenpilotEnabledToggle", "1"),
 
@@ -38,8 +43,13 @@ def manager_init():
     ("OpkrPrebuilt", "0"),
     ("OpkrAutoScreenOff", "0"),
     ("OpkrUIBrightness", "0"),
+    ("OpkrUIVolumeBoost", "0"),    
     ("LongitudinalControl", "0"),
+    ("OpkrSSHLegacy", "1"),    
   ]
+
+  if TICI:
+    default_params.append(("IsUploadRawEnabled", "1"))
 
   if params.get_bool("RecordFrontLock"):
     params.put_bool("RecordFront", True)
@@ -66,21 +76,34 @@ def manager_init():
   except PermissionError:
     print("WARNING: failed to make /dev/shm")
 
+  # set version params
+  params.put("Version", version)
+  params.put("TermsVersion", terms_version)
+  params.put("TrainingVersion", training_version)
+  params.put("GitCommit", get_git_commit(default=""))
+  params.put("GitBranch", get_git_branch(default=""))
+  params.put("GitRemote", get_git_remote(default=""))
+
   # set dongle id
   reg_res = register(show_spinner=True)
   if reg_res:
     dongle_id = reg_res
   else:
-    raise Exception("server registration failed")
-  os.environ['DONGLE_ID'] = dongle_id  # Needed for swaglog and loggerd
+    serial = params.get("HardwareSerial")
+    raise Exception(f"Registration failed for device {serial}")
+  os.environ['DONGLE_ID'] = dongle_id  # Needed for swaglog
 
   if not dirty:
     os.environ['CLEAN'] = '1'
 
   cloudlog.bind_global(dongle_id=dongle_id, version=version, dirty=dirty,
                        device=HARDWARE.get_device_type())
+
+  if not (os.getenv("NOLOG") or os.getenv("NOCRASH") or PC):
+    crash.init()
   crash.bind_user(id=dongle_id)
-  crash.bind_extra(version=version, dirty=dirty, device=HARDWARE.get_device_type())
+  crash.bind_extra(dirty=dirty, origin=origin, branch=branch, commit=commit,
+                   device=HARDWARE.get_device_type())
 
 
 def manager_prepare():
@@ -101,6 +124,7 @@ def manager_thread():
 
   # save boot log
   #subprocess.call("./bootlog", cwd=os.path.join(BASEDIR, "selfdrive/loggerd"))
+  params = Params()
 
   ignore = []
   if os.getenv("NOBOARD") is not None:
@@ -111,12 +135,11 @@ def manager_thread():
   ensure_running(managed_processes.values(), started=False, not_run=ignore)
 
   started_prev = False
-  params = Params()
 
 
-#params = Params()
+  # atom
+  #params = Params()
   enableLogger = params.get_bool("RecordFront")
-  
   if not enableLogger:
     ignore.append("loggerd")
     ignore.append("logcatd")
@@ -128,8 +151,6 @@ def manager_thread():
   else:
     # save boot log
     subprocess.call("./bootlog", cwd=os.path.join(BASEDIR, "selfdrive/loggerd"))
-
-
 
 
   sm = messaging.SubMaster(['deviceState'])

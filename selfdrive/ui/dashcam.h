@@ -86,12 +86,6 @@ struct tm get_time_struct()
   return tm;
 }
 
-void reset_time(UIState *s)
-{
-  GLWindow::wake();
-}
-    
-
 void remove_file(char *videos_dir, char *filename)
 {
   if (filename[0] == '\0')
@@ -215,11 +209,13 @@ void start_capture()
 
 bool screen_button_clicked(int touch_x, int touch_y, int x, int y, int cx, int cy )
 {
-   int max_x = x + cx;
-   int max_y = y + cy;
-   int min_x = x - cx;
-   int min_y = y - cy;
+   int   cx_half = cx * 0.5;
+   int   cy_half = cy * 0.5;
 
+   int min_x = x - cx_half;
+   int min_y = y - cy_half;
+   int max_x = x + cx_half;
+   int max_y = y + cy_half;
 
   if (touch_x >= min_x && touch_x <= max_x)
   {
@@ -256,16 +252,47 @@ static void rotate_video()
 }
 
 
-static void screen_draw_button(UIState *s, int touch_x, int touch_y)
+void screen_toggle_record_state()
+{
+  //if (captureState == CAPTURE_STATE_CAPTURING)
+  if( lock_current_video == true )
+  {
+    stop_capture();
+    lock_current_video = false;
+  }
+  else
+  {
+    // start_capture();
+    lock_current_video = true;
+  }
+}
+
+
+static void screen_draw_button(UIState *s, int touch_x, int touch_y, int touched)
 {
   // Set button to bottom left of screen
-
   nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
+
 
     int btn_w = 150;
     int btn_h = 150;
-    int btn_x = 1990 - btn_w;
-    int btn_y = 1080 - btn_h;
+    int bb_dmr_x = s->viz_rect.x + s->viz_rect.w + 100;
+    int btn_x = bb_dmr_x - btn_w;
+    int btn_y = 1080 - btn_h;    
+
+  if ( touched && screen_button_clicked(touch_x, touch_y, btn_x, btn_y, btn_w, btn_h) )
+  {
+    click_elapsed_time = get_time() - click_time;
+
+    printf( "screen_button_clicked %d  captureState = %d \n", click_elapsed_time, captureState );
+    if (click_elapsed_time > 0)
+    {
+      click_time = get_time() + 1;
+      screen_toggle_record_state();
+    }
+  }  
+
+
     nvgBeginPath(s->vg);
     nvgRoundedRect(s->vg, btn_x - 110, btn_y - 45, btn_w, btn_h, 100);
     nvgStrokeColor(s->vg, nvgRGBA(255, 255, 255, 80));
@@ -312,21 +339,6 @@ static void screen_draw_button(UIState *s, int touch_x, int touch_y)
   }
 }
 
-void screen_toggle_record_state()
-{
-  //if (captureState == CAPTURE_STATE_CAPTURING)
-  if( lock_current_video == true )
-  {
-    stop_capture();
-    lock_current_video = false;
-  }
-  else
-  {
-    // start_capture();
-    lock_current_video = true;
-  }
-}
-
 
 
 static void screen_menu_button(UIState *s, int touch_x, int touch_y, int touched)
@@ -336,11 +348,16 @@ static void screen_menu_button(UIState *s, int touch_x, int touch_y, int touched
 
   nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
 
+    //int btn_w = 150;
+    //int btn_h = 150;
+    //int btn_x = 1650;// 1920 - btn_w;
+    //int btn_y = 1080 - btn_h;
+
     int btn_w = 150;
     int btn_h = 150;
-    int btn_x = 1650;// 1920 - btn_w;
+    int bb_dmr_x = s->viz_rect.x + s->viz_rect.w + 100 - 170;
+    int btn_x = bb_dmr_x - btn_w;
     int btn_y = 1080 - btn_h;
-
 
     if( touched && screen_button_clicked(touch_x, touch_y, btn_x, btn_y, btn_w, btn_h) )
     {
@@ -413,8 +430,10 @@ static void ui_draw_debug1(UIState *s)
   UIScene &scene = s->scene;
   
   nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
-  ui_draw_text1(s, 0, 1035, scene.alert.alertTextMsg1.c_str(), 45, COLOR_WHITE, "sans-semibold");
-  ui_draw_text1(s, 0, 1078, scene.alert.alertTextMsg2.c_str(), 45, COLOR_WHITE, "sans-semibold");
+  //  1035, 1078
+  ui_draw_text1(s, 0, 30, scene.alert.alertTextMsg1.c_str(), 45, COLOR_WHITE, "sans-regular");
+  ui_draw_text1(s, 0, 1040, scene.alert.alertTextMsg2.c_str(), 45, COLOR_WHITE, "sans-regular");
+  ui_draw_text1(s, 0, 1078, scene.alert.alertTextMsg3.c_str(), 45, COLOR_WHITE, "sans-regular");
 }
 
 
@@ -429,6 +448,7 @@ static void ui_draw_debug2(UIState *s)
   float  steerRatio = scene.liveParameters.getSteerRatio();
   float  steerRatioCV = scene.liveParameters.getSteerRatioCV();
   float  steerActuatorDelayCV =  scene.liveParameters.getSteerActuatorDelayCV();
+  float  steerRateCostCV =  scene.liveParameters.getSteerRateCostCV();
   float  fanSpeed = scene.deviceState.getFanSpeedPercentDesired();
 
 
@@ -450,16 +470,18 @@ static void ui_draw_debug2(UIState *s)
     //ui_print( s, ui_viz_rx+10, 50, "S:%d",  s->awake_timeout );
 
     x_pos = ui_viz_rx + 300;
-    y_pos = 100+250; 
+    y_pos = 200; 
 
-    ui_print( s, x_pos, y_pos+0,   "sR:%.2f, %.2f %.2f", steerRatio,  steerRatioCV, steerActuatorDelayCV );
-    ui_print( s, x_pos, y_pos+50,  "aO:%.2f, %.2f", angleOffset, angleOffsetAverage );
-    ui_print( s, x_pos, y_pos+100, "sF:%.2f Fan:%.0f", stiffnessFactor, fanSpeed/1000. );
-    ui_print( s, x_pos, y_pos+150, "lW:%.2f CV:%.0f", laneWidth, modelSpeed );
-    ui_print( s, x_pos, y_pos+200, "time:%d", scene.scr.nTime/20 );
+    ui_print( s, x_pos, y_pos+0,   "sR:%.2f, %.2f", steerRatio,  steerRatioCV );
+    ui_print( s, x_pos, y_pos+50,   "SC:%.2f, SD:%.2f", steerRateCostCV,  steerActuatorDelayCV );
+    
+    ui_print( s, x_pos, y_pos+100,  "aO:%.2f, %.2f", angleOffset, angleOffsetAverage );
+    ui_print( s, x_pos, y_pos+150, "sF:%.2f Fan:%.0f", stiffnessFactor, fanSpeed/1000. );
+    ui_print( s, x_pos, y_pos+200, "lW:%.2f CV:%.0f", laneWidth, modelSpeed );
+    ui_print( s, x_pos, y_pos+250, "time:%d", scene.scr.nTime/20 );
 
 
-    ui_print( s, x_pos, y_pos+250, "prob:%.2f, %.2f, %.2f, %.2f", lane_line_probs[0], lane_line_probs[1], lane_line_probs[2], lane_line_probs[3] );
+    ui_print( s, x_pos, y_pos+300, "prob:%.2f, %.2f, %.2f, %.2f", lane_line_probs[0], lane_line_probs[1], lane_line_probs[2], lane_line_probs[3] );
 
 
     
@@ -557,22 +579,24 @@ void update_dashcam(UIState *s, int draw_vision)
   int touch_y = s->scene.mouse.touch_y;
   int touched = s->scene.mouse.touched;
   //int touch_cnt = s->scene.mouse.touch_cnt;
-
   
+
+    
+
 
   if ( program_start )
   {
+
     program_start = 0;
     s->scene.scr.autoScreenOff = get_param("OpkrAutoScreenOff");
     s->scene.scr.brightness = get_param("OpkrUIBrightness");
-        
-    reset_time(s);
+
+    s->scene.scr.nTime = s->scene.scr.autoScreenOff * 60 * UI_FREQ;
     printf("autoScreenOff=%d, brightness=%d \n", s->scene.scr.autoScreenOff, s->scene.scr.brightness);       
   }
   else if ( touched  ) 
   {
     s->scene.mouse.touched = 0; 
-    //printf("touched:(%d,%d) %d  %d \n", touch_x, touch_y, touched, s->sidebar_collapsed);
   }
 
 
@@ -580,26 +604,10 @@ void update_dashcam(UIState *s, int draw_vision)
   if (!s->scene.started) return;
   if (s->scene.driver_view) return;
 
-    int btn_w = 150;
-    int btn_h = 150;
-    int btn_x = 1990 - btn_w;
-    int btn_y = 1080 - btn_h;
 
-  screen_draw_button(s, touch_x, touch_y);
+  screen_draw_button(s, touch_x, touch_y, touched);
   screen_menu_button(s, touch_x, touch_y, touched);
-  if ( touched && screen_button_clicked(touch_x, touch_y, btn_x, btn_y, btn_w, btn_h) )
-  {
-    click_elapsed_time = get_time() - click_time;
 
-    printf( "screen_button_clicked %d  captureState = %d \n", click_elapsed_time, captureState );
-    if (click_elapsed_time > 0)
-    {
-      click_time = get_time() + 1;
-      screen_toggle_record_state();
-    }
-  }
-
- 
 
   if( lock_current_video == true  )
   {

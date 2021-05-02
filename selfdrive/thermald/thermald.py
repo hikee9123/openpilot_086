@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 import datetime
 import os
 import time
@@ -128,6 +128,24 @@ def set_offroad_alert_if_changed(offroad_alert: str, show_alert: bool, extra_tex
   prev_offroad_states[offroad_alert] = (show_alert, extra_text)
   set_offroad_alert(offroad_alert, show_alert, extra_text)
 
+# atom
+def set_prebuilt(params):
+  prebuiltfile = '/data/openpilot/prebuilt'
+  prebuiltlet = params.get_bool("OpkrPrebuilt")
+  if not os.path.isfile(prebuiltfile) and prebuiltlet:
+    os.system("cd /data/openpilot; touch prebuilt")
+  elif os.path.isfile(prebuiltfile) and not prebuiltlet:
+    os.system("cd /data/openpilot; rm -f prebuilt")
+
+
+def set_sshlegacy_key(params):
+  sshkeyfile = '/data/public_key'
+  sshkeylet = params.get_bool("OpkrSSHLegacy")
+  if not os.path.isfile(sshkeyfile) and sshkeylet:
+    os.system("cp -f /data/openpilot/selfdrive/assets/addon/key/GithubSshKeys_legacy /data/params/d/GithubSshKeys; chmod 600 /data/params/d/GithubSshKeys; touch /data/public_key")
+  elif os.path.isfile(sshkeyfile) and not sshkeylet:
+    os.system("cp -f /data/openpilot/selfdrive/assets/addon/key/GithubSshKeys /data/params/d/GithubSshKeys; chmod 600 /data/params/d/GithubSshKeys; rm -f /data/public_key")
+
 
 def thermald_thread():
 
@@ -175,6 +193,7 @@ def thermald_thread():
   if EON:
     base_path = "/sys/kernel/debug/cpr3-regulator/"
     cpr_files = [p for p in Path(base_path).glob("**/*") if p.is_file()]
+    cpr_files = ["/sys/kernel/debug/regulator/pm8994_s11/voltage"] + cpr_files
     cpr_data = {}
     for cf in cpr_files:
       with open(cf, "r") as f:
@@ -363,7 +382,7 @@ def thermald_thread():
     if should_start != should_start_prev or (count == 0):
       params.put_bool("IsOffroad", not should_start)
       HARDWARE.set_power_save(not should_start)
-      if TICI:
+      if TICI and not params.get_bool("EnableLteOnroad"):
         fxn = "stop" if should_start else "start"
         os.system(f"sudo systemctl {fxn} --no-block lte")
 
@@ -379,6 +398,11 @@ def thermald_thread():
       started_ts = None
       if off_ts is None:
         off_ts = sec_since_boot()
+ 
+    # atom
+    set_prebuilt( params )
+    set_sshlegacy_key( params )
+
 
     # Offroad power monitoring
     power_monitor.calculate(pandaState)
@@ -420,8 +444,11 @@ def thermald_thread():
     if usb_power:
       power_monitor.charging_ctrl( msg, ts, 60, 40 )    
 
-    # report to server once per minute
-    if (count % int(60. / DT_TRML)) == 0:
+    # report to server once every 10 minutes
+    if (count % int(600. / DT_TRML)) == 0:
+      if EON and started_ts is None and msg.deviceState.memoryUsagePercent > 40:
+        cloudlog.event("High offroad memory usage", mem=msg.deviceState.memoryUsagePercent)
+
       location = messaging.recv_sock(location_sock)
       cloudlog.event("STATUS_PACKET",
                      count=count,

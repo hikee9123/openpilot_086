@@ -1,4 +1,4 @@
-﻿#include <QDebug>
+#include <QDebug>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QLabel>
@@ -8,7 +8,7 @@
 #include <QVBoxLayout>
 
 #include "QrCode.hpp"
-#include "api.hpp"
+#include "request_repeater.hpp"
 #include "common/params.h"
 #include "setup.hpp"
 
@@ -23,7 +23,7 @@ PairingQRWidget::PairingQRWidget(QWidget* parent) : QWidget(parent) {
 
   QTimer* timer = new QTimer(this);
   timer->start(30 * 1000);
-  connect(timer, SIGNAL(timeout()), this, SLOT(refresh()));
+  connect(timer, &QTimer::timeout, this, &PairingQRWidget::refresh);
   refresh(); // don't wait for the first refresh
 }
 
@@ -104,11 +104,11 @@ PrimeUserWidget::PrimeUserWidget(QWidget* parent) : QWidget(parent) {
   }
 
   QString url = "https://api.commadotai.com/v1/devices/" + dongleId + "/owner";
-  RequestRepeater* repeater = new RequestRepeater(this, url, 6, "ApiCache_Owner");
-  QObject::connect(repeater, SIGNAL(receivedResponse(QString)), this, SLOT(replyFinished(QString)));
+  RequestRepeater *repeater = new RequestRepeater(this, url, "ApiCache_Owner", 6);
+  QObject::connect(repeater, &RequestRepeater::receivedResponse, this, &PrimeUserWidget::replyFinished);
 }
 
-void PrimeUserWidget::replyFinished(QString response) {
+void PrimeUserWidget::replyFinished(const QString &response) {
   QJsonDocument doc = QJsonDocument::fromJson(response.toUtf8());
   if (doc.isNull()) {
     qDebug() << "JSON Parse failed on getting username and points";
@@ -179,7 +179,7 @@ SetupWidget::SetupWidget(QWidget* parent) : QFrame(parent) {
     background: #585858;
   )");
   finishRegistationLayout->addWidget(finishButton);
-  QObject::connect(finishButton, SIGNAL(released()), this, SLOT(showQrCode()));
+  QObject::connect(finishButton, &QPushButton::released, this, &SetupWidget::showQrCode);
 
   QWidget* finishRegistration = new QWidget;
   finishRegistration->setLayout(finishRegistationLayout);
@@ -236,14 +236,14 @@ SetupWidget::SetupWidget(QWidget* parent) : QFrame(parent) {
   // set up API requests
   QString dongleId = QString::fromStdString(Params().get("DongleId"));
   QString url = "https://api.commadotai.com/v1.1/devices/" + dongleId + "/";
-  RequestRepeater* repeater = new RequestRepeater(this, url, 5, "ApiCache_Device");
+  RequestRepeater* repeater = new RequestRepeater(this, url, "ApiCache_Device", 5);
 
-  QObject::connect(repeater, SIGNAL(receivedResponse(QString)), this, SLOT(replyFinished(QString)));
-  QObject::connect(repeater, SIGNAL(failedResponse(QString)), this, SLOT(parseError(QString)));
+  QObject::connect(repeater, &RequestRepeater::receivedResponse, this, &SetupWidget::replyFinished);
+  QObject::connect(repeater, &RequestRepeater::failedResponse, this, &SetupWidget::parseError);
   hide(); // Only show when first request comes back
 }
 
-void SetupWidget::parseError(QString response) {
+void SetupWidget::parseError(const QString &response) {
   show();
   showQr = false;
   mainLayout->setCurrentIndex(0);
@@ -254,7 +254,7 @@ void SetupWidget::showQrCode(){
   mainLayout->setCurrentIndex(1);
 }
 
-void SetupWidget::replyFinished(QString response) {
+void SetupWidget::replyFinished(const QString &response) {
   show();
   QJsonDocument doc = QJsonDocument::fromJson(response.toUtf8());
   if (doc.isNull()) {

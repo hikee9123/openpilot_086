@@ -1,15 +1,4 @@
-﻿#pragma once
-#include "messaging.hpp"
-
-#ifdef __APPLE__
-#include <OpenGL/gl3.h>
-#define NANOVG_GL3_IMPLEMENTATION
-#define nvgCreate nvgCreateGL3
-#else
-#include <GLES3/gl3.h>
-#define NANOVG_GLES3_IMPLEMENTATION
-#define nvgCreate nvgCreateGLES3
-#endif
+#pragma once
 
 #include <atomic>
 #include <map>
@@ -19,15 +8,22 @@
 
 #include "nanovg.h"
 
+#include "camerad/cameras/camera_common.h"
 #include "common/mat.h"
 #include "common/visionimg.h"
 #include "common/modeldata.h"
 #include "common/params.h"
 #include "common/glutil.h"
+#include "common/util.h"
 #include "common/transformations/orientation.hpp"
-#include "qt/sound.hpp"
+#include "messaging.hpp"
 #include "visionipc.h"
 #include "visionipc_client.h"
+
+#include "qt/sound.hpp"
+
+#include <QObject>
+#include <QTimer>
 
 #define COLOR_BLACK nvgRGBA(0, 0, 0, 255)
 #define COLOR_BLACK_ALPHA(x) nvgRGBA(0, 0, 0, x)
@@ -37,7 +33,10 @@
 #define COLOR_YELLOW nvgRGBA(218, 202, 37, 255)
 #define COLOR_RED nvgRGBA(201, 34, 49, 255)
 
-#define UI_BUF_COUNT 4
+#define COLOR_GREEN nvgRGBA(0, 255, 0, 255)
+#define COLOR_GREEN_ALPHA(x) nvgRGBA(0, 255, 0, x)
+#define COLOR_ORANGE nvgRGBA(255, 175, 3, 255)
+#define COLOR_ORANGE_ALPHA(x) nvgRGBA(255, 175, 3, x)
 
 typedef struct Rect {
   int x, y, w, h;
@@ -50,12 +49,9 @@ typedef struct Rect {
   }
 } Rect;
 
-const int sbr_w = 300;
 const int bdr_s = 30;
 const int header_h = 420;
 const int footer_h = 280;
-const Rect settings_btn = {50, 35, 200, 117};
-const Rect home_btn = {60, 1080 - 180 - 40, 180, 180};
 
 const int UI_FREQ = 20;   // Hz
 
@@ -74,8 +70,8 @@ typedef enum UIStatus {
 } UIStatus;
 
 static std::map<UIStatus, NVGcolor> bg_colors = {
-  {STATUS_OFFROAD, nvgRGBA(0x0, 0x0, 0x0, 0xef)},
-  {STATUS_DISENGAGED, nvgRGBA(0x17, 0x33, 0x49, 0xc8)},
+  {STATUS_OFFROAD, nvgRGBA(0x0, 0x0, 0x0, 0xcf)},
+  {STATUS_DISENGAGED, nvgRGBA(0x17, 0x33, 0x49, 0x88)},
   {STATUS_ENGAGED, nvgRGBA(0x17, 0x86, 0x44, 0x51)},
   {STATUS_WARNING, nvgRGBA(0xDA, 0x6F, 0x25, 0x51)},
   {STATUS_ALERT, nvgRGBA(0xC9, 0x22, 0x31, 0x31)},
@@ -139,6 +135,7 @@ typedef struct UIScene {
      int  nTime;
      int  autoScreenOff;
      int  brightness;
+     int  nVolumeBoost;
      int  awake;
   } scr;
 
@@ -150,6 +147,7 @@ typedef struct UIScene {
     int touch_y;
     int touched;
     int touch_cnt;
+    int sidebar;
   } mouse;
 
   cereal::ModelDataV2::Reader modelDataV2;
@@ -162,7 +160,8 @@ typedef struct UIScene {
   struct _STATUS_
   {
       std::string alertTextMsg1;
-      std::string alertTextMsg2;      
+      std::string alertTextMsg2; 
+      std::string alertTextMsg3;
   } alert;
 } UIScene;
 
@@ -181,9 +180,9 @@ typedef struct UIState {
   // images
   std::map<std::string, int> images;
 
-  SubMaster *sm;
+  std::unique_ptr<SubMaster> sm;
 
-  Sound *sound;
+  std::unique_ptr<Sound> sound;
   UIStatus status;
   UIScene scene;
 
@@ -194,15 +193,68 @@ typedef struct UIState {
   GLuint frame_vao[2], frame_vbo[2], frame_ibo[2];
   mat4 rear_frame_mat, front_frame_mat;
 
-  // device state
   bool awake;
 
-  bool sidebar_collapsed;
   Rect video_rect, viz_rect;
   float car_space_transform[6];
   bool wide_camera;
   float zoom;
 } UIState;
 
-void ui_init(UIState *s);
-void ui_update(UIState *s);
+
+class QUIState : public QObject {
+  Q_OBJECT
+
+public:
+  QUIState(QObject* parent = 0);
+
+  // TODO: get rid of this, only use signal
+  inline static UIState ui_state = {0};
+
+signals:
+  void uiUpdate(const UIState &s);
+  void offroadTransition(bool offroad);
+
+private slots:
+  void update();
+
+private:
+  QTimer *timer;
+  bool started_prev = true;
+};
+
+
+// device management class
+
+class Device : public QObject {
+  Q_OBJECT
+
+public:
+  Device(QObject *parent = 0);
+
+private:
+  // auto brightness
+  const float accel_samples = 5*UI_FREQ;
+
+  bool awake;
+  int awake_timeout = 300;
+  float accel_prev = 0;
+  float gyro_prev = 0;
+  float brightness_b = 0;
+  float brightness_m = 0;
+  float last_brightness = 0;
+  FirstOrderFilter brightness_filter;
+
+  QTimer *timer;
+
+  void updateBrightness(const UIState &s);
+  void updateWakefulness(const UIState &s);
+  void ScreenAwake();
+
+signals:
+  void displayPowerChanged(bool on);
+
+public slots:
+  void setAwake(bool on, bool reset);
+  void update(const UIState &s);
+};

@@ -20,8 +20,6 @@ class CUserPanel : public QFrame
 public:
   explicit CUserPanel(QWidget* parent = nullptr);
 
-private:
-
 
 protected:
   void showEvent(QShowEvent *event) override;
@@ -72,7 +70,7 @@ class CPrebuiltToggle : public ToggleControl {
   Q_OBJECT
 
 public:
-  CPrebuiltToggle() : ToggleControl("Prebuilt 파일 생성", "Prebuilt 파일을 생성하며 부팅속도를 단축시킵니다. UI수정을 한 경우 기능을 끄십시오.", "../assets/offroad/icon_shell.png", Params().getBool("PutPrebuiltOn")) {
+  CPrebuiltToggle() : ToggleControl("Prebuilt 파일 생성", "Prebuilt 파일을 생성하며 부팅속도를 단축시킵니다. UI수정을 한 경우 기능을 끄십시오.", "../assets/offroad/icon_shell.png", Params().getBool("OpkrPrebuilt")) {
     QObject::connect(this, &CPrebuiltToggle::toggleFlipped, [=](int state) {
       Params().putBool("OpkrPrebuilt", (bool)state);
     });
@@ -106,6 +104,20 @@ private:
   void refresh();
 };
 
+class CVolumeControl : public AbstractControl {
+  Q_OBJECT
+
+public:
+  CVolumeControl();
+
+private:
+  QPushButton btnplus;
+  QPushButton btnminus;
+  QLabel label;
+
+  void refresh();
+};
+
 
 class AutoScreenOff : public AbstractControl {
   Q_OBJECT
@@ -119,4 +131,57 @@ private:
   QLabel label;
 
   void refresh();
+};
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+//
+//  Git
+
+class GitHash : public AbstractControl {
+  Q_OBJECT
+
+public:
+  GitHash();
+
+private:
+  QLabel local_hash;
+  QLabel remote_hash;
+};
+
+
+
+class SshLegacyToggle : public ToggleControl {
+  Q_OBJECT
+
+public:
+  SshLegacyToggle() : ToggleControl("기존 공개KEY 사용", "SSH 접속시 기존 공개KEY(0.8.2이하)를 사용합니다.", "", Params().getBool("OpkrSSHLegacy")) {
+    QObject::connect(this, &SshLegacyToggle::toggleFlipped, [=](int state) {
+      char value = state ? '1' : '0';
+      Params().put("OpkrSSHLegacy", &value, 1);
+    });
+  }
+};
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+//
+//  Combo box
+class CarSelectCombo : public QComboBox 
+{
+  Q_OBJECT
+
+public:
+  CarSelectCombo( QWidget * parent = 0 );
+
+
+private:
+  QPushButton btnplus;
+  QPushButton btnminus;
+
+
+  void refresh();
+
+  void changeEvent ( QEvent * e );
+  void keyPressEvent ( QKeyEvent * e );
 };

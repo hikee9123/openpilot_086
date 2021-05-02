@@ -8,6 +8,7 @@ class ConfAtom():
 
     self.cv_steerRatioV = [[13.85]]
     self.cv_ActuatorDelayV = [[0.1]]
+    self.cv_SteerRateCostV = [[0.45]]
     self.cv_KPH    = [0.]   # Speed  kph
     self.cv_BPV    = [[200, 255]]  # CV
     self.cv_sMaxV  = [[384, 255]]
@@ -27,4 +28,4 @@ class ConfAtom():
     self.cv_sdDNV = conf['cv_sdDNV']
     self.cv_steerRatioV  = conf['cv_steerRatioV']
     self.cv_ActuatorDelayV = conf['cv_ActuatorDelayV'] 
-
+    self.cv_SteerRateCostV = conf['cv_SteerRateCostV'] 

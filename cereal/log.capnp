@@ -525,7 +525,8 @@ struct ControlsState @0x97ff69c53601abf1 {
   output @59 :Float32;
   alertTextMsg1  @60 :Text;
   alertTextMsg2  @61 :Text;
-  modelSpeed @62 :Float32;
+  alertTextMsg3  @62 :Text;
+  modelSpeed @63 :Float32;
 
   lateralControlState :union {
     indiState @52 :LateralINDIState;
@@ -810,6 +811,9 @@ struct LateralPlan @0xe1e9318e2ae8b51e {
   curvatureRate @23 :Float32;
   rawCurvature @24 :Float32;
   rawCurvatureRate @25 :Float32;
+
+  # atom
+  laneLess @26 :Bool;
 
   enum Desire {
     none @0;
@@ -1234,6 +1238,7 @@ struct LiveParametersData {
   # atom
   steerRatioCV @10 :Float32;
   steerActuatorDelayCV @11 :Float32;
+  steerRateCostCV @12 :Float32;
 }
 
 struct LiveMapDataDEPRECATED {

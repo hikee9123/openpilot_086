@@ -1,4 +1,4 @@
-﻿#include <stdio.h>
+#include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -30,7 +30,6 @@
 
 #include "panda.h"
 #include "pigeon.h"
-
 
 #define MAX_IR_POWER 0.5f
 #define MIN_IR_POWER 0.0f
@@ -64,6 +63,8 @@ void safety_setter_thread() {
   // diagnostic only is the default, needed for VIN query
   panda->set_safety_model(cereal::CarParams::SafetyModel::ELM327);
 
+  Params p = Params();
+
   // switch to SILENT when CarVin param is read
   while (true) {
     if (do_exit || !panda->connected){
@@ -71,7 +72,7 @@ void safety_setter_thread() {
       return;
     };
 
-    std::string value_vin = Params().get("CarVin");
+    std::string value_vin = p.get("CarVin");
     if (value_vin.size() > 0) {
       // sanity check VIN format
       assert(value_vin.size() == 17);
@@ -92,8 +93,10 @@ void safety_setter_thread() {
       return;
     };
 
-    params = Params().get("CarParams");
-    if (params.size() > 0) break;
+    if (p.getBool("ControlsReady")) {
+      params = p.get("CarParams");
+      if (params.size() > 0) break;
+    }
     util::sleep_for(100);
   }
   LOGW("got %d bytes CarParams", params.size());
@@ -499,8 +502,8 @@ void pigeon_thread() {
 
   std::unordered_map<char, uint64_t> last_recv_time;
   std::unordered_map<char, int64_t> cls_max_dt = {
-    {(char)ublox::CLASS_NAV, int64_t(250000000ULL)}, // 0.25s
-    {(char)ublox::CLASS_RXM, int64_t(250000000ULL)}, // 0.25s
+    {(char)ublox::CLASS_NAV, int64_t(900000000ULL)}, // 0.9s
+    {(char)ublox::CLASS_RXM, int64_t(900000000ULL)}, // 0.9s
   };
 
   while (!do_exit && panda->connected) {
@@ -578,8 +581,6 @@ int main() {
   err = set_core_affinity(3);
 #endif
   LOG("set affinity returns %d", err);
-
-  panda_set_power(true);
 
   while (!do_exit){
     std::vector<std::thread> threads;

@@ -81,7 +81,7 @@ class Android(HardwareBase):
 
   def get_serial(self):
     ret = getprop("ro.serialno")
-    if ret == "":
+    if len(ret) == 0:
       ret = "cccccccc"
     return ret
 
@@ -353,10 +353,10 @@ class Android(HardwareBase):
     with open("/sys/class/leds/lcd-backlight/brightness", "w") as f:
       f.write(str(int(percentage * 2.55)))
 
-
+  def set_power_save(self, enabled):
+    pass
 
   def get_ip_address(self):
-
     try:
       wlan = subprocess.check_output(["ifconfig", "wlan0"], encoding='utf8').strip()
       pattern = re.compile(r'inet addr:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})')

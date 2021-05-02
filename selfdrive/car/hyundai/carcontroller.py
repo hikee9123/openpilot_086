@@ -1,4 +1,4 @@
-﻿from cereal import car, log
+from cereal import car, log
 from common.realtime import DT_CTRL
 from selfdrive.car import apply_std_steer_torque_limits
 from selfdrive.car.hyundai.hyundaican import create_lkas11, create_clu11, create_lfahda_mfc, create_mdps12
@@ -43,18 +43,13 @@ class CarController():
     self.lkas11_cnt = 0
 
 
-
-    self.nBlinker = 0
     self.steer_torque_over_timer = 0
     self.steer_torque_ratio = 1
-    self.steer_torque_ratio_dir = 1
 
     self.dRel = 0
     self.vRel = 0
 
-    self.movAvg = moveavg1.MoveAvg()
     self.timer1 = tm.CTime1000("time1")
-    self.timer2 = tm.CTime1000("time2")
     self.model_speed = 0
 
     
@@ -63,12 +58,10 @@ class CarController():
     self.hud_timer_right = 0
     self.hud_sys_state = 0
 
-    self.command_cnt = 0
-    self.command_load = 0
-    self.params = Params()
 
+    self.params = Params()
     self.SC = SpdctrlSlow()
-    self.kph_vEgo_old = 0
+
 
     # long control
     self.longCtrl = CLongControl(self.p)
@@ -212,19 +205,7 @@ class CarController():
 
     return  param, dst_steer
 
-  def acc_auto_active(self, kph_vEgo):
-    acc_flag = False
-    delta = abs(kph_vEgo - self.kph_vEgo_old)
-    if kph_vEgo < 60:
-      acc_flag = False
-    elif kph_vEgo != self.kph_vEgo_old:
-      self.kph_vEgo_old = kph_vEgo
-      self.timer2.startTime( 5000 )
-    elif self.timer2.endTime():
-      acc_flag = True
-
-    return  acc_flag
-    
+  
 
 
   def update(self, c, CS, frame, sm, CP ):
@@ -242,7 +223,6 @@ class CarController():
       self.model_speed = self.SC.cal_model_speed(  sm, CS.out.vEgo  )
     else:
       self.model_speed =  0
-
 
 
     # Steering Torque
@@ -284,11 +264,8 @@ class CarController():
       can_sends.append( create_mdps12(self.packer, frame, CS.mdps12) )
 
     
-    str_log1 = 'torg:{:5.0f} gas={:.3f} brake={:.3f}'.format( apply_steer, actuators.gas, actuators.brake   )
-    str_log2 = 'limit={:.0f} tm={:.1f} gap={:.0f}  gas={:.1f}'.format( apply_steer_limit, self.timer1.sampleTime(), CS.cruiseGapSet, CS.out.gas  )
-    str_log3 = '{:.2f} {:.2f}'.format( CS.aReqRaw, CS.aReqValue )
-
-    trace1.printf( '{} {} {}'.format( str_log1, str_log2, str_log3 ) )
+    str_log1 = 'torg:{:5.0f}'.format( apply_steer  )
+    trace1.printf( '  {}'.format( str_log1 ) )
 
     run_speed_ctrl = CS.acc_active and self.SC != None
 
@@ -310,14 +287,13 @@ class CarController():
           self.resume_cnt = 0
     # reset lead distnce after the car starts moving
     elif self.last_lead_distance != 0:
-      self.last_lead_distance = 0
+        self.last_lead_distance = 0
     elif CP.openpilotLongitudinalControl and CS.acc_active:
       # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
-      if  frame % 2 == 0:
+      if frame % 2 == 0:
         data = self.longCtrl.update( self.packer, CS, c, frame )
-        can_sends.append( data )
-
-    elif run_speed_ctrl and self.SC != None:
+        can_sends.append( data )      
+    elif run_speed_ctrl:
       is_sc_run = self.SC.update( CS, sm, self )
       if is_sc_run:
         can_sends.append(create_clu11(self.packer, self.resume_cnt, CS.clu11, self.SC.btn_type, self.SC.sc_clu_speed ))
@@ -325,14 +301,12 @@ class CarController():
       else:
         self.resume_cnt = 0
     else:
-      acc_flag = self.acc_auto_active( kph_vEgo)
-      if acc_flag:
-         can_sends.append(create_clu11(self.packer, self.resume_cnt, CS.clu11, Buttons.RES_ACCEL, kph_vEgo ))
-         self.resume_cnt += 1
-      else:
-         self.resume_cnt = 0
-      str_log2 = 'LKAS={:.0f}  steer={:5.0f}'.format( CS.lkas_button_on,  CS.out.steeringTorque )
-      trace1.printf2( '{}'.format( str_log2 ) )    
+      str_log1 = 'req={:.3f} gas={:.3f} brake={:.3f} '.format( CS.aReqValue, actuators.gas, actuators.brake  )
+      trace1.printf2( '{}'.format( str_log1 ) )
+
+      str_log1 = 'LKAS={:.0f}  steer={:5.0f}'.format( CS.lkas_button_on,  CS.out.steeringTorque )
+      str_log2 = 'limit={:.0f} tm={:.1f} gap={:.0f}  gas={:.1f}'.format( apply_steer_limit, self.timer1.sampleTime(), CS.cruiseGapSet, CS.out.gas  )               
+      trace1.printf3( '{} {}'.format( str_log1, str_log2 ) )    
 
 
 
@@ -340,6 +314,6 @@ class CarController():
     if frame % 5 == 0 and self.car_fingerprint in FEATURES["use_lfa_mfa"]:
       can_sends.append(create_lfahda_mfc(self.packer, enabled))
 
-   # counter inc
+    # counter inc
     self.lkas11_cnt += 1
     return can_sends

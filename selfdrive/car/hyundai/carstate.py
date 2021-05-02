@@ -1,12 +1,12 @@
-﻿import copy
+import copy
 from cereal import car
 from selfdrive.car.hyundai.values import DBC, STEER_THRESHOLD, FEATURES, EV_HYBRID
 from selfdrive.car.interfaces import CarStateBase
 from opendbc.can.parser import CANParser
 from selfdrive.config import Conversions as CV
+
 from selfdrive.car.hyundai.spdcontroller  import SpdController
 from selfdrive.car.hyundai.values import Buttons
-
 import common.log as trace1
 
 GearShifter = car.CarState.GearShifter
@@ -107,19 +107,23 @@ class CarState(CarStateBase):
       #self.main_on = cp.vl["TCS13"]['ACCEnable'] == 0
       self.main_on = (cp.vl["SCC11"]["MainMode_ACC"] != 0)
       self.acc_active = cp.vl["TCS13"]['ACC_REQ'] == 1
-      ret.cruiseState.standstill = cp.vl["TCS13"]['StandStill'] == 1
+      #ret.cruiseState.standstill = cp.vl["TCS13"]['StandStill'] == 1
+      ret.cruiseState.standstill = cp.vl["SCC11"]['SCCInfoDisplay'] == 4.
     else:    
       #ret.cruiseState.available = True
       #ret.cruiseState.enabled = cp.vl["SCC12"]['ACCMode'] != 0
       self.main_on = (cp.vl["SCC11"]["MainMode_ACC"] != 0)
       self.acc_active = (cp.vl["SCC12"]['ACCMode'] != 0)
-      ret.cruiseState.standstill = cp.vl["SCC11"]['SCCInfoDisplay'] == 4.      
+      ret.cruiseState.standstill = cp.vl["SCC11"]['SCCInfoDisplay'] == 4.
 
     self.update_atom( cp, cp_cam )
 
     if self.time_delay_int <= 0:
-      if self.gearShifter != GearShifter.drive or ret.doorOpen  or ret.seatbeltUnlatched or self.cruiseState_modeSel == 3:
-        self.time_delay_int = 500
+      if self.gearShifter != GearShifter.drive:
+        self.time_delay_int = 1000
+        ret.cruiseState.available = False
+      elif ret.doorOpen  or ret.seatbeltUnlatched or self.cruiseState_modeSel == 3:
+        self.time_delay_int = 200
         ret.cruiseState.available = False
       else:
        ret.cruiseState.available = self.main_on
@@ -128,7 +132,7 @@ class CarState(CarStateBase):
       ret.cruiseState.available = False
 
     ret.cruiseState.enabled =  ret.cruiseState.available
-
+    ret.cruiseState.accActive = self.acc_active
 
 
     self.cruiseState_modeSel , speed_kph = self.SC.update_cruiseSW( self )
@@ -140,7 +144,7 @@ class CarState(CarStateBase):
       speed_conv = CV.MPH_TO_MS if is_set_speed_in_mph else CV.KPH_TO_MS
       ret.cruiseState.speed = speed_kph * speed_conv
     else:
-      ret.cruiseState.speed = 0
+      ret.cruiseState.speed = ret.vEgo
 
     # TODO: Find brake pressure
     ret.brake = 0
@@ -193,9 +197,6 @@ class CarState(CarStateBase):
     self.lead_distance = cp.vl["SCC11"]['ACC_ObjDist']
     self.brake_hold = cp.vl["TCS15"]['AVH_LAMP'] # 0 OFF, 1 ERROR, 2 ACTIVE, 3 READY
     self.brake_error = cp.vl["TCS13"]['ACCEnable'] # 0 ACC CONTROL ENABLED, 1-3 ACC CONTROL DISABLED
-
-
-
 
     return ret
 
@@ -295,7 +296,7 @@ class CarState(CarStateBase):
 
 
   def get_Blindspot(self, cp):
-    if self.CP.carFingerprint in FEATURES["use_bsm"]:
+    if self.CP.enableBsm:
       if cp.vl["LCA11"]['CF_Lca_IndLeft'] != 0:
         self.leftBlindspot_time = 200
       elif self.leftBlindspot_time:
@@ -352,7 +353,7 @@ class CarState(CarStateBase):
 
   @staticmethod
   def get_parser_ev_hybrid(CP, signals, checks):
-    if CP.carFingerprint in FEATURES["use_bsm"]:
+    if CP.enableBsm:
       signals += [
         ("CF_Lca_IndLeft", "LCA11", 0),
         ("CF_Lca_IndRight", "LCA11", 0),
@@ -431,26 +432,28 @@ class CarState(CarStateBase):
       ("CF_Clu_AliveCnt1", "CLU11", 0),
 
       ("ACCEnable", "TCS13", 0),
-      ("ACC_REQ", "TCS13", 0),           # append  082
+      ("ACC_REQ", "TCS13", 0),
       ("BrakeLight", "TCS13", 0),
       ("DriverBraking", "TCS13", 0),
-      ("StandStill", "TCS13", 0),        # append  082
-      ("PBRAKE_ACT", "TCS13", 0),        # append  082
-      ("DriverOverride", "TCS13", 0),
+      ("StandStill", "TCS13", 0),
+      ("PBRAKE_ACT", "TCS13", 0),
 
       ("ESC_Off_Step", "TCS15", 0),
-      ("AVH_LAMP", "TCS15", 0),          # append  082
+      ("AVH_LAMP", "TCS15", 0),
 
-      ("CF_Lvr_GearInf", "LVR11", 0),        # Transmission Gear (0 = N or P, 1-8 = Fwd, 14 = Rev)
+      ("DriverOverride", "TCS13", 0),
+      #("CF_Lvr_GearInf", "LVR11", 0),        # Transmission Gear (0 = N or P, 1-8 = Fwd, 14 = Rev)
 
       ("CR_Mdps_StrColTq", "MDPS12", 0),
       ("CF_Mdps_ToiActive", "MDPS12", 0),
       ("CF_Mdps_ToiUnavail", "MDPS12", 0),
+      ("CF_Mdps_ToiFlt", "MDPS12", 0),
+      ("CR_Mdps_OutTq", "MDPS12", 0),
+
       ("CF_Mdps_MsgCount2", "MDPS12", 0),  #
       ("CF_Mdps_Chksum2", "MDPS12", 0),    #
-     
       ("CF_Mdps_FailStat", "MDPS12", 0),
-      ("CR_Mdps_OutTq", "MDPS12", 0),
+
 
       ("SAS_Angle", "SAS11", 0),
       ("SAS_Speed", "SAS11", 0),
@@ -492,21 +495,10 @@ class CarState(CarStateBase):
       ("CR_VSM_Alive", "SCC12", 0),
       ("CR_VSM_ChkSum", "SCC12", 0),
 
-      ("SCCDrvModeRValue", "SCC13", 2),
-      ("SCC_Equip", "SCC13", 1),
-      ("AebDrvSetStatus", "SCC13", 0),
-
-      ("JerkUpperLimit", "SCC14", 0),
-      ("JerkLowerLimit", "SCC14", 0),
-      ("SCCMode2", "SCC14", 0),
-      ("ComfortBandUpper", "SCC14", 0),
-      ("ComfortBandLower", "SCC14", 0),
-
       ("PRESSURE_FL", "TPMS11", 0),
       ("PRESSURE_FR", "TPMS11", 0),
       ("PRESSURE_RL", "TPMS11", 0),
       ("PRESSURE_RR", "TPMS11", 0),
-
     ]
 
     checks = [
@@ -517,6 +509,7 @@ class CarState(CarStateBase):
       ("CLU11", 50),
       ("ESP12", 100),
       ("CGW1", 10),
+      ("CGW2", 5),
       ("CGW4", 5),
       ("WHL_SPD11", 50),
       ("SAS11", 100),

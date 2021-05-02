@@ -211,4 +211,4 @@ class SpdctrlNormal(SpdController):
         str4 = ' LD/LS={:03.0f}/{:03.0f} '.format(  CS.lead_distance, CS.lead_objspd )
 
         str5 = str3 +  str4
-        trace1.printf2( str5 )
+        trace1.printf3( str5 )

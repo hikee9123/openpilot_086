@@ -1,15 +1,25 @@
-﻿#include "ui.hpp"
-
 #include <assert.h>
+#include <algorithm>
+
+#include "ui.hpp"
+#ifdef __APPLE__
+#include <OpenGL/gl3.h>
+#define NANOVG_GL3_IMPLEMENTATION
+#define nvgCreate nvgCreateGL3
+#else
+#include <GLES3/gl3.h>
+#define NANOVG_GLES3_IMPLEMENTATION
+#define nvgCreate nvgCreateGLES3
+#endif
+
 #include "common/util.h"
 #include "common/timing.h"
-#include <algorithm>
 
 #define NANOVG_GLES3_IMPLEMENTATION
 #include "nanovg_gl.h"
 #include "nanovg_gl_utils.h"
 #include "paint.hpp"
-#include "sidebar.hpp"
+
 
 #include "dashcam.h"
 
@@ -97,10 +107,14 @@ static void draw_lead(UIState *s, int idx) {
     fillAlpha = (int)(fmin(fillAlpha, 255));
   }
 
+  NVGcolor color = COLOR_YELLOW;
+  if(lead.getRadar())
+    color = nvgRGBA(112, 128, 255, 255);
+
   float sz = std::clamp((25 * 30) / (d_rel / 3 + 30), 15.0f, 30.0f) * s->zoom;
   x = std::clamp(x, 0.f, s->viz_rect.right() - sz / 2);
   y = std::fmin(s->viz_rect.bottom() - sz * .6, y);
-  draw_chevron(s, x, y, sz, nvgRGBA(201, 34, 49, fillAlpha), COLOR_YELLOW);
+  draw_chevron(s, x, y, sz, nvgRGBA(201, 34, 49, fillAlpha), color);
 }
 
 static void ui_draw_line(UIState *s, const line_vertices_data &vd, NVGcolor *color, NVGpaint *paint) {
@@ -244,12 +258,15 @@ static void ui_draw_world(UIState *s) {
 }
 
 static void ui_draw_vision_maxspeed(UIState *s) {
-  const int SET_SPEED_NA = 255;
+  //const int SET_SPEED_NA = 255;
   float maxspeed = s->scene.controls_state.getVCruise();
-  const bool is_cruise_set = maxspeed != 0 && maxspeed != SET_SPEED_NA;
+  //const bool is_cruise_set = maxspeed != 0 && maxspeed != SET_SPEED_NA;
+  auto cruiseState = s->scene.car_state.getCruiseState();
+  bool is_cruise_set = cruiseState.getAccActive();
+
   if (is_cruise_set && !s->scene.is_metric) { maxspeed *= 0.6225; }
 
-  const Rect rect = {s->viz_rect.x + (bdr_s * 2), int(s->viz_rect.y + (bdr_s * 1.5)), 184, 202};
+  const Rect rect = {s->viz_rect.x + bdr_s, int(s->viz_rect.y + (bdr_s * 1.5)), 184, 202};
   ui_fill_rect(s->vg, rect, COLOR_BLACK_ALPHA(100), 30.);
   ui_draw_rect(s->vg, rect, COLOR_WHITE_ALPHA(100), 10, 20.);
 
@@ -280,11 +297,10 @@ static void ui_draw_vision_speed(UIState *s) {
 }
 
 static void ui_draw_vision_event(UIState *s) {
-
+  int engageable = s->scene.controls_state.getEngageable();
   const int radius = 96;
   const int center_x = s->viz_rect.right() - radius;// - bdr_s * 1.5;
   const int center_y = s->viz_rect.y + (radius / 2)  + (bdr_s * 0.9); 
-  int engageable = s->scene.controls_state.getEngageable();
 
   if (engageable) {
     // draw steering wheel
@@ -305,7 +321,6 @@ static void ui_draw_vision_face(UIState *s) {
 }
 
 static void ui_draw_driver_view(UIState *s) {
-  s->sidebar_collapsed = true;
   const bool is_rhd = s->scene.is_rhd;
   const int width = 4 * s->viz_rect.h / 3;
   const Rect rect = {s->viz_rect.centerX() - width / 2, s->viz_rect.y, width, s->viz_rect.h};  // x, y, w, h
@@ -689,11 +704,11 @@ static void bb_ui_draw_UI(UIState *s)
 {
   //const UIScene *scene = &s->scene;
   const int bb_dml_w = 180;
-  const int bb_dml_x = (s->viz_rect.x + (bdr_s * 2));
+  const int bb_dml_x = (s->viz_rect.x + bdr_s);
   const int bb_dml_y = (bdr_s + (bdr_s * 1.5)) + 220;
 
   const int bb_dmr_w = 170;
-  const int bb_dmr_x = s->viz_rect.x + s->viz_rect.w - (bb_dmr_w/1.5) - (bdr_s * 2);
+  const int bb_dmr_x = s->viz_rect.x + s->viz_rect.w - (bb_dmr_w/1.5) - (bdr_s * 2.5);
   const int bb_dmr_y = (bdr_s + (bdr_s * 1.5)) + 200;
 
   bb_ui_draw_measures_right(s, bb_dml_x, bb_dml_y, bb_dml_w);
@@ -778,6 +793,40 @@ static void ui_draw_vision_frame(UIState *s) {
   glViewport(0, 0, s->fb_w, s->fb_h);
 }
 
+
+static void ui_draw_driver(UIState *s) 
+{
+  // opkr
+  if (s->scene.driver_view && s->vipc_client->connected && s->vipc_client == s->vipc_client_front) 
+  {
+    nvgFontSize(s->vg, 48);
+    nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
+    
+    nvgFillColor(s->vg, COLOR_GREEN_ALPHA(200));
+    ui_print(s, s->viz_rect.centerX(), 100, "faceProb:  %.2f%%", s->scene.driver_state.getFaceProb()*100);
+    ui_print(s, s->viz_rect.centerX(), 150, "partialFace:  %.2f%%", s->scene.driver_state.getPartialFace()*100);
+
+    //// ui_print(s, s->viz_rect.centerX(), 200, "facePositionStd:  %.4f,  %.4f,  %.4f", s->scene.driver_state.getFacePositionStd()[0], s->scene.driver_state.getFacePositionStd()[1], s->scene.driver_state.getFacePositionStd()[2]);
+    //// ui_print(s, s->viz_rect.centerX(), 250, "facePosition:  %.4f,  %.4f", s->scene.driver_state.getFacePosition()[0], s->scene.driver_state.getFacePosition()[1]);
+    // ui_print(s, s->viz_rect.centerX(), 250, "driverOffsetPitch:  %.4f", s->scene.dmonitoring_state.getPosePitchOffset());
+    // ui_print(s, s->viz_rect.centerX(), 300, "driverOffsetYaw:  %.4f", s->scene.dmonitoring_state.getPoseYawOffset());
+    nvgFillColor(s->vg, COLOR_GREEN_ALPHA(200));
+    ui_print(s, s->viz_rect.centerX(), 250, "sunglassesProb:  %.2f%%", s->scene.driver_state.getSunglassesProb()*100);
+    ui_print(s, s->viz_rect.centerX(), 300, "eyesProb:  %.2f%%,  %.2f%%", s->scene.driver_state.getLeftEyeProb()*100, s->scene.driver_state.getRightEyeProb()*100);
+    nvgFillColor(s->vg, COLOR_ORANGE_ALPHA(200));
+    ui_print(s, s->viz_rect.centerX(), 350, "blinksProb:  %.2f%%,  %.2f%%", s->scene.driver_state.getLeftBlinkProb()*100, s->scene.driver_state.getRightBlinkProb()*100);
+    nvgFillColor(s->vg, COLOR_WHITE_ALPHA(200));
+    ui_print(s, s->viz_rect.centerX(), 450, "poorVision:  %.2f%%", s->scene.driver_state.getPoorVision()*100);
+    ui_print(s, s->viz_rect.centerX(), 500, "distractedPose:  %.2f%%", s->scene.driver_state.getDistractedPose()*100);
+    ui_print(s, s->viz_rect.centerX(), 550, "distractedEyes:  %.2f%%", s->scene.driver_state.getDistractedEyes()*100);
+    // nvgFillColor(s->vg, COLOR_RED_ALPHA(200));
+    // ui_print(s, s->viz_rect.centerX(), 550, "isDistracted:  %.2f", s->scene.dmonitoring_state.getIsDistracted());
+    // nvgFillColor(s->vg, COLOR_ORANGE_ALPHA(200));
+    // ui_print(s, s->viz_rect.centerX(), 600, "awarenessStatus:  %.2f", s->scene.dmonitoring_state.getAwarenessStatus());
+    // ui_draw_text(s, s->viz_rect.centerX(), 650, s->scene.alert_text1.c_str(), 48, COLOR_GREEN_ALPHA(200), "sans-semibold");
+  }
+}
+
 static void ui_draw_vision(UIState *s) {
   const UIScene *scene = &s->scene;
   if (!scene->driver_view) {
@@ -801,12 +850,8 @@ static void ui_draw_background(UIState *s) {
   glClear(GL_STENCIL_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 }
 
-void ui_draw(UIState *s) {
-  s->viz_rect = Rect{bdr_s, bdr_s, s->fb_w - 2 * bdr_s, s->fb_h - 2 * bdr_s};
-  if (!s->sidebar_collapsed) {
-    s->viz_rect.x += sbr_w;
-    s->viz_rect.w -= sbr_w;
-  }
+void ui_draw(UIState *s, int w, int h) {
+  s->viz_rect = Rect{bdr_s, bdr_s, w - 2 * bdr_s, h - 2 * bdr_s};
 
   const bool draw_alerts = s->scene.started;
   const bool draw_vision = draw_alerts && s->vipc_client->connected;
@@ -822,7 +867,7 @@ void ui_draw(UIState *s) {
 
   // NVG drawing functions - should be no GL inside NVG frame
   nvgBeginFrame(s->vg, s->fb_w, s->fb_h, 1.0f);
-  ui_draw_sidebar(s);
+
   if (draw_vision) {
     ui_draw_vision(s);
   }
@@ -837,6 +882,11 @@ void ui_draw(UIState *s) {
     nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
     ui_draw_text(s, s->viz_rect.centerX(), s->viz_rect.centerY(), "Please wait for camera to start", 40 * 2.5, COLOR_WHITE, "sans-bold");
   }
+  else
+  {
+    ui_draw_driver( s);
+  }
+
   nvgEndFrame(s->vg);
   glDisable(GL_BLEND);
 }
@@ -898,6 +948,10 @@ static const char frame_fragment_shader[] =
   "out vec4 colorOut;\n"
   "void main() {\n"
   "  colorOut = texture(uTexture, vTexCoord.xy);\n"
+#ifdef QCOM
+  "  vec3 dz = vec3(0.0627f, 0.0627f, 0.0627f);\n"
+  "  colorOut.rgb = ((vec3(1.0f, 1.0f, 1.0f) - dz) * colorOut.rgb / vec3(1.0f, 1.0f, 1.0f)) + dz;\n"
+#endif
   "}\n";
 
 static const mat4 device_transform = {{
@@ -957,21 +1011,10 @@ void ui_nvg_init(UIState *s) {
 
   // init images
   std::vector<std::pair<const char *, const char *>> images = {
-      {"wheel", "../assets/img_chffr_wheel.png"},
-      {"trafficSign_turn", "../assets/img_trafficSign_turn.png"},
-      {"driver_face", "../assets/img_driver_face.png"},
-      {"button_settings", "../assets/images/button_settings.png"},
-      {"button_home", "../assets/images/button_home.png"},
-      {"battery", "../assets/images/battery.png"},
-      {"battery_charging", "../assets/images/battery_charging.png"},
-      {"network_0", "../assets/images/network_0.png"},
-      {"network_1", "../assets/images/network_1.png"},
-      {"network_2", "../assets/images/network_2.png"},
-      {"network_3", "../assets/images/network_3.png"},
-      {"network_4", "../assets/images/network_4.png"},
-      {"network_5", "../assets/images/network_5.png"},
-      {"compass", "../assets/compass/img_compass.png"},
-      {"direction", "../assets/compass/img_direction.png"},
+    {"wheel", "../assets/img_chffr_wheel.png"},
+    {"driver_face", "../assets/img_driver_face.png"},
+    {"compass", "../assets/compass/img_compass.png"},
+    {"direction", "../assets/compass/img_direction.png"},
   };
   for (auto [name, file] : images) {
     s->images[name] = nvgCreateImage(s->vg, file, 1);

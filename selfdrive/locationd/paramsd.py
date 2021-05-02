@@ -1,4 +1,5 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
+import gc
 import math
 
 import json
@@ -46,19 +47,22 @@ class ParamsLearner:
     self.cv_ActuatorDelayV = atomTuning.cvsteerActuatorDelayV
     self.cv_ActuatorDelay = []
 
+    self.cv_SteerRateCostV = atomTuning.cvSteerRateCostV
+    self.cv_SteerRateCost = []
 
     nPos = 0
     for steerRatio in self.cv_BPV:  # steerRatio
       self.cv_SteerRatio.append( interp( cv_value, steerRatio, self.cv_steerRatioV[nPos] ) )
       self.cv_ActuatorDelay.append( interp( cv_value, steerRatio, self.cv_ActuatorDelayV[nPos] ) )
+      self.cv_SteerRateCost.append( interp( cv_value, steerRatio, self.cv_SteerRateCostV[nPos] ) )
       nPos += 1
       if nPos > 20:
         break
 
     steerRatio = interp( v_ego_kph, self.cv_KPH, self.cv_SteerRatio )
     actuatorDelay = interp( v_ego_kph, self.cv_KPH, self.cv_ActuatorDelay )
-
-    return steerRatio, actuatorDelay
+    steerRateCost = interp( v_ego_kph, self.cv_KPH, self.cv_SteerRateCost )
+    return steerRatio, actuatorDelay, steerRateCost
 
    
 
@@ -96,6 +100,8 @@ class ParamsLearner:
 
 
 def main(sm=None, pm=None):
+  gc.disable()
+
   if sm is None:
     sm = messaging.SubMaster(['liveLocationKalman', 'carState', 'carParams', 'controlsState'], poll=['liveLocationKalman'])
   if pm is None:
@@ -166,6 +172,7 @@ def main(sm=None, pm=None):
       x = learner.kf.x
 
       # atom
+      steerRateCostCV = CP.steerRateCost
       actuatorDelayCV = CP.steerActuatorDelay
       steerRatioCV = float(x[States.STEER_RATIO])
       angle_offset_fast = math.degrees(x[States.ANGLE_OFFSET_FAST])
@@ -179,16 +186,18 @@ def main(sm=None, pm=None):
         cv_value = sm['controlsState'].modelSpeed
         if cv_value <= 10: 
           cv_value = 255
-        steerRatioCV, actuatorDelayCV = learner.atom_tune( v_ego_kph, cv_value,  atomTuning )
+        steerRatioCV, actuatorDelayCV, steerRateCostCV = learner.atom_tune( v_ego_kph, cv_value,  atomTuning )
 
 
-      if v_ego_kph < 50:  # 50 km/h
-         v_ego_BP = [10,50]
+      if v_ego_kph < 20:  # 30 km/h
+         v_ego_BP = [5,20]
          angle_rate = [0,1]
          angle_offset_fast *= interp( v_ego_kph, v_ego_BP, angle_rate )
 
       msg.liveParameters.steerRatioCV = steerRatioCV
       msg.liveParameters.steerActuatorDelayCV = actuatorDelayCV
+      msg.liveParameters.steerRateCostCV = steerRateCostCV
+
       msg.liveParameters.steerRatio = float(x[States.STEER_RATIO])
       msg.liveParameters.stiffnessFactor = float(x[States.STIFFNESS])
       msg.liveParameters.angleOffsetAverageDeg = math.degrees(x[States.ANGLE_OFFSET])

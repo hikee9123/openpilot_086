@@ -1,4 +1,4 @@
-﻿# distutils: language = c++
+# distutils: language = c++
 # cython: language_level = 3
 from libcpp cimport bool
 from libcpp.string cimport string
@@ -25,6 +25,8 @@ keys = {
   b"CarParamsCache": [TxType.CLEAR_ON_MANAGER_START, TxType.CLEAR_ON_PANDA_DISCONNECT],
   b"CarVin": [TxType.CLEAR_ON_MANAGER_START, TxType.CLEAR_ON_PANDA_DISCONNECT],
   b"CommunityFeaturesToggle": [TxType.PERSISTENT],
+  b"ControlsReady": [TxType.CLEAR_ON_MANAGER_START, TxType.CLEAR_ON_PANDA_DISCONNECT],
+  b"EnableLteOnroad": [TxType.PERSISTENT],
   b"EndToEndToggle": [TxType.PERSISTENT],
   b"CompletedTrainingVersion": [TxType.PERSISTENT],
   b"DisablePowerDown": [TxType.PERSISTENT],
@@ -91,7 +93,9 @@ keys = {
   b"OpkrPrebuilt": [TxType.PERSISTENT],
   b"OpkrAutoScreenOff": [TxType.PERSISTENT],
   b"OpkrUIBrightness": [TxType.PERSISTENT],
+  b"OpkrUIVolumeBoost": [TxType.PERSISTENT],  
   b"LongitudinalControl": [TxType.PERSISTENT],
+  b"OpkrSSHLegacy": [TxType.PERSISTENT],  
 }
 
 def ensure_bytes(v):
