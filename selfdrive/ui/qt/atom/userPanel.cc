@@ -483,7 +483,7 @@ CarSelectCombo::CarSelectCombo() : AbstractControl("Car Select", "Car select men
     refresh();
   });
 
-  QObject::connect(&comboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [=](int index){
+  QObject::connect(&combobox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [=](int index){
       int nIdx = combobox.currentIndex();
 
       printf("changeEvent: %d  index = %d \n", nIdx, index );
