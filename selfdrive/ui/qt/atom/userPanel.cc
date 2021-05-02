@@ -399,13 +399,7 @@ CarSelectCombo::CarSelectCombo() : AbstractControl("Car", "자동차 모델을 �
     border-style: solid;
     border: 1px solid #1e1e1e;
     border-radius: 5;
-    padding: 1px 0px 1px 5px;
-
-    QScrollBar:vertical {
-        min-height: 10px;
-        width: 23px;
-        background-color: yellow;        
-    }    
+    padding: 1px 0px 1px 5px; 
   )");
 
   btnminus.setStyleSheet(R"(
