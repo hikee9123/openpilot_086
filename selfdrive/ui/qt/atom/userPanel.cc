@@ -404,10 +404,12 @@ CarSelectCombo::CarSelectCombo() : AbstractControl("Car", "Car select menu", "")
     QScrollBar:horizontal {
         min-width: 240px;
         height: 13px;
+
     }
     QScrollBar:vertical {
         min-height: 240px;
         width: 13px;
+        background-color: yellow;        
     }    
   )");
 
@@ -458,8 +460,8 @@ CarSelectCombo::CarSelectCombo() : AbstractControl("Car", "Car select menu", "")
     combobox.addItem("GENESIS G80 2017");
     combobox.addItem("GENESIS G90 2017");
 
-  QAbstractItemView *qv = combobox.view();
-  QScrollBar *scrollbar = qv->verticalScrollBar();    
+  //QAbstractItemView *qv = combobox.view();
+  //QScrollBar *scrollbar = qv->verticalScrollBar();    
 
   hlayout->addWidget(&combobox);
 
