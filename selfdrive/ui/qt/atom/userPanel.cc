@@ -447,6 +447,7 @@ CarSelectCombo::CarSelectCombo(QWidget * parent)
     background-color: #393939;
   )");
   
+  
   btnminus.setFixedSize(150, 100);
   btnplus.setFixedSize(150, 100);
   layout()->addWidget(&btnminus);
@@ -485,12 +486,12 @@ CarSelectCombo::CarSelectCombo(QWidget * parent)
 
 void CarSelectCombo::refresh() 
 {
-  QString option = QString::fromStdString(Params().get("OpkrAutoScreenOff"));
-  if (option == "0") {
-    label.setText(QString::fromStdString("항상켜기"));
-  } else {
-    label.setText(QString::fromStdString(Params().get("OpkrAutoScreenOff")));
-  }
+ // QString option = QString::fromStdString(Params().get("OpkrAutoScreenOff"));
+ // if (option == "0") {
+ //   label.setText(QString::fromStdString("항상켜기"));
+ // } else {
+ //   label.setText(QString::fromStdString(Params().get("OpkrAutoScreenOff")));
+ // }
   btnminus.setText("－");
   btnplus.setText("＋");
 }
