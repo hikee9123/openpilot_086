@@ -174,6 +174,14 @@ class CarSelectCombo : public QComboBox
 public:
   CarSelectCombo( QWidget * parent = 0 );
 
+
+private:
+  QPushButton btnplus;
+  QPushButton btnminus;
+
+
+  void refresh();
+
   void changeEvent ( QEvent * e );
   void keyPressEvent ( QKeyEvent * e );
 };
