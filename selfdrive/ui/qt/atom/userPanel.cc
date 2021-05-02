@@ -110,6 +110,18 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
     )
   );
 
+  layout()->addWidget(
+    new ButtonControl("build 실행", "실행",
+      "/data/openpiot/selfdrive/manager/build.py 을 실행 합니다.", [=]() 
+      {
+          if (ConfirmationDialog::confirm("Are you sure you want to exec(test_car_interfaces.py)?")) 
+          {
+            std::system("cd /data/openpiot/selfdrive/manager;  python build.py");
+          }
+      }
+    )
+  );
+
   layout()->addWidget(horizontal_line());
   layout()->addWidget( new CarSelectCombo() );
 }
