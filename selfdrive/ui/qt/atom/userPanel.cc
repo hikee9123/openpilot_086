@@ -400,6 +400,15 @@ CarSelectCombo::CarSelectCombo() : AbstractControl("Car", "Car select menu", "")
     border: 1px solid #1e1e1e;
     border-radius: 5;
     padding: 1px 0px 1px 10px;
+
+    QScrollBar:horizontal {
+        min-width: 240px;
+        height: 13px;
+    }
+    QScrollBar:vertical {
+        min-height: 240px;
+        width: 13px;
+    }    
   )");
 
   btnminus.setStyleSheet(R"(
@@ -448,6 +457,9 @@ CarSelectCombo::CarSelectCombo() : AbstractControl("Car", "Car select menu", "")
     combobox.addItem("GENESIS G70 2018");
     combobox.addItem("GENESIS G80 2017");
     combobox.addItem("GENESIS G90 2017");
+
+  QAbstractItemView *qv = combobox.view();
+  QScrollBar *scrollbar = qv->verticalScrollBar();    
 
   hlayout->addWidget(&combobox);
 
