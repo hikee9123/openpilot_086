@@ -116,7 +116,7 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
       {
           if (ConfirmationDialog::confirm("Are you sure you want to exec(test_car_interfaces.py)?")) 
           {
-            std::system("python /data/openpiot/selfdrive/managerbuild.py");
+            std::system("python /data/openpiot/selfdrive/manager/build.py");
           }
       }
     )
