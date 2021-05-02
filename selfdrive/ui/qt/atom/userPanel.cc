@@ -104,7 +104,7 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
       {
           if (ConfirmationDialog::confirm("Are you sure you want to exec(test_car_interfaces.py)?")) 
           {
-            std::system("cd /data/openpiot/selfdrive/car/tests;  python test_car_interfaces.py");
+            std::system("python /data/openpiot/selfdrive/car/teststest_car_interfaces.py");
           }
       }
     )
@@ -116,7 +116,7 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
       {
           if (ConfirmationDialog::confirm("Are you sure you want to exec(test_car_interfaces.py)?")) 
           {
-            std::system("cd /data/openpiot/selfdrive/manager;  python build.py");
+            std::system("python /data/openpiot/selfdrive/managerbuild.py");
           }
       }
     )
