@@ -399,7 +399,7 @@ CarSelectCombo::CarSelectCombo() : AbstractControl("Car", "Car select menu", "")
     border-style: solid;
     border: 1px solid #1e1e1e;
     border-radius: 5;
-    padding: 1px 0px 1px 60px;
+    padding: 1px 0px 1px 10px;
   )");
 
   btnminus.setStyleSheet(R"(
