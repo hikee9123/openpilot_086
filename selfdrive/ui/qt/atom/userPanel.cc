@@ -463,6 +463,7 @@ CarSelectCombo::CarSelectCombo() : AbstractControl("Car", "Car select menu", "")
   hlayout->addWidget(&btnplus);
 
 
+  int  m_nCurrentSelected;
 
   QObject::connect(&btnminus, &QPushButton::released, [=]() 
   {
@@ -481,7 +482,7 @@ CarSelectCombo::CarSelectCombo() : AbstractControl("Car", "Car select menu", "")
   QObject::connect(&combobox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [=](int index)
   {
       int nIdx = combobox.currentIndex();
-
+      m_nCurrentSelected = index;
       printf("changeEvent: %d  index = %d \n", nIdx, index );
       refresh();
   });
@@ -493,11 +494,10 @@ CarSelectCombo::CarSelectCombo() : AbstractControl("Car", "Car select menu", "")
 
 void CarSelectCombo::refresh() 
 {
-  QString option = QString::fromStdString(Params().get("OpkrAutoScreenOff"));
-  if (option == "0") {
+  if (m_nCurrentSelected == "0") {
     label.setText(QString::fromStdString("항상켜기"));
   } else {
-    label.setText(QString::fromStdString(Params().get("OpkrAutoScreenOff")));
+    label.setText(QString::fromStdString(m_nCurrentSelected));
   }
   btnminus.setText("－");
   btnplus.setText("＋");
