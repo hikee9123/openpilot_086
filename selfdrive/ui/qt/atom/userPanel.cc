@@ -396,6 +396,23 @@ CarSelectCombo::CarSelectCombo() : AbstractControl("Car Select", "Car select men
     background-color: #393939;
   )");
 
+  btnminus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnplus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+
    combobox.addItem("HYUNDAI ELANTRA LIMITED 2017");
     combobox.addItem("HYUNDAI I30 N LINE 2019");
     combobox.addItem("HYUNDAI GENESIS 2015-2016");
@@ -432,22 +449,7 @@ CarSelectCombo::CarSelectCombo() : AbstractControl("Car Select", "Car select men
   label.setStyleSheet("color: #e0e879");
   hlayout->addWidget(&label);
 
-  btnminus.setStyleSheet(R"(
-    padding: 0;
-    border-radius: 50px;
-    font-size: 35px;
-    font-weight: 500;
-    color: #E4E4E4;
-    background-color: #393939;
-  )");
-  btnplus.setStyleSheet(R"(
-    padding: 0;
-    border-radius: 50px;
-    font-size: 35px;
-    font-weight: 500;
-    color: #E4E4E4;
-    background-color: #393939;
-  )");
+
   btnminus.setFixedSize(150, 100);
   btnplus.setFixedSize(150, 100);
   hlayout->addWidget(&btnminus);
@@ -481,7 +483,7 @@ CarSelectCombo::CarSelectCombo() : AbstractControl("Car Select", "Car select men
     refresh();
   });
 
-  QObject::connect(comboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [=](int index){
+  QObject::connect(&comboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [=](int index){
       int nIdx = combobox.currentIndex();
 
       printf("changeEvent: %d  index = %d \n", nIdx, index );
