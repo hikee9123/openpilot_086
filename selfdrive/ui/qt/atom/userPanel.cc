@@ -100,11 +100,11 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
 
   layout()->addWidget(
     new ButtonControl("car interfaces 실행", "실행",
-      "/data/openpiot/selfdrive/car/tests/test_car_interfaces.py 을 실행 합니다.", [=]() 
+      "/data/openpilot/selfdrive/car/tests/test_car_interfaces.py 을 실행 합니다.", [=]() 
       {
           if (ConfirmationDialog::confirm("Are you sure you want to exec(test_car_interfaces.py)?")) 
           {
-            std::system("python /data/openpiot/selfdrive/car/teststest_car_interfaces.py");
+            std::system("python /data/openpilot/selfdrive/car/teststest_car_interfaces.py");
           }
       }
     )
@@ -112,11 +112,11 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
 
   layout()->addWidget(
     new ButtonControl("build 실행", "실행",
-      "/data/openpiot/selfdrive/manager/build.py 을 실행 합니다.", [=]() 
+      "/data/openpilot/selfdrive/manager/build.py 을 실행 합니다.", [=]() 
       {
           if (ConfirmationDialog::confirm("Are you sure you want to exec(test_car_interfaces.py)?")) 
           {
-            std::system("python /data/openpiot/selfdrive/manager/build.py");
+            std::system("python /data/openpilot/selfdrive/manager/build.py");
           }
       }
     )
