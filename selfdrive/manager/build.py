@@ -74,7 +74,7 @@ def build(spinner, dirty=False):
         cloudlog.error("scons build failed\n" + error_s)
 
         # Show TextWindow
-        #spinner.close()
+        spinner.close()
         error_s = "\n \n".join(["\n".join(textwrap.wrap(e, 65)) for e in errors])
         with TextWindow("openpilot failed to build\n \n" + error_s) as t:
           t.wait_for_exit()
