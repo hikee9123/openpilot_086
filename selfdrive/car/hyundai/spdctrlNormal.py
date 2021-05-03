@@ -145,7 +145,8 @@ class SpdctrlNormal(SpdController):
         v_ego_kph = CS.clu_Vanz
 
         if int(self.cruise_set_mode) == 4:
-            set_speed = model_speed
+            target_kph = v_ego_kph + 5
+            set_speed = min( model_speed, target_kph )
             delta_spd = abs(model_speed - v_ego_kph)
             xp = [2,10,30]
             fp = [100,30,15]

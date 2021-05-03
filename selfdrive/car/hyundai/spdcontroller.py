@@ -97,7 +97,7 @@ class SpdController():
 
         self.prev_VSetDis  = 0
 
-        self.cruise_set_mode = 0
+        self.cruise_set_mode = 4
         self.sc_clu_speed = 0
         self.btn_type = Buttons.NONE
         self.active_time = 0
