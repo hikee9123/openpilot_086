@@ -11,7 +11,7 @@
 #include <QScrollArea>
 #include <QStackedWidget>
 
-#include "selfdrive/ui/qt/widgets/controls.hpp"
+#include "selfdrive/ui/qt/widgets/controls.h"
 
 
 class CUserPanel : public QFrame 
