@@ -150,6 +150,7 @@ class SpdctrlNormal(SpdController):
             if temp_speed < set_speed:
               set_speed = temp_speed
 
+            set_speed = max( 30, set_speed )
             delta_spd = abs(set_speed - v_ego_kph)
             xp = [2,10]
             fp = [50,15]
