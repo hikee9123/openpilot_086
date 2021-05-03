@@ -4,7 +4,7 @@
 #include <sys/stat.h>
 
 #include "common/params.h"
-#include "home.hpp"
+#include "home.h"
 
 #define CAPTURE_STATE_NONE 0
 #define CAPTURE_STATE_CAPTURING 1
