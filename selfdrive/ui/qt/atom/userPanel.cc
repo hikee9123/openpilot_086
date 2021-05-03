@@ -6,14 +6,14 @@
 
 
 
-#include "widgets/input.hpp"
-#include "widgets/toggle.hpp"
-#include "widgets/offroad_alerts.hpp"
-#include "widgets/controls.hpp"
+#include "widgets/input.h"
+#include "widgets/toggle.h"
+#include "widgets/offroad_alerts.h"
+#include "widgets/controls.h"
 
 #include "common/params.h"
 #include "common/util.h"
-#include "ui.hpp"
+#include "ui.h"
 
 #include "userPanel.hpp"
 
