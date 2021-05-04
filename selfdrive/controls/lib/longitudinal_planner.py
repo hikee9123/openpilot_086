@@ -225,5 +225,7 @@ class Planner():
     longitudinalPlan.vRel1 = lead_1.vRel
     longitudinalPlan.dRel2 = lead_2.dRel
     longitudinalPlan.yRel2 = lead_2.yRel
-    longitudinalPlan.vRel2 = lead_2.vRel 
+    longitudinalPlan.vRel2 = lead_2.vRel
+    longitudinalPlan.status2 = lead_2.status
+        
     pm.send('longitudinalPlan', plan_send)

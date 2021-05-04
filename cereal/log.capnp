@@ -767,7 +767,8 @@ struct LongitudinalPlan @0xe00b5b3eba12876c {
   dRel2 @35 :Float32;
   yRel2 @36 :Float32;
   vRel2 @37 :Float32;
-
+  status2 @38 :Bool;
+  
   enum LongitudinalPlanSource {
     cruise @0;
     mpc1 @1;

@@ -135,11 +135,12 @@ class SpdctrlSlow(SpdController):
         dRelef = plan.dRel2 #EON Lead
         yRelef = plan.yRel2 #EON Lead
         vRelef = plan.vRel2 * 3.6 + 0.5 #EON Lead
+        lead2_status = plan.status2
 
-        if (dRele - dRelef) > 3:
-           cut_in = True
-    
-
+        if lead2_status and (dRele - dRelef) > 3:
+           self.cut_in = True
+        else:
+           self.cut_in = False
 
         lead_objspd = min( yRele, yRelef )
         lead_objspd = min( lead_objspd, CS.lead_objspd )
@@ -147,17 +148,17 @@ class SpdctrlSlow(SpdController):
         if int(self.cruise_set_mode) == 4:
             set_speed = model_speed * 0.8
 
-            if lead_objspd < 0:
-               if cut_in:
-                  target_kph = v_ego_kph - 10
-               else:
-                  target_kph = v_ego_kph + lead_objspd
+            if self.cut_in:
+              target_kph = v_ego_kph - 10
+            elif lead_objspd < 0:
+              target_kph = v_ego_kph + lead_objspd
             else:
               target_kph = v_ego_kph + 5
 
             temp_speed = min( model_speed, target_kph )
             if temp_speed < set_speed:
               set_speed = temp_speed
+
             set_speed = max( 30, set_speed )
             delta_spd = abs(set_speed - v_ego_kph)
             xp = [1,3,10]
