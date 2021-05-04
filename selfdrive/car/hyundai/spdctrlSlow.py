@@ -132,7 +132,7 @@ class SpdctrlSlow(SpdController):
             set_speed = model_speed * 0.8
 
             if CS.lead_objspd < 0:
-              target_kph = v_ego_kph
+              target_kph = v_ego_kph + CS.lead_objspd
             else:
               target_kph = v_ego_kph + 5
 
