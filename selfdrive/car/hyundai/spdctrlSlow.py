@@ -130,10 +130,22 @@ class SpdctrlSlow(SpdController):
 
         if int(self.cruise_set_mode) == 4:
             set_speed = model_speed * 0.8
-            delta_spd = abs(model_speed - v_ego_kph)
-            xp = [2,10,20]
+
+            if CS.lead_objspd < 0:
+              target_kph = v_ego_kph
+            else:
+              target_kph = v_ego_kph + 5
+
+            temp_speed = min( model_speed, target_kph )
+            if temp_speed < set_speed:
+              set_speed = temp_speed
+            set_speed = max( 30, set_speed )
+            delta_spd = abs(set_speed - v_ego_kph)
+            xp = [1,3,10]
             fp = [100,30,15]
             wait_time_cmd = interp( delta_spd, xp, fp )
+
+                
 
         # 2. 커브 감속.
         elif self.cruise_set_speed_kph >= 70:
