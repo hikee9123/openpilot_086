@@ -193,9 +193,12 @@ class Planner():
     self.mpc1.publish(pm)
     self.mpc2.publish(pm)
 
+
+
     plan_send = messaging.new_message('longitudinalPlan')
 
     plan_send.valid = sm.all_alive_and_valid(service_list=['carState', 'controlsState', 'radarState'])
+
 
     longitudinalPlan = plan_send.longitudinalPlan
     longitudinalPlan.mdMonoTime = sm.logMonoTime['modelV2']
@@ -214,4 +217,13 @@ class Planner():
 
     longitudinalPlan.processingDelay = (plan_send.logMonoTime / 1e9) - sm.rcv_time['radarState']
 
+    # atom
+    lead_1 = sm['radarState'].leadOne
+    lead_2 = sm['radarState'].leadTwo    
+    longitudinalPlan.dRel1 = lead_1.dRel
+    longitudinalPlan.yRel1 = lead_1.yRel
+    longitudinalPlan.vRel1 = lead_1.vRel
+    longitudinalPlan.dRel2 = lead_2.dRel
+    longitudinalPlan.yRel2 = lead_2.yRel
+    longitudinalPlan.vRel2 = lead_2.vRel 
     pm.send('longitudinalPlan', plan_send)

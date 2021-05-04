@@ -307,7 +307,7 @@ class SpdController():
             self.long_curv_timer += 1
 
 
-        # ?�행 차량 거리?��?
+        # 선행 차량 거리 유지.
         lead_wait_cmd, lead_set_speed = self.update_lead( CS,  dRel, vRel )  
 
         # 커브 감속.

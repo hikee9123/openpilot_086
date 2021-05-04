@@ -128,11 +128,30 @@ class SpdctrlSlow(SpdController):
         set_speed = self.cruise_set_speed_kph
         v_ego_kph = CS.clu_Vanz 
 
+        plan = sm['longitudinalPlan']
+        dRele = plan.dRel1 #EON Lead
+        yRele = plan.yRel1 #EON Lead
+        vRele = plan.vRel1 * 3.6 + 0.5 #EON Lead
+        dRelef = plan.dRel2 #EON Lead
+        yRelef = plan.yRel2 #EON Lead
+        vRelef = plan.vRel2 * 3.6 + 0.5 #EON Lead
+
+        if (dRele - dRelef) > 3:
+           cut_in = True
+    
+
+
+        lead_objspd = min( yRele, yRelef )
+        lead_objspd = min( lead_objspd, CS.lead_objspd )
+
         if int(self.cruise_set_mode) == 4:
             set_speed = model_speed * 0.8
 
-            if CS.lead_objspd < 0:
-              target_kph = v_ego_kph + CS.lead_objspd
+            if lead_objspd < 0:
+               if cut_in:
+                  target_kph = v_ego_kph - 10
+               else:
+                  target_kph = v_ego_kph + lead_objspd
             else:
               target_kph = v_ego_kph + 5
 
@@ -142,7 +161,7 @@ class SpdctrlSlow(SpdController):
             set_speed = max( 30, set_speed )
             delta_spd = abs(set_speed - v_ego_kph)
             xp = [1,3,10]
-            fp = [100,30,15]
+            fp = [100,30,10]
             wait_time_cmd = interp( delta_spd, xp, fp )
 
                 

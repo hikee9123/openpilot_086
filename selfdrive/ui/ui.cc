@@ -360,7 +360,7 @@ QUIState::QUIState(QObject *parent) : QObject(parent) {
   ui_state.sm = std::make_unique<SubMaster, const std::initializer_list<const char *>>({
     "modelV2", "controlsState", "liveCalibration", "radarState", "deviceState", "liveLocationKalman",
     "pandaState", "carParams", "driverState", "driverMonitoringState", "sensorEvents", "carState", "ubloxGnss",
-    "liveParameters","lateralPlan","carControl","gpsLocationExternal",
+    "liveParameters","lateralPlan","carControl","gpsLocationExternal",  // atom
 #ifdef QCOM2
     "roadCameraState",
 #endif
