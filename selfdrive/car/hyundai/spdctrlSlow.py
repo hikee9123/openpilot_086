@@ -147,10 +147,10 @@ class SpdctrlSlow(SpdController):
         if int(self.cruise_set_mode) == 4:
             set_speed = model_speed * 0.8
 
-            if self.cut_in and dRele < 60:
+            if self.cut_in and dRele < 40:
               target_kph = v_ego_kph - 5
-            elif lead_objspd < 0:
-              target_kph = v_ego_kph + lead_objspd
+            #elif lead_objspd < 0:
+            #  target_kph = v_ego_kph + lead_objspd
             elif dRele > 30:
               target_kph = v_ego_kph + 5
             else:
