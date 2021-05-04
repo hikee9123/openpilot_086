@@ -154,7 +154,7 @@ class SpdctrlSlow(SpdController):
             elif dRele > 30:
               target_kph = v_ego_kph + 5
             else:
-              target_kph = v_ego_kph + 1
+              target_kph = v_ego_kph + 3
 
             temp_speed = min( model_speed, target_kph )
             if temp_speed < set_speed:
