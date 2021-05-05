@@ -349,7 +349,7 @@ class SpdController():
           set_speed = CS.VSetDis - dec_step_cmd
           btn_type = Buttons.SET_DECEL
           self.long_curv_timer = 0
-        elif delta >= 1 and (model_speed > 200 or CS.clu_Vanz < 70):
+        elif delta >= 1 and (CC.model_speed > 200 or CS.clu_Vanz < 70):
           set_speed = CS.VSetDis + dec_step_cmd
           btn_type = Buttons.RES_ACCEL
           self.long_curv_timer = 0            
