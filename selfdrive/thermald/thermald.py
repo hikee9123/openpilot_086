@@ -242,7 +242,7 @@ def thermald_thread():
       if pandaState_prev is not None:
         if pandaState.pandaState.pandaType == log.PandaState.PandaType.unknown and \
           pandaState_prev.pandaState.pandaType != log.PandaState.PandaType.unknown:
-          params.panda_disconnect()
+          params.clear_all(ParamKeyType.CLEAR_ON_PANDA_DISCONNECT)
       pandaState_prev = pandaState
 
     # get_network_type is an expensive call. update every 10s
