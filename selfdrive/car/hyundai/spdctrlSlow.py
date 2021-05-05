@@ -128,14 +128,18 @@ class SpdctrlSlow(SpdController):
         set_speed = self.cruise_set_speed_kph
         v_ego_kph = CS.clu_Vanz 
 
-        plan = sm['longitudinalPlan']
-        dRele = plan.dRel1 #EON Lead
-        yRele = plan.yRel1 #EON Lead
-        vRele = plan.vRel1 * 3.6 + 0.5 #EON Lead
-        dRelef = plan.dRel2 #EON Lead
-        yRelef = plan.yRel2 #EON Lead
-        vRelef = plan.vRel2 * 3.6 + 0.5 #EON Lead
-        lead2_status = plan.status2
+
+        # atom
+        lead_1 = sm['radarState'].leadOne
+        lead_2 = sm['radarState'].leadTwo    
+
+        dRele = lead_1.dRel #EON Lead  거리
+        yRele = lead_1.yRel #EON Lead  속도 차이
+        vRele = lead_1.vRel * 3.6 + 0.5 #EON Lead  속도.
+        dRelef = lead_2.dRel #EON Lead
+        yRelef = lead_2.yRel #EON Lead
+        vRelef = lead_2.vRel * 3.6 + 0.5 #EON Lead
+        lead2_status = lead_2.status
 
         if lead2_status and (dRele - dRelef) > 3:
            self.cut_in = True
