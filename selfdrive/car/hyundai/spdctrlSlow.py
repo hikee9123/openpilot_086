@@ -151,7 +151,7 @@ class SpdctrlSlow(SpdController):
 
  
         if int(self.cruise_set_mode) == 4:
-            set_speed = model_speed * 0.8
+            set_speed = min( set_speed, model_speed * 0.8)
 
             if self.cut_in and dRele < 50:
               target_kph = v_ego_kph - 10
@@ -161,13 +161,13 @@ class SpdctrlSlow(SpdController):
               target_kph = v_ego_kph + 5
 
             temp_speed = min( model_speed, target_kph )
-            if temp_speed < set_speed  and dRele < 80:
+            if temp_speed < set_speed  and dRele < 90:
               set_speed = temp_speed
 
             set_speed = max( 30, set_speed )
             delta_spd = abs(set_speed - v_ego_kph)
             xp = [1,3,10]
-            fp = [100,30,10]
+            fp = [100,30,15]
             wait_time_cmd = interp( delta_spd, xp, fp )
 
                 
