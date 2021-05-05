@@ -184,6 +184,7 @@ class CarState(CarStateBase):
     # test
     self.aReqRaw = cp.vl["SCC12"]["aReqRaw"]
     self.aReqValue = cp.vl["SCC12"]["aReqValue"]
+    #ret.autoHold = cp.vl["ESP11"]['AVH_STAT']
 
     # save the entire LKAS11 and CLU11
     self.lkas11 = copy.copy(cp_cam.vl["LKAS11"])
@@ -400,8 +401,6 @@ class CarState(CarStateBase):
       ("WHL_SPD_RL", "WHL_SPD11", 0),
       ("WHL_SPD_RR", "WHL_SPD11", 0),
 
-      ("YAW_RATE", "ESP12", 0),
-
       ("CF_Gway_DrvSeatBeltInd", "CGW4", 1),
 
       ("CF_Gway_DrvSeatBeltSw", "CGW1", 0),
@@ -415,6 +414,8 @@ class CarState(CarStateBase):
       ("CF_Gway_TurnSigRh", "CGW1", 0),
       ("CF_Gway_ParkBrakeSw", "CGW1", 0),
 
+      (AVH_STAT", "ESP11", -1),
+      ("YAW_RATE", "ESP12", 0),
       ("CYL_PRES", "ESP12", 0),
 
       ("CF_Clu_CruiseSwState", "CLU11", 0),
@@ -506,6 +507,7 @@ class CarState(CarStateBase):
       ("TCS13", 50),
       ("TCS15", 10),
       ("CLU11", 50),
+      ("ESP11", 50),
       ("ESP12", 100),
       ("CGW1", 10),
       ("CGW2", 5),
