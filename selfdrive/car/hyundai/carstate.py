@@ -414,7 +414,7 @@ class CarState(CarStateBase):
       ("CF_Gway_TurnSigRh", "CGW1", 0),
       ("CF_Gway_ParkBrakeSw", "CGW1", 0),
 
-      (AVH_STAT", "ESP11", -1),
+      ("AVH_STAT", "ESP11", -1),
       ("YAW_RATE", "ESP12", 0),
       ("CYL_PRES", "ESP12", 0),
 
