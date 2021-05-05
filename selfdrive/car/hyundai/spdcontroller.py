@@ -306,31 +306,30 @@ class SpdController():
         set_speed = self.cruise_set_speed_kph
 
         if self.long_curv_timer < 600:
-            self.long_curv_timer += 1
+          self.long_curv_timer += 1
 
 
         # 선행 차량 거리 유지.
         lead_wait_cmd, lead_set_speed = self.update_lead( CS,  dRel, vRel )  
 
         # 커브 감속.
-        model_speed = CC.model_speed   #cal_model_speed( CS.out.vEgo )
-        curv_wait_cmd, curv_set_speed = self.update_curv(CS, sm, model_speed)
+        curv_wait_cmd, curv_set_speed = self.update_curv(CS, sm, CC.model_speed )
 
         if curv_wait_cmd != 0:
-            if lead_set_speed > curv_set_speed:
-                set_speed = curv_set_speed
-                long_wait_cmd = curv_wait_cmd
-            else:
-                set_speed = lead_set_speed
-                long_wait_cmd = lead_wait_cmd
-        else:
+          if lead_set_speed > curv_set_speed:
+            set_speed = curv_set_speed
+            long_wait_cmd = curv_wait_cmd
+          else:
             set_speed = lead_set_speed
             long_wait_cmd = lead_wait_cmd
+        else:
+          set_speed = lead_set_speed
+          long_wait_cmd = lead_wait_cmd
 
         if set_speed > self.cruise_set_speed_kph:
-            set_speed = self.cruise_set_speed_kph
+          set_speed = self.cruise_set_speed_kph
         elif set_speed < 30:
-            set_speed = 30
+          set_speed = 30
 
         # control process
         target_set_speed = set_speed
@@ -339,25 +338,25 @@ class SpdController():
 
 
         if self.long_curv_timer < long_wait_cmd:
-            pass
+          pass
         elif CS.driverOverride == 1:  # acc
-            if self.cruise_set_speed_kph > CS.clu_Vanz:
-                delta = int(CS.clu_Vanz) - int(CS.VSetDis)
-                if delta > 1:
-                    set_speed = CS.clu_Vanz
-                    btn_type = Buttons.SET_DECEL
+          if self.cruise_set_speed_kph > CS.clu_Vanz:
+            delta = int(CS.clu_Vanz) - int(CS.VSetDis)
+            if delta > 1:
+              set_speed = CS.clu_Vanz
+              btn_type = Buttons.SET_DECEL
         elif delta <= -1:
-            set_speed = CS.VSetDis - dec_step_cmd
-            btn_type = Buttons.SET_DECEL
-            self.long_curv_timer = 0
+          set_speed = CS.VSetDis - dec_step_cmd
+          btn_type = Buttons.SET_DECEL
+          self.long_curv_timer = 0
         elif delta >= 1 and (model_speed > 200 or CS.clu_Vanz < 70):
-            set_speed = CS.VSetDis + dec_step_cmd
-            btn_type = Buttons.RES_ACCEL
-            self.long_curv_timer = 0            
-            if set_speed > self.cruise_set_speed_kph:
-                set_speed = self.cruise_set_speed_kph
+          set_speed = CS.VSetDis + dec_step_cmd
+          btn_type = Buttons.RES_ACCEL
+          self.long_curv_timer = 0            
+          if set_speed > self.cruise_set_speed_kph:
+            set_speed = self.cruise_set_speed_kph
         if self.cruise_set_mode == 0:
-            btn_type = Buttons.NONE
+          btn_type = Buttons.NONE
 
 
         self.update_log( CS, set_speed, target_set_speed, long_wait_cmd )
