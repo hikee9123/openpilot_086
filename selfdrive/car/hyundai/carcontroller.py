@@ -264,7 +264,7 @@ class CarController():
       can_sends.append( create_mdps12(self.packer, frame, CS.mdps12) )
 
     
-    str_log1 = 'torg:{:5.0f}'.format( apply_steer  )
+    str_log1 = 'torg:{:5.0f} steer={:5.0f}'.format( apply_steer, CS.out.steeringTorque  )
     trace1.printf( '  {}'.format( str_log1 ) )
 
     run_speed_ctrl = CS.acc_active and self.SC != None
@@ -301,10 +301,11 @@ class CarController():
       else:
         self.resume_cnt = 0
     else:
-      str_log1 = 'req={:.3f} gas={:.3f} brake={:.3f} '.format( CS.aReqValue, actuators.gas, actuators.brake  )
+      str_log1 = 'Value={:.3f} raw={:.3f} gas={:.3f} brake={:.3f} '.format( CS.aReqValue, CS.aReqRaw, actuators.gas, actuators.brake  )
       trace1.printf2( '{}'.format( str_log1 ) )
 
-      str_log1 = 'LKAS={:.0f}  steer={:5.0f}'.format( CS.lkas_button_on,  CS.out.steeringTorque )
+
+      str_log1 = 'LKAS={:.0f} hold={:.1f} {:.1f}'.format( CS.lkas_button_on, CS.autoHold, CS.LDM_STAT )
       str_log2 = 'limit={:.0f} tm={:.1f} gap={:.0f}  gas={:.1f}'.format( apply_steer_limit, self.timer1.sampleTime(), CS.cruiseGapSet, CS.out.gas  )               
       trace1.printf3( '{} {}'.format( str_log1, str_log2 ) )    
 
