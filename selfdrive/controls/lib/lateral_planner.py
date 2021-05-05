@@ -106,10 +106,10 @@ class LateralPlanner():
     vEgo_kph = carState.vEgo * CV.MS_TO_KPH
 
     if self.lanelines:
-      if vEgo_kph < 40:  #or dRel < 25:
+      if vEgo_kph < 30:  #or dRel < 25:
         lanelines = False
     else:
-      if vEgo_kph < 60:  #or dRel < 25:
+      if vEgo_kph < 50:  #or dRel < 25:
         lanelines = False      
     return lanelines
     

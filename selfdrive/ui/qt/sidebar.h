@@ -12,13 +12,13 @@ class SignalWidget : public QFrame {
   Q_OBJECT
 
 public:
-  SignalWidget(QString text, int strength, QWidget* parent = 0);
-  void update(QString text, int strength, const UIScene &scene);
-  QLabel label;
+  SignalWidget(QWidget* parent = 0);
+  void update(const QString &text, int strength, const UIScene &scene);
+  QLabel *label;
   int _strength = 0;
 
+  // atom
   QLabel label_ip;
-
   QImage image_bty;
   int    m_batteryPercent;
   int    m_battery_img;
@@ -27,7 +27,7 @@ protected:
   void paintEvent(QPaintEvent*) override;
 
 private:
-  QVBoxLayout layout;
+  QVBoxLayout *layout;
 
   const float _dotspace = 37; // spacing between dots
   const float _top = 10;
@@ -38,17 +38,17 @@ class StatusWidget : public QFrame {
   Q_OBJECT
 
 public:
-  StatusWidget(QString label, QString msg, QColor c, QWidget* parent = 0);
-  void update(QString label, QString msg, QColor c);
+  StatusWidget(bool has_substatus, QWidget* parent = 0);
+  void update(const QString &label, const QColor &c, const QString &msg = "");
 
 protected:
   void paintEvent(QPaintEvent*) override;
 
 private:
+  QLabel *status;
+  QLabel *substatus = nullptr;
   QColor color = COLOR_WARNING;
-  QLabel status;
-  QLabel substatus;
-  QVBoxLayout layout;
+  QVBoxLayout *layout;
 };
 
 class Sidebar : public QFrame {
