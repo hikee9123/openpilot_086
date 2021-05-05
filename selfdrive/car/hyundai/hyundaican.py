@@ -66,8 +66,8 @@ def create_lkas11(packer, frame, car_fingerprint, apply_steer, steer_req,
 def create_clu11(packer, frame, clu11, button, speed = None):
   values = clu11
 
-  if speed != None:
-    values["CF_Clu_Vanz"] = speed
+  #if speed != None:
+  #  values["CF_Clu_Vanz"] = speed
 
   values["CF_Clu_CruiseSwState"] = button
   values["CF_Clu_AliveCnt1"] = frame % 0x10
