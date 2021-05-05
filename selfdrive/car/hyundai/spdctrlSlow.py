@@ -141,7 +141,7 @@ class SpdctrlSlow(SpdController):
         vRelef = lead_2.vRel * 3.6 + 0.5 #EON Lead
         lead2_status = lead_2.status
 
-        if dRele <= 0:
+        if dRele <= 1:
             dRele = 150
 
         if lead2_status and (dRele - dRelef) > 3:
