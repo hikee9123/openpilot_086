@@ -405,6 +405,8 @@ class CarInterface(CarInterfaceBase):
         self.meg_name = EventName.steerUnavailable
       elif ret.steerWarning:
         self.meg_name = EventName.steerTempUnavailable
+      elif self.CS.Lkas_LdwsSysState == 15:
+        self.meg_name = EventName.invalidLkasSetting        
       else:
         meg_timer = 0
         self.meg_name =  None
