@@ -20,8 +20,6 @@
 #include "visionipc.h"
 #include "visionipc_client.h"
 
-#include "qt/sound.h"
-
 #include <QObject>
 #include <QTimer>
 
@@ -62,7 +60,6 @@ typedef enum NetStatus {
 } NetStatus;
 
 typedef enum UIStatus {
-  STATUS_OFFROAD,
   STATUS_DISENGAGED,
   STATUS_ENGAGED,
   STATUS_WARNING,
@@ -70,8 +67,7 @@ typedef enum UIStatus {
 } UIStatus;
 
 static std::map<UIStatus, NVGcolor> bg_colors = {
-  {STATUS_OFFROAD, nvgRGBA(0x0, 0x0, 0x0, 0xcf)},
-  {STATUS_DISENGAGED, nvgRGBA(0x17, 0x33, 0x49, 0x88)},
+  {STATUS_DISENGAGED, nvgRGBA(0x17, 0x33, 0x49, 0xc8)},
   {STATUS_ENGAGED, nvgRGBA(0x17, 0x86, 0x44, 0x51)},
   {STATUS_WARNING, nvgRGBA(0xDA, 0x6F, 0x25, 0x51)},
   {STATUS_ALERT, nvgRGBA(0xC9, 0x22, 0x31, 0x31)},
@@ -93,12 +89,6 @@ typedef struct UIScene {
 
   bool is_rhd;
   bool driver_view;
-
-  std::string alert_text1;
-  std::string alert_text2;
-  std::string alert_type;
-  float alert_blinking_rate;
-  cereal::ControlsState::AlertSize alert_size;
 
   cereal::PandaState::PandaType pandaType;
   NetStatus athenaStatus;
@@ -182,7 +172,6 @@ typedef struct UIState {
 
   std::unique_ptr<SubMaster> sm;
 
-  std::unique_ptr<Sound> sound;
   UIStatus status;
   UIScene scene;
 

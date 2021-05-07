@@ -30,6 +30,7 @@ HomeWindow::HomeWindow(QWidget* parent) : QWidget(parent) {
   onroad = new OnroadWindow(this);
   slayout->addWidget(onroad);
   QObject::connect(this, &HomeWindow::update, onroad, &OnroadWindow::update);
+  QObject::connect(this, &HomeWindow::offroadTransitionSignal, onroad, &OnroadWindow::offroadTransition);
 
   home = new OffroadHome();
   slayout->addWidget(home);
@@ -65,11 +66,11 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
   if( e_x < 1000 || e_y < 820 ) 
   {
     // Handle sidebar collapsing
-    if (childAt(e->pos()) == onroad) {
-      bool bSidebar = sidebar->isVisible();
-      QUIState::ui_state.scene.mouse.sidebar = !bSidebar;
-      sidebar->setVisible(!bSidebar);
-    }
+  if (onroad->isVisible() && (!sidebar->isVisible() || e->x() > sidebar->width())) {
+    bool bSidebar = sidebar->isVisible();
+    QUIState::ui_state.scene.mouse.sidebar = !bSidebar;
+    sidebar->setVisible(!bSidebar);
+  }
   }
 
     if (QUIState::ui_state.scene.mouse.sidebar )
