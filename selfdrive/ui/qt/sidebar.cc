@@ -41,6 +41,7 @@ void Sidebar::drawMetric(QPainter &p, const QString &label, const QString &val, 
 Sidebar::Sidebar(QWidget *parent) : QFrame(parent) {
   home_img = QImage("../assets/images/button_home.png").scaled(180, 180, Qt::KeepAspectRatio, Qt::SmoothTransformation);
   settings_img = QImage("../assets/images/button_settings.png").scaled(settings_btn.width(), settings_btn.height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);;
+  image_bty.load("../assets/images/battery.png");
 
   setFixedWidth(300);
   setMinimumHeight(vwp_h);
@@ -89,6 +90,9 @@ void Sidebar::update(const UIState &s) {
   }
 
   if (s.sm->updated("deviceState") || s.sm->updated("pandaState")) {
+    // atom
+    m_batteryPercent = scene.deviceState.getBatteryPercent();
+    m_strip = scene.deviceState.getWifiIpAddress();
     repaint();
   }
 }
@@ -115,4 +119,27 @@ void Sidebar::paintEvent(QPaintEvent *event) {
   drawMetric(p, "TEMP", QString("%1°C").arg(temp_val), temp_status, 338);
   drawMetric(p, panda_str, "", panda_status, 518);
   drawMetric(p, "CONNECT\n" + connect_str, "", connect_status, 676);
+
+  // atom - battery
+  if( m_batteryPercent <= 0)
+    m_batteryPercent = 50;  
+  QRect  rect(90, 46, 76, 36);
+  QRect  bq(rect.left() + 6, rect.top() + 5, int((rect.width() - 19) * m_batteryPercent * 0.01), rect.height() - 11 );
+  QBrush bgBrush("#00F010");
+  p.fillRect(bq, bgBrush);  
+  p.drawImage(rect, image_bty);
+
+  p.setPen(Qt::black);
+  QFont font = p.font();
+  font.setPixelSize(20);
+  p.setFont(font);
+
+
+  char temp_value_str1[32];
+  snprintf(temp_value_str1, sizeof(temp_value_str1), "%d", m_batteryPercent );
+  p.drawText(rect, Qt::AlignLeft, temp_value_str1);
+
+  // atom - ip
+  QString  strip = m_strip.c_str();
+  p.drawText(rect, Qt::AlignLeft, strip);
 }

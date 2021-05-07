@@ -54,4 +54,11 @@ private:
   QColor temp_status = warning_color;
   cereal::DeviceState::NetworkType net_type;
   cereal::DeviceState::NetworkStrength strength;
+
+
+  // atom
+  QImage image_bty;
+  int    m_batteryPercent;
+  int    m_battery_img;  
+  std::string m_strip;
 };
