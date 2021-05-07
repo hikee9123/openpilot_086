@@ -72,6 +72,7 @@ void OnroadAlerts::update(const UIState &s) {
     // scale volume with speed
     volume = util::map_val(sm["carState"].getCarState().getVEgo(), 0.f, 20.f,
                            Hardware::MIN_VOLUME, Hardware::MAX_VOLUME);
+    // QUIState::ui_state.scene.scr.nVolumeBoost
   }
   if (sm.updated("controlsState")) {
     const cereal::ControlsState::Reader &cs = sm["controlsState"].getControlsState();
