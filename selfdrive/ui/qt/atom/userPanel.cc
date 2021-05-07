@@ -249,8 +249,8 @@ CVolumeControl::CVolumeControl() : AbstractControl("EON 볼륨 조절(%)", "EON�
     QUIState::ui_state.scene.scr.nVolumeBoost = value;
     Params().put("OpkrUIVolumeBoost", values.toStdString());
     refresh();
-    QUIState::ui_state.sound->volume = value * 0.005;
-    QUIState::ui_state.sound->play(AudibleAlert::CHIME_WARNING1);
+   // QUIState::ui_state.sound->volume = value * 0.005;
+   // QUIState::ui_state.sound->play(AudibleAlert::CHIME_WARNING1);
   });
   
   QObject::connect(&btnplus, &QPushButton::released, [=]() {
@@ -264,8 +264,8 @@ CVolumeControl::CVolumeControl() : AbstractControl("EON 볼륨 조절(%)", "EON�
     QUIState::ui_state.scene.scr.nVolumeBoost = value;
     Params().put("OpkrUIVolumeBoost", values.toStdString());
     refresh();
-    QUIState::ui_state.sound->volume = value * 0.005;
-    QUIState::ui_state.sound->play(AudibleAlert::CHIME_WARNING1);
+  //  QUIState::ui_state.sound->volume = value * 0.005;
+   // QUIState::ui_state.sound->play(AudibleAlert::CHIME_WARNING1);
   });
   refresh();
 }
