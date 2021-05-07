@@ -129,10 +129,15 @@ void Sidebar::paintEvent(QPaintEvent *event) {
   drawMetric(p, panda_str, "", panda_status, 518);
   drawMetric(p, "CONNECT\n" + connect_str, "", connect_status, 676);
 
+  // atom - ip
+  QString  strip = m_strip.c_str();
+  const QRect r2 = QRect(50, 300, 100, 50);
+  p.drawText(r2, Qt::AlignLeft, strip);
+
   // atom - battery
   if( m_batteryPercent <= 0)
     m_batteryPercent = 50;  
-  QRect  rect(90, 280, 76, 36);
+  QRect  rect(160, 247, 76, 36);
   QRect  bq(rect.left() + 6, rect.top() + 5, int((rect.width() - 19) * m_batteryPercent * 0.01), rect.height() - 11 );
   QBrush bgBrush("#00F010");
   p.fillRect(bq, bgBrush);  
@@ -148,8 +153,5 @@ void Sidebar::paintEvent(QPaintEvent *event) {
   snprintf(temp_value_str1, sizeof(temp_value_str1), "%d", m_batteryPercent );
   p.drawText(rect, Qt::AlignLeft, temp_value_str1);
 
-  // atom - ip
-  QString  strip = m_strip.c_str();
-  const QRect r2 = QRect(50, 300, 100, 50);
-  p.drawText(r2, Qt::AlignLeft, strip);
+
 }
