@@ -91,8 +91,17 @@ void Sidebar::update(const UIState &s) {
 
   if (s.sm->updated("deviceState") || s.sm->updated("pandaState")) {
     // atom
-    m_batteryPercent = scene.deviceState.getBatteryPercent();
-    m_strip = scene.deviceState.getWifiIpAddress();
+    int battery_img = s.scene.deviceState.getBatteryStatus() == "Charging" ? 1 : 0;
+    if( m_battery_img != battery_img )
+    {
+      m_battery_img = battery_img;
+      if( battery_img )
+        image_bty.load("../assets/images/battery_charging.png");
+      else
+        image_bty.load("../assets/images/battery.png");
+    }    
+    m_batteryPercent = s.scene.deviceState.getBatteryPercent();
+    m_strip = s.scene.deviceState.getWifiIpAddress();
     repaint();
   }
 }
