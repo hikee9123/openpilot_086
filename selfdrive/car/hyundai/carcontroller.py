@@ -305,7 +305,7 @@ class CarController():
       trace1.printf2( '{}'.format( str_log1 ) )
 
 
-      str_log1 = 'LKAS={:.0f} hold={:.1f} {:.1f}'.format( CS.lkas_button_on, CS.autoHold, CS.LDM_STAT )
+      str_log1 = 'LKAS={:.0f} hold={:.0f} {:.0f}'.format( CS.lkas_button_on, CS.autoHold, CS.LDM_STAT )
       str_log2 = 'limit={:.0f} tm={:.1f} gap={:.0f}  gas={:.1f}'.format( apply_steer_limit, self.timer1.sampleTime(), CS.cruiseGapSet, CS.out.gas  )               
       trace1.printf3( '{} {}'.format( str_log1, str_log2 ) )    
 
