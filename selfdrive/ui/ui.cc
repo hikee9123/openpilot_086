@@ -243,7 +243,6 @@ static void update_state(UIState *s) {
    } 
 }
 
-
 static void update_params(UIState *s) {
   const uint64_t frame = s->sm->frame;
   UIScene &scene = s->scene;

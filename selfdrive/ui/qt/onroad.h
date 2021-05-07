@@ -74,3 +74,20 @@ private:
 public slots:
   void update(const UIState &s);
 };
+
+// container for all onroad widgets
+class OnroadWindow : public QWidget {
+  Q_OBJECT
+
+public:
+  OnroadWindow(QWidget* parent = 0);
+
+private:
+  OnroadAlerts *alerts;
+  NvgWindow *nvg;
+  QStackedLayout *layout;
+
+signals:
+  void update(const UIState &s);
+  void offroadTransition(bool offroad);
+};
