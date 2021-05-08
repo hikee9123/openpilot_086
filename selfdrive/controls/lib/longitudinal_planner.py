@@ -111,6 +111,7 @@ class Planner():
     """Gets called when new radarState is available"""
     cur_time = sec_since_boot()
     v_ego = sm['carState'].vEgo
+    gap_set = sm['carState'].cruiseState.gapSet
 
     long_control_state = sm['controlsState'].longControlState
     v_cruise_kph = sm['controlsState'].vCruise
@@ -122,8 +123,11 @@ class Planner():
     lead_1 = sm['radarState'].leadOne
     lead_2 = sm['radarState'].leadTwo
 
+    set_gap_point = 45.0   # defualt gap
+    set_gap_point = interp(gap_set, [1,2,3,4], [45.0,55.0,65.0,75.0])
+
     enabled = (long_control_state == LongCtrlState.pid) or (long_control_state == LongCtrlState.stopping)
-    following = lead_1.status and lead_1.dRel < 45.0 and lead_1.vLeadK > v_ego and lead_1.aLeadK > 0.0
+    following = lead_1.status and lead_1.dRel < set_gap_point and lead_1.vLeadK > v_ego and lead_1.aLeadK > 0.0
 
     self.v_acc_start = self.v_acc_next
     self.a_acc_start = self.a_acc_next
