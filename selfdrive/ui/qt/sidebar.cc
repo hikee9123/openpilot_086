@@ -122,27 +122,21 @@ void Sidebar::paintEvent(QPaintEvent *event) {
   drawMetric(p, "CONNECT\n" + connect_str, "", connect_status, 676);
 
   // atom - ip
+  if( m_batteryPercent <= 0) return;
   QString  strip = m_strip.c_str();
-  const QRect r2 = QRect(50, 300, 200, 50);
-
+  const QRect r2 = QRect(50, 295, 200, 50);
   configFont(p, "Open Sans", 35, 400);
   p.drawText(r2, Qt::AlignLeft, strip);
 
   // atom - battery
-  if( m_batteryPercent <= 0)
-    m_batteryPercent = 50;  
   QRect  rect(160, 247, 76, 36);
   QRect  bq(rect.left() + 6, rect.top() + 5, int((rect.width() - 19) * m_batteryPercent * 0.01), rect.height() - 11 );
   QBrush bgBrush("#149948");
   p.fillRect(bq, bgBrush);  
-  //p.drawImage(rect, image_bty);
   p.drawImage(rect, battery_imgs[m_battery_img]);
 
   p.setPen(Qt::white);
   configFont(p, "Open Sans", 25, 400);
-  //QFont font = p.font();
-  //font.setPixelSize(25);
-  //p.setFont(font);
 
   char temp_value_str1[32];
   snprintf(temp_value_str1, sizeof(temp_value_str1), "%d", m_batteryPercent );
