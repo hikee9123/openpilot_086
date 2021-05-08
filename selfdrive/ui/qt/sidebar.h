@@ -57,7 +57,11 @@ private:
 
 
   // atom
-  QImage image_bty;
+  const QMap<int, QImage> battery_imgs = {
+    {0, QImage("../assets/images/battery.png")},
+    {1, QImage("../assets/images/battery_charging.png")},
+  };  
+
   int    m_batteryPercent;
   int    m_battery_img;  
   std::string m_strip;

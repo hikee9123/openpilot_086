@@ -91,15 +91,8 @@ void Sidebar::update(const UIState &s) {
 
   if (s.sm->updated("deviceState") || s.sm->updated("pandaState")) {
     // atom
-    int battery_img = s.scene.deviceState.getBatteryStatus() == "Charging" ? 1 : 0;
-    if( m_battery_img != battery_img )
-    {
-      m_battery_img = battery_img;
-      if( battery_img )
-        image_bty.load("../assets/images/battery_charging.png");
-      else
-        image_bty.load("../assets/images/battery.png");
-    }    
+    m_battery_img = s.scene.deviceState.getBatteryStatus() == "Charging" ? 1 : 0;
+  
     m_batteryPercent = s.scene.deviceState.getBatteryPercent();
     m_strip = s.scene.deviceState.getWifiIpAddress();
     repaint();
@@ -131,7 +124,7 @@ void Sidebar::paintEvent(QPaintEvent *event) {
 
   // atom - ip
   QString  strip = m_strip.c_str();
-  const QRect r2 = QRect(50, 300, 100, 50);
+  const QRect r2 = QRect(50, 300, 200, 50);
   p.drawText(r2, Qt::AlignLeft, strip);
 
   // atom - battery
@@ -139,19 +132,18 @@ void Sidebar::paintEvent(QPaintEvent *event) {
     m_batteryPercent = 50;  
   QRect  rect(160, 247, 76, 36);
   QRect  bq(rect.left() + 6, rect.top() + 5, int((rect.width() - 19) * m_batteryPercent * 0.01), rect.height() - 11 );
-  QBrush bgBrush("#00F010");
+  QBrush bgBrush("#149948");
   p.fillRect(bq, bgBrush);  
-  p.drawImage(rect, image_bty);
+  //p.drawImage(rect, image_bty);
+  p.drawImage(rect.left(), rect.top(), battery_imgs[m_battery_img]);
 
-  p.setPen(Qt::black);
+  p.setPen(Qt::white);
   QFont font = p.font();
-  font.setPixelSize(20);
+  font.setPixelSize(25);
   p.setFont(font);
 
 
   char temp_value_str1[32];
   snprintf(temp_value_str1, sizeof(temp_value_str1), "%d", m_batteryPercent );
-  p.drawText(rect, Qt::AlignLeft, temp_value_str1);
-
-
+  p.drawText(rect, Qt::AlignCenter, temp_value_str1);
 }
