@@ -221,10 +221,10 @@ class SpdController():
                 if self.curise_set_first:
                    self.curise_set_first = 0
                    set_speed_kph =  int(CS.VSetDis)
-              elif delta_vsetdis > 5:
-                set_speed_kph = CS.VSetDis
-              elif not self.curise_sw_check:
-                set_speed_kph += 1
+                elif delta_vsetdis > 5:
+                   set_speed_kph = CS.VSetDis
+                elif not self.curise_sw_check:
+                   set_speed_kph += 1
               elif self.prev_clu_CruiseSwState == Buttons.SET_DECEL:  # dn
                 if self.curise_set_first:
                    self.curise_set_first = 0
@@ -234,10 +234,10 @@ class SpdController():
                 elif not self.curise_sw_check:
                    set_speed_kph -= 1
 
-                self.prev_clu_CruiseSwState = CS.cruise_buttons
+              self.prev_clu_CruiseSwState = CS.cruise_buttons
            elif CS.cruise_buttons and delta_vsetdis > 0:
-                self.curise_sw_check = True
-                set_speed_kph = int(CS.VSetDis)
+              self.curise_sw_check = True
+              set_speed_kph = int(CS.VSetDis)
         else:
            self.curise_sw_check = False
            self.curise_set_first = 1
