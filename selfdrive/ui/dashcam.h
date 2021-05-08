@@ -461,6 +461,11 @@ static void ui_draw_debug2(UIState *s)
   float  laneWidth = scene.lateralPlan.getLaneWidth();
   //float  cpuPerc = scene.deviceState.getCpuUsagePercent();
 
+  float  vCruise = scene.longitudinalPlan.getVCruise();
+  float  aCruise = scene.longitudinalPlan.getACruise();
+  float  vTarget = scene.longitudinalPlan.getVTarget();
+  float  aTarget = scene.longitudinalPlan.getATarget();
+
 
   auto lane_line_probs = scene.modelDataV2.getLaneLineProbs();
 
@@ -469,8 +474,8 @@ static void ui_draw_debug2(UIState *s)
 
     //ui_print( s, ui_viz_rx+10, 50, "S:%d",  s->awake_timeout );
 
-    x_pos = ui_viz_rx + 300;
-    y_pos = 200; 
+    x_pos = ui_viz_rx + 250;
+    y_pos = 100; 
 
     ui_print( s, x_pos, y_pos+0,   "sR:%.2f, %.2f", steerRatio,  steerRatioCV );
     ui_print( s, x_pos, y_pos+50,   "SC:%.2f, SD:%.2f", steerRateCostCV,  steerActuatorDelayCV );
@@ -480,8 +485,9 @@ static void ui_draw_debug2(UIState *s)
     ui_print( s, x_pos, y_pos+200, "lW:%.2f CV:%.0f", laneWidth, modelSpeed );
     ui_print( s, x_pos, y_pos+250, "time:%d", scene.scr.nTime/20 );
 
-
     ui_print( s, x_pos, y_pos+300, "prob:%.2f, %.2f, %.2f, %.2f", lane_line_probs[0], lane_line_probs[1], lane_line_probs[2], lane_line_probs[3] );
+    ui_print( s, x_pos, y_pos+350, "vCruise:%.3f, aCruise:%.3f  %.3f %.3f",  vCruise,  aCruise, vTarget,  aTarget);
+ );
 
 
     
@@ -586,7 +592,6 @@ void update_dashcam(UIState *s, int draw_vision)
 
   if ( program_start )
   {
-
     program_start = 0;
     s->scene.scr.autoScreenOff = get_param("OpkrAutoScreenOff");
     s->scene.scr.brightness = get_param("OpkrUIBrightness");

@@ -139,6 +139,7 @@ typedef struct UIScene {
   cereal::LateralPlan::Reader lateralPlan;
   cereal::LiveParametersData::Reader   liveParameters;
   cereal::GpsLocationData::Reader   gpsLocationExternal;
+  cereal::LongitudinalPlan::Reader longitudinalPlan;
 
   struct _STATUS_
   {
