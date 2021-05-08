@@ -501,7 +501,7 @@ static void ui_draw_debug2(UIState *s)
     float fr = tpms.getFr();
     float rl = tpms.getRl();
     float rr = tpms.getRr();
-    ui_print( s, x_pos, y_pos+350, "tpms:%.0f,%.0f,%.0f,%.0f", fl, fr, rl, rr );
+    ui_print( s, x_pos, y_pos+400, "tpms:%.0f,%.0f,%.0f,%.0f", fl, fr, rl, rr );
 }
 
 static void ui_draw_debug(UIState *s) 
