@@ -487,8 +487,6 @@ static void ui_draw_debug2(UIState *s)
 
     ui_print( s, x_pos, y_pos+300, "prob:%.2f, %.2f, %.2f, %.2f", lane_line_probs[0], lane_line_probs[1], lane_line_probs[2], lane_line_probs[3] );
     ui_print( s, x_pos, y_pos+350, "vCruise:%.3f, aCruise:%.3f  %.3f %.3f",  vCruise,  aCruise, vTarget,  aTarget);
- );
-
 
     
 
