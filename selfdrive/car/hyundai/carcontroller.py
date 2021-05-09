@@ -267,7 +267,7 @@ class CarController():
     str_log1 = 'torg:{:5.0f} steer={:5.0f}'.format( apply_steer, CS.out.steeringTorque  )
     trace1.printf( '  {}'.format( str_log1 ) )
 
-    str_log1 = 'Value={:.3f} raw={:.3f} Alive={:2.0f} gas={:.0f} gap={:.0f}  BTN={:.0f}'.format( CS.aReqValue, CS.aReqRaw, CS.CR_VSM_Alive, CS.out.gas, CS.cruiseGapSet, CS.cruise_buttons )
+    str_log1 = 'Value={:.3f} raw={:.3f} gas={:.3f} gap={:.0f}  BTN={:.0f} Alive={:2.0f} '.format( CS.aReqValue, CS.aReqRaw, CS.out.gas, CS.cruiseGapSet, CS.cruise_buttons, CS.CR_VSM_Alive )
     trace1.printf2( '{}'.format( str_log1 ) )
 
     run_speed_ctrl = CS.acc_active and self.SC != None
