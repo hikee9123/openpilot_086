@@ -295,7 +295,7 @@ class CarController():
       # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
       if frame % 2 or CS.driverOverride:
         pass
-      elif CS.acc_active and  self.AVM_View == 23:
+      elif CS.acc_active and  CS.AVM_View == 23:
         data = self.longCtrl.update( self.packer, CS, c, frame )
         can_sends.append( data )
       else:
