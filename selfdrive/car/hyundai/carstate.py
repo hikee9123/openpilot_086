@@ -191,6 +191,7 @@ class CarState(CarStateBase):
     self.CR_VSM_Alive = cp.vl["SCC12"]["CR_VSM_Alive"]
 
 
+    self.AVM_ParkingAssist_BtnSts = cp.vl["AVM_HU_PE_00"]["AVM_ParkingAssist_BtnSts"]
 
     # save the entire LKAS11 and CLU11
     self.lkas11 = copy.copy(cp_cam.vl["LKAS11"])
@@ -202,12 +203,8 @@ class CarState(CarStateBase):
     self.park_brake = cp.vl["TCS13"]['PBRAKE_ACT'] == 1
     self.steer_state = cp.vl["MDPS12"]['CF_Mdps_ToiActive']  # 0 NOT ACTIVE, 1 ACTIVE
     self.brake_hold = cp.vl["TCS15"]['AVH_LAMP'] # 0 OFF, 1 ERROR, 2 ACTIVE, 3 READY
-    self.autoHold = cp.vl["ESP11"]['AVH_STAT']  # 0 OFF, 1 ACTIVE, 2     
+    self.auto_hold = cp.vl["ESP11"]['AVH_STAT']  # 0 OFF, 1 HOLD, 2 START    
     self.brake_error = cp.vl["TCS13"]['ACCEnable'] # 0 ACC CONTROL ENABLED, 1-3 ACC CONTROL DISABLED
-
-    self.AVH_CLU = cp.vl["TCS15"]['AVH_CLU']
-    self.AVH_I_LAMP = cp.vl["TCS15"]['AVH_I_LAMP']
-    self.AVH_ALARM = cp.vl["TCS15"]['AVH_ALARM']
 
     return ret
 
@@ -523,6 +520,9 @@ class CarState(CarStateBase):
       ("PRESSURE_FR", "TPMS11", 0),
       ("PRESSURE_RL", "TPMS11", 0),
       ("PRESSURE_RR", "TPMS11", 0),
+
+      # test
+      ("AVM_ParkingAssist_BtnSts", "AVM_HU_PE_00", 0),
     ]
 
     checks = [
@@ -531,10 +531,10 @@ class CarState(CarStateBase):
       ("TCS13", 50),
       ("TCS15", 10),
       ("CLU11", 50),
-     # ("ESP11", 50),
+      ("ESP11", 50),
       ("ESP12", 100),
       ("CGW1", 10),
-     # ("CGW2", 5),
+      ("CGW2", 5),
       ("CGW4", 5),
       ("WHL_SPD11", 50),
       ("SAS11", 100),
