@@ -190,6 +190,7 @@ class CarState(CarStateBase):
     self.aReqValue = cp.vl["SCC12"]["aReqValue"]
     self.CR_VSM_Alive = cp.vl["SCC12"]["CR_VSM_Alive"]
 
+    self.AVM_View = cp.vl["AVM_HU_PE_00"]["AVM_View"]
 
     self.str_carstate = '{}'.format( cp.vl["AVM_HU_PE_00"]["AVM_View"] ) 
 

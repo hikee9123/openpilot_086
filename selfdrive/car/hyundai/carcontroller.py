@@ -267,7 +267,7 @@ class CarController():
     str_log1 = 'torg:{:5.0f} steer={:5.0f}'.format( apply_steer, CS.out.steeringTorque  )
     trace1.printf( '  {}'.format( str_log1 ) )
 
-    str_log1 = 'Value={:.3f} raw={:.3f} gas={:.3f} gap={:.0f}  BTN={:.0f} Alive={:2.0f} '.format( CS.aReqValue, CS.aReqRaw, CS.out.gas, CS.cruiseGapSet, CS.cruise_buttons, CS.CR_VSM_Alive )
+    str_log1 = 'Value={:.5f} raw={:.5f} gas={:.3f} gap={:.0f}  BTN={:.0f} Alive={:2.0f} '.format( CS.aReqValue, CS.aReqRaw, CS.out.gas, CS.cruiseGapSet, CS.cruise_buttons, CS.CR_VSM_Alive )
     trace1.printf2( '{}'.format( str_log1 ) )
 
     run_speed_ctrl = CS.acc_active and self.SC != None
@@ -293,9 +293,9 @@ class CarController():
         self.last_lead_distance = 0
     elif CP.openpilotLongitudinalControl:
       # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
-      if frame % 2:
+      if frame % 2 or CS.driverOverride:
         pass
-      elif CS.acc_active and  CS.cruise_buttons == Buttons.GAP_DIST:
+      elif CS.acc_active and  self.AVM_View == 23:
         data = self.longCtrl.update( self.packer, CS, c, frame )
         can_sends.append( data )
       else:
