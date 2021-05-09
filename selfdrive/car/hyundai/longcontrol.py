@@ -52,7 +52,7 @@ class CLongControl():
     lead_visible = c.hudControl.leadVisible
     stopping = kph_vEgo <= 1
     apply_accel = self.accel_applay(  actuators )
-    scc_live = True
+    scc_live = False
 
     if CS.aReqValue > 0:  
       apply_accel = 0

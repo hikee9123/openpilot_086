@@ -117,6 +117,8 @@ static void draw_lead(UIState *s, int idx) {
   x = std::clamp(x, 0.f, s->viz_rect.right() - sz / 2);
   y = std::fmin(s->viz_rect.bottom() - sz * .6, y);
   draw_chevron(s, x, y, sz, nvgRGBA(201, 34, 49, fillAlpha), color);
+
+  nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
   ui_draw_text(s, x, y + sz/1.5f, string, 20 * 2.5, txtColor, "sans-bold");
 }
 
