@@ -176,7 +176,7 @@ def create_mdps12(packer, frame, mdps12):
 
 def create_scc11(packer, frame, enabled, set_speed, lead_visible, scc_live, scc11):
   values = scc11
-  values["AliveCounterACC"] = frame % 0x10
+  values["AliveCounterACC"] = frame // 2 % 0x10
   if not scc_live:
     values["MainMode_ACC"] = 1
     values["VSetDis"] = set_speed

@@ -60,10 +60,10 @@ class CLongControl():
       apply_accel = CS.aReqValue
     
 
-    self.scc12_cnt = CS.scc12["CR_VSM_Alive"] + 1 
+
     can_sends = create_scc12(packer, apply_accel, enabled, self.scc12_cnt, scc_live, CS.scc12)
     can_sends.append( create_scc11(packer, frame, enabled, set_speed, lead_visible, scc_live, CS.scc11) )
-
+    self.scc12_cnt += 1 
 
     str_log2 = 'accel={:.3f}  speed={:.0f} lead={} stop={:.0f}'.format( apply_accel, set_speed,  lead_visible, stopping )
     trace1.printf3( '{}'.format( str_log2 ) )
