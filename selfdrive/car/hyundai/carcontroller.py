@@ -288,7 +288,7 @@ class CarController():
     # reset lead distnce after the car starts moving
     elif self.last_lead_distance != 0:
         self.last_lead_distance = 0
-    elif CP.openpilotLongitudinalControl and CS.acc_active:
+    elif CP.openpilotLongitudinalControl and CS.acc_active and CS.cruise_buttons == Buttons.CANCEL:
       # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
       if frame % 2 == 0:
         data = self.longCtrl.update( self.packer, CS, c, frame )
@@ -301,12 +301,13 @@ class CarController():
       else:
         self.resume_cnt = 0
     else:
-      str_log1 = 'Value={:.3f} raw={:.3f} gas={:.3f} brake={:.3f} '.format( CS.aReqValue, CS.aReqRaw, actuators.gas, actuators.brake  )
+      str_log1 = 'Value={:.3f} raw={:.3f} Alive={:.0f} gas={:.0f} gap={:.0f}  AVU={:0.f},{:0.f},{:0.f}'.format( CS.aReqValue, CS.aReqRaw, CS.CR_VSM_Alive, CS.out.gas, CS.cruiseGapSet, CS.AVH_CLU, CS.AVH_I_LAMP, CS.AVH_ALARM )
       trace1.printf2( '{}'.format( str_log1 ) )
 
+    
 
-      str_log1 = 'LKAS={:.0f} hold={:.0f} {:.0f}'.format( CS.lkas_button_on, CS.autoHold, CS.LDM_STAT )
-      str_log2 = 'limit={:.0f} tm={:.1f} gap={:.0f}  gas={:.1f}'.format( apply_steer_limit, self.timer1.sampleTime(), CS.cruiseGapSet, CS.out.gas  )               
+      str_log1 = 'LKAS={:.0f} hold={:.0f}'.format( CS.lkas_button_on, CS.autoHold )
+      str_log2 = 'limit={:.0f} tm={:.1f} '.format( apply_steer_limit, self.timer1.sampleTime()  )               
       trace1.printf3( '{} {}'.format( str_log1, str_log2 ) )    
 
 

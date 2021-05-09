@@ -5,6 +5,7 @@ import numpy as np
 
 from selfdrive.config import Conversions as CV
 from selfdrive.car.hyundai.hyundaican import create_scc11, create_scc12
+from selfdrive.car.hyundai.values import Buttons
 from common.numpy_fast import clip, interp
 
 
@@ -53,10 +54,14 @@ class CLongControl():
     apply_accel = self.accel_applay(  actuators )
     scc_live = True
 
+    if CS.cruise_buttons == Buttons.CANCEL:
+      apply_accel = 0
+
+    self.scc12_cnt = CS.scc12["CR_VSM_Alive"] + 1 
     can_sends = create_scc12(packer, apply_accel, enabled, self.scc12_cnt, scc_live, CS.scc12)
     can_sends.append( create_scc11(packer, frame, enabled, set_speed, lead_visible, scc_live, CS.scc11) )
 
-    self.scc12_cnt += 1
+    #self.scc12_cnt += 1
     str_log2 = 'accel={:.3f}  speed={:.0f} lead={} stop={:.0f}'.format( apply_accel, set_speed,  lead_visible, stopping )
     trace1.printf2( '{}'.format( str_log2 ) )
     return can_sends

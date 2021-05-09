@@ -1,6 +1,6 @@
 import copy
 from cereal import car
-from selfdrive.car.hyundai.values import DBC, STEER_THRESHOLD, FEATURES, EV_HYBRID
+from selfdrive.car.hyundai.values import DBC, STEER_THRESHOLD, FEATURES, EV_HYBRID, HYBRID_VEH
 from selfdrive.car.interfaces import CarStateBase
 from opendbc.can.parser import CANParser
 from selfdrive.config import Conversions as CV
@@ -154,7 +154,10 @@ class CarState(CarStateBase):
     # TODO: Check this
     ret.brakeLights = bool(cp.vl["TCS13"]['BrakeLight'] or ret.brakePressed)
 
-    if self.CP.carFingerprint in EV_HYBRID:
+    if self.CP.carFingerprint in HYBRID_VEH:
+      ret.gas = cp.vl["EV_PC4"]['CR_Vcu_AccPedDep_Pc']
+      ret.gasPressed = cp.vl["TCS13"]["DriverOverride"] == 1
+    elif self.CP.carFingerprint in EV_HYBRID:
       ret.gas = cp.vl["E_EMS11"]['Accel_Pedal_Pos'] / 256.
       ret.gasPressed = ret.gas > 5
     else:
@@ -185,8 +188,9 @@ class CarState(CarStateBase):
     # test
     self.aReqRaw = cp.vl["SCC12"]["aReqRaw"]
     self.aReqValue = cp.vl["SCC12"]["aReqValue"]
-    self.autoHold = cp.vl["ESP11"]['AVH_STAT']
-    self.LDM_STAT = cp.vl["ESP11"]["LDM_STAT"]
+    self.CR_VSM_Alive = cp.vl["SCC12"]["CR_VSM_Alive"]
+
+
 
     # save the entire LKAS11 and CLU11
     self.lkas11 = copy.copy(cp_cam.vl["LKAS11"])
@@ -198,9 +202,15 @@ class CarState(CarStateBase):
     self.park_brake = cp.vl["TCS13"]['PBRAKE_ACT'] == 1
     self.steer_state = cp.vl["MDPS12"]['CF_Mdps_ToiActive']  # 0 NOT ACTIVE, 1 ACTIVE
     self.brake_hold = cp.vl["TCS15"]['AVH_LAMP'] # 0 OFF, 1 ERROR, 2 ACTIVE, 3 READY
+    self.autoHold = cp.vl["ESP11"]['AVH_STAT']  # 0 OFF, 1 ACTIVE, 2     
     self.brake_error = cp.vl["TCS13"]['ACCEnable'] # 0 ACC CONTROL ENABLED, 1-3 ACC CONTROL DISABLED
 
+    self.AVH_CLU = cp.vl["TCS15"]['AVH_CLU']
+    self.AVH_I_LAMP = cp.vl["TCS15"]['AVH_I_LAMP']
+    self.AVH_ALARM = cp.vl["TCS15"]['AVH_ALARM']
+
     return ret
+
 
 
 
@@ -362,7 +372,14 @@ class CarState(CarStateBase):
       ]
       checks += [("LCA11", 50)]
 
-    if CP.carFingerprint in EV_HYBRID:
+    if CP.carFingerprint in HYBRID_VEH:
+      signals += [
+        ("CR_Vcu_AccPedDep_Pc", "EV_PC4", 0),
+      ]
+      checks += [
+        ("EV_PC4", 50),
+      ]
+    elif CP.carFingerprint in EV_HYBRID:
       signals += [
         ("Accel_Pedal_Pos", "E_EMS11", 0),
       ]
@@ -417,7 +434,6 @@ class CarState(CarStateBase):
       ("CF_Gway_ParkBrakeSw", "CGW1", 0),
 
       ("AVH_STAT", "ESP11", -1),   # auto hold
-      ("LDM_STAT", "ESP11", 0),
       ("YAW_RATE", "ESP12", 0),
       ("CYL_PRES", "ESP12", 0),
 
@@ -440,11 +456,16 @@ class CarState(CarStateBase):
       ("DriverBraking", "TCS13", 0),
       ("StandStill", "TCS13", 0),
       ("PBRAKE_ACT", "TCS13", 0),
+      ("DriverOverride", "TCS13", 0),
 
       ("ESC_Off_Step", "TCS15", 0),
       ("AVH_LAMP", "TCS15", 0),
+      ("AVH_CLU", "TCS15", 0),
+      ("AVH_I_LAMP", "TCS15", 0),
+      ("AVH_ALARM", "TCS15", 0),
 
-      ("DriverOverride", "TCS13", 0),
+
+
       #("CF_Lvr_GearInf", "LVR11", 0),        # Transmission Gear (0 = N or P, 1-8 = Fwd, 14 = Rev)
 
       ("CR_Mdps_StrColTq", "MDPS12", 0),
@@ -510,10 +531,10 @@ class CarState(CarStateBase):
       ("TCS13", 50),
       ("TCS15", 10),
       ("CLU11", 50),
-      ("ESP11", 50),
+     # ("ESP11", 50),
       ("ESP12", 100),
       ("CGW1", 10),
-      ("CGW2", 5),
+     # ("CGW2", 5),
       ("CGW4", 5),
       ("WHL_SPD11", 50),
       ("SAS11", 100),

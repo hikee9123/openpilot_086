@@ -205,15 +205,7 @@ class SpdController():
         delta_vsetdis = 0
         if CS.acc_active:
            delta_vsetdis = abs(CS.VSetDis - self.prev_VSetDis)            
-           if CP.openpilotLongitudinalControl:
-              if self.prev_clu_CruiseSwState != CS.cruise_buttons:
-                if self.prev_clu_CruiseSwState == Buttons.RES_ACCEL:   # up
-                  set_speed_kph += 1
-                elif self.prev_clu_CruiseSwState == Buttons.SET_DECEL:  # dn
-                  set_speed_kph -= 1
-                self.prev_clu_CruiseSwState = CS.cruise_buttons
-
-           elif self.prev_clu_CruiseSwState != CS.cruise_buttons:
+           if self.prev_clu_CruiseSwState != CS.cruise_buttons:
               if CS.cruise_buttons:
                 self.prev_VSetDis = int(CS.VSetDis)
               elif CS.driverOverride:
