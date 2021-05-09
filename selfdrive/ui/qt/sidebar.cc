@@ -122,10 +122,10 @@ void Sidebar::paintEvent(QPaintEvent *event) {
   drawMetric(p, "CONNECT\n" + connect_str, "", connect_status, 676);
 
   // atom - ip
-  if( m_batteryPercent <= 0) return;
+  if( m_batteryPercent <= 1) return;
   QString  strip = m_strip.c_str();
   const QRect r2 = QRect(50, 295, 200, 50);
-  configFont(p, "Open Sans", 35, 400);
+  configFont(p, "Open Sans", 30, 400);
   p.drawText(r2, Qt::AlignLeft, strip);
 
   // atom - battery
