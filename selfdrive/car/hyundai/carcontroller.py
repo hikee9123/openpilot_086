@@ -301,7 +301,7 @@ class CarController():
       else:
         self.resume_cnt = 0
     else:
-      str_log1 = 'Value={:.3f} raw={:.3f} Alive={:.0f} gas={:.0f} gap={:.0f}  AVU={:0.f},{:0.f},{:0.f}'.format( CS.aReqValue, CS.aReqRaw, CS.CR_VSM_Alive, CS.out.gas, CS.cruiseGapSet, CS.AVH_CLU, CS.AVH_I_LAMP, CS.AVH_ALARM )
+      str_log1 = 'Value={:.3f} raw={:.3f} Alive={:.0f} gas={:.0f} gap={:.0f}  AVU={:.0f},{:.0f},{:.0f}'.format( CS.aReqValue, CS.aReqRaw, CS.CR_VSM_Alive, CS.out.gas, CS.cruiseGapSet, CS.AVH_CLU, CS.AVH_I_LAMP, CS.AVH_ALARM )
       trace1.printf2( '{}'.format( str_log1 ) )
 
     
