@@ -203,7 +203,7 @@ class CarState(CarStateBase):
     s9 = cp.vl["AVM_HU_PE_00"]["AVM_HU_RearView_Option"]
     s10 = cp.vl["AVM_HU_PE_00"]["AVM_HU_FrontView_Option"]
 
-    self.str_carstate = '{},{},{},{},{} - {},{},{},{},{}'.format( s1, s2, s3,  s3, s5, s6, s7, s8, s9, s10 ) 
+    self.str_carstate = '{},{},{},{},{} - {},{},{},{},{} - {}'.format( s1, s2, s3,  s3, s5, s6, s7, s8, s9, s10, self.AVM_View) 
 
     # save the entire LKAS11 and CLU11
     self.lkas11 = copy.copy(cp_cam.vl["LKAS11"])
