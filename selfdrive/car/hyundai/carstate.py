@@ -192,7 +192,18 @@ class CarState(CarStateBase):
 
     self.AVM_View = cp.vl["AVM_HU_PE_00"]["AVM_View"]
 
-    self.str_carstate = '{}'.format( cp.vl["AVM_HU_PE_00"]["AVM_View"] ) 
+    s1 = cp.vl["AVM_HU_PE_00"]["AVM_ParkingAssist_BtnSts"]
+    s2 = cp.vl["AVM_HU_PE_00"]["AVM_Display_Message"]
+    s3 = cp.vl["AVM_HU_PE_00"]["AVM_Popup_Msg"]
+    s4 = cp.vl["AVM_HU_PE_00"]["AVM_Ready"]
+    s5 = cp.vl["AVM_HU_PE_00"]["AVM_ParkingAssist_Step"]
+    s6 = cp.vl["AVM_HU_PE_00"]["AVM_FrontBtn_Type"]
+    s7 = cp.vl["AVM_HU_PE_00"]["AVM_Option"]
+    s8 = cp.vl["AVM_HU_PE_00"]["AVM_HU_FrontViewPointOpt"]
+    s9 = cp.vl["AVM_HU_PE_00"]["AVM_HU_RearView_Option"]
+    s10 = cp.vl["AVM_HU_PE_00"]["AVM_HU_FrontView_Option"]
+
+    self.str_carstate = '{},{},{},{},{},  {},{},{},{},{}'.format( s1, s2, s3,  s3, s5, s6, s7, s8, s9, s10 ) 
 
     # save the entire LKAS11 and CLU11
     self.lkas11 = copy.copy(cp_cam.vl["LKAS11"])
@@ -524,6 +535,16 @@ class CarState(CarStateBase):
 
       # test
       ("AVM_View", "AVM_HU_PE_00", 0),
+      ("AVM_ParkingAssist_BtnSts", "AVM_HU_PE_00", 0),
+      ("AVM_Display_Message", "AVM_HU_PE_00", 0),
+      ("AVM_Popup_Msg", "AVM_HU_PE_00", 0),
+      ("AVM_Ready", "AVM_HU_PE_00", 0),
+      ("AVM_ParkingAssist_Step", "AVM_HU_PE_00", 0),
+      ("AVM_FrontBtn_Type", "AVM_HU_PE_00", 0),
+      ("AVM_Option", "AVM_HU_PE_00", 0),
+      ("AVM_HU_FrontViewPointOpt", "AVM_HU_PE_00", 0),
+      ("AVM_HU_RearView_Option", "AVM_HU_PE_00", 0),
+      ("AVM_HU_FrontView_Option", "AVM_HU_PE_00", 0),
     ]
 
     checks = [
