@@ -54,8 +54,11 @@ class CLongControl():
     apply_accel = self.accel_applay(  actuators )
     scc_live = True
 
-    if CS.cruise_buttons == Buttons.GAP_DIST:
+    if CS.aReqValue > 0:  
       apply_accel = 0
+    else:
+      apply_accel = CS.aReqValue
+    
 
     self.scc12_cnt = CS.scc12["CR_VSM_Alive"] + 1 
     can_sends = create_scc12(packer, apply_accel, enabled, self.scc12_cnt, scc_live, CS.scc12)
