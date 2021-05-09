@@ -191,7 +191,7 @@ class CarState(CarStateBase):
     self.CR_VSM_Alive = cp.vl["SCC12"]["CR_VSM_Alive"]
 
 
-    self.AVM_ParkingAssist_BtnSts = cp.vl["AVM_HU_PE_00"]["AVM_ParkingAssist_BtnSts"]
+    self.str_carstate = '{}'.format( cp.vl["AVM_HU_PE_00"]["AVM_View"] ) 
 
     # save the entire LKAS11 and CLU11
     self.lkas11 = copy.copy(cp_cam.vl["LKAS11"])
@@ -522,7 +522,7 @@ class CarState(CarStateBase):
       ("PRESSURE_RR", "TPMS11", 0),
 
       # test
-      ("AVM_ParkingAssist_BtnSts", "AVM_HU_PE_00", 0),
+      ("AVM_View", "AVM_HU_PE_00", 0),
     ]
 
     checks = [

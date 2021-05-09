@@ -293,12 +293,14 @@ class CarController():
         self.last_lead_distance = 0
     elif CP.openpilotLongitudinalControl:
       # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
-      if CS.acc_active and frame % 2 == 0 and  CS.cruise_buttons == Buttons.GAP_DIST:
+      if frame % 2:
+        pass
+      elif CS.acc_active and  CS.cruise_buttons == Buttons.GAP_DIST:
         data = self.longCtrl.update( self.packer, CS, c, frame )
         can_sends.append( data )
       else:
-        str_log2 = 'None ={:.1f}'.format( CS.AVM_ParkingAssist_BtnSts )
-        trace1.printf3( '{}'.format( str_log2 ) )
+        str_log2 = CS.str_carstate
+        trace1.printf3( 'None={}'.format( str_log2 ) )
     elif run_speed_ctrl:
       is_sc_run = self.SC.update( CS, sm, self )
       if is_sc_run:
