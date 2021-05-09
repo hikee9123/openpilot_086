@@ -197,6 +197,7 @@ class CarState(CarStateBase):
     s3 = cp.vl["AVM_HU_PE_00"]["AVM_Popup_Msg"]
     s4 = cp.vl["AVM_HU_PE_00"]["AVM_Ready"]
     s5 = cp.vl["AVM_HU_PE_00"]["AVM_ParkingAssist_Step"]
+    
     s6 = cp.vl["AVM_HU_PE_00"]["AVM_FrontBtn_Type"]
     s7 = cp.vl["AVM_HU_PE_00"]["AVM_Option"]
     s8 = cp.vl["AVM_HU_PE_00"]["AVM_HU_FrontViewPointOpt"]
