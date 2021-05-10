@@ -55,7 +55,7 @@ class CLongControl():
     scc_live = True
 
     if CS.aReqValue > 0:  
-      apply_accel = 0
+      apply_accel = -0.04
     else:
       apply_accel = CS.aReqValue
     
