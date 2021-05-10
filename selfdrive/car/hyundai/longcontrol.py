@@ -54,7 +54,7 @@ class CLongControl():
     apply_accel = self.accel_applay(  actuators )
     scc_live = True
 
-    if CS.aReqValue > 0:  
+    if CS.aReqValue > -0.04:  
       apply_accel = -0.04
     else:
       apply_accel = CS.aReqValue
