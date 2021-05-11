@@ -19,7 +19,6 @@ class CarControllerParams:
     self.STEER_DRIVER_MULTIPLIER = 2
     self.STEER_DRIVER_FACTOR = 1
 
-
     # Accel limits
     self.ACCEL_HYST_GAP = 0.02  # don't change accel command for small oscilalitons within this value
     self.ACCEL_MAX = 1.5  # 1.5 m/s2
