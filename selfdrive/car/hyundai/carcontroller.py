@@ -307,6 +307,8 @@ class CarController():
         if btn_signal != None:
           can_sends.append(create_clu11(self.packer, self.resume_cnt, CS.clu11, btn_signal ))
           self.resume_cnt += 1
+        else:
+          self.resume_cnt = 0
     elif run_speed_ctrl:
       is_sc_run = self.SC.update( CS, sm, self )
       if is_sc_run:
