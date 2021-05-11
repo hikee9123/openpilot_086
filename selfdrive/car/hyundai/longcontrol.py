@@ -120,9 +120,12 @@ class CLongControl():
       return btn_signal
 
   def case_3(self):  # None
-      btn_signal = Buttons.NONE
+      btn_signal = None  # Buttons.NONE
+      
       self.btn_cnt += 1
-      if self.btn_cnt > 5: 
+      if self.btn_cnt == 1:
+        btn_signal = Buttons.NONE
+      elif self.btn_cnt > 5: 
         self.seq_command = 0
       return btn_signal
 
