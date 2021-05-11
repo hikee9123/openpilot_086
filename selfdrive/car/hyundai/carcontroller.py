@@ -305,7 +305,18 @@ class CarController():
       if self.SC.update_btn(CS, sm, self ) == 0:
         pass
       elif CS.acc_active and CS.AVM_View == 23:
-        btn_signal = self.longCtrl.update_scc( CS, kph_vEgo )
+        if self.dRel < 100:
+          if self.vRel < -5:
+            kph_vEgo -= 2
+          else:
+            kph_vEgo -= 1
+        else:
+          kph_vEgo += 5 
+
+
+        self.cruise_set_speed_kph = CS.out.cruiseState.speed * CV.MS_TO_KPH
+        self.ctrl_speed = min( self.cruise_set_speed_kph, kph_vEgo)
+        btn_signal = self.longCtrl.update_scc( CS, self.ctrl_speed )
         if btn_signal != None:
           can_sends.append(create_clu11(self.packer, self.resume_cnt, CS.clu11, btn_signal ))
           self.resume_cnt += 1
