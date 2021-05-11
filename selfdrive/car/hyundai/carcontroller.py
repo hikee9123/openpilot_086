@@ -305,8 +305,26 @@ class CarController():
       if self.SC.update_btn(CS, sm, self ) == 0:
         pass
       elif CS.acc_active and CS.AVM_View == 23:
-        if self.dRel < 100:
-          if self.vRel < -5:
+        # atom
+        lead_1 = sm['radarState'].leadOne
+        lead_2 = sm['radarState'].leadTwo    
+
+        dRele = lead_1.dRel #EON Lead  거리
+        yRele = lead_1.yRel #EON Lead  속도 차이
+        vRele = lead_1.vRel * 3.6 + 0.5 #EON Lead  속도.
+        dRelef = lead_2.dRel #EON Lead
+        yRelef = lead_2.yRel #EON Lead
+        vRelef = lead_2.vRel * 3.6 + 0.5 #EON Lead
+        lead2_status = lead_2.status
+        if lead2_status and (dRele - dRelef) > 3:
+           self.cut_in = True
+        else:
+           self.cut_in = False
+
+        if dRele < 100:
+          if self.cut_in:
+            kph_vEgo -= 3
+          elif self.vRel < -5:
             kph_vEgo -= 2
           else:
             kph_vEgo -= 1
