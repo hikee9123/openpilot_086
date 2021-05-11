@@ -302,7 +302,7 @@ class CarController():
         str_log2 = CS.str_carstate
         trace1.printf3( 'None={}'.format( str_log2 ) )
       
-      if self.SC.update_btn(CS, sm, CC ) == 0:
+      if self.SC.update_btn(CS, sm, self ) == 0:
         pass
       elif CS.acc_active and CS.AVM_View == 23:
         btn_signal = self.longCtrl.update_scc( CS, kph_vEgo )
