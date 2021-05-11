@@ -60,7 +60,6 @@ class CLongControl():
     if CS.aReqValue > -0.04:
       apply_accel = -0.04
     else:
-      self.reset()
       apply_accel = CS.aReqValue
     
     can_sends = create_scc12(packer, apply_accel, enabled, self.scc12_cnt, scc_live, CS.scc12)
@@ -78,7 +77,7 @@ class CLongControl():
       self.case_func = getattr( self, self.case_name, lambda:"default")
       return self.case_func()
 
-  def reset(self):
+  def reset_btn(self):
       if self.seq_command != 3:
         self.seq_command = 0
 
