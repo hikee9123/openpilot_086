@@ -370,6 +370,20 @@ class SpdController():
         return btn_type, set_speed, active_time
 
 
+    def update_btn(self, CS, sm, CC ): 
+        self.cruise_set_mode = CS.out.cruiseState.modeSel 
+        self.cruise_set_speed_kph = CS.out.cruiseState.speed * CV.MS_TO_KPH 
+        if CS.driverOverride == 2 or not CS.acc_active or CS.cruise_buttons == Buttons.RES_ACCEL or CS.cruise_buttons == Buttons.SET_DECEL: 
+          self.resume_cnt = 0 
+          self.btn_type = Buttons.NONE 
+          self.wait_timer2 = 10 
+          self.active_timer2 = 0 
+        elif self.wait_timer2: 
+          self.wait_timer2 -= 1
+        else:
+          return 1
+
+        return 0
 
     def update(self, CS, sm, CC ):
         self.cruise_set_mode = CS.out.cruiseState.modeSel
