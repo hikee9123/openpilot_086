@@ -131,7 +131,7 @@ class CLongControl():
 
 
   def update_scc( self, CS, set_speed ):
-    self.set_point = set_speed
+    self.set_point = max(30,set_speed)
     self.curr_speed = CS.out.vEgo * CV.MS_TO_KPH
     self.VSetDis   = CS.VSetDis
     btn_signal = self.switch( self.seq_command )
