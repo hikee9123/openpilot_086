@@ -301,11 +301,12 @@ class CarController():
       else:
         str_log2 = CS.str_carstate
         trace1.printf3( 'None={}'.format( str_log2 ) )
-
-      btn_signal = self.longCtrl.update_scc( CS, kph_vEgo )
-      if btn_signal != None:
-        can_sends.append(create_clu11(self.packer, self.resume_cnt, CS.clu11, btn_signal ))
-        self.resume_cnt += 1
+      
+      if CS.acc_active and CS.AVM_View == 23:
+        btn_signal = self.longCtrl.update_scc( CS, kph_vEgo )
+        if btn_signal != None:
+          can_sends.append(create_clu11(self.packer, self.resume_cnt, CS.clu11, btn_signal ))
+          self.resume_cnt += 1
     elif run_speed_ctrl:
       is_sc_run = self.SC.update( CS, sm, self )
       if is_sc_run:
