@@ -171,7 +171,7 @@ class LateralPlanner():
 
       # State transitions
       # off
-      if cruiseState.cruiseSwState == Buttons.CANCEL or steeringTorqueAbs > 300:
+      if cruiseState.cruiseSwState == Buttons.CANCEL or steeringTorqueAbs > 150:
         self.lane_change_state = LaneChangeState.off
         self.lane_change_direction = LaneChangeDirection.none
         self.lane_change_ll_prob = 1.0
