@@ -329,7 +329,8 @@ class CarController():
         elif self.vRel < -1:
           kph_set_vEgo -= 1
       else:
-        kph_set_vEgo += 5
+        kph_add = interp( kph_vEgo, [40,60], [10,5] )
+        kph_set_vEgo += kph_add
 
       kph_delta = kph_set_vEgo - kph_vEgo
       if kph_delta < -5:
