@@ -337,11 +337,13 @@ class CarController():
          self.dec_flag = True
 
       if frame % 2 or CS.driverOverride:
-        pass
+        self.longCtrl.reset( CS )
       elif CS.acc_active and self.dec_flag and  CS.out.cruiseState.modeSel == 4:
-        data = self.longCtrl.update( self.packer, CS, c, frame )
+        accel_dec = interp( self.vRel, [-30,-20,-5], [-0.1, -0.07,-0.04] )
+        data = self.longCtrl.update( self.packer, CS, c, frame, accel_dec )
         can_sends.append( data )
       else:
+        self.longCtrl.reset( CS )
         str_log2 = CS.str_carstate
         trace1.printf3( 'None={}'.format( str_log2 ) )
       
