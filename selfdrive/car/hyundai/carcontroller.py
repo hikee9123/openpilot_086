@@ -329,7 +329,7 @@ class CarController():
 
       if frame % 2 or CS.driverOverride:
         pass
-      elif CS.acc_active and self.dec_flag and  CS.AVM_View == 23:
+      elif CS.acc_active and self.dec_flag and  CS.out.cruiseState.modeSel == 4:
         data = self.longCtrl.update( self.packer, CS, c, frame )
         can_sends.append( data )
       else:
@@ -338,7 +338,7 @@ class CarController():
       
       if self.SC.update_btn(CS, sm, self ) == 0:
         pass
-      elif CS.acc_active and CS.AVM_View == 23:
+      elif CS.acc_active and CS.out.cruiseState.modeSel == 4:
         self.cruise_set_speed_kph = CS.out.cruiseState.speed * CV.MS_TO_KPH
         self.ctrl_speed = min( self.cruise_set_speed_kph, kph_set_vEgo)
         btn_signal = self.longCtrl.update_scc( CS, self.ctrl_speed )
