@@ -304,6 +304,10 @@ class CarController():
       yRelef = lead_2.yRel #EON Lead
       vRelef = lead_2.vRel * 3.6 + 0.5 #EON Lead
       lead2_status = lead_2.status
+
+      if dRele <= 0 or dRele > 150:
+        dRele = 150
+
       if lead2_status and (dRele - dRelef) > 3:
         self.cut_in = True
       else:
@@ -315,10 +319,14 @@ class CarController():
         if self.cut_in:
           self.dec_flag = True
           kph_set_vEgo -= 3
+        elif self.vRel >= 0:
+          kph_add = interp( self.vRel, [1,5,10], [1,3,5] )
+          kph_set_vEgo += kph_add
         elif self.vRel < -5:
+          kph_dec = interp( self.vRel, [-40,-20,-5], [15,7,3] )
           self.dec_flag = True
-          kph_set_vEgo -= 2
-        else:
+          kph_set_vEgo -= kph_dec
+        elif self.vRel < -1:
           kph_set_vEgo -= 1
       else:
         kph_set_vEgo += 5
