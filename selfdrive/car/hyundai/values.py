@@ -7,7 +7,7 @@ Ecu = car.CarParams.Ecu
 # Steer torque limits
 class CarControllerParams:
   def __init__(self, CP):
-    if CP.carFingerprint in [CAR.GRANDEUR_HEV_19]:
+    if CP.carFingerprint in [CAR.GRANDEUR_HEV_19, CAR.GRANDEUR_HEV_20, CAR.GRANDEUR_20]:
       self.STEER_MAX = 384 # 409      
     elif CP.carFingerprint in [CAR.SONATA, CAR.PALISADE, CAR.SANTA_FE, CAR.VELOSTER, CAR.GENESIS_G70, CAR.IONIQ_EV_2020]:
       self.STEER_MAX = 384
@@ -41,6 +41,8 @@ class CAR:
   PALISADE = "HYUNDAI PALISADE 2020"
   VELOSTER = "HYUNDAI VELOSTER 2019"
   GRANDEUR_HEV_19 = "HYUNDAI GRANDEUR HYBRID 2019"
+  GRANDEUR_HEV_20 = "HYUNDAI GRANDEUR HYBRID 2020"
+  GRANDEUR_20 = "HYUNDAI GRANDEUR 2020"
 
   # Kia
   KIA_FORTE = "KIA FORTE E 2018 & GT 2021"
@@ -173,7 +175,15 @@ FINGERPRINTS = {
   }],
   CAR.GRANDEUR_HEV_19: [{
     68: 8, 127: 8, 304: 8, 320: 8, 339: 8, 352: 8, 356: 4, 544: 8, 546: 8, 576: 8, 593: 8, 688: 5, 832: 8, 881: 8, 882: 8, 897: 8, 902: 8, 903: 8, 916: 8, 1040: 8, 1042: 8, 1056: 8, 1057: 8, 1078: 4, 1136: 6, 1151: 6, 1156: 8, 1157: 4, 1168: 7, 1173: 8, 1185: 8, 1225: 8, 1265: 4, 1280: 1, 1287: 4, 1290: 8, 1291: 8, 1292: 8, 1294: 8, 1312: 8, 1322: 8, 1342: 6, 1345: 8, 1348: 8, 1355: 8, 1363: 8, 1369: 8, 1371: 8, 1378: 4, 1407: 8, 1419: 8, 1425: 2, 1427: 6, 1429: 8, 1430: 8, 1448: 8, 1456: 4, 1470: 8, 1476: 8, 1535: 8
-  }]   
+  }],
+  CAR.GRANDEUR_20: [{
+    67: 8, 68: 8, 127: 8, 304: 8, 320: 8, 339: 8, 356: 4, 516: 8, 524: 8, 528: 8, 532: 8, 544: 8, 576: 8, 593: 8, 608: 8, 688: 5, 809: 8, 832: 8, 854: 8, 870: 7, 871: 8, 872: 8, 897: 8, 902: 8, 903: 8, 905: 8, 909: 8, 913: 8, 916: 8, 1040: 8, 1042: 8, 1056: 8, 1057: 8, 1078: 4, 1107: 5, 1136: 8, 1151: 8, 1155: 8, 1156: 8, 1157: 4, 1162: 8, 1164: 8, 1168: 8, 1170: 8, 1173: 8, 1180: 8, 1186: 2, 1191: 2, 1193: 8, 1210: 8, 1225: 8, 1227: 8, 1265: 4, 1280: 1, 1287: 4, 1290: 8, 1292: 8, 1294: 8, 1312: 8, 1322: 8, 1342: 8, 1345: 8, 1348: 8, 1363: 8, 1369: 8, 1371: 8, 1378: 8, 1384: 8, 1407: 8, 1419: 8, 1427: 6, 1456: 4, 1470: 8
+  }],
+  CAR.GRANDEUR_HEV_20: [{
+    127: 8, 304: 8, 320: 8, 339: 8, 352: 8, 356: 4, 544: 8, 576: 8, 593: 8, 688: 5, 832: 8, 865: 8, 881: 8, 882: 8, 897: 8, 902: 8, 903: 8, 905: 8, 909: 8, 913: 8, 916: 8, 1040: 8, 1042: 8, 1056: 8, 1057: 8, 1078: 4, 1108: 8, 1136: 6, 1138: 5, 1151: 8, 1155: 8, 1156: 8, 1157: 4, 1162: 8, 1164: 8, 1168: 8, 1173: 8, 1180: 8, 1186: 2, 1191: 2, 1193: 8, 1210: 8, 1225: 8, 1227: 8, 1265: 4, 1268: 8, 1280: 1, 1287: 4, 1290: 8, 1291: 8, 1292: 8, 1294: 8, 1312: 8, 1322: 8, 1342: 8, 1345: 8, 1348: 8, 1355: 8, 1363: 8, 1369: 8, 1371: 8, 1378: 8, 1407: 8, 1419: 8, 1427: 6, 1429: 8, 1430: 8, 1448: 8, 1456: 4, 1470: 8, 1476: 8, 1535: 8
+    },{
+    127: 8, 304: 8, 320: 8, 339: 8, 352: 8, 356: 4, 516: 8, 544: 8, 576: 8, 593: 8, 688: 5, 832: 8, 865: 8, 881: 8, 882: 8, 897: 8, 902: 8, 903: 8, 905: 8, 909: 8, 913: 8, 916: 8, 1040: 8, 1042: 8, 1056: 8, 1057: 8, 1078: 4, 1108: 8, 1136: 6, 1138: 5, 1151: 8, 1155: 8, 1156: 8, 1157: 4, 1162: 8, 1164: 8, 1168: 8, 1173: 8, 1180: 8, 1186: 2, 1191: 2, 1193: 8, 1210: 8, 1225: 8, 1227: 8, 1265: 4, 1268: 8, 1280: 1, 1287: 4, 1290: 8, 1291: 8, 1292: 8, 1294: 8, 1312: 8, 1322: 8, 1342: 8, 1345: 8, 1348: 8, 1355: 8, 1363: 8, 1369: 8, 1371: 8, 1378: 8, 1407: 8, 1419: 8, 1427: 6, 1429: 8, 1430: 8, 1448: 8, 1456: 4, 1470: 8, 1476: 8, 1535: 8
+  }]  
 }
 
 # Don't use these fingerprints for fingerprinting, they are still used for ECU detection
@@ -597,20 +607,20 @@ CHECKSUM = {
 
 FEATURES = {
   # which message has the gear
-  "use_cluster_gears": set([CAR.ELANTRA, CAR.ELANTRA_GT_I30, CAR.KONA]),
+  "use_cluster_gears": set([CAR.ELANTRA, CAR.ELANTRA_GT_I30, CAR.KONA, CAR.GRANDEUR_20]),
   "use_tcu_gears": set([CAR.KIA_OPTIMA, CAR.SONATA_LF, CAR.VELOSTER]),
-  "use_elect_gears": set([CAR.GRANDEUR_HEV_19,CAR.KIA_NIRO_EV, CAR.KIA_OPTIMA_H, CAR.IONIQ_EV_LTD, CAR.KONA_EV, CAR.IONIQ, CAR.IONIQ_EV_2020]),
+  "use_elect_gears": set([CAR.GRANDEUR_HEV_19,CAR.GRANDEUR_HEV_20,CAR.KIA_NIRO_EV, CAR.KIA_OPTIMA_H, CAR.IONIQ_EV_LTD, CAR.KONA_EV, CAR.IONIQ, CAR.IONIQ_EV_2020]),
 
   # these cars use the FCA11 message for the AEB and FCW signals, all others use SCC12
-  "use_fca": set([CAR.SONATA, CAR.ELANTRA, CAR.ELANTRA_GT_I30, CAR.KIA_STINGER, CAR.IONIQ, CAR.IONIQ_EV_2020, CAR.KONA_EV, CAR.KIA_FORTE, CAR.KIA_NIRO_EV, CAR.PALISADE, CAR.GENESIS_G70, CAR.KONA, CAR.SANTA_FE, CAR.KIA_SELTOS]),
+  "use_fca": set([CAR.GRANDEUR_HEV_20, CAR.GRANDEUR_20, CAR.SONATA, CAR.ELANTRA, CAR.ELANTRA_GT_I30, CAR.KIA_STINGER, CAR.IONIQ, CAR.IONIQ_EV_2020, CAR.KONA_EV, CAR.KIA_FORTE, CAR.KIA_NIRO_EV, CAR.PALISADE, CAR.GENESIS_G70, CAR.KONA, CAR.SANTA_FE, CAR.KIA_SELTOS]),
 
 
   # send LFA MFA message for new HKG models
-  "use_lfa_mfa": set([ CAR.PALISADE ]),
+  "use_lfa_mfa": set([ CAR.PALISADE, CAR.GRANDEUR_HEV_20, CAR.GRANDEUR_20 ]),
 }
 
 EV_HYBRID = set([CAR.IONIQ_EV_2020, CAR.IONIQ_EV_LTD, CAR.IONIQ, CAR.KONA_EV, CAR.KIA_NIRO_EV])
-HYBRID_VEH = set([CAR.GRANDEUR_HEV_19])
+HYBRID_VEH = set([CAR.GRANDEUR_HEV_19, CAR.GRANDEUR_HEV_20])
 
 DBC = {
   CAR.ELANTRA: dbc_dict('hyundai_kia_generic', None),
@@ -638,6 +648,8 @@ DBC = {
   CAR.VELOSTER: dbc_dict('hyundai_kia_generic', None),
   CAR.KIA_CEED: dbc_dict('hyundai_kia_generic', None),
   CAR.GRANDEUR_HEV_19: dbc_dict('hyundai_kia_generic_hybrid', None),
+  CAR.GRANDEUR_HEV_20: dbc_dict('hyundai_kia_generic_hybrid', None),
+  CAR.GRANDEUR_20: dbc_dict('hyundai_kia_generic', None),
 }
 
 STEER_THRESHOLD = 150
