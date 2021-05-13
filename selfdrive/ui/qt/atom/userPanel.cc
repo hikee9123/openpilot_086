@@ -434,6 +434,8 @@ CarSelectCombo::CarSelectCombo() : AbstractControl("Car", "자동차 모델을 �
     combobox.addItem("HYUNDAI PALISADE 2020");
     combobox.addItem("HYUNDAI VELOSTER 2019");
     combobox.addItem("HYUNDAI GRANDEUR HYBRID 2019");
+    combobox.addItem("HYUNDAI GRANDEUR HYBRID 2020");
+    combobox.addItem("HYUNDAI GRANDEUR 2020");  
 
 
     combobox.addItem("KIA FORTE E 2018 & GT 2021");
