@@ -321,7 +321,7 @@ class CarController():
           kph_set_vEgo -= 3
         elif self.vRel >= 0:
           if dRele < 50:
-            kph_add = interp( self.vRel, [1,5,10], [1,3,5] )
+            kph_add = interp( self.vRel, [1,10], [1,5] )
           else:
             kph_add = interp( self.vRel, [1,10], [1,10] )
 
@@ -335,6 +335,8 @@ class CarController():
       else:
         kph_add = interp( kph_vEgo, [40,60], [10,5] )
         kph_set_vEgo += kph_add
+
+      kph_set_vEgo = min( kph_set_vEgo, self.model_speed * 0.8)
 
       kph_delta = kph_set_vEgo - kph_vEgo
       if kph_delta < -5:
