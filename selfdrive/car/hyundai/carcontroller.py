@@ -320,7 +320,11 @@ class CarController():
           self.dec_flag = True
           kph_set_vEgo -= 3
         elif self.vRel >= 0:
-          kph_add = interp( self.vRel, [1,5,10], [1,3,5] )
+          if dRele < 50:
+            kph_add = interp( self.vRel, [1,5,10], [1,3,5] )
+          else:
+            kph_add = interp( self.vRel, [1,10], [1,10] )
+
           kph_set_vEgo += kph_add
         elif self.vRel < -5:
           kph_dec = interp( self.vRel, [-40,-20,-5], [15,7,3] )
