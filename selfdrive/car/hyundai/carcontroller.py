@@ -163,7 +163,7 @@ class CarController():
 
              
     if abs(CS.out.steeringAngleDeg) >= CS.CP.maxSteeringAngleDeg: # and CS.out.steeringPressed:
-      sec_mval = 0.5  # 오파 => 운전자.  (sec)
+      sec_mval = 10  # 오파 => 운전자.  (sec)
       sec_pval = 10   #  운전자 => 오파  (sec)
       self.timer1.startTime( 5000 )
       self.steer_torque_over_timer = 50
@@ -185,7 +185,7 @@ class CarController():
       self.steer_torque_over_timer = 0
     elif not CS.out.cruiseState.enabled:
       self.steer_torque_over_timer = 0
-    elif v_ego_kph > 5 and abs(CS.out.steeringTorque) > 250:  #사용자 핸들 토크
+    elif v_ego_kph > 5 and abs(CS.out.steeringTorque) > 280:  #사용자 핸들 토크
       self.steer_torque_over_timer = 50
     elif self.steer_torque_over_timer:
       self.steer_torque_over_timer -= 1
