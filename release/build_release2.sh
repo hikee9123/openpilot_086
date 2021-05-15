@@ -17,7 +17,7 @@ if [ ! -z "$CLEAN" ]; then
 
   # Create git repo
   git init
-  git remote add origin git@github.com:hikee9123/openpilot.git
+  git remote add origin git@github.com:commaai/openpilot.git
   git fetch origin devel-staging
 else
   cd /data/openpilot
@@ -83,7 +83,7 @@ git commit --amend -m "openpilot v$VERSION"
 #git status --ignored
 
 if [ ! -z "$PUSH" ]; then
-  git remote set-url origin git@github.com:hikee9123/openpilot.git
+  git remote set-url origin git@github.com:commaai/openpilot.git
 
   # Push to release2-staging
   git push -f origin release2-staging

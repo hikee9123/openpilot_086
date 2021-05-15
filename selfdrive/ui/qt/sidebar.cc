@@ -1,14 +1,9 @@
-#include "common/util.h"
-#include "sidebar.h"
-#include "qt_window.h"
-#include "selfdrive/hardware/hw.h"
+#include "selfdrive/ui/qt/sidebar.h"
 
-void configFont(QPainter &p, QString family, int size, int weight) {
-  QFont f(family);
-  f.setPixelSize(size);
-  f.setWeight(weight);
-  p.setFont(f);
-}
+#include "selfdrive/ui/qt/qt_window.h"
+#include "selfdrive/common/util.h"
+#include "selfdrive/hardware/hw.h"
+#include "selfdrive/ui/qt/util.h"
 
 void Sidebar::drawMetric(QPainter &p, const QString &label, const QString &val, QColor c, int y) {
   const QRect rect = {30, y, 240, val.isEmpty() ? (label.contains("\n") ? 124 : 100) : 148};
@@ -27,13 +22,13 @@ void Sidebar::drawMetric(QPainter &p, const QString &label, const QString &val, 
 
   p.setPen(QColor(0xff, 0xff, 0xff));
   if (val.isEmpty()) {
-    configFont(p, "Open Sans", 35, 500);
+    configFont(p, "Open Sans", 35, "Bold");
     const QRect r = QRect(rect.x() + 35, rect.y(), rect.width() - 50, rect.height());
     p.drawText(r, Qt::AlignCenter, label);
   } else {
-    configFont(p, "Open Sans", 58, 500);
+    configFont(p, "Open Sans", 58, "Bold");
     p.drawText(rect.x() + 50, rect.y() + 71, val);
-    configFont(p, "Open Sans", 35, 400);
+    configFont(p, "Open Sans", 35, "Regular");
     p.drawText(rect.x() + 50, rect.y() + 50 + 77, label);
   }
 }
@@ -91,7 +86,6 @@ void Sidebar::update(const UIState &s) {
   if (s.sm->updated("deviceState") || s.sm->updated("pandaState")) {
     // atom
     m_battery_img = s.scene.deviceState.getBatteryStatus() == "Charging" ? 1 : 0;
-  
     m_batteryPercent = s.scene.deviceState.getBatteryPercent();
     m_strip = s.scene.deviceState.getWifiIpAddress();
     repaint();
@@ -111,7 +105,7 @@ void Sidebar::paintEvent(QPaintEvent *event) {
 
   // network
   p.drawImage(58, 196, signal_imgs[strength]);
-  configFont(p, "Open Sans", 35, 400);
+  configFont(p, "Open Sans", 35, "Regular");
   p.setPen(QColor(0xff, 0xff, 0xff));
   const QRect r = QRect(50, 237, 100, 50);
   p.drawText(r, Qt::AlignCenter, network_type[net_type]);
@@ -125,7 +119,7 @@ void Sidebar::paintEvent(QPaintEvent *event) {
   if( m_batteryPercent <= 1) return;
   QString  strip = m_strip.c_str();
   const QRect r2 = QRect(50, 295, 200, 50);
-  configFont(p, "Open Sans", 28, 400);
+  configFont(p, "Open Sans", 28, "Regular");
   p.drawText(r2, Qt::AlignLeft, strip);
 
   // atom - battery
@@ -136,7 +130,7 @@ void Sidebar::paintEvent(QPaintEvent *event) {
   p.drawImage(rect, battery_imgs[m_battery_img]);
 
   p.setPen(Qt::white);
-  configFont(p, "Open Sans", 25, 400);
+  configFont(p, "Open Sans", 25, "Regular");
 
   char temp_value_str1[32];
   snprintf(temp_value_str1, sizeof(temp_value_str1), "%d", m_batteryPercent );
