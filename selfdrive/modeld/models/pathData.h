@@ -4,9 +4,9 @@
 #include <unistd.h>
 #include <eigen3/Eigen/Dense>
 
-#include "common/timing.h"
-#include "common/params.h"
-#include "clutil.h"
+#include "selfdrive/common/timing.h"
+#include "selfdrive/common/params.h"
+#include "selfdrive/common/clutil.h"
 
 const int  POLYFIT_DEGREE = 4;
 const int MODEL_PATH_DISTANCE = 192;
