@@ -6,14 +6,14 @@
 
 
 
-#include "widgets/input.h"
-#include "widgets/toggle.h"
-#include "widgets/offroad_alerts.h"
-#include "widgets/controls.h"
+#include "selfdrive/ui/qt/widgets/input.h"
+#include "selfdrive/ui/qt/widgets/toggle.h"
+#include "selfdrive/ui/qt/widgets/offroad_alerts.h"
+#include "selfdrive/ui/qt/widgets/controls.h"
 
-#include "common/params.h"
-#include "common/util.h"
-#include "ui.h"
+#include "selfdrive/common/params.h"
+#include "selfdrive/common/util.h"
+#include "selfdrive/ui/ui.h"
 
 #include "userPanel.hpp"
 
