@@ -323,7 +323,7 @@ class CarController():
       if dRele <= 0 or dRele >= 150:
         dRele = 150
         self.longFlag = 0
-      elif kph_vEgo < 50 or yRele > 2:
+      elif kph_vEgo < 30 or yRele > 2:
         self.longFlag = 0
       else:
         delta_ctrl_spd = abs(self.cruise_set_speed_kph - kph_vEgo)
