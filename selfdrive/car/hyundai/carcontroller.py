@@ -65,6 +65,7 @@ class CarController():
 
     # long control
     self.longCtrl = CLongControl(self.p)
+    self.longFlag = 0
 
 
 
@@ -300,13 +301,14 @@ class CarController():
 
       if kph_vEgo < 30:
         self.dec_flag = True
-      elif kph_delta < -2:
+      elif kph_delta < -1:
         self.dec_flag = True
       else:
         self.dec_flag = False
          
       
-      """
+
+      self.cruise_set_speed_kph = CS.out.cruiseState.speed * CV.MS_TO_KPH
       lead_1 = sm['radarState'].leadOne
       lead_2 = sm['radarState'].leadTwo    
 
@@ -318,47 +320,28 @@ class CarController():
       vRelef = lead_2.vRel * 3.6 + 0.5 #EON Lead
       lead2_status = lead_2.status
 
-      if dRele <= 0 or dRele > 150:
+      if dRele <= 0 or dRele >= 150:
         dRele = 150
-
-      if lead2_status and (dRele - dRelef) > 3:
-        self.cut_in = True
+        self.longFlag = 0
+      elif kph_vEgo < 50:
+        self.longFlag = 0
       else:
-        self.cut_in = False
+        delta_ctrl_spd = abs(self.cruise_set_speed_kph - kph_vEgo)
+        if delta_ctrl_spd <= 5:
+          self.longFlag = 1
 
-      kph_set_vEgo = kph_vEgo
-      self.dec_flag = False
-      if dRele < 140:
-        if self.cut_in:
-          self.dec_flag = True
-          kph_set_vEgo -= 3
-        elif self.vRel >= 0:
-          if dRele < 50:
-            kph_add = interp( self.vRel, [1,10], [1,5] )
-          else:
-            kph_add = interp( self.vRel, [1,10], [1,10] )
 
-          kph_set_vEgo += kph_add
-        elif self.vRel < -2:
-          kph_dec = interp( self.vRel, [-40,-20,-3], [15,7,3] )
+      if dRele < 140 and self.longFlag:
+        if self.vRel < -1:
+          kph_dec = interp( self.vRel, [-40,-20,-1], [15,10,1] )
           self.dec_flag = True
           kph_set_vEgo -= kph_dec
-        elif self.vRel < -1:
-          kph_set_vEgo -= 1
-      else:
-        kph_add = interp( kph_vEgo, [40,60], [10,5] )
-        kph_set_vEgo += kph_add
 
-      kph_set_vEgo = min( kph_set_vEgo, self.model_speed * 0.8)
 
-      kph_delta = kph_set_vEgo - kph_vEgo
-      if kph_delta < -5:
-         self.dec_flag = True
-      """
       if frame % 2 or CS.driverOverride:
         self.longCtrl.reset( CS )
       elif CS.acc_active and self.dec_flag and  CS.out.cruiseState.modeSel == 4:
-        accel_dec = interp( self.vRel, [-30,-20,-5], [-0.1, -0.07,-0.04] )
+        accel_dec = interp( self.vRel, [-30,-20,-5], [-0.2, -0.1,-0.04] )
         data = self.longCtrl.update( self.packer, CS, c, frame, accel_dec )
         can_sends.append( data )
       else:
@@ -369,7 +352,6 @@ class CarController():
       if self.SC.update_btn(CS, sm, self ) == 0:
         pass
       elif CS.acc_active and CS.out.cruiseState.modeSel == 4:
-        self.cruise_set_speed_kph = CS.out.cruiseState.speed * CV.MS_TO_KPH
         self.ctrl_speed = min( self.cruise_set_speed_kph, kph_set_vEgo)
         btn_signal = self.longCtrl.update_scc( CS, self.ctrl_speed )
         if btn_signal != None:
