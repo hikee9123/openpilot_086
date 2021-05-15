@@ -294,6 +294,19 @@ class CarController():
     elif CP.openpilotLongitudinalControl:
       # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
       # atom
+      vCruise =  sm['longitudinalPlan'].vCruise
+      kph_set_vEgo = vCruise
+      kph_delta = kph_set_vEgo - kph_vEgo
+
+      if kph_vEgo < 30:
+        self.dec_flag = True
+      elif kph_delta < -2:
+        self.dec_flag = True
+      else:
+        self.dec_flag = False
+         
+      
+      """
       lead_1 = sm['radarState'].leadOne
       lead_2 = sm['radarState'].leadTwo    
 
@@ -341,7 +354,7 @@ class CarController():
       kph_delta = kph_set_vEgo - kph_vEgo
       if kph_delta < -5:
          self.dec_flag = True
-
+      """
       if frame % 2 or CS.driverOverride:
         self.longCtrl.reset( CS )
       elif CS.acc_active and self.dec_flag and  CS.out.cruiseState.modeSel == 4:
