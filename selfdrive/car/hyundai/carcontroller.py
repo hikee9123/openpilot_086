@@ -315,7 +315,7 @@ class CarController():
 
       kph_set_vEgo = kph_vEgo
       self.dec_flag = False
-      if dRele < 100:
+      if dRele < 140:
         if self.cut_in:
           self.dec_flag = True
           kph_set_vEgo -= 3
@@ -326,8 +326,8 @@ class CarController():
             kph_add = interp( self.vRel, [1,10], [1,10] )
 
           kph_set_vEgo += kph_add
-        elif self.vRel < -5:
-          kph_dec = interp( self.vRel, [-40,-20,-5], [15,7,3] )
+        elif self.vRel < -2:
+          kph_dec = interp( self.vRel, [-40,-20,-3], [15,7,3] )
           self.dec_flag = True
           kph_set_vEgo -= kph_dec
         elif self.vRel < -1:
