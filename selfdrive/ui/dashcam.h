@@ -3,8 +3,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include "common/params.h"
-#include "home.h"
+#include "selfdrive/common/params.h"
+#include "selfdrive/ui/qt/home.h"
 
 #define CAPTURE_STATE_NONE 0
 #define CAPTURE_STATE_CAPTURING 1
