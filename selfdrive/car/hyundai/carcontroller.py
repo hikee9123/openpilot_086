@@ -299,7 +299,7 @@ class CarController():
       kph_set_vEgo = vCruise * CV.MS_TO_KPH
       kph_delta = kph_set_vEgo - kph_vEgo
 
-      if kph_vEgo < 30:
+      if kph_vEgo < 30 and kph_vEgo > 1:
         self.dec_flag = True
       elif kph_delta < -1:
         self.dec_flag = True
@@ -323,7 +323,7 @@ class CarController():
       if dRele <= 0 or dRele >= 150:
         dRele = 150
         self.longFlag = 0
-      elif kph_vEgo < 50:
+      elif kph_vEgo < 50 or yRele > 2:
         self.longFlag = 0
       else:
         delta_ctrl_spd = abs(self.cruise_set_speed_kph - kph_vEgo)
@@ -333,7 +333,7 @@ class CarController():
 
       if dRele < 140 and self.longFlag:
         if self.vRel < -1:
-          kph_dec = interp( self.vRel, [-40,-20,-1], [15,10,1] )
+          kph_dec = interp( self.vRel, [-20,-10,-1], [15,10,1] )
           self.dec_flag = True
           kph_set_vEgo -= kph_dec
 
