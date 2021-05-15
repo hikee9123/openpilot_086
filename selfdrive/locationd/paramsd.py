@@ -151,7 +151,7 @@ def main(sm=None, pm=None):
 
   # When driving in wet conditions the stiffness can go down, and then be too low on the next drive
   # Without a way to detect this we have to reset the stiffness every drive
-  params['stiffnessFactor'] = 0.9
+  params['stiffnessFactor'] = 0.84
   params['angleOffsetAverageDeg'] = 0
   opkrLiveSteerRatio = int(params_reader.get("OpkrLiveSteerRatio"))
   
