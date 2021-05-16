@@ -492,7 +492,7 @@ static void ui_draw_debug2(UIState *s)
     int  lensPos = scene.camera_state.getLensPos();
     float  lensTruePos = scene.camera_state.getLensTruePos();
     float  lensErr = scene.camera_state.getLensErr();
-    ui_print( s, x_pos, y_pos+450, "frame:%d,%.3f,%.3f", lensPos, lensTruePos, lensErr );
+    ui_print( s, x_pos, y_pos+450, "frame:%d,%.3f,%.3f, %d", lensPos, lensTruePos, lensErr, Params::param_value.autoFocus );
   //float  dPoly = scene.pathPlan.lPoly + scene.pathPlan.rPoly;
   //ui_print( s, x_pos, y_pos+300, "Poly:%.2f, %.2f = %.2f", scene.pathPlan.lPoly, scene.pathPlan.rPoly, dPoly );
   // ui_print( s, x_pos, y_pos+350, "map:%d,cam:%d", scene.live.map_valid, scene.live.speedlimitahead_valid  );
