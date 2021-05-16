@@ -323,7 +323,7 @@ AutoScreenOff::AutoScreenOff() : AbstractControl("EON 화면 끄기(분)", "주�
     } else {
     }
 
-    QUIState::ui_state.scene.scr.autoFocus = value;
+    QUIState::ui_state.scene.scr.autoScreenOff = value;
     QString values = QString::number(value);
     Params().put("OpkrAutoScreenOff", values.toStdString());
     refresh();
@@ -338,7 +338,7 @@ AutoScreenOff::AutoScreenOff() : AbstractControl("EON 화면 끄기(분)", "주�
     } else {
     }
 
-    QUIState::ui_state.scene.scr.autoFocus = value;
+    QUIState::ui_state.scene.scr.autoScreenOff = value;
     QString values = QString::number(value);
     Params().put("OpkrAutoScreenOff", values.toStdString());
     refresh();

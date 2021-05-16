@@ -133,7 +133,19 @@ private:
   void refresh();
 };
 
+class CAutoFocus : public AbstractControl {
+  Q_OBJECT
 
+public:
+  CAutoFocus();
+
+private:
+  QPushButton btnplus;
+  QPushButton btnminus;
+  QLabel label;
+
+  void refresh();
+};
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 //  Git
