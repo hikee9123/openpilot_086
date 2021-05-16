@@ -222,10 +222,14 @@ static void update_state(UIState *s) {
       }
     }
   }
-  if (Hardware::TICI() && sm.updated("roadCameraState")) {
+  if ( sm.updated("roadCameraState")) {
     scene.camera_state = sm["roadCameraState"].getRoadCameraState();
-    float gain = scene.camera_state.getGainFrac() * (scene.camera_state.getGlobalGain() > 100 ? 2.5 : 1.0) / 10.0;
-    scene.light_sensor = std::clamp<float>((1023.0 / 1757.0) * (1757.0 - scene.camera_state.getIntegLines()) * (1.0 - gain), 0.0, 1023.0);
+
+    if ( Hardware::TICI() )
+    {
+      float gain = scene.camera_state.getGainFrac() * (scene.camera_state.getGlobalGain() > 100 ? 2.5 : 1.0) / 10.0;
+      scene.light_sensor = std::clamp<float>((1023.0 / 1757.0) * (1757.0 - scene.camera_state.getIntegLines()) * (1.0 - gain), 0.0, 1023.0);
+    }
   }
   scene.started = scene.deviceState.getStarted() || scene.driver_view;
 
