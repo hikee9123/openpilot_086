@@ -352,12 +352,20 @@ static void screen_menu_button(UIState *s, int touch_x, int touch_y, int touched
     if( touched && screen_button_clicked(touch_x, touch_y, 1000, 950, 150, 150) )
     {
         int value = Params::param_value.autoFocus++;
+        if( value > 100)
+        {
+          Params::param_value.autoFocus = 100;
+        }
         QString values = QString::number(value);
         Params().put("OpkrAutoFocus", values.toStdString());
     }
     else if( touched && screen_button_clicked(touch_x, touch_y, 1200, 950, 150, 150) )
     {
         int value = Params::param_value.autoFocus--;
+        if( value < 0)
+        {
+          Params::param_value.autoFocus = 0;
+        }
         QString values = QString::number(value);
         Params().put("OpkrAutoFocus", values.toStdString());
     }
