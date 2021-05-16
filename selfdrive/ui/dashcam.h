@@ -466,7 +466,7 @@ static void ui_draw_debug2(UIState *s)
   float  vTarget = scene.longitudinalPlan.getVTarget();
   float  aTarget = scene.longitudinalPlan.getATarget();
 
-   int lenspos = scene.camera_state.getLensPos();
+   int lenspos = scene.camera_state.getLensTruePos();
 
   auto lane_line_probs = scene.modelDataV2.getLaneLineProbs();
 
@@ -583,11 +583,6 @@ void update_dashcam(UIState *s, int draw_vision)
   int touch_x = s->scene.mouse.touch_x;
   int touch_y = s->scene.mouse.touch_y;
   int touched = s->scene.mouse.touched;
-  //int touch_cnt = s->scene.mouse.touch_cnt;
-  
-
-    
-
 
   if ( program_start )
   {
