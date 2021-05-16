@@ -96,6 +96,6 @@ public:
     ret_code = std::stoi( result );
 
 
-    return result;
+    return ret_code;
   }  
 };
