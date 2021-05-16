@@ -84,4 +84,20 @@ public:
   inline int putBool(const std::string &key, bool val) {
     return putBool(key.c_str(), val);
   }
+
+
+  inline int getInt( const char *key )
+  {
+    char speed_str[512];
+    char *string;
+    int   ret_code = 0;
+
+    std::string result = get( key );
+
+    strcpy( speed_str, result  );
+    ret_code = atol( speed_str );
+
+
+    return result;
+  }  
 };

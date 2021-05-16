@@ -36,16 +36,8 @@ const uint16_t INFINITY_DAC = 364;
 extern ExitHandler do_exit;
 
 
-extern int get_param( const std::string &key );
 
-/*
-int get_param( const std::string &key )
-{
-    auto str = QString::fromStdString(Params().get( key ));
-    int value = str.toInt();
-    return value;
-}
-*/
+
 static int cam_ioctl(int fd, unsigned long int request, void *arg, const char *log_msg = nullptr) {
   int err = ioctl(fd, request, arg);
   if (err != 0 && log_msg) {
@@ -891,8 +883,8 @@ static void do_autofocus(CameraState *s, SubMaster *sm) {
   lens_true_pos = std::clamp(lens_true_pos, float(LP3_AF_DAC_DOWN), float(LP3_AF_DAC_UP));
   int target = std::clamp(lens_true_pos - sag, float(LP3_AF_DAC_DOWN), float(LP3_AF_DAC_UP));
 
-
-  Params::param_value.autoFocus = get_param("OpkrAutoFocus");
+  Params param = Params();
+  Params::param_value.autoFocus = param.getInt("OpkrAutoFocus");
   if( Params::param_value.autoFocus )
   {
     target = LP3_AF_DAC_DOWN + Params::param_value.autoFocus;
