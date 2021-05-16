@@ -890,7 +890,7 @@ static void do_autofocus(CameraState *s, SubMaster *sm) {
   {
     nStep = 0;
     Params param = Params();
-    Params::param_value.autoFocus = param.getInt("OpkrAutoFocus");
+    Params::param_value.autoFocus = param.getInt("OpkrAutoFocus") * 2;
   }
 
   if( Params::param_value.autoFocus )
