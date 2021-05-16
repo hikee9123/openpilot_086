@@ -116,6 +116,7 @@ typedef struct UIScene {
   struct _screen
   {
      int  nTime;
+     int  autoFocus;
      int  autoScreenOff;
      int  brightness;
      int  nVolumeBoost;

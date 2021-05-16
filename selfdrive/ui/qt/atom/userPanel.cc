@@ -280,6 +280,7 @@ void CVolumeControl::refresh() {
   btnminus.setText("－");
   btnplus.setText("＋");
 }
+
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 //  AutoScreenOff
@@ -322,7 +323,7 @@ AutoScreenOff::AutoScreenOff() : AbstractControl("EON 화면 끄기(분)", "주�
     } else {
     }
 
-    QUIState::ui_state.scene.scr.autoScreenOff = value;
+    QUIState::ui_state.scene.scr.autoFocus = value;
     QString values = QString::number(value);
     Params().put("OpkrAutoScreenOff", values.toStdString());
     refresh();
@@ -337,7 +338,7 @@ AutoScreenOff::AutoScreenOff() : AbstractControl("EON 화면 끄기(분)", "주�
     } else {
     }
 
-    QUIState::ui_state.scene.scr.autoScreenOff = value;
+    QUIState::ui_state.scene.scr.autoFocus = value;
     QString values = QString::number(value);
     Params().put("OpkrAutoScreenOff", values.toStdString());
     refresh();
@@ -358,6 +359,82 @@ void AutoScreenOff::refresh()
 }
 
 
+////////////////////////////////////////////////////////////////////////////////////////
+//
+//  Auto Focus
+
+
+CAutoFocus::CAutoFocus() : AbstractControl("Auto Focus", "AUto Focus.", "../assets/offroad/icon_shell.png") 
+{
+
+  label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
+  label.setStyleSheet("color: #e0e879");
+  hlayout->addWidget(&label);
+
+  btnminus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnplus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnminus.setFixedSize(150, 100);
+  btnplus.setFixedSize(150, 100);
+  hlayout->addWidget(&btnminus);
+  hlayout->addWidget(&btnplus);
+
+  QObject::connect(&btnminus, &QPushButton::released, [=]() {
+    auto str = QString::fromStdString(Params().get("OpkrAutoFocus"));
+    int value = str.toInt();
+    value = value - 1;
+    if (value <= 0 ) {
+      value = 0;
+    } else {
+    }
+
+    QUIState::ui_state.scene.scr.autoScreenOff = value;
+    QString values = QString::number(value);
+    Params().put("OpkrAutoFocus", values.toStdString());
+    refresh();
+  });
+  
+  QObject::connect(&btnplus, &QPushButton::released, [=]() {
+    auto str = QString::fromStdString(Params().get("OpkrAutoFocus"));
+    int value = str.toInt();
+    value = value + 1;
+    if (value >= 100 ) {
+      value = 100;
+    } else {
+    }
+
+    QUIState::ui_state.scene.scr.autoScreenOff = value;
+    QString values = QString::number(value);
+    Params().put("OpkrAutoFocus", values.toStdString());
+    refresh();
+  });
+  refresh();
+}
+
+void CAutoFocus::refresh() 
+{
+  QString option = QString::fromStdString(Params().get("OpkrAutoFocus"));
+  if (option == "0") {
+    label.setText(QString::fromStdString("자동"));
+  } else {
+    label.setText(QString::fromStdString(Params().get("OpkrAutoFocus")));
+  }
+  btnminus.setText("－");
+  btnplus.setText("＋");
+}
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 //  Git

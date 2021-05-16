@@ -586,6 +586,8 @@ void update_dashcam(UIState *s, int draw_vision)
   if ( program_start )
   {
     program_start = 0;
+
+    s->scene.scr.autoFocus = get_param("OpkrAutoFocus");
     s->scene.scr.autoScreenOff = get_param("OpkrAutoScreenOff");
     s->scene.scr.brightness = get_param("OpkrUIBrightness");
 

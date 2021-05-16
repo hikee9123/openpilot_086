@@ -223,7 +223,8 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"OpkrUIBrightness", PERSISTENT},
     {"OpkrUIVolumeBoost", PERSISTENT},  
     {"LongitudinalControl", PERSISTENT},
-    {"OpkrSSHLegacy", PERSISTENT},      
+    {"OpkrSSHLegacy", PERSISTENT},
+    {"OpkrAutoFocus", PERSISTENT},
 };
 
 } // namespace

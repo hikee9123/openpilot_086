@@ -42,6 +42,7 @@ def manager_init():
     ("OpkrTurnSteeringDisable", "0"),
     ("OpkrPrebuilt", "0"),
     ("OpkrAutoScreenOff", "0"),
+    ("OpkrAutoFocus", "0"),
     ("OpkrUIBrightness", "0"),
     ("OpkrUIVolumeBoost", "0"),    
     ("LongitudinalControl", "0"),

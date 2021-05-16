@@ -877,6 +877,12 @@ static void do_autofocus(CameraState *s, SubMaster *sm) {
   // stay off the walls
   lens_true_pos = std::clamp(lens_true_pos, float(LP3_AF_DAC_DOWN), float(LP3_AF_DAC_UP));
   int target = std::clamp(lens_true_pos - sag, float(LP3_AF_DAC_DOWN), float(LP3_AF_DAC_UP));
+
+  if( QUIState::ui_state.scene.scr.autoFocus )
+  {
+    target = LP3_AF_DAC_DOWN + QUIState::ui_state.scene.scr.autoFocus;
+  }
+
   s->lens_true_pos.store(lens_true_pos);
 
   char debug[4096];
