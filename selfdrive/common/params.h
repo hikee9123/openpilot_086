@@ -88,14 +88,12 @@ public:
 
   inline int getInt( const char *key )
   {
-    char speed_str[512];
-    char *string;
     int   ret_code = 0;
 
     std::string result = get( key );
 
-    strcpy( speed_str, result  );
-    ret_code = atol( speed_str );
+
+    ret_code = std::stoi( result );
 
 
     return result;
