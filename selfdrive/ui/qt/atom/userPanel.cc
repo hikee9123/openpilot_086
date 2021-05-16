@@ -95,6 +95,7 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
   layout()->addWidget(new BrightnessControl());
   layout()->addWidget(new CVolumeControl());  
   layout()->addWidget(new AutoScreenOff());
+  layout()->addWidget(new CAutoFocus());
 
   layout()->addWidget(horizontal_line());
 
@@ -365,7 +366,7 @@ void AutoScreenOff::refresh()
 
   
 
-CAutoFocus::CAutoFocus() : AbstractControl("Auto Focus", "AUto Focus.", "../assets/offroad/icon_shell.png") 
+CAutoFocus::CAutoFocus() : AbstractControl("Auto Focus", "Focus을 변경합니다.  0:auto  1~100:manaul", "../assets/offroad/icon_shell.png") 
 {
 
   label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
