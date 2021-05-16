@@ -35,6 +35,13 @@ const uint16_t INFINITY_DAC = 364;
 
 extern ExitHandler do_exit;
 
+int get_param( const std::string &key )
+{
+    auto str = QString::fromStdString(Params().get( key ));
+    int value = str.toInt();
+    return value;
+}
+
 static int cam_ioctl(int fd, unsigned long int request, void *arg, const char *log_msg = nullptr) {
   int err = ioctl(fd, request, arg);
   if (err != 0 && log_msg) {
