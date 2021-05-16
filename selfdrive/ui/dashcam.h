@@ -462,9 +462,9 @@ static void ui_draw_debug2(UIState *s)
   //float  cpuPerc = scene.deviceState.getCpuUsagePercent();
 
   float  vCruise = scene.longitudinalPlan.getVCruise();
-  float  aCruise = scene.longitudinalPlan.getACruise();
-  float  vTarget = scene.longitudinalPlan.getVTarget();
-  float  aTarget = scene.longitudinalPlan.getATarget();
+//  float  aCruise = scene.longitudinalPlan.getACruise();
+//  float  vTarget = scene.longitudinalPlan.getVTarget();
+ // float  aTarget = scene.longitudinalPlan.getATarget();
 
 
   auto lane_line_probs = scene.modelDataV2.getLaneLineProbs();
