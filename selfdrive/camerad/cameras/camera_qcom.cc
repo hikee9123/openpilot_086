@@ -883,8 +883,16 @@ static void do_autofocus(CameraState *s, SubMaster *sm) {
   lens_true_pos = std::clamp(lens_true_pos, float(LP3_AF_DAC_DOWN), float(LP3_AF_DAC_UP));
   int target = std::clamp(lens_true_pos - sag, float(LP3_AF_DAC_DOWN), float(LP3_AF_DAC_UP));
 
-  Params param = Params();
-  Params::param_value.autoFocus = param.getInt("OpkrAutoFocus");
+
+  static int nStep = 0;
+  nStep++;
+  if( nStep > 10 )
+  {
+    nStep = 0;
+    Params param = Params();
+    Params::param_value.autoFocus = param.getInt("OpkrAutoFocus");
+  }
+
   if( Params::param_value.autoFocus )
   {
     target = LP3_AF_DAC_DOWN + Params::param_value.autoFocus;
@@ -892,13 +900,17 @@ static void do_autofocus(CameraState *s, SubMaster *sm) {
 
   s->lens_true_pos.store(lens_true_pos);
 
-  char debug[4096];
-  char *pdebug = debug;
-  pdebug += sprintf(pdebug, "focus ");
-  //for (int i = 0; i < NUM_FOCUS; i++) pdebug += sprintf(pdebug, "%2x(%4d) ", s->confidence[i], s->focus[i]);
-  pdebug += sprintf(pdebug, "autoFocus=%d  lens_true_pos: %7.2f   sag: %6.2f  cur_lens_pos: %4d->%4d", Params::param_value.autoFocus, lens_true_pos, sag,  s->cur_lens_pos, target);
-  //LOGD(debug);
-  printf("%s \n",debug);
+  if(  nStep == 0)
+  {
+    char debug[4096];
+    char *pdebug = debug;
+    pdebug += sprintf(pdebug, "focus ");
+    //for (int i = 0; i < NUM_FOCUS; i++) pdebug += sprintf(pdebug, "%2x(%4d) ", s->confidence[i], s->focus[i]);
+    pdebug += sprintf(pdebug, "autoFocus=%d  lens_true_pos: %7.2f   sag: %6.2f  cur_lens_pos: %4d->%4d", Params::param_value.autoFocus, lens_true_pos, sag,  s->cur_lens_pos, target);
+    //LOGD(debug);
+    printf("%s \n",debug);
+  }
+
   actuator_move(s, target);
 }
 
