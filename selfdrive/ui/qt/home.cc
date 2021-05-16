@@ -64,7 +64,7 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
   int e_y = e->y();
   int e_button= e->button();
   // 1400, 820
-  if( e_x < 1000 || e_y < 820 ) 
+  if( e_x < 500 || e_y < 800 ) 
   {
     // Handle sidebar collapsing
   if (onroad->isVisible() && (!sidebar->isVisible() || e->x() > sidebar->width())) {

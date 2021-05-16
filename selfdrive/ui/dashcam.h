@@ -349,20 +349,20 @@ static void screen_menu_button(UIState *s, int touch_x, int touch_y, int touched
   nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
 
 
-    if( touched && screen_button_clicked(touch_x, touch_y, 800, 1000, 150, 150) )
+    if( touched && screen_button_clicked(touch_x, touch_y, 1000, 950, 150, 150) )
     {
         int value = Params::param_value.autoFocus++;
         QString values = QString::number(value);
         Params().put("OpkrAutoFocus", values.toStdString());
     }
-    else if( touched && screen_button_clicked(touch_x, touch_y, 1000, 900, 150, 150) )
+    else if( touched && screen_button_clicked(touch_x, touch_y, 1200, 950, 150, 150) )
     {
         int value = Params::param_value.autoFocus--;
         QString values = QString::number(value);
         Params().put("OpkrAutoFocus", values.toStdString());
     }
-    nvgText(s->vg, 800, 900, "[+]", NULL);
-    nvgText(s->vg, 1000, 900, "[-]", NULL);
+    nvgText(s->vg, 1000, 950, "[+]", NULL);
+    nvgText(s->vg, 1200, 950, "[-]", NULL);
 
     int btn_w = 150;
     int btn_h = 150;
