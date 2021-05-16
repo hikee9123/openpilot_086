@@ -21,6 +21,7 @@
 #include "selfdrive/common/timing.h"
 #include "selfdrive/common/util.h"
 #include "selfdrive/hardware/hw.h"
+
 #include "selfdrive/ui/ui.h"
 
 #include "dashcam.h"
@@ -790,7 +791,7 @@ static void ui_draw_vision(UIState *s) {
     }
     // Set Speed, Current Speed, Status/Events
     ui_draw_vision_header(s);
-    if (s->scene.controls_state.getAlertSize() == cereal::ControlsState::AlertSize::NONE) {
+    if ((*s->sm)["controlsState"].getControlsState().getAlertSize() == cereal::ControlsState::AlertSize::NONE) {
       ui_draw_vision_face(s);
     }
   } else {

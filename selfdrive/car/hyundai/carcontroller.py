@@ -271,7 +271,7 @@ class CarController():
     str_log1 = 'Value={:.5f} raw={:.5f} gas={:.3f} gap={:.0f}  BTN={:.0f} Alive={:2.0f} '.format( CS.aReqValue, CS.aReqRaw, CS.out.gas, CS.cruiseGapSet, CS.cruise_buttons, CS.CR_VSM_Alive )
     trace1.printf2( '{}'.format( str_log1 ) )
 
-    run_speed_ctrl = CS.acc_active and self.SC != None
+    #run_speed_ctrl = CS.acc_active and self.SC != None
 
     if pcm_cancel_cmd:
       can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.CANCEL))
@@ -338,16 +338,16 @@ class CarController():
           kph_set_vEgo -= kph_dec
 
 
-      if frame % 2 or CS.driverOverride:
-        self.longCtrl.reset( CS )
-      elif CS.acc_active and self.dec_flag and  CS.out.cruiseState.modeSel == 4:
-        accel_dec = interp( self.vRel, [-30,-20,-5], [-0.2, -0.1,-0.04] )
-        data = self.longCtrl.update( self.packer, CS, c, frame, accel_dec )
-        can_sends.append( data )
-      else:
-        self.longCtrl.reset( CS )
-        str_log2 = CS.str_carstate
-        trace1.printf3( 'None={}'.format( str_log2 ) )
+      #if frame % 2 or CS.driverOverride:
+      #  self.longCtrl.reset( CS )
+      #elif CS.acc_active and self.dec_flag and  CS.out.cruiseState.modeSel == 4:
+      #  accel_dec = interp( self.vRel, [-30,-20,-5], [-0.2, -0.1,-0.04] )
+      #  data = self.longCtrl.update( self.packer, CS, c, frame, accel_dec )
+      #  can_sends.append( data )
+      #else:
+      #  self.longCtrl.reset( CS )
+      #  str_log2 = CS.str_carstate
+      #  trace1.printf3( 'None={}'.format( str_log2 ) )
       
       if self.SC.update_btn(CS, sm, self ) == 0:
         pass
@@ -359,13 +359,13 @@ class CarController():
           self.resume_cnt += 1
         else:
           self.resume_cnt = 0
-    elif run_speed_ctrl:
-      is_sc_run = self.SC.update( CS, sm, self )
-      if is_sc_run:
-        can_sends.append(create_clu11(self.packer, self.resume_cnt, CS.clu11, self.SC.btn_type, self.SC.sc_clu_speed ))
-        self.resume_cnt += 1
-      else:
-        self.resume_cnt = 0
+    #elif run_speed_ctrl:
+    #  is_sc_run = self.SC.update( CS, sm, self )
+    #  if is_sc_run:
+    #    can_sends.append(create_clu11(self.packer, self.resume_cnt, CS.clu11, self.SC.btn_type, self.SC.sc_clu_speed ))
+    #    self.resume_cnt += 1
+    #  else:
+    #    self.resume_cnt = 0
     else:
       str_log1 = 'LKAS={:.0f} hold={:.0f}'.format( CS.lkas_button_on, CS.auto_hold )
       str_log2 = 'limit={:.0f} tm={:.1f} '.format( apply_steer_limit, self.timer1.sampleTime()  )               
