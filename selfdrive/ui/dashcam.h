@@ -466,7 +466,7 @@ static void ui_draw_debug2(UIState *s)
   float  vTarget = scene.longitudinalPlan.getVTarget();
   float  aTarget = scene.longitudinalPlan.getATarget();
 
-   int lenspos = scene.camera_state.getLensTruePos();
+   float lenspos = scene.camera_state.getLensTruePos();
 
   auto lane_line_probs = scene.modelDataV2.getLaneLineProbs();
 
@@ -484,7 +484,7 @@ static void ui_draw_debug2(UIState *s)
     ui_print( s, x_pos, y_pos+100,  "aO:%.2f, %.2f", angleOffset, angleOffsetAverage );
     ui_print( s, x_pos, y_pos+150, "sF:%.2f Fan:%.0f", stiffnessFactor, fanSpeed/1000. );
     ui_print( s, x_pos, y_pos+200, "lW:%.2f CV:%.0f", laneWidth, modelSpeed );
-    ui_print( s, x_pos, y_pos+250, "time:%d   lens:%d" , scene.scr.nTime/20,  lenspos );
+    ui_print( s, x_pos, y_pos+250, "time:%d   lens:%.3f" , scene.scr.nTime/20,  lenspos );
 
     ui_print( s, x_pos, y_pos+300, "prob:%.2f, %.2f, %.2f, %.2f", lane_line_probs[0], lane_line_probs[1], lane_line_probs[2], lane_line_probs[3] );
     ui_print( s, x_pos, y_pos+350, "vCruise:%.1f, aCruise:%.3f  %.1f %.3f",  vCruise*3.6,  aCruise, vTarget*3.6,  aTarget);
