@@ -900,6 +900,7 @@ static void do_autofocus(CameraState *s, SubMaster *sm) {
 
   s->lens_true_pos.store(lens_true_pos);
 
+/*
   if(  nStep == 0)
   {
     char debug[4096];
@@ -910,7 +911,7 @@ static void do_autofocus(CameraState *s, SubMaster *sm) {
     //LOGD(debug);
     printf("%s \n",debug);
   }
-
+*/
   actuator_move(s, target);
 }
 
