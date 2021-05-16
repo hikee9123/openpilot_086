@@ -1,5 +1,6 @@
 #include "selfdrive/camerad/cameras/camera_qcom.h"
 
+
 #include <assert.h>
 #include <fcntl.h>
 #include <math.h>
@@ -26,6 +27,7 @@
 #include "selfdrive/common/swaglog.h"
 #include "selfdrive/common/timing.h"
 #include "selfdrive/common/util.h"
+#include "selfdrive/ui/ui.h"
 
 // leeco actuator (DW9800W H-Bridge Driver IC)
 // from sniff
