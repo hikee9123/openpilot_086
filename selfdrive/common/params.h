@@ -16,7 +16,18 @@ enum ParamKeyType {
   ALL = 0x02 | 0x04 | 0x08 | 0x10
 };
 
+typedef struct ParamValue {
+
+  // atom
+  int  autoFocus;
+} ParamValue;
+
+
 class Params {
+public:
+  // TODO: get rid of this, only use signal
+  inline static ParamValue param_value = {0};
+
 private:
   std::string params_path;
 

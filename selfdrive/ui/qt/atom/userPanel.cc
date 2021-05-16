@@ -363,6 +363,7 @@ void AutoScreenOff::refresh()
 //
 //  Auto Focus
 
+  
 
 CAutoFocus::CAutoFocus() : AbstractControl("Auto Focus", "AUto Focus.", "../assets/offroad/icon_shell.png") 
 {
@@ -401,7 +402,7 @@ CAutoFocus::CAutoFocus() : AbstractControl("Auto Focus", "AUto Focus.", "../asse
     } else {
     }
 
-    QUIState::ui_state.scene.scr.autoScreenOff = value;
+    Params::param_value.autoFocus = value;
     QString values = QString::number(value);
     Params().put("OpkrAutoFocus", values.toStdString());
     refresh();
@@ -416,7 +417,7 @@ CAutoFocus::CAutoFocus() : AbstractControl("Auto Focus", "AUto Focus.", "../asse
     } else {
     }
 
-    QUIState::ui_state.scene.scr.autoScreenOff = value;
+    Params::param_value.autoFocus = value;
     QString values = QString::number(value);
     Params().put("OpkrAutoFocus", values.toStdString());
     refresh();

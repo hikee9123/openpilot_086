@@ -27,7 +27,7 @@
 #include "selfdrive/common/swaglog.h"
 #include "selfdrive/common/timing.h"
 #include "selfdrive/common/util.h"
-#include "selfdrive/ui/ui.h"
+
 
 // leeco actuator (DW9800W H-Bridge Driver IC)
 // from sniff
@@ -880,9 +880,9 @@ static void do_autofocus(CameraState *s, SubMaster *sm) {
   lens_true_pos = std::clamp(lens_true_pos, float(LP3_AF_DAC_DOWN), float(LP3_AF_DAC_UP));
   int target = std::clamp(lens_true_pos - sag, float(LP3_AF_DAC_DOWN), float(LP3_AF_DAC_UP));
 
-  if( QUIState::ui_state.scene.scr.autoFocus )
+  if( Params::param_value.autoFocus )
   {
-    target = LP3_AF_DAC_DOWN + QUIState::ui_state.scene.scr.autoFocus;
+    target = LP3_AF_DAC_DOWN + Params::param_value.autoFocus;
   }
 
   s->lens_true_pos.store(lens_true_pos);
