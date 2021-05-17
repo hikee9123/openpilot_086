@@ -65,7 +65,8 @@ class CarController():
 
     # long control
     self.longCtrl = CLongControl(self.p)
-    self.longFlag = 0
+    self.delFlag = 0
+    self.accFlag = 0
 
 
 
@@ -206,8 +207,62 @@ class CarController():
 
     return  param, dst_steer
 
-  
+  def update_longctrl(self, c, CS, frame, sm, CP ):  
+    kph_vEgo = CS.out.vEgo * CV.MS_TO_KPH
 
+    # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
+    # atom
+    btn_signal = None
+    vCruise =  sm['longitudinalPlan'].vCruise
+    kph_set_vEgo = vCruise * CV.MS_TO_KPH
+    kph_delta = kph_set_vEgo - kph_vEgo
+
+
+
+
+
+    self.cruise_set_speed_kph = CS.out.cruiseState.speed * CV.MS_TO_KPH
+    lead_1 = sm['radarState'].leadOne
+    lead_2 = sm['radarState'].leadTwo    
+
+    dRele = lead_1.dRel #EON Lead  거리
+    yRele = lead_1.yRel #EON Lead  속도 차이
+    vRele = lead_1.vRel * 3.6 + 0.5 #EON Lead  속도.
+    dRelef = lead_2.dRel #EON Lead
+    yRelef = lead_2.yRel #EON Lead
+    vRelef = lead_2.vRel * 3.6 + 0.5 #EON Lead
+    lead2_status = lead_2.status
+
+    if kph_vEgo < 30:
+      self.delFlag = False
+      self.accFlag = True
+    elif dRele <= 0 or dRele >= 150:
+      dRele = 150
+      self.delFlag = 0
+    elif kph_vEgo < 30 or yRele > 2:
+      self.delFlag = 0
+    else:
+      delta_ctrl_spd = abs(self.cruise_set_speed_kph - kph_vEgo)
+      if delta_ctrl_spd <= 5:
+        self.delFlag = 1
+        self.accFlag = False
+
+
+    if self.accFlag:
+        kph_acc = interp( self.vRel, [-5,0,5,10], [1,10,15,20] )
+        kph_set_vEgo += kph_acc
+    elif dRele < 140 and self.delFlag:
+      if self.vRel < -1:
+        kph_dec = interp( self.vRel, [-20,-10,-1], [15,10,1] )
+        kph_set_vEgo -= kph_dec
+    
+    if self.SC.update_btn(CS, sm, self ) == 0:
+      pass
+    elif CS.acc_active and CS.out.cruiseState.modeSel == 4:
+      self.ctrl_speed = min( self.cruise_set_speed_kph, kph_set_vEgo)
+      btn_signal = self.longCtrl.update_scc( CS, self.ctrl_speed )
+
+    return btn_signal
 
   def update(self, c, CS, frame, sm, CP ):
     if self.CP != CP:
@@ -293,79 +348,12 @@ class CarController():
     elif self.last_lead_distance != 0:
         self.last_lead_distance = 0
     elif CP.openpilotLongitudinalControl:
-      # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
-      # atom
-      vCruise =  sm['longitudinalPlan'].vCruise
-      kph_set_vEgo = vCruise * CV.MS_TO_KPH
-      kph_delta = kph_set_vEgo - kph_vEgo
-
-      if kph_vEgo < 30 and kph_vEgo > 1:
-        self.dec_flag = True
-      elif kph_delta < -1:
-        self.dec_flag = True
+      btn_signal = self.update_longctrl( c, CS, frame, sm, CP )
+      if btn_signal != None:
+        can_sends.append(create_clu11(self.packer, self.resume_cnt, CS.clu11, btn_signal ))
+        self.resume_cnt += 1
       else:
-        self.dec_flag = False
-         
-      
-
-      self.cruise_set_speed_kph = CS.out.cruiseState.speed * CV.MS_TO_KPH
-      lead_1 = sm['radarState'].leadOne
-      lead_2 = sm['radarState'].leadTwo    
-
-      dRele = lead_1.dRel #EON Lead  거리
-      yRele = lead_1.yRel #EON Lead  속도 차이
-      vRele = lead_1.vRel * 3.6 + 0.5 #EON Lead  속도.
-      dRelef = lead_2.dRel #EON Lead
-      yRelef = lead_2.yRel #EON Lead
-      vRelef = lead_2.vRel * 3.6 + 0.5 #EON Lead
-      lead2_status = lead_2.status
-
-      if dRele <= 0 or dRele >= 150:
-        dRele = 150
-        self.longFlag = 0
-      elif kph_vEgo < 30 or yRele > 2:
-        self.longFlag = 0
-      else:
-        delta_ctrl_spd = abs(self.cruise_set_speed_kph - kph_vEgo)
-        if delta_ctrl_spd <= 5:
-          self.longFlag = 1
-
-
-      if dRele < 140 and self.longFlag:
-        if self.vRel < -1:
-          kph_dec = interp( self.vRel, [-20,-10,-1], [15,10,1] )
-          self.dec_flag = True
-          kph_set_vEgo -= kph_dec
-
-
-      #if frame % 2 or CS.driverOverride:
-      #  self.longCtrl.reset( CS )
-      #elif CS.acc_active and self.dec_flag and  CS.out.cruiseState.modeSel == 4:
-      #  accel_dec = interp( self.vRel, [-30,-20,-5], [-0.2, -0.1,-0.04] )
-      #  data = self.longCtrl.update( self.packer, CS, c, frame, accel_dec )
-      #  can_sends.append( data )
-      #else:
-      #  self.longCtrl.reset( CS )
-      #  str_log2 = CS.str_carstate
-      #  trace1.printf3( 'None={}'.format( str_log2 ) )
-      
-      if self.SC.update_btn(CS, sm, self ) == 0:
-        pass
-      elif CS.acc_active and CS.out.cruiseState.modeSel == 4:
-        self.ctrl_speed = min( self.cruise_set_speed_kph, kph_set_vEgo)
-        btn_signal = self.longCtrl.update_scc( CS, self.ctrl_speed )
-        if btn_signal != None:
-          can_sends.append(create_clu11(self.packer, self.resume_cnt, CS.clu11, btn_signal ))
-          self.resume_cnt += 1
-        else:
-          self.resume_cnt = 0
-    #elif run_speed_ctrl:
-    #  is_sc_run = self.SC.update( CS, sm, self )
-    #  if is_sc_run:
-    #    can_sends.append(create_clu11(self.packer, self.resume_cnt, CS.clu11, self.SC.btn_type, self.SC.sc_clu_speed ))
-    #    self.resume_cnt += 1
-    #  else:
-    #    self.resume_cnt = 0
+        self.resume_cnt = 0
     else:
       str_log1 = 'LKAS={:.0f} hold={:.0f}'.format( CS.lkas_button_on, CS.auto_hold )
       str_log2 = 'limit={:.0f} tm={:.1f} '.format( apply_steer_limit, self.timer1.sampleTime()  )               
