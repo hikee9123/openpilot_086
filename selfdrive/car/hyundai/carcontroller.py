@@ -238,13 +238,13 @@ class CarController():
       self.accFlag = True
     elif dRele <= 0 or dRele >= 150:
       dRele = 150
-      self.delFlag = 0
+      self.delFlag = False
     elif kph_vEgo < 30 or yRele > 2:
-      self.delFlag = 0
+      self.delFlag = False
     else:
       delta_ctrl_spd = abs(self.cruise_set_speed_kph - kph_vEgo)
       if delta_ctrl_spd <= 5:
-        self.delFlag = 1
+        self.delFlag = True
         self.accFlag = False
 
 
