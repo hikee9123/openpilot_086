@@ -1,6 +1,5 @@
 #include "selfdrive/camerad/cameras/camera_qcom.h"
 
-
 #include <assert.h>
 #include <fcntl.h>
 #include <math.h>
@@ -28,15 +27,11 @@
 #include "selfdrive/common/timing.h"
 #include "selfdrive/common/util.h"
 
-
 // leeco actuator (DW9800W H-Bridge Driver IC)
 // from sniff
 const uint16_t INFINITY_DAC = 364;
 
 extern ExitHandler do_exit;
-
-
-
 
 static int cam_ioctl(int fd, unsigned long int request, void *arg, const char *log_msg = nullptr) {
   int err = ioctl(fd, request, arg);
