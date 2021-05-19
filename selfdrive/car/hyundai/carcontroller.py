@@ -65,8 +65,8 @@ class CarController():
 
     # long control
     self.longCtrl = CLongControl(self.p)
-    self.delFlag = 0
-    self.accFlag = 0
+    self.del_flag = 0
+
 
 
 
@@ -220,10 +220,8 @@ class CarController():
     kph_delta = kph_set_vEgo - kph_vEgo
 
 
-
-
-
     self.cruise_set_speed_kph = CS.out.cruiseState.speed * CV.MS_TO_KPH
+    self.cruise_set_speed_kph = min( self.model_speed * 0.8, self.cruise_set_speed_kph )
     lead_1 = sm['radarState'].leadOne
     lead_2 = sm['radarState'].leadTwo    
 
@@ -235,26 +233,16 @@ class CarController():
     vRelef = lead_2.vRel * 3.6 + 0.5 #EON Lead
     lead2_status = lead_2.status
 
-    if kph_vEgo < 30:
-      self.delFlag = False
-      self.accFlag = True
-    elif dRele <= 0 or dRele >= 150:
+    if dRele <= 0 or dRele >= 150:
       dRele = 150
-      self.delFlag = False
-    elif kph_vEgo < 30 or yRele > 2:
-      self.delFlag = False
-    else:
-      delta_ctrl_spd = abs(self.cruise_set_speed_kph - kph_vEgo)
-      if delta_ctrl_spd <= 5:
-        self.delFlag = True
-        self.accFlag = False
+      self.del_flag = True
+    elif yRele > 2:
+      self.del_flag = False
 
 
-    if self.accFlag:
-        kph_acc = interp( self.vRel, [-5,0,5,10], [1,10,15,20] )
-        kph_set_vEgo += kph_acc
-    elif dRele < 140 and self.delFlag:
-      if self.vRel < -1:
+
+    if  dRele < 140 and self.del_flag:
+      if kph_vEgo > 80 and self.vRel < -1:
         kph_dec = interp( self.vRel, [-20,-10,-1], [15,10,1] )
         kph_set_vEgo -= kph_dec
     
