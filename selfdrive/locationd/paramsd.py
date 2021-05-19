@@ -18,6 +18,9 @@ from selfdrive.swaglog import cloudlog
 from common.numpy_fast import interp
 from selfdrive.config import Conversions as CV
 
+
+MAX_ANGLE_OFFSET_DELTA = 20 * DT_MDL  # Max 20 deg/s
+
 class ParamsLearner:
   def __init__(self, CP, steer_ratio, stiffness_factor, angle_offset):
     self.kf = CarKalman(GENERATED_DIR, steer_ratio, stiffness_factor, angle_offset)
