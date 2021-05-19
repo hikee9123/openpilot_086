@@ -241,7 +241,7 @@ class SpdController():
                 self.cruise_set_mode += 1
               if self.cruise_set_mode > 4:
                 self.cruise_set_mode = 0
-                self.prev_clu_CruiseSwState = CS.cruise_buttons
+              self.prev_clu_CruiseSwState = CS.cruise_buttons
 
         if CP.openpilotLongitudinalControl:
           if set_speed_kph < 0:
