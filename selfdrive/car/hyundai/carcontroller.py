@@ -148,7 +148,7 @@ class CarController():
     param = copy.copy(self.p)
     v_ego_kph = CS.out.vEgo * CV.MS_TO_KPH
     dst_steer = actuators.steer * param.STEER_MAX
-    abs_angle_steers =  abs(actuators.steeringAngleDeg)        
+
 
     self.enable_time = self.timer1.sampleTime()
     if self.enable_time < 50:
@@ -187,7 +187,9 @@ class CarController():
       self.steer_torque_over_timer = 0
     elif not CS.out.cruiseState.enabled:
       self.steer_torque_over_timer = 0
-    elif v_ego_kph > 5 and abs(CS.out.steeringTorque) > 280:  #사용자 핸들 토크
+    elif v_ego_kph > 5 and abs(CS.out.steeringTorque) > 300:  #사용자 핸들 토크
+      sec_mval = 0.5  # 오파 => 운전자.  (sec)
+      sec_pval = 10   #  운전자 => 오파       
       self.steer_torque_over_timer = 50
     elif self.steer_torque_over_timer:
       self.steer_torque_over_timer -= 1
@@ -311,7 +313,7 @@ class CarController():
 
     self.lkas11_cnt %= 0x10
 
-
+    apply_steer = int(round(float(apply_steer)))
     can_sends = []
     can_sends.append( create_lkas11(self.packer, self.lkas11_cnt, self.car_fingerprint, apply_steer, steer_req,
                                    CS.lkas11, sys_warning, self.hud_sys_state, c ) )
