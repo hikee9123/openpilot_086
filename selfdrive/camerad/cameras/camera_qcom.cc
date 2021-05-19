@@ -890,7 +890,7 @@ static void do_autofocus(CameraState *s, SubMaster *sm) {
 
   if( Params::param_value.autoFocus )
   {
-    target = LP3_AF_DAC_DOWN + Params::param_value.autoFocus;
+    lens_true_pos = LP3_AF_DAC_DOWN + Params::param_value.autoFocus;
   }
 
   s->lens_true_pos.store(lens_true_pos);
