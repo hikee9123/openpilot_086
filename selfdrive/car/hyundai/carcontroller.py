@@ -288,7 +288,10 @@ class CarController():
     param, dst_steer = self.steerParams_torque( CS, actuators, path_plan )
     new_steer = actuators.steer * param.STEER_MAX
     apply_steer = apply_std_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, param)
-    self.steer_rate_limited = new_steer != apply_steer
+    if new_steer != apply_steer:
+      self.steer_rate_limited = True
+    else:
+      self.steer_rate_limited = False
 
     apply_steer_limit = param.STEER_MAX
     if self.steer_torque_ratio < 1:
