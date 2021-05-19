@@ -371,6 +371,9 @@ def thermald_thread():
     startup_conditions["device_temp_good"] = thermal_status < ThermalStatus.danger
     set_offroad_alert_if_changed("Offroad_TemperatureTooHigh", (not startup_conditions["device_temp_good"]))
 
+    if TICI:
+      set_offroad_alert_if_changed("Offroad_NvmeMissing", (not Path("/data/media").is_mount()))
+
     # Handle offroad/onroad transition
     # atom
     is_rhd_region = params.get_bool("IsOpenpilotViewEnabled") # IsRHD

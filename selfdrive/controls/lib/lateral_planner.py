@@ -95,7 +95,7 @@ class LateralPlanner():
     self.safe_desired_curvature_rate = 0.0
 
   # atom
-  def auto_lanelines(self, sm ):
+  def auto_lanelines(self, sm, ll_probs ):
     if not self.use_lanelines:
       return False
  
@@ -106,10 +106,10 @@ class LateralPlanner():
     vEgo_kph = carState.vEgo * CV.MS_TO_KPH
 
     if self.lanelines:
-      if vEgo_kph < 30:  #or dRel < 25:
+      if vEgo_kph < 30 and ll_probs[0] < 0.5 and ll_probs[3] < 0.5:  #or dRel < 25:
         lanelines = False
     else:
-      if vEgo_kph < 50:  #or dRel < 25:
+      if vEgo_kph < 50 and (ll_probs[0] < 0.5 and ll_probs[3] < 0.5):   #or dRel < 25:
         lanelines = False      
     return lanelines
     
@@ -227,7 +227,7 @@ class LateralPlanner():
       self.LP.lll_prob *= self.lane_change_ll_prob
       self.LP.rll_prob *= self.lane_change_ll_prob
     #if self.use_lanelines:
-    self.lanelines = self.auto_lanelines( sm )
+    self.lanelines = self.auto_lanelines( sm, md.laneLineProbs )
     if self.lanelines:
       d_path_xyz = self.LP.get_d_path(v_ego, self.t_idxs, self.path_xyz)
       self.libmpc.set_weights(MPC_COST_LAT.PATH, MPC_COST_LAT.HEADING, steerRateCostCV)

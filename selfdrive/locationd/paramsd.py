@@ -8,6 +8,8 @@ import numpy as np
 import cereal.messaging as messaging
 from cereal import car
 from common.params import Params, put_nonblocking
+from common.realtime import DT_MDL
+from common.numpy_fast import clip
 from selfdrive.locationd.models.car_kf import CarKalman, ObservationKind, States
 from selfdrive.locationd.models.constants import GENERATED_DIR
 from selfdrive.swaglog import cloudlog
@@ -152,11 +154,12 @@ def main(sm=None, pm=None):
   # When driving in wet conditions the stiffness can go down, and then be too low on the next drive
   # Without a way to detect this we have to reset the stiffness every drive
   params['stiffnessFactor'] = 0.84
-  params['angleOffsetAverageDeg'] = 0
-  opkrLiveSteerRatio = int(params_reader.get("OpkrLiveSteerRatio"))
-  
+  opkrLiveSteerRatio = int(params_reader.get("OpkrLiveSteerRatio"))  
 
   learner = ParamsLearner(CP, params['steerRatio'], params['stiffnessFactor'], math.radians(params['angleOffsetAverageDeg']))
+
+  angle_offset_average = params['angleOffsetAverageDeg']
+  angle_offset = angle_offset_average
 
   while True:
     sm.update()
@@ -172,6 +175,9 @@ def main(sm=None, pm=None):
         cloudlog.error("NaN in liveParameters estimate. Resetting to default values")
         learner = ParamsLearner(CP, CP.steerRatio, 1.0, 0.0)
         x = learner.kf.x
+
+      angle_offset_average = clip(math.degrees(x[States.ANGLE_OFFSET]), angle_offset_average - MAX_ANGLE_OFFSET_DELTA, angle_offset_average + MAX_ANGLE_OFFSET_DELTA)
+      angle_offset = clip(math.degrees(x[States.ANGLE_OFFSET] + x[States.ANGLE_OFFSET_FAST]), angle_offset - MAX_ANGLE_OFFSET_DELTA, angle_offset + MAX_ANGLE_OFFSET_DELTA)
 
       msg = messaging.new_message('liveParameters')
       msg.logMonoTime = sm.logMonoTime['carState']
@@ -208,8 +214,8 @@ def main(sm=None, pm=None):
 
       msg.liveParameters.steerRatio = float(x[States.STEER_RATIO])
       msg.liveParameters.stiffnessFactor = float(x[States.STIFFNESS])
-      msg.liveParameters.angleOffsetAverageDeg = math.degrees(x[States.ANGLE_OFFSET])
-      msg.liveParameters.angleOffsetDeg = msg.liveParameters.angleOffsetAverageDeg + angle_offset_fast
+      msg.liveParameters.angleOffsetAverageDeg = angle_offset_average
+      msg.liveParameters.angleOffsetDeg = angle_offset
       msg.liveParameters.valid = all((
         abs(msg.liveParameters.angleOffsetAverageDeg) < 10.0,
         abs(msg.liveParameters.angleOffsetDeg) < 10.0,

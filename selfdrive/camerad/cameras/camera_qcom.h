@@ -1,7 +1,5 @@
 #pragma once
 
-#include <pthread.h>
-#include <stdbool.h>
 #include <stdint.h>
 
 #include <atomic>
@@ -23,8 +21,8 @@
 
 #define NUM_FOCUS 8
 
-#define LP3_AF_DAC_DOWN  366   // 380
-#define LP3_AF_DAC_UP    634    // 480
+#define LP3_AF_DAC_DOWN 366
+#define LP3_AF_DAC_UP 634
 #define LP3_AF_DAC_M 440
 #define LP3_AF_DAC_3SIG 52
 
