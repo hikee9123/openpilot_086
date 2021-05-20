@@ -107,7 +107,7 @@ class LateralPlanner():
     vEgo_kph = carState.vEgo * CV.MS_TO_KPH
 
     ll_prob_ok = True
-    if ll_probs[0] < 0.5 or ll_probs[3] < 0.5:
+    if ll_probs[1] < 0.5 or ll_probs[2] < 0.5:
       if self.lane_timer > 0:
         self.lane_timer -= 1
       else:
