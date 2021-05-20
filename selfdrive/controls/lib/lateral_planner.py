@@ -77,6 +77,7 @@ class LateralPlanner():
     # atom
     self.lanelines = True
     self.lane_timer = 0
+    self.steer_torq_timer = 0
 
 
   def setup_mpc(self):
@@ -133,6 +134,15 @@ class LateralPlanner():
     active = sm['controlsState'].active
     measured_curvature = sm['controlsState'].curvature
 
+    md = sm['modelV2']
+    self.LP.parse_model(sm['modelV2'])
+    if len(md.position.x) == TRAJECTORY_SIZE and len(md.orientation.x) == TRAJECTORY_SIZE:
+      self.path_xyz = np.column_stack([md.position.x, md.position.y, md.position.z])
+      self.t_idxs = np.array(md.position.t)
+      self.plan_yaw = list(md.orientation.z)
+    if len(md.orientation.xStd) == TRAJECTORY_SIZE:
+      self.path_xyz_stds = np.column_stack([md.position.xStd, md.position.yStd, md.position.zStd])
+
     # atom
     steeringTorqueAbs = abs(sm['carState'].steeringTorque)
     cruiseState  = sm['carState'].cruiseState
@@ -143,14 +153,10 @@ class LateralPlanner():
       steerActuatorDelayCV = CP.steerActuatorDelay
       steerRateCostCV = CP.steerRateCost
 
-    md = sm['modelV2']
-    self.LP.parse_model(sm['modelV2'])
-    if len(md.position.x) == TRAJECTORY_SIZE and len(md.orientation.x) == TRAJECTORY_SIZE:
-      self.path_xyz = np.column_stack([md.position.x, md.position.y, md.position.z])
-      self.t_idxs = np.array(md.position.t)
-      self.plan_yaw = list(md.orientation.z)
-    if len(md.orientation.xStd) == TRAJECTORY_SIZE:
-      self.path_xyz_stds = np.column_stack([md.position.xStd, md.position.yStd, md.position.zStd])
+    if steeringTorqueAbs > 150:
+      self.steer_torq_timer +=1
+    else:
+      self.steer_torq_timer = 0
 
     # Lane change logic
     one_blinker = sm['carState'].leftBlinker != sm['carState'].rightBlinker
@@ -185,7 +191,7 @@ class LateralPlanner():
 
       # State transitions
       # off
-      if cruiseState.cruiseSwState == Buttons.CANCEL or steeringTorqueAbs > 150:
+      if cruiseState.cruiseSwState == Buttons.CANCEL or self.steer_torq_timer > 5:
         self.lane_change_state = LaneChangeState.off
         self.lane_change_direction = LaneChangeDirection.none
         self.lane_change_ll_prob = 1.0
