@@ -236,13 +236,13 @@ class CarController():
     if dRele <= 0 or dRele >= 150:
       dRele = 150
       self.del_flag = True
-    elif yRele > 2:
+    elif yRele > 5:
       self.del_flag = False
 
 
 
     if  dRele < 140 and self.del_flag:
-      if kph_vEgo > 80 and self.vRel < -1:
+      if kph_vEgo > 80 and self.vRel < -10:
         kph_dec = interp( self.vRel, [-20,-10,-1], [15,10,1] )
         kph_set_vEgo -= kph_dec
     
