@@ -154,7 +154,7 @@ class CarState(CarStateBase):
     ret.brakePressed = cp.vl["TCS13"]['DriverBraking'] != 0
 
     # TODO: Check this
-    ret.brakeLights = bool(cp.vl["TCS13"]['BrakeLight'] or ret.brakePressed)
+    ret.brakeLightsDEPRECATED = bool(cp.vl["TCS13"]['BrakeLight'] or ret.brakePressed)
 
     if self.CP.carFingerprint in HYBRID_VEH:
       ret.gas = cp.vl["EV_PC4"]['CR_Vcu_AccPedDep_Pc']

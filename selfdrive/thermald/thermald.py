@@ -250,6 +250,7 @@ def thermald_thread():
       try:
         network_type = HARDWARE.get_network_type()
         network_strength = HARDWARE.get_network_strength(network_type)
+        network_info = HARDWARE.get_network_info()  # pylint: disable=assignment-from-none
         wifiIpAddress = HARDWARE.get_ip_address()
       except Exception:
         cloudlog.exception("Error getting network status")
@@ -259,6 +260,9 @@ def thermald_thread():
     msg.deviceState.cpuUsagePercent = int(round(psutil.cpu_percent()))
     msg.deviceState.networkType = network_type
     msg.deviceState.networkStrength = network_strength
+    if network_info is not None:
+      msg.deviceState.networkInfo = network_info
+
     msg.deviceState.wifiIpAddress = wifiIpAddress
     msg.deviceState.batteryPercent = HARDWARE.get_battery_capacity()
     msg.deviceState.batteryStatus = HARDWARE.get_battery_status()
@@ -433,6 +437,10 @@ def thermald_thread():
     msg.deviceState.chargingError = current_filter.x > 0. and msg.deviceState.batteryPercent < 90  # if current is positive, then battery is being discharged
     msg.deviceState.started = started_ts is not None
     msg.deviceState.startedMonoTime = int(1e9*(started_ts or 0))
+
+    last_ping = params.get("LastAthenaPingTime")
+    if last_ping is not None:
+      msg.deviceState.lastAthenaPingTime = int(last_ping)
 
     msg.deviceState.thermalStatus = thermal_status
     pm.send("deviceState", msg)

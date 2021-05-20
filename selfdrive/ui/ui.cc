@@ -186,13 +186,14 @@ static void update_state(UIState *s) {
     if (data.which() == cereal::UbloxGnss::MEASUREMENT_REPORT) {
       scene.satelliteCount = data.getMeasurementReport().getNumMeas();
     }
-
-    scene.gpsLocationExternal = sm["gpsLocationExternal"].getGpsLocationExternal();
-  
   }
   if (sm.updated("liveLocationKalman")) {
     scene.gpsOK = sm["liveLocationKalman"].getLiveLocationKalman().getGpsOK();
   }
+  if (sm.updated("gpsLocationExternal")) {
+    scene.gpsLocationExternal = sm["gpsLocationExternal"].getGpsLocationExternal();
+    scene.gpsAccuracy = sm["gpsLocationExternal"].getGpsLocationExternal().getAccuracy();
+  }  
   if (sm.updated("carParams")) {
     scene.longitudinal_control = sm["carParams"].getCarParams().getOpenpilotLongitudinalControl();
   }

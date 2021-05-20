@@ -94,6 +94,7 @@ typedef struct UIScene {
 
   // gps
   int satelliteCount;
+  float gpsAccuracy;
   bool gpsOK;
 
   // modelV2
@@ -220,7 +221,7 @@ private:
   const float accel_samples = 5*UI_FREQ;
 
   bool awake;
-  int awake_timeout = 300;
+  int awake_timeout = 900;
   float accel_prev = 0;
   float gyro_prev = 0;
   float brightness_b = 0;

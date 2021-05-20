@@ -293,7 +293,7 @@ static void ui_draw_vision_speed(UIState *s) {
   NVGcolor val_color = COLOR_WHITE;
 
   bool  brakePress = s->scene.car_state.getBrakePressed();
-  bool  brakeLights = s->scene.car_state.getBrakeLights();
+  bool  brakeLights = s->scene.car_state.getBrakeLightsDEPRECATED();
   if( brakePress  ) val_color = COLOR_RED;
   else if( brakeLights ) val_color = nvgRGBA(201, 34, 49, 100);    
 
