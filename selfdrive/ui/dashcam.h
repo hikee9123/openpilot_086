@@ -367,8 +367,8 @@ static void focus_menu_button(UIState *s, int touch_x, int touch_y, int touched)
         QString values = QString::number(value);
         Params().put("OpkrAutoFocus", values.toStdString());
     }
-    nvgText(s->vg, 600, 500, "[+]", NULL);
-    nvgText(s->vg, 900, 500, "[-]", NULL);
+    nvgText(s->vg, 600, 500, "[ + ]", NULL);
+    nvgText(s->vg, 900, 500, "[ - ]", NULL);
 }
 
 static void screen_menu_button(UIState *s, int touch_x, int touch_y, int touched)
