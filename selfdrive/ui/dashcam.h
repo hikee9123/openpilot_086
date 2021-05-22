@@ -657,7 +657,7 @@ void update_dashcam(UIState *s, int draw_vision)
   screen_draw_button(s, touch_x, touch_y, touched);
   screen_menu_button(s, touch_x, touch_y, touched);
 
-  if( scene.dash_menu_no == 1 ) 
+  if( s->scene.dash_menu_no == 1 ) 
     focus_menu_button(s, touch_x, touch_y, touched);
 
   if( lock_current_video == true  )
