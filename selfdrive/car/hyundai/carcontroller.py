@@ -117,7 +117,7 @@ class CarController():
 
 
 
-  def atom_tune( self, v_ego_kph, cv_value ):  # cV
+  def atom_tune( self, v_ego_kph, angleDeg ):  # cV
     self.cv_KPH = self.CP.atomTuning.cvKPH
     self.cv_BPV = self.CP.atomTuning.cvBPV
     self.cv_sMaxV  = self.CP.atomTuning.cvsMaxV
@@ -131,9 +131,9 @@ class CarController():
     # Max
     nPos = 0
     for sCV in self.cv_BPV:  
-      self.steerMAX.append( interp( cv_value, sCV, self.cv_sMaxV[nPos] ) )
-      self.steerdUP.append( interp( cv_value, sCV, self.cv_sdUpV[nPos] ) )
-      self.steerdDN.append( interp( cv_value, sCV, self.cv_sdDnV[nPos] ) )
+      self.steerMAX.append( interp( angleDeg, sCV, self.cv_sMaxV[nPos] ) )
+      self.steerdUP.append( interp( angleDeg, sCV, self.cv_sdUpV[nPos] ) )
+      self.steerdDN.append( interp( angleDeg, sCV, self.cv_sdDnV[nPos] ) )
       nPos += 1
       if nPos > 20:
         break
@@ -156,8 +156,8 @@ class CarController():
       self.steer_torque_ratio = 1
       return param, dst_steer
 
-
-    nMAX, nUP, nDN = self.atom_tune( v_ego_kph, self.model_speed )
+    
+    nMAX, nUP, nDN = self.atom_tune( v_ego_kph, CS.out.steeringAngleDeg )
     param.STEER_MAX = min( param.STEER_MAX, nMAX)
     param.STEER_DELTA_UP = min( param.STEER_DELTA_UP, nUP)
     param.STEER_DELTA_DOWN = min( param.STEER_DELTA_DOWN, nDN )
@@ -217,8 +217,6 @@ class CarController():
     btn_signal = None
     vCruise =  sm['longitudinalPlan'].vCruise
     kph_set_vEgo = vCruise * CV.MS_TO_KPH
-    kph_delta = kph_set_vEgo - kph_vEgo
-
 
     self.cruise_set_speed_kph = CS.out.cruiseState.speed * CV.MS_TO_KPH
     self.cruise_set_speed_kph = min( self.model_speed * 0.8, self.cruise_set_speed_kph )
