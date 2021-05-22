@@ -374,6 +374,8 @@ static void focus_menu_button(UIState *s, int touch_x, int touch_y, int touched)
     }
     nvgText(s->vg, Increase, 500, "[ + ]", NULL);
     nvgText(s->vg, Reduction, 500, "[ - ]", NULL);
+
+    ui_print( s, nCenterX, 400, "%d", Params::param_value.autoFocus );
 }
 
 static void screen_menu_button(UIState *s, int touch_x, int touch_y, int touched)

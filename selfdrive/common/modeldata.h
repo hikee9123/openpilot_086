@@ -19,6 +19,7 @@ const double X_IDXS[TRAJECTORY_SIZE] = {
        108.    , 117.1875, 126.75  , 136.6875, 147.    , 157.6875,
        168.75  , 180.1875, 192.};
 
+
 #ifdef __cplusplus
 
 #include "selfdrive/common/mat.h"
