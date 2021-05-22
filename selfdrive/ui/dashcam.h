@@ -340,6 +340,37 @@ static void screen_draw_button(UIState *s, int touch_x, int touch_y, int touched
 }
 
 
+static void focus_menu_button(UIState *s, int touch_x, int touch_y, int touched)
+{
+  // Set button to bottom left of screen
+  UIScene &scene = s->scene;
+
+  nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
+
+
+    if( touched && screen_button_clicked(touch_x, touch_y, 600, 500, 150, 150) )
+    {
+        int value = Params::param_value.autoFocus++;
+        if( value > 100)
+        {
+          Params::param_value.autoFocus = 100;
+        }
+        QString values = QString::number(value);
+        Params().put("OpkrAutoFocus", values.toStdString());
+    }
+    else if( touched && screen_button_clicked(touch_x, touch_y, 800, 500, 150, 150) )
+    {
+        int value = Params::param_value.autoFocus--;
+        if( value < 0)
+        {
+          Params::param_value.autoFocus = 0;
+        }
+        QString values = QString::number(value);
+        Params().put("OpkrAutoFocus", values.toStdString());
+    }
+    nvgText(s->vg, 600, 500, "[+]", NULL);
+    nvgText(s->vg, 800, 500, "[-]", NULL);
+}
 
 static void screen_menu_button(UIState *s, int touch_x, int touch_y, int touched)
 {
@@ -627,6 +658,8 @@ void update_dashcam(UIState *s, int draw_vision)
   screen_draw_button(s, touch_x, touch_y, touched);
   screen_menu_button(s, touch_x, touch_y, touched);
 
+  if( scene.dash_menu_no == 1 ) 
+    focus_menu_button(s, touch_x, touch_y, touched);
 
   if( lock_current_video == true  )
   {
