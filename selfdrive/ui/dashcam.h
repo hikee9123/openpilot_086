@@ -346,8 +346,13 @@ static void focus_menu_button(UIState *s, int touch_x, int touch_y, int touched)
 
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
 
+  int  nCenterX = s->viz_rect.centerX();
 
-    if( touched && screen_button_clicked(touch_x, touch_y, 600, 500, 150, 150) )
+
+  int  Increase = nCenterX - 100;
+  int  Reduction = nCenterX + 100;
+
+    if( touched && screen_button_clicked(touch_x, touch_y, Increase, 500, 150, 150) )
     {
         int value = Params::param_value.autoFocus++;
         if( value > 100)
@@ -357,7 +362,7 @@ static void focus_menu_button(UIState *s, int touch_x, int touch_y, int touched)
         QString values = QString::number(value);
         Params().put("OpkrAutoFocus", values.toStdString());
     }
-    else if( touched && screen_button_clicked(touch_x, touch_y, 900, 500, 150, 150) )
+    else if( touched && screen_button_clicked(touch_x, touch_y, Reduction, 500, 150, 150) )
     {
         int value = Params::param_value.autoFocus--;
         if( value < 0)
@@ -367,8 +372,8 @@ static void focus_menu_button(UIState *s, int touch_x, int touch_y, int touched)
         QString values = QString::number(value);
         Params().put("OpkrAutoFocus", values.toStdString());
     }
-    nvgText(s->vg, 600, 500, "[ + ]", NULL);
-    nvgText(s->vg, 900, 500, "[ - ]", NULL);
+    nvgText(s->vg, Increase, 500, "[ + ]", NULL);
+    nvgText(s->vg, Reduction, 500, "[ - ]", NULL);
 }
 
 static void screen_menu_button(UIState *s, int touch_x, int touch_y, int touched)
