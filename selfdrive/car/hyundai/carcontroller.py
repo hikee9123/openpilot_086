@@ -65,7 +65,6 @@ class CarController():
 
     # long control
     self.longCtrl = CLongControl(self.p)
-    self.del_flag = 0
 
 
 
@@ -219,7 +218,6 @@ class CarController():
     kph_set_vEgo = vCruise * CV.MS_TO_KPH
 
     self.cruise_set_speed_kph = CS.out.cruiseState.speed * CV.MS_TO_KPH
-    self.cruise_set_speed_kph = min( self.model_speed * 0.8, self.cruise_set_speed_kph )
     lead_1 = sm['radarState'].leadOne
     lead_2 = sm['radarState'].leadTwo    
 
@@ -231,18 +229,6 @@ class CarController():
     vRelef = lead_2.vRel * 3.6 + 0.5 #EON Lead
     lead2_status = lead_2.status
 
-    if dRele <= 0 or dRele >= 150:
-      dRele = 150
-      self.del_flag = True
-    elif yRele > 5:
-      self.del_flag = False
-
-
-
-    if  dRele < 140 and self.del_flag:
-      if kph_vEgo > 80 and self.vRel < -10:
-        kph_dec = interp( self.vRel, [-20,-10,-1], [15,10,1] )
-        kph_set_vEgo -= kph_dec
     
     if self.SC.update_btn(CS, sm, self ) == 0:
       pass
