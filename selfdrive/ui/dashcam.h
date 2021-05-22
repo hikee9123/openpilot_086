@@ -343,7 +343,6 @@ static void screen_draw_button(UIState *s, int touch_x, int touch_y, int touched
 static void focus_menu_button(UIState *s, int touch_x, int touch_y, int touched)
 {
   // Set button to bottom left of screen
-  UIScene &scene = s->scene;
 
   nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
 
@@ -368,8 +367,8 @@ static void focus_menu_button(UIState *s, int touch_x, int touch_y, int touched)
         QString values = QString::number(value);
         Params().put("OpkrAutoFocus", values.toStdString());
     }
-    nvgText(s->vg, 600, 500, "[+]", NULL);
-    nvgText(s->vg, 800, 500, "[-]", NULL);
+    nvgText(s->vg, 600+70, 500+70, "[+]", NULL);
+    nvgText(s->vg, 800+70, 500+70, "[-]", NULL);
 }
 
 static void screen_menu_button(UIState *s, int touch_x, int touch_y, int touched)
