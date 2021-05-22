@@ -104,11 +104,13 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     dashcamMode @96;
     controlsInitializing @98;
     usbError @99;
-    cameraError @100;
+    roadCameraError @100;
+    driverCameraError @101;
+    wideRoadCameraError @102;
 
     # atom
-    steerTorqueOver @101;
-    steerTorqueLow @102;
+    steerTorqueOver @103;
+    steerTorqueLow @104;
 
 
     radarCanErrorDEPRECATED @15;
