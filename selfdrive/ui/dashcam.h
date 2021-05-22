@@ -344,7 +344,7 @@ static void focus_menu_button(UIState *s, int touch_x, int touch_y, int touched)
 {
   // Set button to bottom left of screen
 
-  nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
+  nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
 
 
     if( touched && screen_button_clicked(touch_x, touch_y, 600, 500, 150, 150) )
@@ -357,7 +357,7 @@ static void focus_menu_button(UIState *s, int touch_x, int touch_y, int touched)
         QString values = QString::number(value);
         Params().put("OpkrAutoFocus", values.toStdString());
     }
-    else if( touched && screen_button_clicked(touch_x, touch_y, 800, 500, 150, 150) )
+    else if( touched && screen_button_clicked(touch_x, touch_y, 900, 500, 150, 150) )
     {
         int value = Params::param_value.autoFocus--;
         if( value < 0)
@@ -367,8 +367,8 @@ static void focus_menu_button(UIState *s, int touch_x, int touch_y, int touched)
         QString values = QString::number(value);
         Params().put("OpkrAutoFocus", values.toStdString());
     }
-    nvgText(s->vg, 600+70, 500+70, "[+]", NULL);
-    nvgText(s->vg, 800+70, 500+70, "[-]", NULL);
+    nvgText(s->vg, 600, 500, "[+]", NULL);
+    nvgText(s->vg, 900, 500, "[-]", NULL);
 }
 
 static void screen_menu_button(UIState *s, int touch_x, int touch_y, int touched)
@@ -378,29 +378,6 @@ static void screen_menu_button(UIState *s, int touch_x, int touch_y, int touched
 
   nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
 
-
-    if( touched && screen_button_clicked(touch_x, touch_y, 1000, 950, 150, 150) )
-    {
-        int value = Params::param_value.autoFocus++;
-        if( value > 100)
-        {
-          Params::param_value.autoFocus = 100;
-        }
-        QString values = QString::number(value);
-        Params().put("OpkrAutoFocus", values.toStdString());
-    }
-    else if( touched && screen_button_clicked(touch_x, touch_y, 1200, 950, 150, 150) )
-    {
-        int value = Params::param_value.autoFocus--;
-        if( value < 0)
-        {
-          Params::param_value.autoFocus = 0;
-        }
-        QString values = QString::number(value);
-        Params().put("OpkrAutoFocus", values.toStdString());
-    }
-    nvgText(s->vg, 1000, 950, "[+]", NULL);
-    nvgText(s->vg, 1200, 950, "[-]", NULL);
 
     int btn_w = 150;
     int btn_h = 150;
