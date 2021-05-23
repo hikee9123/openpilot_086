@@ -15,7 +15,7 @@ import common.log as trace1
 
 
 class CLongControl():
-  def __init__(self, p ):
+  def __init__(self, p = None ):
     self.p = p
     self.accel_steady = 0
     self.scc12_cnt = 0
