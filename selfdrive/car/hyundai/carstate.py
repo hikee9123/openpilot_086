@@ -119,18 +119,17 @@ class CarState(CarStateBase):
 
     self.update_atom( cp, cp_cam )
 
-
-    if ret.doorOpen or self.gearShifter != GearShifter.drive:
+    ret.cruiseState.available = False
+    if self.main_on == False:
+      self.time_delay_int = 0
+    elif ret.doorOpen or self.gearShifter != GearShifter.drive:
       self.time_delay_int = 2000
-      ret.cruiseState.available = False
     elif ret.seatbeltUnlatched or self.cruiseState_modeSel == 3:
       self.time_delay_int = 100
-      ret.cruiseState.available = False
     elif self.time_delay_int <= 0:
       ret.cruiseState.available = self.main_on
     else:
       self.time_delay_int -= 1
-      ret.cruiseState.available = False
       if self.clu_Vanz > 15:
         self.time_delay_int = 0
 

@@ -251,12 +251,13 @@ static void ui_draw_world(UIState *s) {
 }
 
 static void ui_draw_vision_maxspeed(UIState *s) {
-  const int SET_SPEED_NA = 255;
-  float maxspeed = (*s->sm)["controlsState"].getControlsState().getVCruise();
-  const bool is_cruise_set = maxspeed != 0 && maxspeed != SET_SPEED_NA;
+  float maxspeed = s->scene.controls_state.getVCruise();
+  auto cruiseState = s->scene.car_state.getCruiseState();
+  bool is_cruise_set = cruiseState.getAccActive();
+
   if (is_cruise_set && !s->scene.is_metric) { maxspeed *= 0.6225; }
 
-  const Rect rect = {s->viz_rect.x + (bdr_s * 2), int(s->viz_rect.y + (bdr_s * 1.5)), 184, 202};
+  const Rect rect = {s->viz_rect.x + bdr_s, int(s->viz_rect.y + (bdr_s * 1.5)), 184, 202};
   ui_fill_rect(s->vg, rect, COLOR_BLACK_ALPHA(100), 30.);
   ui_draw_rect(s->vg, rect, COLOR_WHITE_ALPHA(100), 10, 20.);
 
@@ -287,12 +288,15 @@ static void ui_draw_vision_speed(UIState *s) {
 }
 
 static void ui_draw_vision_event(UIState *s) {
+  int engageable = s->scene.controls_state.getEngageable();
   const int radius = 96;
-  const int center_x = s->viz_rect.right() - radius - bdr_s * 2;
-  const int center_y = s->viz_rect.y + radius  + (bdr_s * 1.5);  
-  if ((*s->sm)["controlsState"].getControlsState().getEngageable()) {
+  const int center_x = s->viz_rect.right() - radius;// - bdr_s * 1.5;
+  const int center_y = s->viz_rect.y + (radius / 2)  + (bdr_s * 0.9); 
+
+  if (engageable) {
     // draw steering wheel
-    ui_draw_circle_image(s, center_x, center_y, radius, "wheel", bg_colors[s->status], 1.0f);
+    float angleSteers = s->scene.car_state.getSteeringAngleDeg();
+    ui_draw_circle_image(s, center_x, center_y, radius, "wheel", bg_colors[s->status], 1.0f, angleSteers);
   }
   else
   {
