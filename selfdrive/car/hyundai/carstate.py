@@ -47,7 +47,7 @@ class CarState(CarStateBase):
     self.time_delay_int = 600
 
     # long control
-    self.longCtrl = CLongControl(self.p)
+    self.longCtrl = CLongControl()
 
 
 
