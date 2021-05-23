@@ -187,9 +187,7 @@ static void update_state(UIState *s) {
       scene.satelliteCount = data.getMeasurementReport().getNumMeas();
     }
   }
-  if (sm.updated("liveLocationKalman")) {
-    scene.gpsOK = sm["liveLocationKalman"].getLiveLocationKalman().getGpsOK();
-  }
+
   if (sm.updated("gpsLocationExternal")) {
     scene.gpsLocationExternal = sm["gpsLocationExternal"].getGpsLocationExternal();
     scene.gpsAccuracy = sm["gpsLocationExternal"].getGpsLocationExternal().getAccuracy();
@@ -200,9 +198,7 @@ static void update_state(UIState *s) {
   if (sm.updated("driverState")) {
     scene.driver_state = sm["driverState"].getDriverState();
   }
-  if (sm.updated("driverMonitoringState")) {
-    scene.dmonitoring_state = sm["driverMonitoringState"].getDriverMonitoringState();
-  }
+
   if (sm.updated("sensorEvents")) {
     for (auto sensor : sm["sensorEvents"].getSensorEvents()) {
       if (!Hardware::TICI() && sensor.which() == cereal::SensorEventData::LIGHT) {
@@ -221,16 +217,12 @@ static void update_state(UIState *s) {
       }
     }
   }
-  if (  sm.updated("roadCameraState")) {
-    scene.camera_state = sm["roadCameraState"].getRoadCameraState();
-
-    if( Hardware::TICI() )
-    {
-      float gain = scene.camera_state.getGainFrac() * (scene.camera_state.getGlobalGain() > 100 ? 2.5 : 1.0) / 10.0;
-      scene.light_sensor = std::clamp<float>((1023.0 / 1757.0) * (1757.0 - scene.camera_state.getIntegLines()) * (1.0 - gain), 0.0, 1023.0);
-    }
+  if (Hardware::TICI() && sm.updated("roadCameraState")) {
+    auto camera_state = sm["roadCameraState"].getRoadCameraState();
+    float gain = camera_state.getGainFrac() * (camera_state.getGlobalGain() > 100 ? 2.5 : 1.0) / 10.0;
+    scene.light_sensor = std::clamp<float>((1023.0 / 1757.0) * (1757.0 - camera_state.getIntegLines()) * (1.0 - gain), 0.0, 1023.0);
   }
-  scene.started = scene.deviceState.getStarted() || scene.driver_view;
+  scene.started = sm["deviceState"].getDeviceState().getStarted() || scene.driver_view;
 
    // atom
    if (sm.updated("liveParameters")) 
@@ -325,9 +317,9 @@ QUIState::QUIState(QObject *parent) : QObject(parent) {
     "modelV2", "controlsState", "liveCalibration", "radarState", "deviceState", "liveLocationKalman",
     "pandaState", "carParams", "driverState", "driverMonitoringState", "sensorEvents", "carState", "ubloxGnss",
     "liveParameters","lateralPlan", "longitudinalPlan","carControl","gpsLocationExternal",  // atom
-//#ifdef QCOM2
+#ifdef QCOM2
     "roadCameraState",
-//#endif
+#endif
   });
 
   ui_state.fb_w = vwp_w;
@@ -472,11 +464,6 @@ void Device::ScreenAwake()
   {
       cur_key += 1;
   }
-
-  // static int  time_disp = 0;
-  // time_disp++;
-  //if( (time_disp % (2*UI_FREQ)) == 0 )
-   //   printf("ScreenAwake awake = %d draw_alerts = %d  scr.nTime=%d  time=%d\n", cur_key, draw_alerts, s.scene.scr.nTime, time_disp );  
 
   static int old_key;
   if( cur_key != old_key )

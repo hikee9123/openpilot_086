@@ -489,8 +489,6 @@ static void ui_draw_debug2(UIState *s)
   float  angleOffsetAverage = scene.liveParameters.getAngleOffsetAverageDeg();
   float  stiffnessFactor = scene.liveParameters.getStiffnessFactor();
 
-  float  modelSpeed = scene.controls_state.getModelSpeed();
-
   float  laneWidth = scene.lateralPlan.getLaneWidth();
   //float  cpuPerc = scene.deviceState.getCpuUsagePercent();
 
@@ -515,17 +513,17 @@ static void ui_draw_debug2(UIState *s)
     
     ui_print( s, x_pos, y_pos+100,  "aO:%.2f, %.2f", angleOffset, angleOffsetAverage );
     ui_print( s, x_pos, y_pos+150, "sF:%.2f Fan:%.0f", stiffnessFactor, fanSpeed/1000. );
-    ui_print( s, x_pos, y_pos+200, "lW:%.2f CV:%.0f", laneWidth, modelSpeed );
+    ui_print( s, x_pos, y_pos+200, "lW:%.2f", laneWidth );
    // ui_print( s, x_pos, y_pos+250, "time:%d" , scene.scr.nTime/20 );
 
     ui_print( s, x_pos, y_pos+300, "prob:%.2f, %.2f, %.2f, %.2f", lane_line_probs[0], lane_line_probs[1], lane_line_probs[2], lane_line_probs[3] );
     ui_print( s, x_pos, y_pos+350, "vCruise:%.1f",  vCruise*3.6 );//,  aCruise, vTarget*3.6,  aTarget);
 
     
-    int  lensPos = scene.camera_state.getLensPos();
-    float  lensTruePos = scene.camera_state.getLensTruePos();
-    float  lensErr = scene.camera_state.getLensErr();
-    ui_print( s, x_pos, y_pos+450, "frame:%d,%3.0f,%3.0f, %3d", lensPos, lensTruePos, lensErr, Params::param_value.autoFocus );
+    //int  lensPos = scene.camera_state.getLensPos();
+    //float  lensTruePos = scene.camera_state.getLensTruePos();
+    //float  lensErr = scene.camera_state.getLensErr();
+    //ui_print( s, x_pos, y_pos+450, "frame:%d,%3.0f,%3.0f, %3d", lensPos, lensTruePos, lensErr, Params::param_value.autoFocus );
   //float  dPoly = scene.pathPlan.lPoly + scene.pathPlan.rPoly;
   //ui_print( s, x_pos, y_pos+300, "Poly:%.2f, %.2f = %.2f", scene.pathPlan.lPoly, scene.pathPlan.rPoly, dPoly );
   // ui_print( s, x_pos, y_pos+350, "map:%d,cam:%d", scene.live.map_valid, scene.live.speedlimitahead_valid  );

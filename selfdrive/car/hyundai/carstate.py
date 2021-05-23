@@ -5,7 +5,7 @@ from selfdrive.car.interfaces import CarStateBase
 from opendbc.can.parser import CANParser
 from selfdrive.config import Conversions as CV
 
-from selfdrive.car.hyundai.spdcontroller  import SpdController
+from selfdrive.car.hyundai.longcontrol  import CLongControl
 from selfdrive.car.hyundai.values import Buttons
 import common.log as trace1
 
@@ -46,7 +46,8 @@ class CarState(CarStateBase):
 
     self.time_delay_int = 600
 
-    self.SC = SpdController()
+    # long control
+    self.longCtrl = CLongControl(self.p)
 
 
 
@@ -118,15 +119,15 @@ class CarState(CarStateBase):
 
     self.update_atom( cp, cp_cam )
 
-    if self.time_delay_int <= 0:
-      if ret.doorOpen or self.gearShifter != GearShifter.drive:
-        self.time_delay_int = 1000
-        ret.cruiseState.available = False
-      elif ret.seatbeltUnlatched or self.cruiseState_modeSel == 3:
-        self.time_delay_int = 100
-        ret.cruiseState.available = False
-      else:
-       ret.cruiseState.available = self.main_on
+
+    if ret.doorOpen or self.gearShifter != GearShifter.drive:
+      self.time_delay_int = 2000
+      ret.cruiseState.available = False
+    elif ret.seatbeltUnlatched or self.cruiseState_modeSel == 3:
+      self.time_delay_int = 100
+      ret.cruiseState.available = False
+    elif self.time_delay_int <= 0:
+      ret.cruiseState.available = self.main_on
     else:
       self.time_delay_int -= 1
       ret.cruiseState.available = False
@@ -137,7 +138,7 @@ class CarState(CarStateBase):
     ret.cruiseState.accActive = self.acc_active
 
 
-    self.cruiseState_modeSel, speed_kph = self.SC.update_cruiseSW( self, self.CP )
+    self.cruiseState_modeSel, speed_kph = self.longCtrl.update_cruiseSW( self )
     ret.cruiseState.modeSel = self.cruiseState_modeSel
     ret.cruiseState.cruiseSwState = self.cruise_buttons
     ret.cruiseState.gapSet = self.cruiseGapSet

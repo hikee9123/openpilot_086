@@ -43,7 +43,7 @@ class ParamsLearner:
 
 
   # atom
-  def atom_tune( self, v_ego_kph, cv_value,  atomTuning ):  
+  def atom_tune( self, v_ego_kph, angleDeg,  atomTuning ):  
     self.cv_KPH = atomTuning.cvKPH
     self.cv_BPV = atomTuning.cvBPV
     self.cv_steerRatioV = atomTuning.cvsteerRatioV
@@ -57,9 +57,9 @@ class ParamsLearner:
 
     nPos = 0
     for steerRatio in self.cv_BPV:  # steerRatio
-      self.cv_SteerRatio.append( interp( cv_value, steerRatio, self.cv_steerRatioV[nPos] ) )
-      self.cv_ActuatorDelay.append( interp( cv_value, steerRatio, self.cv_ActuatorDelayV[nPos] ) )
-      self.cv_SteerRateCost.append( interp( cv_value, steerRatio, self.cv_SteerRateCostV[nPos] ) )
+      self.cv_SteerRatio.append( interp( angleDeg, steerRatio, self.cv_steerRatioV[nPos] ) )
+      self.cv_ActuatorDelay.append( interp( angleDeg, steerRatio, self.cv_ActuatorDelayV[nPos] ) )
+      self.cv_SteerRateCost.append( interp( angleDeg, steerRatio, self.cv_SteerRateCostV[nPos] ) )
       nPos += 1
       if nPos > 20:
         break
@@ -110,7 +110,7 @@ def main(sm=None, pm=None):
   gc.disable()
 
   if sm is None:
-    sm = messaging.SubMaster(['liveLocationKalman', 'carState', 'carParams', 'controlsState'], poll=['liveLocationKalman'])
+    sm = messaging.SubMaster(['liveLocationKalman', 'carState', 'carParams'], poll=['liveLocationKalman'])
   if pm is None:
     pm = messaging.PubMaster(['liveParameters'])
 
@@ -192,7 +192,6 @@ def main(sm=None, pm=None):
       steerRateCostCV = CP.steerRateCost
       actuatorDelayCV = CP.steerActuatorDelay
       steerRatioCV = float(x[States.STEER_RATIO])
-      angle_offset_fast = math.degrees(x[States.ANGLE_OFFSET_FAST])
       v_ego_kph = sm['carState'].vEgo * CV.MS_TO_KPH
 
 
@@ -200,16 +199,9 @@ def main(sm=None, pm=None):
         pass
       elif sm['carParams'].steerRateCost > 0:
         atomTuning = sm['carParams'].atomTuning
-        cv_value = sm['controlsState'].modelSpeed
-        if cv_value <= 10: 
-          cv_value = 255
-        steerRatioCV, actuatorDelayCV, steerRateCostCV = learner.atom_tune( v_ego_kph, cv_value,  atomTuning )
+        angleDeg = sm['carState'].steeringAngleDeg
+        steerRatioCV, actuatorDelayCV, steerRateCostCV = learner.atom_tune( v_ego_kph, angleDeg,  atomTuning )
 
-
-      if v_ego_kph < 20:  # 30 km/h
-         v_ego_BP = [5,20]
-         angle_rate = [0,1]
-         angle_offset_fast *= interp( v_ego_kph, v_ego_BP, angle_rate )
 
       msg.liveParameters.steerRatioCV = steerRatioCV
       msg.liveParameters.steerActuatorDelayCV = actuatorDelayCV

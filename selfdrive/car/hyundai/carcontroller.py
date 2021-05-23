@@ -7,10 +7,6 @@ from opendbc.can.packer import CANPacker
 from selfdrive.config import Conversions as CV
 from common.numpy_fast import clip, interp
 
-# speed controller
-from selfdrive.car.hyundai.spdcontroller  import SpdController
-from selfdrive.car.hyundai.spdctrlSlow  import SpdctrlSlow
-from selfdrive.car.hyundai.spdctrlNormal  import SpdctrlNormal
 
 # long controller
 from selfdrive.car.hyundai.longcontrol  import CLongControl
@@ -46,12 +42,7 @@ class CarController():
     self.steer_torque_over_timer = 0
     self.steer_torque_ratio = 1
 
-    self.dRel = 0
-    self.vRel = 0
-
     self.timer1 = tm.CTime1000("time1")
-    self.model_speed = 0
-
     
     # hud
     self.hud_timer_left = 0
@@ -60,8 +51,6 @@ class CarController():
 
 
     self.params = Params()
-    self.SC = SpdctrlSlow()
-
 
     # long control
     self.longCtrl = CLongControl(self.p)
@@ -209,8 +198,6 @@ class CarController():
     return  param, dst_steer
 
   def update_longctrl(self, c, CS, frame, sm, CP ):  
-    kph_vEgo = CS.out.vEgo * CV.MS_TO_KPH
-
     # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
     # atom
     btn_signal = None
@@ -218,19 +205,8 @@ class CarController():
     kph_set_vEgo = vCruise * CV.MS_TO_KPH
 
     self.cruise_set_speed_kph = CS.out.cruiseState.speed * CV.MS_TO_KPH
-    lead_1 = sm['radarState'].leadOne
-    lead_2 = sm['radarState'].leadTwo    
-
-    dRele = lead_1.dRel #EON Lead  거리
-    yRele = lead_1.yRel #EON Lead  속도 차이
-    vRele = lead_1.vRel * 3.6 + 0.5 #EON Lead  속도.
-    dRelef = lead_2.dRel #EON Lead
-    yRelef = lead_2.yRel #EON Lead
-    vRelef = lead_2.vRel * 3.6 + 0.5 #EON Lead
-    lead2_status = lead_2.status
-
     
-    if self.SC.update_btn(CS, sm, self ) == 0:
+    if self.longCtrl.update_btn( CS  ) == 0:
       pass
     elif CS.acc_active and CS.out.cruiseState.modeSel == 4:
       self.ctrl_speed = min( self.cruise_set_speed_kph, kph_set_vEgo)
@@ -245,15 +221,6 @@ class CarController():
     enabled = c.enabled
     actuators = c.actuators
     pcm_cancel_cmd = c.cruiseControl.cancel
-    kph_vEgo = CS.out.vEgo * CV.MS_TO_KPH
-
-
-    self.dRel, self.vRel = SpdController.get_lead( sm )
-    if self.SC is not None:
-      self.model_speed = self.SC.cal_model_speed(  sm, CS.out.vEgo  )
-    else:
-      self.model_speed =  0
-
 
     # Steering Torque
     path_plan = sm['lateralPlan']    
@@ -300,10 +267,12 @@ class CarController():
     str_log1 = 'torg:{:5.0f} steer={:5.0f}'.format( apply_steer, CS.out.steeringTorque  )
     trace1.printf( '  {}'.format( str_log1 ) )
 
-    str_log1 = 'Value={:.5f} raw={:.5f} gas={:.3f} gap={:.0f}  BTN={:.0f} Alive={:2.0f} '.format( CS.aReqValue, CS.aReqRaw, CS.out.gas, CS.cruiseGapSet, CS.cruise_buttons, CS.CR_VSM_Alive )
+    str_log1 = 'gas={:.3f} gap={:.0f} Value={:.3f} raw={:.3f}'.format( CS.out.gas, CS.cruiseGapSet, CS.aReqValue, CS.aReqRaw )
     trace1.printf2( '{}'.format( str_log1 ) )
 
-    #run_speed_ctrl = CS.acc_active and self.SC != None
+    str_log1 = 'LKAS={:.0f} hold={:.0f}'.format( CS.lkas_button_on, CS.auto_hold )
+    str_log2 = 'limit={:.0f} tm={:.1f} '.format( apply_steer_limit, self.timer1.sampleTime()  )               
+    trace1.printf3( '{} {}'.format( str_log1, str_log2 ) )    
 
     if pcm_cancel_cmd:
       can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.CANCEL))
@@ -331,10 +300,7 @@ class CarController():
         self.resume_cnt += 1
       else:
         self.resume_cnt = 0
-    else:
-      str_log1 = 'LKAS={:.0f} hold={:.0f}'.format( CS.lkas_button_on, CS.auto_hold )
-      str_log2 = 'limit={:.0f} tm={:.1f} '.format( apply_steer_limit, self.timer1.sampleTime()  )               
-      trace1.printf3( '{} {}'.format( str_log1, str_log2 ) )    
+ 
 
 
 

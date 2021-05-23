@@ -539,7 +539,7 @@ struct ControlsState @0x97ff69c53601abf1 {
   alertTextMsg1  @60 :Text;
   alertTextMsg2  @61 :Text;
   alertTextMsg3  @62 :Text;
-  modelSpeed @63 :Float32;
+
 
   lateralControlState :union {
     indiState @52 :LateralINDIState;
@@ -673,18 +673,6 @@ struct ModelDataV2 {
   leads @11 :List(LeadDataV2);
 
   meta @12 :MetaData;
-
-  # atom
-  path @18 :PathData;
-
-  struct PathData {
-    points @0 :List(Float32);
-    prob @1 :Float32;
-    std @2 :Float32;
-    stds @3 :List(Float32);
-    poly @4 :List(Float32);
-    validLen @5 :Float32;
-  } 
 
   # All SI units and in device frame
   struct XYZTData {

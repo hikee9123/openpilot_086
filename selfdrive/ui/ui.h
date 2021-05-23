@@ -90,12 +90,11 @@ typedef struct UIScene {
   cereal::CarState::Reader car_state;
   cereal::ControlsState::Reader controls_state;
   cereal::DriverState::Reader driver_state;
-  cereal::DriverMonitoringState::Reader dmonitoring_state;
+
 
   // gps
   int satelliteCount;
   float gpsAccuracy;
-  bool gpsOK;
 
   // modelV2
   float lane_line_probs[4];

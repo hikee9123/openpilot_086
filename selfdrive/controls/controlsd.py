@@ -166,7 +166,6 @@ class Controls:
     self.prof = Profiler(False)  # off by default
 
     # atom
-    self.model_speed = 0
     self.hyundai_lkas = self.read_only  #read_only
     self.init_flag = True
 
@@ -541,7 +540,6 @@ class Controls:
     if not self.hyundai_lkas and self.initialized:
       # send car controls over can
       can_sends = self.CI.apply(CC, self.sm, self.CP)
-      self.model_speed  = self.CI.CC.model_speed      
       self.pm.send('sendcan', can_list_to_can_capnp(can_sends, msgtype='sendcan', valid=CS.canValid))
 
     force_decel = (self.sm['driverMonitoringState'].awarenessStatus < 0.) or \
@@ -592,7 +590,7 @@ class Controls:
     controlsState.alertTextMsg1 = str(log_alertTextMsg1)
     controlsState.alertTextMsg2 = str(log_alertTextMsg2)
     controlsState.alertTextMsg3 = str(log_alertTextMsg3)
-    controlsState.modelSpeed = float(self.model_speed) 
+
 
 
     if self.CP.steerControlType == car.CarParams.SteerControlType.angle:

@@ -24,7 +24,14 @@ class CLongControl():
     self.seq_command = 0
     self.target_speed = 0
     self.set_point = 0
-      
+    self.wait_timer2 = 0
+
+    self.prev_clu_CruiseSwState = 0       
+    self.prev_VSetDis  = 0
+    self.curise_set_first = 0
+    self.curise_sw_check = False
+    self.cruise_set_mode = 4
+
   def reset( self, CS ):
     self.scc12_cnt = CS.scc12["CR_VSM_Alive"] + 1     
 
@@ -44,6 +51,69 @@ class CLongControl():
     apply_accel, self.accel_steady = self.accel_hysteresis(apply_accel, self.accel_steady)
     apply_accel = clip(apply_accel * self.p.ACCEL_SCALE, self.p.ACCEL_MIN, self.p.ACCEL_MAX)
     return  apply_accel
+
+
+
+  def update_btn(self, CS ): 
+    if CS.driverOverride == 2 or not CS.acc_active or CS.cruise_buttons == Buttons.RES_ACCEL or CS.cruise_buttons == Buttons.SET_DECEL or CS.cruise_buttons == Buttons.CANCEL: 
+      self.wait_timer2 = 10 
+    elif self.wait_timer2: 
+      self.wait_timer2 -= 1
+    else:
+      return 1
+    return 0
+
+
+  def update_cruiseSW(self, CS ):
+    set_speed_kph = self.cruise_set_speed_kph
+    delta_vsetdis = 0
+    if CS.acc_active:
+        delta_vsetdis = abs(CS.VSetDis - self.prev_VSetDis)            
+        if self.prev_clu_CruiseSwState != CS.cruise_buttons:
+          if CS.cruise_buttons:
+            self.prev_VSetDis = int(CS.VSetDis)
+          elif CS.driverOverride:
+            set_speed_kph = int(CS.VSetDis)          
+          elif self.prev_clu_CruiseSwState == Buttons.RES_ACCEL:   # up 
+            if self.curise_set_first:
+                self.curise_set_first = 0
+                set_speed_kph =  int(CS.VSetDis)
+            elif delta_vsetdis > 5:
+                set_speed_kph = CS.VSetDis
+            elif not self.curise_sw_check:
+                set_speed_kph += 1
+          elif self.prev_clu_CruiseSwState == Buttons.SET_DECEL:  # dn
+            if self.curise_set_first:
+                self.curise_set_first = 0
+                set_speed_kph = int(CS.clu_Vanz)
+            elif delta_vsetdis > 5:
+                set_speed_kph = int(CS.VSetDis)
+            elif not self.curise_sw_check:
+                set_speed_kph -= 1
+
+          self.prev_clu_CruiseSwState = CS.cruise_buttons
+        elif CS.cruise_buttons and delta_vsetdis > 0:
+          self.curise_sw_check = True
+          set_speed_kph = int(CS.VSetDis)
+    else:
+        self.curise_sw_check = False
+        self.curise_set_first = 1
+        self.prev_VSetDis = int(CS.VSetDis)
+        set_speed_kph = CS.VSetDis
+        if not CS.acc_active and self.prev_clu_CruiseSwState != CS.cruise_buttons:  # MODE GAP
+          if CS.cruise_buttons == Buttons.GAP_DIST: 
+            self.cruise_set_mode += 1
+          if self.cruise_set_mode > 4:
+            self.cruise_set_mode = 0
+          self.prev_clu_CruiseSwState = CS.cruise_buttons
+
+
+    if set_speed_kph < 30:
+      set_speed_kph = 30
+
+    self.cruise_set_speed_kph = set_speed_kph
+    return self.cruise_set_mode, set_speed_kph
+
 
 
   def update( self, packer, CS, c, frame, accel_dec ):

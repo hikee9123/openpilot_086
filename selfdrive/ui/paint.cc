@@ -87,16 +87,15 @@ static void ui_draw_circle_image(const UIState *s, int center_x, int center_y, i
   ui_draw_circle_image(s, center_x, center_y, radius, image, nvgRGBA(0, 0, 0, (255 * bg_alpha)), img_alpha);
 }
 
-static void draw_lead(UIState *s, int idx) {
+static void draw_lead(UIState *s, const cereal::RadarState::LeadData::Reader &lead_data, const vertex_data &vd) {
   // Draw lead car indicator
-  const auto &lead = s->scene.lead_data[idx];
-  auto [x, y] = s->scene.lead_vertices[idx];
+  auto [x, y] = vd;
 
   float fillAlpha = 0;
   float speedBuff = 10.;
   float leadBuff = 40.;
-  float d_rel = lead.getDRel();
-  float v_rel = lead.getVRel();
+  float d_rel = lead_data.getDRel();
+  float v_rel = lead_data.getVRel();
   if (d_rel < leadBuff) {
     fillAlpha = 255*(1.0-(d_rel/leadBuff));
     if (v_rel < 0) {
@@ -105,24 +104,10 @@ static void draw_lead(UIState *s, int idx) {
     fillAlpha = (int)(fmin(fillAlpha, 255));
   }
 
-  const char *string = "C";
-  NVGcolor color = COLOR_YELLOW;
-  NVGcolor txtColor = COLOR_WHITE;
-  if(lead.getRadar())
-  {
-     txtColor = COLOR_BLACK;
-     string = "R";
-     color = nvgRGBA(112, 128, 255, 255);
-  }
-    
-
   float sz = std::clamp((25 * 30) / (d_rel / 3 + 30), 15.0f, 30.0f) * s->zoom;
   x = std::clamp(x, 0.f, s->viz_rect.right() - sz / 2);
   y = std::fmin(s->viz_rect.bottom() - sz * .6, y);
-  draw_chevron(s, x, y, sz, nvgRGBA(201, 34, 49, fillAlpha), color);
-
-  nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
-  ui_draw_text(s, x, y + sz/1.5f, string, 20 * 2.5, txtColor, "sans-bold");
+  draw_chevron(s, x, y, sz, nvgRGBA(201, 34, 49, fillAlpha), COLOR_YELLOW);
 }
 
 static void ui_draw_line(UIState *s, const line_vertices_data &vd, NVGcolor *color, NVGpaint *paint) {
@@ -244,7 +229,6 @@ static void ui_draw_vision_lane_lines(UIState *s) {
 
 // Draw all world space objects.
 static void ui_draw_world(UIState *s) {
-  const UIScene *scene = &s->scene;
   // Don't draw on top of sidebar
   nvgScissor(s->vg, s->viz_rect.x, s->viz_rect.y, s->viz_rect.w, s->viz_rect.h);
 
@@ -253,26 +237,26 @@ static void ui_draw_world(UIState *s) {
 
   // Draw lead indicators if openpilot is handling longitudinal
   if (s->scene.longitudinal_control) {
-    if (scene->lead_data[0].getStatus()) {
-      draw_lead(s, 0);
+    auto radar_state = (*s->sm)["radarState"].getRadarState();
+    auto lead_one = radar_state.getLeadOne();
+    auto lead_two = radar_state.getLeadTwo();
+    if (lead_one.getStatus()) {
+      draw_lead(s, lead_one, s->scene.lead_vertices[0]);
     }
-    if (scene->lead_data[1].getStatus() && (std::abs(scene->lead_data[0].getDRel() - scene->lead_data[1].getDRel()) > 3.0)) {
-      draw_lead(s, 1);
+    if (lead_two.getStatus() && (std::abs(lead_one.getDRel() - lead_two.getDRel()) > 3.0)) {
+      draw_lead(s, lead_two, s->scene.lead_vertices[1]);
     }
   }
   nvgResetScissor(s->vg);
 }
 
 static void ui_draw_vision_maxspeed(UIState *s) {
-  //const int SET_SPEED_NA = 255;
-  float maxspeed = s->scene.controls_state.getVCruise();
-  //const bool is_cruise_set = maxspeed != 0 && maxspeed != SET_SPEED_NA;
-  auto cruiseState = s->scene.car_state.getCruiseState();
-  bool is_cruise_set = cruiseState.getAccActive();
-
+  const int SET_SPEED_NA = 255;
+  float maxspeed = (*s->sm)["controlsState"].getControlsState().getVCruise();
+  const bool is_cruise_set = maxspeed != 0 && maxspeed != SET_SPEED_NA;
   if (is_cruise_set && !s->scene.is_metric) { maxspeed *= 0.6225; }
 
-  const Rect rect = {s->viz_rect.x + bdr_s, int(s->viz_rect.y + (bdr_s * 1.5)), 184, 202};
+  const Rect rect = {s->viz_rect.x + (bdr_s * 2), int(s->viz_rect.y + (bdr_s * 1.5)), 184, 202};
   ui_fill_rect(s->vg, rect, COLOR_BLACK_ALPHA(100), 30.);
   ui_draw_rect(s->vg, rect, COLOR_WHITE_ALPHA(100), 10, 20.);
 
@@ -303,15 +287,12 @@ static void ui_draw_vision_speed(UIState *s) {
 }
 
 static void ui_draw_vision_event(UIState *s) {
-  int engageable = s->scene.controls_state.getEngageable();
-  const int radius = 96;
-  const int center_x = s->viz_rect.right() - radius;// - bdr_s * 1.5;
-  const int center_y = s->viz_rect.y + (radius / 2)  + (bdr_s * 0.9); 
-
-  if (engageable) {
+  if ((*s->sm)["controlsState"].getControlsState().getEngageable()) {
     // draw steering wheel
-    float angleSteers = s->scene.car_state.getSteeringAngleDeg();
-    ui_draw_circle_image(s, center_x, center_y, radius, "wheel", bg_colors[s->status], 1.0f, angleSteers);
+    const int radius = 96;
+    const int center_x = s->viz_rect.right() - radius - bdr_s * 2;
+    const int center_y = s->viz_rect.y + radius  + (bdr_s * 1.5);
+    ui_draw_circle_image(s, center_x, center_y, radius, "wheel", bg_colors[s->status], 1.0f);
   }
   else
   {
@@ -323,7 +304,8 @@ static void ui_draw_vision_face(UIState *s) {
   const int radius = 96;
   const int center_x = s->viz_rect.x + radius + (bdr_s * 2);
   const int center_y = s->viz_rect.bottom() - footer_h / 2;
-  ui_draw_circle_image(s, center_x, center_y, radius, "driver_face", s->scene.dmonitoring_state.getIsActiveMode());
+  bool is_active = (*s->sm)["driverMonitoringState"].getDriverMonitoringState().getIsActiveMode();
+  ui_draw_circle_image(s, center_x, center_y, radius, "driver_face", is_active);
 }
 
 static void ui_draw_driver_view(UIState *s) {
@@ -341,9 +323,10 @@ static void ui_draw_driver_view(UIState *s) {
   ui_fill_rect(s->vg, {blackout_x_l, rect.y, blackout_w_l, rect.h}, COLOR_BLACK_ALPHA(144));
   ui_fill_rect(s->vg, {blackout_x_r, rect.y, blackout_w_r, rect.h}, COLOR_BLACK_ALPHA(144));
 
-  const bool face_detected = s->scene.driver_state.getFaceProb() > 0.4;
+  auto driver_state = (*s->sm)["driverState"].getDriverState();
+  const bool face_detected = driver_state.getFaceProb() > 0.4;
   if (face_detected) {
-    auto fxy_list = s->scene.driver_state.getFacePosition();
+    auto fxy_list = driver_state.getFacePosition();
     float face_x = fxy_list[0];
     float face_y = fxy_list[1];
     int fbox_x = valid_rect.centerX() + (is_rhd ? face_x : -face_x) * valid_rect.w;
@@ -731,10 +714,6 @@ static void ui_draw_driver(UIState *s)
     ui_print(s, s->viz_rect.centerX(), 100, "faceProb:  %.2f%%", s->scene.driver_state.getFaceProb()*100);
     ui_print(s, s->viz_rect.centerX(), 150, "partialFace:  %.2f%%", s->scene.driver_state.getPartialFace()*100);
 
-    //// ui_print(s, s->viz_rect.centerX(), 200, "facePositionStd:  %.4f,  %.4f,  %.4f", s->scene.driver_state.getFacePositionStd()[0], s->scene.driver_state.getFacePositionStd()[1], s->scene.driver_state.getFacePositionStd()[2]);
-    //// ui_print(s, s->viz_rect.centerX(), 250, "facePosition:  %.4f,  %.4f", s->scene.driver_state.getFacePosition()[0], s->scene.driver_state.getFacePosition()[1]);
-    // ui_print(s, s->viz_rect.centerX(), 250, "driverOffsetPitch:  %.4f", s->scene.dmonitoring_state.getPosePitchOffset());
-    // ui_print(s, s->viz_rect.centerX(), 300, "driverOffsetYaw:  %.4f", s->scene.dmonitoring_state.getPoseYawOffset());
     nvgFillColor(s->vg, COLOR_GREEN_ALPHA(200));
     ui_print(s, s->viz_rect.centerX(), 250, "sunglassesProb:  %.2f%%", s->scene.driver_state.getSunglassesProb()*100);
     ui_print(s, s->viz_rect.centerX(), 300, "eyesProb:  %.2f%%,  %.2f%%", s->scene.driver_state.getLeftEyeProb()*100, s->scene.driver_state.getRightEyeProb()*100);
@@ -744,11 +723,6 @@ static void ui_draw_driver(UIState *s)
     ui_print(s, s->viz_rect.centerX(), 450, "poorVision:  %.2f%%", s->scene.driver_state.getPoorVision()*100);
     ui_print(s, s->viz_rect.centerX(), 500, "distractedPose:  %.2f%%", s->scene.driver_state.getDistractedPose()*100);
     ui_print(s, s->viz_rect.centerX(), 550, "distractedEyes:  %.2f%%", s->scene.driver_state.getDistractedEyes()*100);
-    // nvgFillColor(s->vg, COLOR_RED_ALPHA(200));
-    // ui_print(s, s->viz_rect.centerX(), 550, "isDistracted:  %.2f", s->scene.dmonitoring_state.getIsDistracted());
-    // nvgFillColor(s->vg, COLOR_ORANGE_ALPHA(200));
-    // ui_print(s, s->viz_rect.centerX(), 600, "awarenessStatus:  %.2f", s->scene.dmonitoring_state.getAwarenessStatus());
-    // ui_draw_text(s, s->viz_rect.centerX(), 650, s->scene.alert_text1.c_str(), 48, COLOR_GREEN_ALPHA(200), "sans-semibold");
   }
 }
 
@@ -769,7 +743,6 @@ static void ui_draw_vision_header(UIState *s) {
   bb_ui_draw_UI(s);
   //BB END: add new measures panel    
 }
-
 
 static void ui_draw_vision_frame(UIState *s) {
   // Draw video frames

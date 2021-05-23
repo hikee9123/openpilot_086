@@ -43,7 +43,7 @@ class CarInterface(CarInterfaceBase):
     ret.steerActuatorDelay = 0.1  # Default delay
     ret.steerRateCost = 0.5
     ret.steerLimitTimer = 0.4
-    tire_stiffness_factor = 1.1
+    tire_stiffness_factor = 1.
 
     ret.maxSteeringAngleDeg = 90.
     ret.startAccel = 1.0
@@ -143,6 +143,14 @@ class CarInterface(CarInterfaceBase):
       ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
       ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.25], [0.05]]
       ret.minSteerSpeed = 32 * CV.MPH_TO_MS
+    elif candidate == CAR.ELANTRA_2021:
+      ret.lateralTuning.pid.kf = 0.00005
+      ret.mass = (2800. * CV.LB_TO_KG) + STD_CARGO_KG
+      ret.wheelbase = 2.72
+      ret.steerRatio = 13.27 * 1.15   # 15% higher at the center seems reasonable
+      tire_stiffness_factor = 0.65
+      ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
+      ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.25], [0.05]]
     elif candidate == CAR.HYUNDAI_GENESIS:
       ret.lateralTuning.pid.kf = 0.00005
       ret.mass = 2060. + STD_CARGO_KG
@@ -367,31 +375,7 @@ class CarInterface(CarInterfaceBase):
     CP.atomTuning.cvSteerRateCostV = ATOMC.cv_SteerRateCostV
     return CP
 
-  def button_event( self, CS ):
-    buttonEvents = []
-    if CS.cruise_buttons != CS.prev_cruise_buttons:
-      be = car.CarState.ButtonEvent.new_message()
-      be.pressed = self.CS.cruise_buttons != 0
-      but = CS.cruise_buttons if be.pressed else CS.prev_cruise_buttons
-      if but == Buttons.RES_ACCEL:
-        be.type = ButtonType.accelCruise
-      elif but == Buttons.SET_DECEL:
-        be.type = ButtonType.decelCruise
-      elif but == Buttons.GAP_DIST:
-        be.type = ButtonType.gapAdjustCruise
-      elif but == Buttons.CANCEL:
-        be.type = ButtonType.cancel
-      else:
-        be.type = ButtonType.unknown
-      buttonEvents.append(be)
 
-    if self.CS.cruise_main_button != self.CS.prev_cruise_main_button:
-      be = car.CarState.ButtonEvent.new_message()
-      be.type = ButtonType.altButton3
-      be.pressed = bool(self.CS.cruise_main_button)
-      buttonEvents.append(be)
-
-    return buttonEvents
 
 
   def update(self, c, can_strings):
@@ -401,9 +385,6 @@ class CarInterface(CarInterfaceBase):
     ret = self.CS.update(self.cp, self.cp_cam)
     ret.canValid = self.cp.can_valid and self.cp_cam.can_valid
     ret.steeringRateLimited = self.CC.steer_rate_limited if self.CC is not None else False
-
-    if not self.CP.enableCruise:
-      ret.buttonEvents = self.button_event( self.CS )
 
     events = self.create_common_events(ret)
     # TODO: addd abs(self.CS.angle_steers) > 90 to 'steerTempUnavailable' event
