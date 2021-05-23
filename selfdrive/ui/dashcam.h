@@ -349,8 +349,8 @@ static void focus_menu_button(UIState *s, int touch_x, int touch_y, int touched)
   int  nCenterX = s->viz_rect.centerX();
 
 
-  int  Increase = nCenterX - 100;
-  int  Reduction = nCenterX + 100;
+  int  Increase = nCenterX - 200;
+  int  Reduction = nCenterX + 200;
 
     if( touched && screen_button_clicked(touch_x, touch_y, Increase, 500, 150, 150) )
     {
@@ -375,7 +375,7 @@ static void focus_menu_button(UIState *s, int touch_x, int touch_y, int touched)
     nvgText(s->vg, Increase, 500, "[ + ]", NULL);
     nvgText(s->vg, Reduction, 500, "[ - ]", NULL);
 
-    ui_print( s, nCenterX, 400, "%d", Params::param_value.autoFocus );
+    ui_print( s, nCenterX, 500, "%d", Params::param_value.autoFocus );
 }
 
 static void screen_menu_button(UIState *s, int touch_x, int touch_y, int touched)
