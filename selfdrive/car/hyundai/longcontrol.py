@@ -31,6 +31,7 @@ class CLongControl():
     self.curise_set_first = 0
     self.curise_sw_check = False
     self.cruise_set_mode = 4
+    self.cruise_set_speed_kph = 30
 
   def reset( self, CS ):
     self.scc12_cnt = CS.scc12["CR_VSM_Alive"] + 1     
