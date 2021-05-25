@@ -77,7 +77,6 @@ class LateralPlanner():
     # atom
     self.lanelines = True
     self.lane_timer = 0
-    self.steer_torq_timer = 0
 
 
   def setup_mpc(self):
@@ -128,6 +127,11 @@ class LateralPlanner():
         lanelines = False
     return lanelines
     
+  def lanechange_cancel( self, steeringTorqueAbs ):
+    if steeringTorqueAbs > 150:
+      self.lane_change_state = LaneChangeState.off
+      self.lane_change_direction = LaneChangeDirection.none
+      self.lane_change_ll_prob = 1.0        
 
   def update(self, sm, CP):
     v_ego = sm['carState'].vEgo
@@ -152,11 +156,6 @@ class LateralPlanner():
     else:
       steerActuatorDelayCV = CP.steerActuatorDelay
       steerRateCostCV = CP.steerRateCost
-
-    if steeringTorqueAbs > 150:
-      self.steer_torq_timer +=1
-    else:
-      self.steer_torq_timer = 0
 
     # Lane change logic
     one_blinker = sm['carState'].leftBlinker != sm['carState'].rightBlinker
@@ -191,7 +190,7 @@ class LateralPlanner():
 
       # State transitions
       # off
-      if cruiseState.cruiseSwState == Buttons.CANCEL or self.steer_torq_timer > 5:
+      if cruiseState.cruiseSwState == Buttons.CANCEL or steeringTorqueAbs > 200:
         self.lane_change_state = LaneChangeState.off
         self.lane_change_direction = LaneChangeDirection.none
         self.lane_change_ll_prob = 1.0
@@ -214,6 +213,8 @@ class LateralPlanner():
 
       # starting
       elif self.lane_change_state == LaneChangeState.laneChangeStarting:
+        self.lanechange_cancel( steeringTorqueAbs )
+
         # fade out over .5s
         v_ego_kph = v_ego * CV.MS_TO_KPH
         xp = [40,80]
@@ -226,6 +227,8 @@ class LateralPlanner():
 
       # finishing
       elif self.lane_change_state == LaneChangeState.laneChangeFinishing:
+        self.lanechange_cancel( steeringTorqueAbs )
+        
         # fade in laneline over 1s
         self.lane_change_ll_prob = min(self.lane_change_ll_prob + DT_MDL, 1.0)
         if one_blinker and self.lane_change_ll_prob > 0.99:
