@@ -128,7 +128,7 @@ class LateralPlanner():
     return lanelines
     
   def lanechange_cancel( self, steeringTorqueAbs ):
-    if steeringTorqueAbs > 150:
+    if steeringTorqueAbs > 100:
       self.lane_change_state = LaneChangeState.off
       self.lane_change_direction = LaneChangeDirection.none
       self.lane_change_ll_prob = 1.0        
