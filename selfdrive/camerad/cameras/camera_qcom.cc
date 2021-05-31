@@ -876,7 +876,7 @@ static void do_autofocus(CameraState *s, SubMaster *sm) {
   lens_true_pos = std::clamp(lens_true_pos, float(LP3_AF_DAC_DOWN), float(LP3_AF_DAC_UP));
   int target = std::clamp(lens_true_pos - sag, float(LP3_AF_DAC_DOWN), float(LP3_AF_DAC_UP));
 
-
+  // atom
   static int nStep = 0;
   nStep++;
   if( nStep > 10 )
