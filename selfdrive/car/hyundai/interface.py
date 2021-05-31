@@ -41,7 +41,7 @@ class CarInterface(CarInterfaceBase):
     ret.communityFeature = candidate not in [CAR.SONATA, CAR.PALISADE]
 
     ret.steerActuatorDelay = 0.1  # Default delay
-    ret.steerRateCost = 0.5
+    ret.steerRateCost = 0.6
     ret.steerLimitTimer = 0.4
     tire_stiffness_factor = 1.
 
