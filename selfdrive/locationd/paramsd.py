@@ -201,6 +201,7 @@ def main(sm=None, pm=None):
         atomTuning = sm['carParams'].atomTuning
         angleDeg = sm['carState'].steeringAngleDeg
         steerRatioCV, actuatorDelayCV, steerRateCostCV = learner.atom_tune( v_ego_kph, angleDeg,  atomTuning )
+        steerRatioCV = float(x[States.STEER_RATIO])
 
 
       msg.liveParameters.steerRatioCV = steerRatioCV
