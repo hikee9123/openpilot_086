@@ -13,7 +13,7 @@ import cereal.messaging as messaging
 
 class TestCarInterfaces(unittest.TestCase):
   def __init__(self):  
-      self.sm = messaging.SubMaster(['modelV2','lateralPlan','radarState'])
+      self.sm = messaging.SubMaster(['modelV2','lateralPlan','radarState','longitudinalPlan'])
 
   def test_car_interfaces(self):
     all_cars = all_known_cars()
