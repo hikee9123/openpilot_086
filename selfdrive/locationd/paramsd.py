@@ -201,7 +201,7 @@ def main(sm=None, pm=None):
         pass
       elif sm['carParams'].steerRateCost > 0:
         lateral_plan = sm['lateralPlan']
-        if lateral_plan.laneChangeState != LaneChangeState.off:
+        if lateral_plan.laneChangeState == LaneChangeState.laneChangeStarting:
           vCurvature = 0
         else:
           vCurvature = abs(lateral_plan.vCurvature)
