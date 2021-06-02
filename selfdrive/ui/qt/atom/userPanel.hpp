@@ -42,7 +42,7 @@ public:
 };
 
 
-"""
+/*
 class CLiveSteerRatioToggle : public ToggleControl {
   Q_OBJECT
 
@@ -53,7 +53,7 @@ public:
     });
   }
 };
-"""
+*/
 
 class CLiveSteerRatioToggle : public AbstractControl {
   Q_OBJECT

@@ -6,7 +6,7 @@ import json
 import numpy as np
 
 import cereal.messaging as messaging
-from cereal import car
+from cereal import car, log
 from common.params import Params, put_nonblocking
 from common.realtime import DT_MDL
 from common.numpy_fast import clip
@@ -20,6 +20,8 @@ from selfdrive.config import Conversions as CV
 
 
 MAX_ANGLE_OFFSET_DELTA = 20 * DT_MDL  # Max 20 deg/s
+
+LaneChangeState = log.LateralPlan.LaneChangeState
 
 class ParamsLearner:
   def __init__(self, CP, steer_ratio, stiffness_factor, angle_offset):
@@ -199,10 +201,16 @@ def main(sm=None, pm=None):
         pass
       elif sm['carParams'].steerRateCost > 0:
         lateral_plan = sm['lateralPlan']
-        model_speed = interp(abs(lateral_plan.vCurvature), [0.0, 0.0002, 0.00074, 0.0025, 0.008, 0.02], [255, 255, 130, 90, 60, 20])
+        if lateral_plan.laneChangeState != LaneChangeState.off:
+          vCurvature = 0
+        else:
+          vCurvature = abs(lateral_plan.vCurvature)
+
+        model_speed = interp( vCurvature, [0.0002, 0.00074, 0.0025, 0.008, 0.02], [255, 130, 90, 60, 20])
         atomTuning = sm['carParams'].atomTuning
         #angleDeg = sm['carState'].steeringAngleDeg
         steerRatioCV, actuatorDelayCV, steerRateCostCV = learner.atom_tune( v_ego_kph, model_speed,  atomTuning )
+
 
         if opkrLiveSteerRatio == 2:
           steerRatioCV = float(x[States.STEER_RATIO])
