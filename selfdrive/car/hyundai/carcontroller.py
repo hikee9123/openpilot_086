@@ -203,7 +203,10 @@ class CarController():
     # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
     # atom
     btn_signal = None
-    vCruise =  sm['longitudinalPlan'].vCruise
+    if sm['longitudinalPlan'].valid:
+      vCruise = sm['longitudinalPlan'].vCruise
+    else:
+      vCruise = 30
     kph_set_vEgo = vCruise * CV.MS_TO_KPH
 
     self.cruise_set_speed_kph = CS.out.cruiseState.speed * CV.MS_TO_KPH
