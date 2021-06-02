@@ -112,7 +112,7 @@ def main(sm=None, pm=None):
   gc.disable()
 
   if sm is None:
-    sm = messaging.SubMaster(['liveLocationKalman', 'carState', 'carParams','lateralPlan'], poll=['liveLocationKalman'])
+    sm = messaging.SubMaster(['liveLocationKalman', 'carState', 'carParams','controlsState'], poll=['liveLocationKalman'])
   if pm is None:
     pm = messaging.PubMaster(['liveParameters'])
 
@@ -200,11 +200,8 @@ def main(sm=None, pm=None):
       if opkrLiveSteerRatio == 1:  # auto
         pass
       elif sm['carParams'].steerRateCost > 0:
-        lateral_plan = sm['lateralPlan']
-        if lateral_plan.laneChangeState == LaneChangeState.laneChangeStarting:
-          vCurvature = 0
-        else:
-          vCurvature = abs(lateral_plan.vCurvature)
+        controlsState = sm['controlsState']
+        vCurvature = abs(controlsState.curvature)
 
         model_speed = interp( vCurvature, [0.0002, 0.00074, 0.0025, 0.008, 0.02], [255, 130, 90, 60, 20])
         atomTuning = sm['carParams'].atomTuning
