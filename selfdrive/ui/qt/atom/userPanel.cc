@@ -140,7 +140,7 @@ void CUserPanel::showEvent(QShowEvent *event)
 //
 //  CLiveSteerRatioToggle
 
-CLiveSteerRatioToggle::CLiveSteerRatioToggle() : AbstractControl("Live SteerRatio 사용", "가변/고정 SR 대신 Live SteerRatio를 사용합니다. 반자동:SteerRatio값 학습.", "../assets/offroad/icon_shell.png") 
+CLiveSteerRatioToggle::CLiveSteerRatioToggle() : AbstractControl("Live SteerRatio 사용", "가변/고정 SR 대신 Live SteerRatio를 사용합니다. 반학습:SteerRatio값 학습.", "../assets/offroad/icon_shell.png") 
 {
   label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
   label.setStyleSheet("color: #e0e879");
