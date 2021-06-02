@@ -42,6 +42,7 @@ public:
 };
 
 
+"""
 class CLiveSteerRatioToggle : public ToggleControl {
   Q_OBJECT
 
@@ -52,7 +53,21 @@ public:
     });
   }
 };
+"""
 
+class CLiveSteerRatioToggle : public AbstractControl {
+  Q_OBJECT
+
+public:
+  CLiveSteerRatioToggle();
+
+private:
+  QPushButton btnplus;
+  QPushButton btnminus;
+  QLabel label;
+
+  void refresh();
+};
 
 class CTurnSteeringDisableToggle : public ToggleControl {
   Q_OBJECT

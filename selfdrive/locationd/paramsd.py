@@ -110,7 +110,7 @@ def main(sm=None, pm=None):
   gc.disable()
 
   if sm is None:
-    sm = messaging.SubMaster(['liveLocationKalman', 'carState', 'carParams'], poll=['liveLocationKalman'])
+    sm = messaging.SubMaster(['liveLocationKalman', 'carState', 'carParams','lateralPlan'], poll=['liveLocationKalman'])
   if pm is None:
     pm = messaging.PubMaster(['liveParameters'])
 
@@ -195,13 +195,17 @@ def main(sm=None, pm=None):
       v_ego_kph = sm['carState'].vEgo * CV.MS_TO_KPH
 
 
-      if opkrLiveSteerRatio:
+      if opkrLiveSteerRatio == 1:  # auto
         pass
       elif sm['carParams'].steerRateCost > 0:
+        lateral_plan = sm['lateralPlan']
+        model_speed = interp(abs(lateral_plan.vCurvature), [0.0, 0.0002, 0.00074, 0.0025, 0.008, 0.02], [255, 255, 130, 90, 60, 20])
         atomTuning = sm['carParams'].atomTuning
-        angleDeg = sm['carState'].steeringAngleDeg
-        steerRatioCV, actuatorDelayCV, steerRateCostCV = learner.atom_tune( v_ego_kph, angleDeg,  atomTuning )
-        steerRatioCV = float(x[States.STEER_RATIO])
+        #angleDeg = sm['carState'].steeringAngleDeg
+        steerRatioCV, actuatorDelayCV, steerRateCostCV = learner.atom_tune( v_ego_kph, model_speed,  atomTuning )
+
+        if opkrLiveSteerRatio == 2:
+          steerRatioCV = float(x[States.STEER_RATIO])
 
 
       msg.liveParameters.steerRatioCV = steerRatioCV

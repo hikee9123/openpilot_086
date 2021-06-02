@@ -135,6 +135,87 @@ void CUserPanel::showEvent(QShowEvent *event)
 }
 
 
+
+////////////////////////////////////////////////////////////////////////////////////////
+//
+//  CLiveSteerRatioToggle
+
+CLiveSteerRatioToggle::CLiveSteerRatioToggle() : AbstractControl("Live SteerRatio 사용", "가변/고정 SR 대신 Live SteerRatio를 사용합니다. 반자동:SteerRatio값 학습.", "../assets/offroad/icon_shell.png") 
+{
+  label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
+  label.setStyleSheet("color: #e0e879");
+  hlayout->addWidget(&label);
+
+  btnminus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnplus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnminus.setFixedSize(150, 100);
+  btnplus.setFixedSize(150, 100);
+  hlayout->addWidget(&btnminus);
+  hlayout->addWidget(&btnplus);
+
+  QObject::connect(&btnminus, &QPushButton::released, [=]() {
+    auto str = QString::fromStdString(Params().get("OpkrLiveSteerRatio"));
+    int value = str.toInt();
+    value = value - 1;
+    if (value <= 0 ) {
+      value = 0;
+    }
+
+    QString values = QString::number(value);
+    Params().put("OpkrLiveSteerRatio", values.toStdString());
+    refresh();
+  });
+  
+  QObject::connect(&btnplus, &QPushButton::released, [=]() {
+    auto str = QString::fromStdString(Params().get("OpkrLiveSteerRatio"));
+    int value = str.toInt();
+    value = value + 1;
+    if (value >= 2 ) {
+      value = 2;
+    }
+
+    QString values = QString::number(value);
+    Params().put("OpkrLiveSteerRatio", values.toStdString());
+    refresh();
+  });
+  refresh();
+}
+
+void CLiveSteerRatioToggle::refresh() 
+{
+  QString option = QString::fromStdString(Params().get("OpkrLiveSteerRatio"));
+  if (option == "0") 
+  {
+    label.setText(QString::fromStdString("수동"));
+  } 
+  else if (option == "1") 
+  {
+    label.setText(QString::fromStdString("학습"));
+  }
+  else if (option == "2") 
+  {
+    label.setText(QString::fromStdString("반학습"));
+  }
+
+  btnminus.setText("－");
+  btnplus.setText("＋");
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 //  BrightnessControl
