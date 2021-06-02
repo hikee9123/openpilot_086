@@ -209,8 +209,9 @@ void CLiveSteerRatioToggle::refresh()
   else if (option == "2") 
   {
     label.setText(QString::fromStdString("반학습"));
-  }
-  } else {
+  } 
+  else 
+  {
     label.setText( option );
   }
   btnminus.setText("－");
