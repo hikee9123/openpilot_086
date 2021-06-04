@@ -119,6 +119,7 @@ typedef struct UIScene {
      int  brightness;
      int  nVolumeBoost;
      int  awake;
+     int  face_detect;
   } scr;
 
   
