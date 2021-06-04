@@ -397,7 +397,7 @@ void Device::updateBrightness(const UIState &s) {
   float brightness_m = 0.1;
   
   if ( s.scene.scr.face_detect )
-    brightness_m = 0.5; 
+    brightness_m = 1; 
   
   float clipped_brightness = std::min(100.0f, (s.scene.light_sensor * brightness_m) + brightness_b);
   if (!s.scene.started) {
