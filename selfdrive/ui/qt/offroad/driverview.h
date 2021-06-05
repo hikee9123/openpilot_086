@@ -27,6 +27,10 @@ private:
   QImage face;
   bool is_rhd = false;
   bool frame_updated = false;
+
+private:
+  void  ui_print( int x, int y,  const char* fmt, ... );
+  void  ui_draw_driver(cereal::DriverState::Reader driver_state);  
 };
 
 class DriverViewWindow : public QWidget {
@@ -46,7 +50,5 @@ private:
   DriverViewScene *scene;
   QStackedLayout *layout;
 
-private:
-  void  ui_print( int x, int y,  const char* fmt, ... );
-  void  ui_draw_driver(cereal::DriverState::Reader driver_state);
+
 };
