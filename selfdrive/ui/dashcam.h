@@ -270,6 +270,7 @@ void screen_toggle_record_state()
 
 static void screen_draw_button(UIState *s, int touch_x, int touch_y, int touched)
 {
+  draw_date_time(s);
   // Set button to bottom left of screen
   nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
 
@@ -321,7 +322,7 @@ static void screen_draw_button(UIState *s, int touch_x, int touch_y, int touched
 
   if (captureState == CAPTURE_STATE_CAPTURING)
   {
-    draw_date_time(s);
+
     elapsed_time = get_time() - start_time;
     if (elapsed_time >= RECORD_INTERVAL)
     {
