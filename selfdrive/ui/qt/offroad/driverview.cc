@@ -141,9 +141,9 @@ void DriverViewScene::ui_draw_driver(cereal::DriverState::Reader driver_state)
 
     //nvgFillColor(s->vg, COLOR_GREEN_ALPHA(200));
     ui_print( centerX, 250, "sunglassesProb:  %.2f%%",  driver_state.getSunglassesProb()*100);
-    ui_print( centerX, 300, "eyesProb:  %.2f%%,  %.2f%%",  driver_state.getLeftEyeProb()*100, s->scene.driver_state.getRightEyeProb()*100);
+    ui_print( centerX, 300, "eyesProb:  %.2f%%,  %.2f%%",  driver_state.getLeftEyeProb()*100, driver_state.getRightEyeProb()*100);
     //nvgFillColor(s->vg, COLOR_ORANGE_ALPHA(200));
-    ui_print( centerX, 350, "blinksProb:  %.2f%%,  %.2f%%",  driver_state.getLeftBlinkProb()*100, s->scene.driver_state.getRightBlinkProb()*100);
+    ui_print( centerX, 350, "blinksProb:  %.2f%%,  %.2f%%",  driver_state.getLeftBlinkProb()*100, driver_state.getRightBlinkProb()*100);
     //nvgFillolor(s->vg, COLOR_WHITE_ALPHA(200));
     ui_print( centerX, 450, "poorVision:  %.2f%%",  driver_state.getPoorVision()*100);
     ui_print( centerX, 500, "distractedPose:  %.2f%%",  driver_state.getDistractedPose()*100);
