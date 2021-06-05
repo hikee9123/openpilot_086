@@ -111,7 +111,7 @@ void DriverViewScene::paintEvent(QPaintEvent* event) {
 }
 
 
-void DriverViewScene::ui_print( int x, int y,  const char* fmt, ... ) {
+void DriverViewScene::ui_print( QPainter &p, int x, int y,  const char* fmt, ... ) {
   //char speed_str[512];  
   char* msg_buf = NULL;
   va_list args;
@@ -120,34 +120,34 @@ void DriverViewScene::ui_print( int x, int y,  const char* fmt, ... ) {
   va_end(args);
 
   //nvgText(s->vg, x, y, msg_buf, NULL);
-  QPainter p(this);
-  p.setPen(QColor(0xff, 0xff, 0xff));
-  p.setRenderHint(QPainter::TextAntialiasing);
-  configFont(p, "Open Sans", 36, "Regular");
 
-  // QString  strip = m_strip.c_str();
- // r = QRect(0, height() - h, width(), h - 30);  
-  //QRect r = QRect(x, y, width(), y+30);
-  //p.drawText( r, Qt::AlignCenter, msg_buf);
+
+
   p.drawText(x, y, msg_buf);
- // p.drawText(rect.x() + 50, rect.y() + 71, val);
 }
 
 void DriverViewScene::ui_draw_driver(cereal::DriverState::Reader driver_state) 
 {
-  // opkr
-  int  centerX = 500;
-    //nvgFillColor(s->vg, COLOR_GREEN_ALPHA(200));
-    ui_print( centerX, 100, "faceProb:  %.2f%%",  driver_state.getFaceProb()*100);
-    ui_print( centerX, 150, "partialFace:  %.2f%%",  driver_state.getPartialFace()*100);
+    QPainter p(this);
+    
+    p.setRenderHint(QPainter::TextAntialiasing);
+    configFont(p, "Open Sans", 36, "Regular");
 
-    //nvgFillColor(s->vg, COLOR_GREEN_ALPHA(200));
-    ui_print( centerX, 250, "sunglassesProb:  %.2f%%",  driver_state.getSunglassesProb()*100);
-    ui_print( centerX, 300, "eyesProb:  %.2f%%,  %.2f%%",  driver_state.getLeftEyeProb()*100, driver_state.getRightEyeProb()*100);
-    //nvgFillColor(s->vg, COLOR_ORANGE_ALPHA(200));
-    ui_print( centerX, 350, "blinksProb:  %.2f%%,  %.2f%%",  driver_state.getLeftBlinkProb()*100, driver_state.getRightBlinkProb()*100);
-    //nvgFillolor(s->vg, COLOR_WHITE_ALPHA(200));
-    ui_print( centerX, 450, "poorVision:  %.2f%%",  driver_state.getPoorVision()*100);
-    ui_print( centerX, 500, "distractedPose:  %.2f%%",  driver_state.getDistractedPose()*100);
-    ui_print( centerX, 550, "distractedEyes:  %.2f%%",  driver_state.getDistractedEyes()*100);
+
+    int  centerX = 500;
+
+    p.setPen(QColor(0, 255, 0)); // green
+    ui_print( p, centerX, 100, "faceProb:  %.2f%%",  driver_state.getFaceProb()*100);
+    ui_print( p, centerX, 150, "partialFace:  %.2f%%",  driver_state.getPartialFace()*100);
+
+    ui_print( p, centerX, 250, "sunglassesProb:  %.2f%%",  driver_state.getSunglassesProb()*100);
+    ui_print( p, centerX, 300, "eyesProb:  %.2f%%,  %.2f%%",  driver_state.getLeftEyeProb()*100, driver_state.getRightEyeProb()*100);
+
+    p.setPen(QColor(255, 175, 3)); // orange
+    ui_print( p, centerX, 350, "blinksProb:  %.2f%%,  %.2f%%",  driver_state.getLeftBlinkProb()*100, driver_state.getRightBlinkProb()*100);
+
+    p.setPen(QColor(255, 255, 255)); // white
+    ui_print( p, centerX, 450, "poorVision:  %.2f%%",  driver_state.getPoorVision()*100);
+    ui_print( p, centerX, 500, "distractedPose:  %.2f%%",  driver_state.getDistractedPose()*100);
+    ui_print( p, centerX, 550, "distractedEyes:  %.2f%%",  driver_state.getDistractedEyes()*100);
 }

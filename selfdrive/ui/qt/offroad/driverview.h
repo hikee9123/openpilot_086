@@ -29,7 +29,7 @@ private:
   bool frame_updated = false;
 
 private:
-  void  ui_print( int x, int y,  const char* fmt, ... );
+  void  ui_print( QPainter &p, int x, int y,  const char* fmt, ... );
   void  ui_draw_driver(cereal::DriverState::Reader driver_state);  
 };
 
