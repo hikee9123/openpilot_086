@@ -299,7 +299,6 @@ static void ui_draw_vision_face(UIState *s) {
   const int center_x = s->viz_rect.x + radius + (bdr_s * 2);
   const int center_y = s->viz_rect.bottom() - footer_h / 2;
   bool is_active = (*s->sm)["driverMonitoringState"].getDriverMonitoringState().getIsActiveMode();
-  s->scene.scr.face_detect = is_active;
   ui_draw_circle_image(s, center_x, center_y, radius, "driver_face", is_active);
 }
 

@@ -513,7 +513,7 @@ static void ui_draw_debug2(UIState *s)
 
 
     ui_print( s, x_pos, y_pos+300, "prob:%.2f, %.2f, %.2f, %.2f", lane_line_probs[0], lane_line_probs[1], lane_line_probs[2], lane_line_probs[3] );
-    ui_print( s, x_pos, y_pos+350, "vCruise:%.1f  face:%d  sensor:%.1f",  vCruise*3.6,  scene.scr.face_detect, scene.light_sensor );//,  aCruise, vTarget*3.6,  aTarget);
+    ui_print( s, x_pos, y_pos+350, "vCruise:%.1f  face:%d  sensor:%.1f",  vCruise*3.6,  scene.scene.dm_active, scene.light_sensor );//,  aCruise, vTarget*3.6,  aTarget);
 
 
     // tpms

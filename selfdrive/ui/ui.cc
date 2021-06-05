@@ -134,6 +134,7 @@ static void update_state(UIState *s) {
   if (sm.frame % (UI_FREQ / 2) == 0) {
     scene.engageable = sm["controlsState"].getControlsState().getEngageable();
     scene.dm_active = sm["driverMonitoringState"].getDriverMonitoringState().getIsActiveMode();
+
   }
 
   if (scene.started && sm.updated("controlsState")) {
@@ -402,7 +403,7 @@ void Device::updateBrightness(const UIState &s) {
   float brightness_b = 10;
   float brightness_m = 0.1;
   
-  if ( s.scene.scr.face_detect )
+  if ( s.scene.dm_active )
     brightness_m = 1; 
   
   float clipped_brightness = std::min(100.0f, (s.scene.light_sensor * brightness_m) + brightness_b);
