@@ -496,10 +496,15 @@ static void ui_draw_debug2(UIState *s)
   float  vCruise = scene.longitudinalPlan.getVCruise();
 
 
-  
 
+   float  curvature = scene.lateralPlan.getCurvature();
+   float  curvatureRate = scene.lateralPlan.getCurvatureRate();
+   float  rawCurvature = scene.lateralPlan.getRawCurvature();
+   float  rawCurvatureRate = scene.lateralPlan.getRawCurvatureRate();
 
-  auto lane_line_probs = scene.modelDataV2.getLaneLineProbs();
+   int model_speed = interp( curvature, [0.0002, 0.00074, 0.0025, 0.008, 0.02], [255, 130, 90, 60, 20])
+
+   auto lane_line_probs = scene.modelDataV2.getLaneLineProbs();
 
     nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
     nvgFontSize(s->vg, 36*1.5*fFontSize);
@@ -512,12 +517,12 @@ static void ui_draw_debug2(UIState *s)
     
     ui_print( s, x_pos, y_pos+100,  "aO:%.2f, %.2f", angleOffset, angleOffsetAverage );
     ui_print( s, x_pos, y_pos+150, "sF:%.2f Fan:%.0f", stiffnessFactor, fanSpeed/1000. );
-    ui_print( s, x_pos, y_pos+200, "lW:%.2f", laneWidth );
+    ui_print( s, x_pos, y_pos+200, "CV:%d,%.5f  raw:%.5f",model_speed, curvature, rawCurvature );
 
 
     ui_print( s, x_pos, y_pos+300, "prob:%.2f, %.2f, %.2f, %.2f", lane_line_probs[0], lane_line_probs[1], lane_line_probs[2], lane_line_probs[3] );
     ui_print( s, x_pos, y_pos+350, "vCruise:%.1f  face:%d  sensor:%.1f",  vCruise*3.6,  scene.dm_active, scene.light_sensor );//,  aCruise, vTarget*3.6,  aTarget);
-
+    ui_print( s, x_pos, y_pos+400, "lW:%.2f", laneWidth );
 
     // tpms
     auto tpms = scene.car_state.getTpms();
