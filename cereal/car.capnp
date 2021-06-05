@@ -443,7 +443,7 @@ struct CarParams {
 
 
   # atom
-  atomTuning @57 :AtomTuning;
+  atomTuning @58 :AtomTuning;
 
   struct AtomTuning {
     cvKPH @0 :List(Float32);
