@@ -490,12 +490,8 @@ static void ui_draw_debug2(UIState *s)
   float  stiffnessFactor = scene.liveParameters.getStiffnessFactor();
 
   float  laneWidth = scene.lateralPlan.getLaneWidth();
-  //float  cpuPerc = scene.deviceState.getCpuUsagePercent();
-
   float  vCruise = scene.longitudinalPlan.getVCruise();
-//  float  aCruise = scene.longitudinalPlan.getACruise();
-//  float  vTarget = scene.longitudinalPlan.getVTarget();
- // float  aTarget = scene.longitudinalPlan.getATarget();
+
 
   
 
@@ -504,8 +500,6 @@ static void ui_draw_debug2(UIState *s)
 
     nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
     nvgFontSize(s->vg, 36*1.5*fFontSize);
-
-    //ui_print( s, ui_viz_rx+10, 50, "S:%d",  s->awake_timeout );
 
     x_pos = ui_viz_rx + 250;
     y_pos = 100; 
@@ -516,19 +510,10 @@ static void ui_draw_debug2(UIState *s)
     ui_print( s, x_pos, y_pos+100,  "aO:%.2f, %.2f", angleOffset, angleOffsetAverage );
     ui_print( s, x_pos, y_pos+150, "sF:%.2f Fan:%.0f", stiffnessFactor, fanSpeed/1000. );
     ui_print( s, x_pos, y_pos+200, "lW:%.2f", laneWidth );
-   // ui_print( s, x_pos, y_pos+250, "time:%d" , scene.scr.nTime/20 );
+
 
     ui_print( s, x_pos, y_pos+300, "prob:%.2f, %.2f, %.2f, %.2f", lane_line_probs[0], lane_line_probs[1], lane_line_probs[2], lane_line_probs[3] );
     ui_print( s, x_pos, y_pos+350, "vCruise:%.1f  face:%d  sensor:%.1f",  vCruise*3.6,  scene.scr.face_detect, scene.light_sensor );//,  aCruise, vTarget*3.6,  aTarget);
-
-    
-    //int  lensPos = scene.camera_state.getLensPos();
-    //float  lensTruePos = scene.camera_state.getLensTruePos();
-    //float  lensErr = scene.camera_state.getLensErr();
-    //ui_print( s, x_pos, y_pos+450, "frame:%d,%3.0f,%3.0f, %3d", lensPos, lensTruePos, lensErr, Params::param_value.autoFocus );
-  //float  dPoly = scene.pathPlan.lPoly + scene.pathPlan.rPoly;
-  //ui_print( s, x_pos, y_pos+300, "Poly:%.2f, %.2f = %.2f", scene.pathPlan.lPoly, scene.pathPlan.rPoly, dPoly );
-  // ui_print( s, x_pos, y_pos+350, "map:%d,cam:%d", scene.live.map_valid, scene.live.speedlimitahead_valid  );
 
 
     // tpms
@@ -553,12 +538,6 @@ static void ui_draw_debug(UIState *s)
   {
     ui_draw_debug2(s);
   }
-
-
-
-
-   // ui_print( s, 0, 1020, "%s", scene.alert.text1 );
-   // ui_print( s, 0, 1078, "%s", scene.alert.text2 );
 }
 
 
@@ -603,7 +582,6 @@ int get_param( const std::string &key )
     auto str = QString::fromStdString(Params().get( key ));
     int value = str.toInt();
 
-
     return value;
 }
 
@@ -635,7 +613,7 @@ void update_dashcam(UIState *s, int draw_vision)
 
   if (!draw_vision) return;
   if (!s->scene.started) return;
-  if (s->scene.driver_view) return;
+  //if (s->scene.driver_view) return;
 
 
   screen_draw_button(s, touch_x, touch_y, touched);
