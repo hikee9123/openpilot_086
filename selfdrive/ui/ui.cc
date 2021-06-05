@@ -16,7 +16,7 @@
 
 #define BACKLIGHT_DT 0.25
 #define BACKLIGHT_TS 2.00
-#define BACKLIGHT_OFFROAD 50
+#define BACKLIGHT_OFFROAD 75
 
 
 // Projects a point in car to space to the corresponding point in full frame
@@ -129,6 +129,13 @@ static void update_sockets(UIState *s){
 static void update_state(UIState *s) {
   SubMaster &sm = *(s->sm);
   UIScene &scene = s->scene;
+
+  // update engageability and DM icons at 2Hz
+  if (sm.frame % (UI_FREQ / 2) == 0) {
+    scene.engageable = sm["controlsState"].getControlsState().getEngageable();
+    scene.dm_active = sm["driverMonitoringState"].getDriverMonitoringState().getIsActiveMode();
+  }
+
   if (scene.started && sm.updated("controlsState")) {
     scene.controls_state = sm["controlsState"].getControlsState();
 
@@ -171,9 +178,7 @@ static void update_state(UIState *s) {
     scene.modelDataV2 = sm["modelV2"].getModelV2();
     update_model(s, scene.modelDataV2);
   }
-  if (sm.updated("deviceState")) {
-    scene.deviceState = sm["deviceState"].getDeviceState();
-  }
+
   if (sm.updated("pandaState")) {
     auto pandaState = sm["pandaState"].getPandaState();
     scene.pandaType = pandaState.getPandaType();
@@ -187,7 +192,6 @@ static void update_state(UIState *s) {
       scene.satelliteCount = data.getMeasurementReport().getNumMeas();
     }
   }
-
   if (sm.updated("gpsLocationExternal")) {
     scene.gpsLocationExternal = sm["gpsLocationExternal"].getGpsLocationExternal();
     scene.gpsAccuracy = sm["gpsLocationExternal"].getGpsLocationExternal().getAccuracy();
@@ -201,9 +205,6 @@ static void update_state(UIState *s) {
 
   if (sm.updated("sensorEvents")) {
     for (auto sensor : sm["sensorEvents"].getSensorEvents()) {
-      if (!Hardware::TICI() && sensor.which() == cereal::SensorEventData::LIGHT) {
-        scene.light_sensor = sensor.getLight();
-      }
       if (!scene.started && sensor.which() == cereal::SensorEventData::ACCELERATION) {
         auto accel = sensor.getAcceleration().getV();
         if (accel.totalSize().wordCount){ // TODO: sometimes empty lists are received. Figure out why
@@ -217,12 +218,20 @@ static void update_state(UIState *s) {
       }
     }
   }
-  if (Hardware::TICI() && sm.updated("roadCameraState")) {
+  if (sm.updated("roadCameraState")) {
     auto camera_state = sm["roadCameraState"].getRoadCameraState();
-    float gain = camera_state.getGainFrac() * (camera_state.getGlobalGain() > 100 ? 2.5 : 1.0) / 10.0;
-    scene.light_sensor = std::clamp<float>((1023.0 / 1757.0) * (1757.0 - camera_state.getIntegLines()) * (1.0 - gain), 0.0, 1023.0);
+
+    float max_lines = Hardware::EON() ? 5408 : 1757;
+    float gain = camera_state.getGainFrac();
+
+    if (Hardware::TICI()) {
+      // gainFrac can go up to 4, with another 2.5x multiplier based on globalGain. Scale back to 0 - 1
+      gain *= (camera_state.getGlobalGain() > 100 ? 2.5 : 1.0) / 10.0;
+    }
+
+    scene.light_sensor = std::clamp<float>((1023.0 / max_lines) * (max_lines - camera_state.getIntegLines() * gain), 0.0, 1023.0);
   }
-  scene.started = sm["deviceState"].getDeviceState().getStarted() || scene.driver_view;
+  scene.started = sm["deviceState"].getDeviceState().getStarted();
 
    // atom
    if (sm.updated("liveParameters")) 
@@ -289,7 +298,6 @@ static void update_status(UIState *s) {
       s->status = STATUS_DISENGAGED;
       s->scene.started_frame = s->sm->frame;
 
-      s->scene.is_rhd = Params().getBool("IsRHD");
       s->scene.end_to_end = Params().getBool("EndToEndToggle");
       s->wide_camera = Hardware::TICI() ? Params().getBool("EnableWideCamera") : false;
 
@@ -297,9 +305,7 @@ static void update_status(UIState *s) {
       ui_resize(s, s->fb_w, s->fb_h);
 
       // Choose vision ipc client
-      if (s->scene.driver_view) {
-        s->vipc_client = s->vipc_client_front;
-      } else if (s->wide_camera){
+      if (s->wide_camera){
         s->vipc_client = s->vipc_client_wide;
       } else {
         s->vipc_client = s->vipc_client_rear;
@@ -315,11 +321,9 @@ static void update_status(UIState *s) {
 QUIState::QUIState(QObject *parent) : QObject(parent) {
   ui_state.sm = std::make_unique<SubMaster, const std::initializer_list<const char *>>({
     "modelV2", "controlsState", "liveCalibration", "radarState", "deviceState", "liveLocationKalman",
-    "pandaState", "carParams", "driverState", "driverMonitoringState", "sensorEvents", "carState", "ubloxGnss",
-    "liveParameters","lateralPlan", "longitudinalPlan","carControl","gpsLocationExternal",  // atom
-#ifdef QCOM2
-    "roadCameraState",
-#endif
+    "pandaState", "carParams", "driverMonitoringState", "sensorEvents", "carState", "ubloxGnss",
+    "liveParameters","driverState","lateralPlan", "longitudinalPlan","carControl",  // atom
+    "gpsLocationExternal", "roadCameraState",
   });
 
   ui_state.fb_w = vwp_w;
@@ -329,7 +333,6 @@ QUIState::QUIState(QObject *parent) : QObject(parent) {
   ui_state.wide_camera = Hardware::TICI() ? Params().getBool("EnableWideCamera") : false;
 
   ui_state.vipc_client_rear = new VisionIpcClient("camerad", VISION_STREAM_RGB_BACK, true);
-  ui_state.vipc_client_front = new VisionIpcClient("camerad", VISION_STREAM_RGB_FRONT, true);
   ui_state.vipc_client_wide = new VisionIpcClient("camerad", VISION_STREAM_RGB_WIDE, true);
 
   ui_state.vipc_client = ui_state.vipc_client_rear;

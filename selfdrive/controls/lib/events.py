@@ -220,7 +220,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, Callable[[Any, messaging.SubMaster, boo
 
   # ********** events only containing alerts displayed in all states **********
 
-  EventName.debugAlert: {
+  EventName.joystickDebug: {
     ET.PERMANENT: Alert(
       "DEBUG ALERT",
       "",
@@ -506,6 +506,10 @@ EVENTS: Dict[int, Dict[str, Union[Alert, Callable[[Any, messaging.SubMaster, boo
 
   EventName.gpsMalfunction: {
     ET.PERMANENT: NormalPermanentAlert("GPS Malfunction", "Contact Support"),
+  },
+
+  EventName.localizerMalfunction: {
+    ET.PERMANENT: NormalPermanentAlert("Localizer unstable", "Contact Support"),
   },
 
   # ********** events that affect controls state transitions **********

@@ -173,6 +173,7 @@ def thermald_thread():
 
   network_type = NetworkType.none
   network_strength = NetworkStrength.unknown
+  network_info = None
   wifiIpAddress = 'N/A'
 
   current_filter = FirstOrderFilter(0., CURRENT_TAU, DT_TRML)
@@ -188,6 +189,9 @@ def thermald_thread():
   no_panda_cnt = 0
 
   thermal_config = HARDWARE.get_thermal_config()
+
+  if params.get_bool("IsOnroad"):
+    cloudlog.event("onroad flag not cleared")
 
   # CPR3 logging
   if EON:
@@ -387,6 +391,7 @@ def thermald_thread():
       should_start = all(startup_conditions.values())
 
     if should_start != should_start_prev or (count == 0):
+      params.put_bool("IsOnroad", should_start)
       params.put_bool("IsOffroad", not should_start)
       HARDWARE.set_power_save(not should_start)
       if TICI and not params.get_bool("EnableLteOnroad"):

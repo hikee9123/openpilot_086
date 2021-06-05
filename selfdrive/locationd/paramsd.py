@@ -17,11 +17,9 @@ from selfdrive.swaglog import cloudlog
 # atom
 from common.numpy_fast import interp
 from selfdrive.config import Conversions as CV
-
+LaneChangeState = log.LateralPlan.LaneChangeState
 
 MAX_ANGLE_OFFSET_DELTA = 20 * DT_MDL  # Max 20 deg/s
-
-LaneChangeState = log.LateralPlan.LaneChangeState
 
 class ParamsLearner:
   def __init__(self, CP, steer_ratio, stiffness_factor, angle_offset):
