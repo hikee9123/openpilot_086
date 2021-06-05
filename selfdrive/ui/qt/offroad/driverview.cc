@@ -131,10 +131,10 @@ void DriverViewScene::ui_draw_driver(cereal::DriverState::Reader driver_state)
     QPainter p(this);
     
     p.setRenderHint(QPainter::TextAntialiasing);
-    configFont(p, "Open Sans", 36, "Regular");
+    configFont(p, "Open Sans", 40, "Regular");
 
 
-    int  centerX = 500;
+    int  centerX = 800;
 
     p.setPen(QColor(0, 255, 0)); // green
     ui_print( p, centerX, 100, "faceProb:  %.2f%%",  driver_state.getFaceProb()*100);
