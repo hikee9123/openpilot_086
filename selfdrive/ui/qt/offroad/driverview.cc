@@ -123,7 +123,7 @@ void DriverViewScene::ui_print( int x, int y,  const char* fmt, ... ) {
   QPainter p(this);
   p.setPen(QColor(0xff, 0xff, 0xff));
   p.setRenderHint(QPainter::TextAntialiasing);
-  configFont(p, "Open Sans", 20, "Regular");
+  configFont(p, "Open Sans", 36, "Regular");
 
   // QString  strip = m_strip.c_str();
  // r = QRect(0, height() - h, width(), h - 30);  
@@ -136,7 +136,7 @@ void DriverViewScene::ui_print( int x, int y,  const char* fmt, ... ) {
 void DriverViewScene::ui_draw_driver(cereal::DriverState::Reader driver_state) 
 {
   // opkr
-  int  centerX = 100;
+  int  centerX = 500;
     //nvgFillColor(s->vg, COLOR_GREEN_ALPHA(200));
     ui_print( centerX, 100, "faceProb:  %.2f%%",  driver_state.getFaceProb()*100);
     ui_print( centerX, 150, "partialFace:  %.2f%%",  driver_state.getPartialFace()*100);
