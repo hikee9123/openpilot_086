@@ -123,12 +123,14 @@ void DriverViewScene::ui_print( int x, int y,  const char* fmt, ... ) {
   QPainter p(this);
   p.setPen(QColor(0xff, 0xff, 0xff));
   p.setRenderHint(QPainter::TextAntialiasing);
-  configFont(p, "Inter", 100, "Bold");
+  configFont(p, "Open Sans", 20, "Regular");
 
   // QString  strip = m_strip.c_str();
  // r = QRect(0, height() - h, width(), h - 30);  
-  QRect r = QRect(x, y, x + 200, y+30);
-  p.drawText( r, Qt::AlignCenter, msg_buf);
+  //QRect r = QRect(x, y, width(), y+30);
+  //p.drawText( r, Qt::AlignCenter, msg_buf);
+  p.drawText(x, y, msg_buf);
+ // p.drawText(rect.x() + 50, rect.y() + 71, val);
 }
 
 void DriverViewScene::ui_draw_driver(cereal::DriverState::Reader driver_state) 
