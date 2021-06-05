@@ -107,10 +107,11 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     roadCameraError @100;
     driverCameraError @101;
     wideRoadCameraError @102;
+    localizerMalfunction @103;
 
     # atom
-    steerTorqueOver @103;
-    steerTorqueLow @104;
+    steerTorqueOver @104;
+    steerTorqueLow @105;
 
 
     radarCanErrorDEPRECATED @15;
