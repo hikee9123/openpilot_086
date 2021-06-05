@@ -286,7 +286,9 @@ static void ui_draw_vision_event(UIState *s) {
   if (engageable) {
     // draw steering wheel
     float angleSteers = s->scene.car_state.getSteeringAngleDeg();
-    ui_draw_circle_image(s, center_x, center_y, radius, "wheel", bg_colors[s->status], 1.0f, angleSteers);
+    const QColor &color = bg_colors[s->status];
+    NVGcolor nvg_color = nvgRGBA(color.red(), color.green(), color.blue(), color.alpha());    
+    ui_draw_circle_image(s, center_x, center_y, radius, "wheel", nvg_color, 1.0f, angleSteers);
   }
   else
   {
