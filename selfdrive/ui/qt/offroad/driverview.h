@@ -49,6 +49,4 @@ private:
   CameraViewWidget *cameraView;
   DriverViewScene *scene;
   QStackedLayout *layout;
-
-
 };
