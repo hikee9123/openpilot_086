@@ -123,6 +123,18 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
     )
   );
 
+  layout()->addWidget(
+    new ButtonControl("핑거 2.0 실행", "실행",
+      "/data/openpilot/selfdrive/car/fw_versions.py 을 실행 합니다.", [=]() 
+      {
+          if (ConfirmationDialog::confirm("Are you sure you want to exec(fw_versions.py)?")) 
+          {
+            std::system("python /data/openpilot/selfdrive/car/fw_versions.py");
+          }
+      }
+    )
+  );
+
   layout()->addWidget(horizontal_line());
   layout()->addWidget( new CarSelectCombo() );
 }
