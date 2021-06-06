@@ -145,6 +145,18 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
           }
       }
     )
+  );
+
+  layout()->addWidget(
+    new ButtonControl("com.mixplorer Open", "Open",
+      "Android를 Open 합니다.", [=]() 
+      {
+          if (ConfirmationDialog::confirm("Are you sure you want to exec(com.mixplorer)?")) 
+          {
+            std::system("am start -n com.mixplorer/com.mixplorer.activities.BrowseActivity");
+          }
+      }
+    )
   );  
 
   layout()->addWidget(horizontal_line());
