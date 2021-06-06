@@ -135,6 +135,18 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
     )
   );
 
+  layout()->addWidget(
+    new ButtonControl("Android Open", "Open",
+      "Android를 Open 합니다.", [=]() 
+      {
+          if (ConfirmationDialog::confirm("Are you sure you want to exec(Android)?")) 
+          {
+            std::system("am start -a android.settings.SETTINGS");
+          }
+      }
+    )
+  );  
+
   layout()->addWidget(horizontal_line());
   layout()->addWidget( new CarSelectCombo() );
 }
