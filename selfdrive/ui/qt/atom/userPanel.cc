@@ -153,7 +153,9 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
       {
           if (ConfirmationDialog::confirm("Are you sure you want to exec(com.mixplorer)?")) 
           {
-            std::system("am start -n com.mixplorer/com.mixplorer.activities.BrowseActivity");
+            //std::system("am start -n com.mixplorer/com.mixplorer.activities.BrowseActivity");
+            std::system("/data/openpilot/run_mixplorer.sh");
+            
           }
       }
     )
