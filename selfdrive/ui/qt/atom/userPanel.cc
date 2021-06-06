@@ -148,6 +148,18 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
   );
 
   layout()->addWidget(
+    new ButtonControl("apk.py 실행", "실행",
+      "/data/openpilot/selfdrive/assets/addon/apk/apk.py 을 실행 합니다.", [=]() 
+      {
+          if (ConfirmationDialog::confirm("Are you sure you want to exec(apk.py)?")) 
+          {
+            std::system("python /data/openpilot/selfdrive/assets/addon/apk/apk.py");
+          }
+      }
+    )
+  );
+
+  layout()->addWidget(
     new ButtonControl("com.mixplorer Open", "Open",
       "Android를 Open 합니다.", [=]() 
       {
