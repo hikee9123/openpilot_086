@@ -517,7 +517,7 @@ static void ui_draw_debug2(UIState *s)
     
     ui_print( s, x_pos, y_pos+100,  "aO:%.2f, %.2f", angleOffset, angleOffsetAverage );
     ui_print( s, x_pos, y_pos+150, "sF:%.2f Fan:%.0f", stiffnessFactor, fanSpeed/1000. );
-    ui_print( s, x_pos, y_pos+200, "CV:%.5f,%.5f  raw:%.5f", curvature1, curvature2, rawCurvature );
+    ui_print( s, x_pos, y_pos+250, "CV:%.5f,%.5f  raw:%.5f", curvature1, curvature2, rawCurvature );
 
 
     ui_print( s, x_pos, y_pos+300, "prob:%.2f, %.2f, %.2f, %.2f", lane_line_probs[0], lane_line_probs[1], lane_line_probs[2], lane_line_probs[3] );
@@ -530,7 +530,7 @@ static void ui_draw_debug2(UIState *s)
     float fr = tpms.getFr();
     float rl = tpms.getRl();
     float rr = tpms.getRr();
-    ui_print( s, x_pos, y_pos+400, "tpms:%.0f,%.0f,%.0f,%.0f", fl, fr, rl, rr );
+    ui_print( s, x_pos, y_pos+450, "tpms:%.0f,%.0f,%.0f,%.0f", fl, fr, rl, rr );
 }
 
 static void ui_draw_debug(UIState *s) 
