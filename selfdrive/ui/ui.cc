@@ -235,9 +235,9 @@ static void update_state(UIState *s) {
   scene.started = sm["deviceState"].getDeviceState().getStarted();
 
    // atom
-  if (sm.updated("deviceState")) {
+   if (sm.updated("deviceState")) {
     scene.deviceState = sm["deviceState"].getDeviceState();
-  }   
+   }   
    if (sm.updated("liveParameters")) 
    { 
     scene.liveParameters = sm["liveParameters"].getLiveParameters();

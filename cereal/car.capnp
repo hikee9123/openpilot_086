@@ -90,6 +90,7 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     startupNoControl @77;
     startupMaster @78;
     startupFuzzyFingerprint @97;
+    startupNoFw @104;
     fcw @79;
     steerSaturated @80;
     belowEngageSpeed @84;
@@ -110,8 +111,8 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     localizerMalfunction @103;
 
     # atom
-    steerTorqueOver @104;
-    steerTorqueLow @105;
+    steerTorqueOver @105;
+    steerTorqueLow @106;
 
 
     radarCanErrorDEPRECATED @15;

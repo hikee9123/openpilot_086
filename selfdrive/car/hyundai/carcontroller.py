@@ -167,7 +167,7 @@ class CarController():
     
     if path_plan.laneChangeState != LaneChangeState.off:
       self.steer_torque_over_timer = 0
-      if path_plan.laneChangeState in [LaneChangeState.laneChangeStarting]:
+      if path_plan.laneChangeState in [LaneChangeState.laneChangeStarting,  LaneChangeState.preLaneChange]:
         param.STEER_MAX = min( param.STEER_MAX, 255)
     elif CS.out.leftBlinker or CS.out.rightBlinker:
       sec_mval = 0.5  # 오파 => 운전자.

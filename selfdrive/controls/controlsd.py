@@ -150,7 +150,8 @@ class Controls:
     # TODO: no longer necessary, aside from process replay
     self.sm['liveParameters'].valid = True
 
-    self.startup_event = get_startup_event(car_recognized, controller_available, self.CP.fuzzyFingerprint)
+    self.startup_event = get_startup_event(car_recognized, controller_available, self.CP.fuzzyFingerprint,
+                                           len(self.CP.carFw) > 0)
 
     if not sounds_available:
       self.events.add(EventName.soundsUnavailable, static=True)
@@ -168,7 +169,6 @@ class Controls:
     # atom
     self.hyundai_lkas = self.read_only  #read_only
     self.init_flag = True
-
     self.timer_alloowed = 1500
     self.timer_start = 1500
 
