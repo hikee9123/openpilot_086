@@ -400,7 +400,7 @@ void Device::setAwake(bool on, bool reset) {
 }
 
 void Device::updateBrightness(const UIState &s) {
-  float brightness_b = 10;
+  float brightness_b = 5;
   float brightness_m = 0.1;
   
   //if ( s.scene.dm_active )
