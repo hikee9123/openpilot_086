@@ -142,7 +142,7 @@ def manager_thread():
 
   # atom
   #params = Params()
-  enableLogger = params.get_bool("RecordFront")
+  enableLogger = params.get_bool("UploadRaw")
   if not enableLogger:
     ignore.append("loggerd")
     ignore.append("logcatd")

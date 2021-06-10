@@ -334,7 +334,7 @@ def thermald_thread():
     last_update_exception = params.get("LastUpdateException", encoding='utf8')
 
 
-    enableLogger = params.get_bool("RecordFront")
+    enableLogger = params.get_bool("UploadRaw")
     if not enableLogger:
       pass
     elif update_failed_count > 15 and last_update_exception is not None:
