@@ -13,7 +13,7 @@ class Sidebar : public QFrame {
   Q_PROPERTY(int tempVal MEMBER temp_val NOTIFY valueChanged);
   Q_PROPERTY(QColor tempStatus MEMBER temp_status NOTIFY valueChanged);
   Q_PROPERTY(QString netType MEMBER net_type NOTIFY valueChanged);
-  Q_PROPERTY(QImage netStrength MEMBER net_strength NOTIFY valueChanged);
+  Q_PROPERTY(int netStrength MEMBER net_strength NOTIFY valueChanged);
 
 public:
   explicit Sidebar(QWidget* parent = 0);
@@ -61,7 +61,7 @@ private:
   int temp_val = 0;
   QColor temp_status = warning_color;
   QString net_type;
-  QImage net_strength;
+  int net_strength = 0;
 
 
   // atom
