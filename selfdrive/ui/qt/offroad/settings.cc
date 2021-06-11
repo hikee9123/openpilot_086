@@ -348,7 +348,7 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
     background-color: #292929;
   )");
   close_btn->setFixedSize(200, 200);
-  sidebar_layout->addSpacing(45);
+  sidebar_layout->addSpacing(40);
   sidebar_layout->addWidget(close_btn, 0, Qt::AlignCenter);
   QObject::connect(close_btn, &QPushButton::released, this, &SettingsWindow::closeSettings);
 
@@ -370,7 +370,7 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
     panels.push_back({"Navigation", new MapPanel(this)});
   }
 #endif
-  const int padding = panels.size() > 3 ? 25 : 35;
+  const int padding = panels.size() > 3 ? 20 : 35;
 
   nav_btns = new QButtonGroup();
   for (auto &[name, panel] : panels) {
