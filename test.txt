@@ -39,6 +39,10 @@ BEGIN_MESSAGE_MAP(CWndOpenGL, CWnd)
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_LBUTTONDBLCLK()
+	//ON_WM_MOUSEHWHEEL()
+	ON_WM_MOUSEWHEEL()
+	ON_WM_RBUTTONDOWN()
+	ON_WM_RBUTTONUP()
 END_MESSAGE_MAP()
 
 
@@ -90,58 +94,14 @@ int CWndOpenGL::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	SetPixelFormat(hdc,PixelFormat, &pfd);
 	m_hRC = wglCreateContext(hdc);
 
-	//wglShareLists(m_hRC, m_hRC);
-
 	wglMakeCurrent(hdc, m_hRC);	
-
-// 	glClearDepth(10.0f);
-// 	glFrontFace(GL_CCW);
-// 	glCullFace(GL_BACK);
-
 	ReleaseDC(pDC);
-
-
-// 	m_pNewObj = gluNewQuadric();
-// 	gluQuadricDrawStyle(m_pNewObj, GL_FILL);
-	// 폴리곤 모드는 면으로 그리기 설정.  
-// 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-// 
-// 	glShadeModel(GL_SMOOTH);							// GL_SMOOTH : 부드러운 쉐이딩을 활성화시킴
-// 	glClearColor(113.0f, 140.0f, 195.0f, 0.5f);				// 검은색 배경
-// 	glClearDepth(1.0f);								// 깊이버퍼 설정
-// 	glDisable(GL_DEPTH_TEST);							// 깊이테스트를 켬 [ 뒤의 객체는 앞의 객체에 의해 가려지도록....]
-// 	glDepthFunc(GL_LEQUAL);								// 깊이테스트 종류
-// 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);  // 정말로 멋진 원근 계산
-// 
-// 	glEnable(GL_BLEND);
-// 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-// 
-// 	// -----------------------------------------------------
-// 	// 안티앨리어싱
-//	glEnable(GL_POINT_SMOOTH);
-//	glEnable(GL_LINE_SMOOTH);
-//	glEnable(GL_POLYGON_SMOOTH);
-// 	// -----------------------------------------------------
-// 
-// 	glPopMatrix();
-// 	glLoadIdentity();
 
 
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	
 
 
-// 	glMatrixMode(GL_PROJECTION);	// 투영 행렬로 변환한다.  
-// 	glLoadIdentity();				// 투영 행렬을 초기화한다. 
-	
-	float m_nViewWd = nWidth;
-	float m_nViewHi = nHeight;
-
-// 	if (m_nViewWd < m_nViewHi)
-// 		gluPerspective(45 /*시야각*/, (float)m_nViewHi / (float)m_nViewWd /*종횡비*/, 0.1/*모두 양수 표현*/, 4000/*모두 양수 표현*/);
-// 	else
- 		gluPerspective(0 /*시야각*/, (float)m_nViewWd / (float)m_nViewHi/*종횡비*/, -100/*모두 양수 표현*/, 40000/*모두 양수 표현*/);
-// 
 
 	return 0;
 }
@@ -149,11 +109,6 @@ int CWndOpenGL::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CWndOpenGL::OnDestroy()
 {
-// 	if (m_pNewObj != NULL)
-// 	{
-// 		gluDeleteQuadric(m_pNewObj);
-// 		m_pNewObj = NULL;
-// 	}
 
 	wglDeleteContext(m_hRC);
 	wglMakeCurrent(NULL, NULL);
@@ -183,24 +138,31 @@ void CWndOpenGL::OnSize(UINT nType, int cx, int cy)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
+	float m_nViewWd = cx;
+	float m_nViewHi = cy;
+	if( cx <= cy )
+	  gluPerspective( 60 /*시야각*/, (float)cy/cx /*종횡비*/, 1.0/*앞면*/, 2000/*뒤면*/);
+	else
+	  gluPerspective( 60 /*시야각*/, (float)cx/cy /*종횡비*/, 1.0/*앞면*/, 2000/*뒷면*/);
+
+
+	//glOrtho( -0, cx, cy, -0, -32768, 32768 );
+//	glOrtho( -1.0, 1.0, -1.0, 1.0, 1.0f, 10.0f );
+
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 }
 
 
 void CWndOpenGL::OnMouseMove(UINT nFlags, CPoint point)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-	if( m_nLButtonDown )
+
+	CPoint  pt = point - m_ptOld;
+
+	if( m_nLButtonDown == 1 )
 	{
-		//m_dX, m_dY, m_dScale;
-
-// 		glRotatef(m_dRX, 1.0f, 0.0f, 0.0f);							// X축 주변으로 회전
-// 		glRotatef(m_dRY, 0.0f, 1.0f, 0.0f);							// Y축 주변으로 회전
-// 		glRotatef(m_dRZ, 0.0f, 0.0f, 1.0f);							// Z축 주변으로 회전
-
-		CPoint  pt = point - m_ptOld;
-
-
-		
 		m_dRX += pt.x;
 		m_dRY += pt.y;
 
@@ -213,6 +175,16 @@ void CWndOpenGL::OnMouseMove(UINT nFlags, CPoint point)
 
 		Invalidate( FALSE );
 	}
+	else if( m_nLButtonDown == 2 )
+	{
+
+		m_dX += (pt.x * 0.001);
+		m_dY -= (pt.y * 0.001);
+
+
+		Invalidate( FALSE );
+	}
+
 	m_ptOld =  point;
 	CWnd::OnMouseMove(nFlags, point);
 }
@@ -221,7 +193,7 @@ void CWndOpenGL::OnMouseMove(UINT nFlags, CPoint point)
 void CWndOpenGL::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-	m_nLButtonDown = TRUE;
+	m_nLButtonDown = 1;
 
 	CWnd::OnLButtonDown(nFlags, point);
 }
@@ -232,6 +204,22 @@ void CWndOpenGL::OnLButtonUp(UINT nFlags, CPoint point)
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
 	m_nLButtonDown = FALSE;
 	CWnd::OnLButtonUp(nFlags, point);
+}
+
+
+void CWndOpenGL::OnRButtonDown(UINT nFlags, CPoint point)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	m_nLButtonDown = 2;
+	CWnd::OnRButtonDown(nFlags, point);
+}
+
+
+void CWndOpenGL::OnRButtonUp(UINT nFlags, CPoint point)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	m_nLButtonDown = FALSE;
+	CWnd::OnRButtonUp(nFlags, point);
 }
 
 
@@ -248,6 +236,20 @@ void CWndOpenGL::OnLButtonDblClk(UINT nFlags, CPoint point)
 }
 
 
+BOOL CWndOpenGL::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+
+	m_dZ += (zDelta * 0.001);
+	if( m_dZ < -10 ) m_dZ = -10;
+	else if( m_dZ > 10 ) m_dZ = 10;
+	Invalidate( FALSE );
+
+	TRACE(_T("m_dZ = %f \n"), m_dZ);
+	return CWnd::OnMouseWheel(nFlags, zDelta, pt);
+}
+
+
 void CWndOpenGL::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
@@ -260,10 +262,15 @@ void CWndOpenGL::OnPaint()
 
 	glClearColor(0.1f, 0.f, 0.f, 0.f);
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
- 	glEnable(GL_LIGHT0);
+
+	glEnable( GL_LIGHTING );
+	GLfloat  lightPos[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+	glLightfv( GL_LIGHT0, GL_POSITION, lightPos );
+	glEnable(GL_LIGHT0);
 	glEnable(GL_DEPTH_TEST);// 이걸 실행하면 다른 면에 가려진 선과 면들을 보지 않는다.
 	//glDisable(GL_DEPTH_TEST); //이걸 실행하면 그런거 없이 정말 그려지는 순서대로 화면에 띄운다.
 
@@ -303,7 +310,7 @@ void CWndOpenGL::Draw3D()
 
 	//glPushMatrix();  
 	{
-		double dL = 0.1;
+		double dL = 0.2;
 		glBegin(GL_QUADS); 
 		{
 			// 앞면 
@@ -368,5 +375,8 @@ void CWndOpenGL::OnDraw()
 	Draw3D();
 
 }
+
+
+
 
 
