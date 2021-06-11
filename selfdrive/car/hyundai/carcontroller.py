@@ -74,7 +74,8 @@ class CarController():
     left_lane = c.hudControl.leftLaneVisible
     right_lane = c.hudControl.rightLaneVisible
 
-    sys_warning = (visual_alert == VisualAlert.steerRequired)
+    sys_warning = (visual_alert in [VisualAlert.steerRequired, VisualAlert.ldw])  
+    #(visual_alert == VisualAlert.steerRequired)
 
     if left_lane:
       self.hud_timer_left = 100

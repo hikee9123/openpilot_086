@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from cereal import car
 from selfdrive.config import Conversions as CV
-from selfdrive.car.hyundai.values import CAR, Buttons
+from selfdrive.car.hyundai.values import CAR, EV_CAR, HYBRID_CAR, Buttons
 from selfdrive.car import STD_CARGO_KG, scale_rot_inertia, scale_tire_stiffness, gen_empty_fingerprint
 from selfdrive.car.interfaces import CarInterfaceBase, MAX_CTRL_SPEED
 
@@ -316,6 +316,12 @@ class CarInterface(CarInterfaceBase):
                      CAR.SONATA_LF, CAR.KIA_NIRO_EV, CAR.KIA_OPTIMA, CAR.VELOSTER, CAR.KIA_STINGER, CAR.KIA_SELTOS,
                      CAR.GENESIS_G70, CAR.GENESIS_G80, CAR.KIA_CEED, CAR.GRANDEUR_HEV_19]:
       ret.safetyModel = car.CarParams.SafetyModel.hyundaiLegacy
+
+    # set appropriate safety param for gas signal
+    if candidate in HYBRID_CAR:
+      ret.safetyParam = 2
+    elif candidate in EV_CAR:
+      ret.safetyParam = 1
 
     ret.centerToFront = ret.wheelbase * 0.4
 

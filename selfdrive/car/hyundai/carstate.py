@@ -1,6 +1,6 @@
 import copy
 from cereal import car
-from selfdrive.car.hyundai.values import DBC, STEER_THRESHOLD, FEATURES, EV_HYBRID, HYBRID_VEH
+from selfdrive.car.hyundai.values import DBC, STEER_THRESHOLD, FEATURES, HYBRID_CAR, EV_CAR
 from selfdrive.car.interfaces import CarStateBase
 from opendbc.can.parser import CANParser
 from selfdrive.config import Conversions as CV
@@ -156,14 +156,14 @@ class CarState(CarStateBase):
     # TODO: Check this
     ret.brakeLightsDEPRECATED = bool(cp.vl["TCS13"]['BrakeLight'] or ret.brakePressed)
 
-    if self.CP.carFingerprint in HYBRID_VEH:
+    if self.CP.carFingerprint in HYBRID_CAR:
       ret.gas = cp.vl["EV_PC4"]['CR_Vcu_AccPedDep_Pc']
       ret.gasPressed = cp.vl["TCS13"]["DriverOverride"] == 1
-    elif self.CP.carFingerprint in EV_HYBRID:
-      ret.gas = cp.vl["E_EMS11"]['Accel_Pedal_Pos'] / 256.
-      ret.gasPressed = ret.gas > 5
+    elif self.CP.carFingerprint in EV_CAR:
+      ret.gas = cp.vl["E_EMS11"]['Accel_Pedal_Pos'] / 254.
+      ret.gasPressed = ret.gas > 0
     else:
-      ret.gas = cp.vl["EMS12"]['PV_AV_CAN'] / 100
+      ret.gas = cp.vl["EMS12"]['PV_AV_CAN'] / 100.
       ret.gasPressed = bool(cp.vl["EMS16"]["CF_Ems_AclAct"])
 
     # TODO: refactor gear parsing in function
@@ -374,14 +374,14 @@ class CarState(CarStateBase):
       ]
       checks += [("LCA11", 50)]
 
-    if CP.carFingerprint in HYBRID_VEH:
+    if CP.carFingerprint in HYBRID_CAR:  
       signals += [
         ("CR_Vcu_AccPedDep_Pc", "EV_PC4", 0),
       ]
       checks += [
         ("EV_PC4", 50),
       ]
-    elif CP.carFingerprint in EV_HYBRID:
+    elif CP.carFingerprint in EV_CAR:
       signals += [
         ("Accel_Pedal_Pos", "E_EMS11", 0),
       ]
