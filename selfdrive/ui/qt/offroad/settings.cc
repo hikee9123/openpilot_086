@@ -362,7 +362,7 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
     {"Network", network_panel(this)},
     {"Toggles", new TogglesPanel(this)},
     {"Software", new SoftwarePanel(this)},
-    {"User", new CUserPanel(this)},
+    {"Community", new CUserPanel(this)},
   };
 
 #ifdef ENABLE_MAPS
