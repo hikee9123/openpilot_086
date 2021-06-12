@@ -1470,9 +1470,9 @@ BO_ 1186 FRT_RADAR11: 2 FCA
  SG_ CF_FCA_Equip_Front_Radar : 0|3@1+ (1,0) [0|7] "" LDWS_LKAS,LDW_LKA,ESC
 
 BO_ 905 SCC14: 8 SCC
- SG_ ComfortBandUpper : 0|6@1+ (0.02,0) [0|1.26] "m/s^2" ESC
- SG_ ComfortBandLower : 6|6@1+ (0.02,0) [0|1.26] "m/s^2" ESC
- SG_ JerkUpperLimit : 12|7@1+ (0.1,0) [0|12.7] "m/s^3" ESC
+ SG_ ComfortBandUpper : 0|6@1+ (0.0986,-4.14) [0|1.26] "m/s^2" ESC
+ SG_ ComfortBandLower : 6|6@1+ (0.0986,-4.14) [0|1.26] "m/s^2" ESC
+ SG_ JerkUpperLimit : 12|7@1+ (1,0) [0|12.7] "m/s^3" ESC
  SG_ JerkLowerLimit : 19|7@1+ (0.1,0) [0|12.7] "m/s^3" ESC
  SG_ ACCMode : 32|3@1+ (1,0) [0|7] "" CLU,HUD,LDWS_LKAS,ESC
  SG_ ObjGap : 56|8@1+ (1,0) [0|255] "" CLU,HUD,ESC
@@ -1641,6 +1641,11 @@ BO_ 1042 ICM_412h: 8 ICM
  SG_ PopupMessageOutput_6Level : 53|1@0+ (1,0) [0|1] "" Vector__XXX
  SG_ PopupMessageOutput_7Level : 54|1@0+ (1,0) [0|1] "" Vector__XXX
  SG_ PopupMessageOutput_8Level : 55|1@0+ (1,0) [0|1] "" Vector__XXX
+
+BO_ 1332 NAVI: 8 XXX
+ SG_ OPKR_S_Dist : 15|10@0+ (1,0) [0|1023] "" XXX
+ SG_ OPKR_S_Sign : 21|5@0+ (1,0) [0|3] "" XXX
+ SG_ OPKR_SBR_Dist : 47|8@0+ (1,0) [0|31] "" XXX
 
 VAL_ 909 CF_VSM_Warn 2 "FCW" 3 "AEB";
 VAL_ 1157 LFA_Icon_State 0 "no_wheel" 1 "white_wheel" 2 "green_wheel" 3 "green_wheel_blink";

@@ -192,11 +192,9 @@ class CarState(CarStateBase):
     self.aReqValue = cp.vl["SCC12"]["aReqValue"]
     self.CR_VSM_Alive = cp.vl["SCC12"]["CR_VSM_Alive"]
 
-    self.AVM_View = cp.vl["AVM_HU_PE_00"]["AVM_View"]
-
-
-
-    self.str_carstate = '{}'.format( self.AVM_View) 
+    self.safety_dist = cp.vl["NAVI"]['OPKR_S_Dist']
+    self.safety_sign_check = cp.vl["NAVI"]['OPKR_S_Sign']
+    self.safety_block_remain_dist = cp.vl["NAVI"]['OPKR_SBR_Dist']
 
     # save the entire LKAS11 and CLU11
     self.lkas11 = copy.copy(cp_cam.vl["LKAS11"])
@@ -527,7 +525,9 @@ class CarState(CarStateBase):
       ("PRESSURE_RR", "TPMS11", 0),
 
       # test
-      ("AVM_View", "AVM_HU_PE_00", 0),
+      ("OPKR_S_Dist", "NAVI", 0),
+      ("OPKR_S_Sign", "NAVI", 0),
+      ("OPKR_SBR_Dist", "NAVI", 0),
 
     ]
 
