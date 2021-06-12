@@ -16,7 +16,6 @@ enum ParamKeyType {
 };
 
 typedef struct ParamValue {
-
   // atom
   int  autoFocus;
 } ParamValue;

@@ -41,13 +41,6 @@ private:
     {cereal::DeviceState::NetworkType::CELL4_G, "LTE"},
     {cereal::DeviceState::NetworkType::CELL5_G, "5G"}
   };
-  const QMap<cereal::DeviceState::NetworkStrength, QImage> signal_imgs = {
-    {cereal::DeviceState::NetworkStrength::UNKNOWN, QImage("../assets/images/network_0.png")},
-    {cereal::DeviceState::NetworkStrength::POOR, QImage("../assets/images/network_1.png")},
-    {cereal::DeviceState::NetworkStrength::MODERATE, QImage("../assets/images/network_2.png")},
-    {cereal::DeviceState::NetworkStrength::GOOD, QImage("../assets/images/network_3.png")},
-    {cereal::DeviceState::NetworkStrength::GREAT, QImage("../assets/images/network_4.png")},
-  };
 
   const QRect settings_btn = QRect(50, 35, 200, 117);
   const QColor good_color = QColor(255, 255, 255);

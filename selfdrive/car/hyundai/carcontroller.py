@@ -154,9 +154,9 @@ class CarController():
 
              
     if abs(CS.out.steeringAngleDeg) >= CS.CP.maxSteeringAngleDeg: # and CS.out.steeringPressed:
-      sec_mval = 10  # 오파 => 운전자.  (sec)
-      sec_pval = 10   #  운전자 => 오파  (sec)
-      self.timer1.startTime( 5000 )
+      sec_mval = 5  # 오파 => 운전자.  (sec)
+      sec_pval = 20   #  운전자 => 오파  (sec)
+      self.timer1.startTime( 10000 )
       self.steer_torque_over_timer = 50
     elif self.timer1.endTime():
       sec_mval = 5    # 오파 => 운전자.  (sec)

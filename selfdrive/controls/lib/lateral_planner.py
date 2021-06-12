@@ -225,7 +225,7 @@ class LateralPlanner():
         if lane_change_prob < 0.02 and self.lane_change_ll_prob < 0.1:  #0.01
           self.lane_change_state = LaneChangeState.laneChangeFinishing
 
-      # finishing
+      # LaneChangeState.laneChangeFinishing
       elif self.lane_change_state == LaneChangeState.laneChangeFinishing:
         self.lanechange_cancel( steeringTorqueAbs )
         

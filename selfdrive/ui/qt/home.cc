@@ -208,7 +208,7 @@ void OffroadHome::refresh() {
   }
 
   if (!alert_notification->isVisible() && !first_refresh) {
-    emit openAlerts();
+    openAlerts();
   }
   alert_notification->setVisible(true);
 
