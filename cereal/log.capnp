@@ -543,10 +543,10 @@ struct ControlsState @0x97ff69c53601abf1 {
   canErrorCounter @57 :UInt32;
 
   # atom
-  output @59 :Float32;
-  alertTextMsg1  @60 :Text;
-  alertTextMsg2  @61 :Text;
-  alertTextMsg3  @62 :Text;
+  output @60 :Float32;
+  alertTextMsg1  @61 :Text;
+  alertTextMsg2  @62 :Text;
+  alertTextMsg3  @63 :Text;
 
 
   lateralControlState :union {
