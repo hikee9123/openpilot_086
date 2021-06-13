@@ -61,10 +61,9 @@ DriveStats::DriveStats(QWidget* parent) : QWidget(parent) {
   add_stats_layouts(gl, week_, 7, distance_unit);
 
   QString dongleId = QString::fromStdString(Params().get("DongleId"));
-  QString url = "https://api.retropilot.org/v1.1/devices/" + dongleId + "/stats";
+  QString url = "https://api.commadotai.com/v1.1/devices/" + dongleId + "/stats";
   RequestRepeater *repeater = new RequestRepeater(this, url, "ApiCache_DriveStats", 30);
   QObject::connect(repeater, &RequestRepeater::receivedResponse, this, &DriveStats::parseResponse);
 
-  setLayout(gl);
   setStyleSheet(R"(QLabel {font-size: 48px; font-weight: 500;})");
 }
