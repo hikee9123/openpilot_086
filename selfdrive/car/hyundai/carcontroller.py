@@ -266,8 +266,10 @@ class CarController():
     if steer_req:
       can_sends.append( create_mdps12(self.packer, frame, CS.mdps12) )
 
+
+    model_speed = self.longCtrl.cal_curve_speed( sm, CS.out.vEgo )
     
-    str_log1 = 'torg:{:5.0f} steer={:5.0f}'.format( apply_steer, CS.out.steeringTorque  )
+    str_log1 = 'torg:{:5.0f} steer={:5.0f} model_speed={:.0f}'.format( apply_steer, CS.out.steeringTorque, model_speed  )
     trace1.printf( '  {}'.format( str_log1 ) )
 
 
