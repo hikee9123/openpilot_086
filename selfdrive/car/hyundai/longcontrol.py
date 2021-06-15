@@ -58,8 +58,8 @@ class CLongControl():
 
       if self.curve_speed > MAX_SPEED:
         self.curve_speed = MAX_SPEED                
-    else:
-      self.curve_speed = MAX_SPEED
+    #else:
+    #  self.curve_speed = MAX_SPEED
 
     return  self.curve_speed
 
