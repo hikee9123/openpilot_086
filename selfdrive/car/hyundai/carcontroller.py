@@ -269,15 +269,12 @@ class CarController():
 
     model_speed = self.longCtrl.cal_curve_speed( sm, CS.out.vEgo )
     
-    str_log1 = 'torg:{:5.0f} steer={:5.0f} model_speed={:.0f}'.format( apply_steer, CS.out.steeringTorque, model_speed  )
+    str_log1 = 'CV={:3.0f} torg:{:5.0f} steer={:5.0f} '.format( model_speed, apply_steer, CS.out.steeringTorque  )
     trace1.printf( '  {}'.format( str_log1 ) )
 
 
 
-
-    str_navi = 'D={:.1f} S={:.1f} R={:.1f}'.format( CS.safety_dist, CS.safety_sign_check, CS.safety_block_remain_dist )
-
-    str_log1 = 'gas={:.3f} gap={:.0f} Value={:.3f} raw={:.3f} NAVI={}'.format( CS.out.gas, CS.cruiseGapSet, CS.aReqValue, CS.aReqRaw, str_navi )
+    str_log1 = 'gas={:.3f} gap={:.0f} Value={:.3f} raw={:.3f} '.format( CS.out.gas, CS.cruiseGapSet, CS.aReqValue, CS.aReqRaw )
     trace1.printf2( '{}'.format( str_log1 ) )
 
     str_log1 = 'LKAS={:.0f} hold={:.0f}'.format( CS.lkas_button_on, CS.auto_hold )
