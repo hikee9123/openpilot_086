@@ -1,4 +1,4 @@
-﻿Import('envCython', 'common')
+Import('envCython', 'common')
 
 envCython.Program('clock.so', 'clock.pyx')
 envCython.Program('params_pyx.so', 'params_pyx.pyx', LIBS=envCython['LIBS'] + [common, 'zmq'])

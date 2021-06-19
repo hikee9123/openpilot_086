@@ -108,6 +108,7 @@ class ParamsLearner:
 
 def main(sm=None, pm=None):
   gc.disable()
+  set_realtime_priority(5)
 
   if sm is None:
     sm = messaging.SubMaster(['liveLocationKalman', 'carState', 'carParams','lateralPlan'], poll=['liveLocationKalman'])

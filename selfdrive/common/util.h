@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <fcntl.h>
 #include <unistd.h>
@@ -58,6 +58,7 @@ std::string tohex(const uint8_t* buf, size_t buf_size);
 std::string hexdump(const std::string& in);
 std::string base_name(std::string const& path);
 std::string dir_name(std::string const& path);
+bool is_valid_dongle_id(std::string const& dongle_id);
 
 // **** file fhelpers *****
 std::string read_file(const std::string& fn);
