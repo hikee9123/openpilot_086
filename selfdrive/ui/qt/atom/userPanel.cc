@@ -27,56 +27,63 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
   main_layout->setMargin(100);
   setLayout(main_layout);
 
-  const char* gitpull = "/data/openpilot/gitpull.sh ''";
-  layout()->addWidget(
-    new ButtonControl("* PROGRAM DOWNLOAD<reboot>", "실행",
-      "리모트 Git에서 변경사항이 있으면 로컬에 반영 후 자동 재부팅 됩니다. 변경사항이 없으면 재부팅하지 않습니다. 로컬 파일이 변경된경우 리모트Git 내역을 반영 못할수도 있습니다. 참고바랍니다.", [=]() 
-      {
+  auto exe_git_pull_reboot = new ButtonControl("* PROGRAM DOWNLOAD<reboot>", "실행",
+                                        "리모트 Git에서 변경사항이 있으면 로컬에 반영 후 자동 재부팅 됩니다. 변경사항이 없으면 재부팅하지 않습니다. 로컬 파일이 변경된경우 리모트Git 내역을 반영 못할수도 있습니다. 참고바랍니다.");
+  connect(exe_git_pull_reboot, &ButtonControl::released, [=]() 
+  { 
           if (ConfirmationDialog::confirm("Are you sure you want to git pull?")) 
           {
+            const char* gitpull = "/data/openpilot/gitpull.sh ''";            
             std::system(gitpull);
           }
-      }
-    )
-  ); 
+  });
 
-   layout()->addWidget(horizontal_line()); 
-   
-  layout()->addWidget(new GitHash());
-  layout()->addWidget(
-    new ButtonControl("Git Pull 실행", "실행",
-      "리모트 Git에서 변경사항이 있으면 로컬에 반영 됩니다. 로컬 파일이 변경된경우 리모트Git 내역을 반영 못할수도 있습니다. 참고바랍니다.", [=]() 
-      {
+
+  auto exe_git_pull = new ButtonControl("Git Pull 실행", "실행",
+                                    "리모트 Git에서 변경사항이 있으면 로컬에 반영 됩니다. 로컬 파일이 변경된경우 리모트Git 내역을 반영 못할수도 있습니다. 참고바랍니다.");
+  connect(exe_git_pull, &ButtonControl::released, [=]() 
+  { 
           if (ConfirmationDialog::confirm("Are you sure you want to git pull?")) 
           {
             std::system("git pull");
           }
-      }
-    )
-  );
+  });
 
-  const char* gitpull_cancel = "/data/openpilot/gitpull_cancel.sh ''";
-  layout()->addWidget(
-    new ButtonControl("Git Pull 취소", "실행", 
-      "Git Pull을 취소하고 이전상태로 되돌립니다. 커밋내역이 여러개인경우 최신커밋 바로 이전상태로 되돌립니다.",[=]()
-      { 
+  auto exe_git_cancel = new ButtonControl("Git Pull 취소", "실행", 
+                                    "Git Pull을 취소하고 이전상태로 되돌립니다. 커밋내역이 여러개인경우 최신커밋 바로 이전상태로 되돌립니다.");
+  connect(exe_git_cancel, &ButtonControl::released, [=]() 
+  { 
         if (ConfirmationDialog::confirm("GitPull 이전 상태로 되돌립니다. 진행하시겠습니까?")){
+          const char* gitpull_cancel = "/data/openpilot/gitpull_cancel.sh ''";
           std::system(gitpull_cancel);
         }
-      }
-    )
-  );  
-    
+  });  
+
+   
+
+  for (auto btn : { exe_git_pull_reboot, exe_git_pull, exe_git_cancel}) {
+    if (btn) {
+      //layout()->addWidget(horizontal_line());
+      connect(parent, SIGNAL(offroadTransition(bool)), btn, SLOT(setEnabled(bool)));
+      layout()->addWidget(btn);
+    }
+  }  
+
+  layout()->addWidget(horizontal_line());  
+  layout()->addWidget(new GitHash());
+
   layout()->addWidget(horizontal_line());
   
   layout()->addWidget(new SshLegacyToggle());
 
   layout()->addWidget(horizontal_line());
+
+
   layout()->addWidget(new ParamControl("IsOpenpilotViewEnabled",
-                                       "주행화면 미리보기",
-                                       "오픈파일럿 주행화면을 미리보기 합니다.",
-                                       "../assets/offroad/icon_eon.png"
-                                       ));
+                                  "주행화면 미리보기",
+                                  "오픈파일럿 주행화면을 미리보기 합니다.",
+                                  "../assets/offroad/icon_network.png",
+                                  this));
 
 
   layout()->addWidget(horizontal_line());
