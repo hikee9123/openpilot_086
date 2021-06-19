@@ -7,6 +7,7 @@
 #include <QTimer>
 #include <QLabel>
 #include <QPushButton>
+#include <QComboBox>
 #include <QButtonGroup>
 #include <QScrollArea>
 #include <QStackedWidget>
