@@ -99,79 +99,79 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
 
   layout()->addWidget(horizontal_line());
 
-  layout()->addWidget(
-    new ButtonControl("car interfaces 실행", "실행",
-      "/data/openpilot/selfdrive/car/tests/test_car_interfaces.py 을 실행 합니다.", [=]() 
-      {
+
+  auto car_interfaces = new ButtonControl("car interfaces 실행", "실행",
+                                        "/data/openpilot/selfdrive/car/tests/test_car_interfaces.py 을 실행 합니다.");
+  connect(car_interfaces, &ButtonControl::released, [=]() 
+  { 
           if (ConfirmationDialog::confirm("Are you sure you want to exec(test_car_interfaces.py)?")) 
           {
             std::system("python /data/openpilot/selfdrive/car/tests/test_car_interfaces.py");
           }
-      }
-    )
-  );
+  });
 
-  layout()->addWidget(
-    new ButtonControl("build 실행", "실행",
-      "/data/openpilot/selfdrive/manager/build.py 을 실행 합니다.", [=]() 
-      {
+  auto build_exe = new ButtonControl("build 실행", "실행",
+                                        "/data/openpilot/selfdrive/manager/build.py 을 실행 합니다.");
+  connect(build_exe, &ButtonControl::released, [=]() 
+  { 
           if (ConfirmationDialog::confirm("Are you sure you want to exec(build.py)?")) 
           {
             std::system("python /data/openpilot/selfdrive/manager/build.py");
           }
-      }
-    )
-  );
+  });
 
-  layout()->addWidget(
-    new ButtonControl("핑거 2.0 실행", "실행",
-      "/data/openpilot/selfdrive/car/fw_versions.py 을 실행 합니다.", [=]() 
-      {
+
+  auto finger_exe = new ButtonControl("핑거 2.0 실행", "실행",
+                                        "/data/openpilot/selfdrive/car/fw_versions.py 을 실행 합니다.");
+  connect(finger_exe, &ButtonControl::released, [=]() 
+  { 
           if (ConfirmationDialog::confirm("Are you sure you want to exec(fw_versions.py)?")) 
           {
             std::system("python /data/openpilot/selfdrive/car/fw_versions.py");
           }
-      }
-    )
-  );
+  });
 
-  layout()->addWidget(
-    new ButtonControl("Android Open", "Open",
-      "Android를 Open 합니다.", [=]() 
-      {
+  auto android_exe = new ButtonControl("Android Open", "Open",
+                                        "Android를 Open 합니다.");
+  connect(android_exe, &ButtonControl::released, [=]() 
+  { 
           if (ConfirmationDialog::confirm("Are you sure you want to exec(Android)?")) 
           {
             std::system("am start -a android.settings.SETTINGS");
           }
-      }
-    )
-  );
+  });
 
-  layout()->addWidget(
-    new ButtonControl("apk.py 실행", "실행",
-      "/data/openpilot/selfdrive/assets/addon/apk/apk.py 을 실행 합니다.", [=]() 
-      {
+  auto apk_exe = new ButtonControl("apk.py 실행", "실행",
+                                        "/data/openpilot/selfdrive/assets/addon/apk/apk.py 을 실행 합니다.");
+  connect(apk_exe, &ButtonControl::released, [=]() 
+  { 
           if (ConfirmationDialog::confirm("Are you sure you want to exec(apk.py)?")) 
           {
             std::system("python /data/openpilot/selfdrive/assets/addon/apk/apk.py");
           }
-      }
-    )
-  );
+  });
 
-  layout()->addWidget(
-    new ButtonControl("com.mixplorer Open", "Open",
-      "Android를 Open 합니다.", [=]() 
-      {
+  auto mixplorer_exe = new ButtonControl("com.mixplorer Open", "Open",
+                                   "run_mixplorer.sh 을 실행 합니다.");
+  connect(mixplorer_exe, &ButtonControl::released, [=]() 
+  { 
           if (ConfirmationDialog::confirm("Are you sure you want to exec(com.mixplorer)?")) 
           {
             //std::system("am start -n com.mixplorer/com.mixplorer.activities.BrowseActivity");
             std::system("/data/openpilot/run_mixplorer.sh");
             
           }
-      }
-    )
-  );  
+  });
+
+ 
+
+  for (auto btn : {car_interfaces, build_exe, finger_exe, android_exe, apk_exe, mixplorer_exe}) {
+    if (btn) {
+      layout()->addWidget(horizontal_line());
+      connect(parent, SIGNAL(offroadTransition(bool)), btn, SLOT(setEnabled(bool)));
+      layout()->addWidget(btn);
+    }
+  }
 
   layout()->addWidget(horizontal_line());
   layout()->addWidget( new CarSelectCombo() );
