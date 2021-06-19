@@ -17,7 +17,7 @@
 
 #include "userPanel.hpp"
 
-
+// 일부 코드 OPKR 참고.
 
 CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
 {
