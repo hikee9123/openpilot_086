@@ -279,7 +279,7 @@ class CarController():
 
     str_log1 = 'LKAS={:.0f} hold={:.0f}'.format( CS.lkas_button_on, CS.auto_hold )
     str_log2 = 'limit={:.0f} tm={:.1f} '.format( apply_steer_limit, self.timer1.sampleTime()  )               
-    trace1.printf3( '{} {}'.format( str_log1, str_log2 ) )    
+    #trace1.printf3( '{} {}'.format( str_log1, str_log2 ) )    
 
     if pcm_cancel_cmd:
       can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.CANCEL))
@@ -306,6 +306,8 @@ class CarController():
           data = self.longCtrl.update( self.packer, CS, c, frame )
           if data != None:
             can_sends.append( data )
+          else:
+            trace1.printf3( '{} {}'.format( str_log1, str_log2 ) )
       else:      
         btn_signal = self.update_longctrl( c, CS, frame, sm, CP )
         if btn_signal != None:
