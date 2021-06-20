@@ -147,7 +147,7 @@ class CLongControl():
 
 
 
-  def update( self, packer, CS, c, frame, accel_dec ):
+  def update( self, packer, CS, c, frame ):
     enabled = CS.acc_active
     kph_vEgo = CS.out.vEgo * CV.MS_TO_KPH    
     # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
@@ -160,10 +160,12 @@ class CLongControl():
 
     #if kph_vEgo < 30:
     #  apply_accel = min( apply_accel, CS.aReqValue )
-    if CS.aReqValue > -0.04:
-      apply_accel = min( -0.04, accel_dec )
+    if CS.aReqValue > apply_accel:
+      apply_accel = apply_accel
     else:
       apply_accel = CS.aReqValue
+      self.scc12_cnt += 1
+      return None
     
     can_sends = create_scc12(packer, apply_accel, enabled, self.scc12_cnt, scc_live, CS.scc12)
     can_sends.append( create_scc11(packer, frame, enabled, set_speed, lead_visible, scc_live, CS.scc11) )
