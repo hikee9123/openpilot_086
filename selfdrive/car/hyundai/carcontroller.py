@@ -211,7 +211,7 @@ class CarController():
     
     if self.longCtrl.update_btn( CS  ) == 0:
       pass
-    elif CS.acc_active and CS.out.cruiseState.modeSel == 4:
+    elif CS.acc_active and (CS.out.cruiseState.modeSel == 4 or CS.out.cruiseState.modeSel == 2):
       self.ctrl_speed = min( self.cruise_set_speed_kph, kph_set_vEgo)
       btn_signal = self.longCtrl.update_scc( CS, self.ctrl_speed )
 
@@ -301,13 +301,8 @@ class CarController():
     elif self.last_lead_distance != 0:
         self.last_lead_distance = 0
     elif CP.openpilotLongitudinalControl:
-      if CS.out.cruiseState.modeSel == 1:
-        #if frame % 2 == 0:
-        data = self.longCtrl.update( self.packer, CS, c, frame )
-        if data != None:
-           can_sends.append( data )
-        else:
-           trace1.printf3( '{} {}'.format( str_log1, str_log2 ) )
+      if not CS.out.cruiseState.accActive:
+        trace1.printf3( '{} {}'.format( str_log1, str_log2 ) )
       else:      
         btn_signal = self.update_longctrl( c, CS, frame, sm, CP )
         if btn_signal != None:
@@ -315,7 +310,15 @@ class CarController():
           self.resume_cnt += 1
         else:
           self.resume_cnt = 0
- 
+
+        # dec 제어.
+        if CS.out.cruiseState.modeSel == 2:
+          data = self.longCtrl.update( self.packer, CS, c, frame )
+          if data != None:
+            can_sends.append( data )
+          else:
+            trace1.printf3( '{} {}'.format( str_log1, str_log2 ) )
+
 
 
 
