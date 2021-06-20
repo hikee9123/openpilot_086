@@ -302,12 +302,12 @@ class CarController():
         self.last_lead_distance = 0
     elif CP.openpilotLongitudinalControl:
       if CS.out.cruiseState.modeSel == 1:
-        if frame % 2 == 0:
-          data = self.longCtrl.update( self.packer, CS, c, frame )
-          if data != None:
-            can_sends.append( data )
-          else:
-            trace1.printf3( '{} {}'.format( str_log1, str_log2 ) )
+        #if frame % 2 == 0:
+        data = self.longCtrl.update( self.packer, CS, c, frame )
+        if data != None:
+           can_sends.append( data )
+        else:
+           trace1.printf3( '{} {}'.format( str_log1, str_log2 ) )
       else:      
         btn_signal = self.update_longctrl( c, CS, frame, sm, CP )
         if btn_signal != None:
