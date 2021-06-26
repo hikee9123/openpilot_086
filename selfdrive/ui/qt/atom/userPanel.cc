@@ -18,6 +18,14 @@
 #include "userPanel.hpp"
 
 // 일부 코드 OPKR 참고.
+def exec_app(status, app, app_main):
+  if status == "1":
+    std::system("pm enable %s" % app)
+    std::system("am start -n %s/%s" % (app, app_main))
+    return True
+  if status == "0":
+    std::system("pm disable %s" % app)
+    return False
 
 CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
 {
@@ -148,7 +156,7 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
           }
   });
 
-  auto apk_exe = new ButtonControl("apk.py 실행", "실행",
+  auto apk_exe = new ButtonControl("apk.py Install", "Install",
                                         "/data/openpilot/selfdrive/assets/addon/apk/apk.py 을 실행 합니다.");
   connect(apk_exe, &ButtonControl::released, [=]() 
   { 
@@ -184,6 +192,17 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
             //QProcess::execute("am start --activity-task-on-home com.opkr.maphack/com.opkr.maphack.MainActivity");  // OPKR add map
           }
   });
+
+   auto softkey_exe = new ButtonControl("Soft Key Open", "Open",
+                                   "Soft Key 을 실행 합니다.");
+  connect(softkey_exe, &ButtonControl::released, [=]() 
+  { 
+          if (ConfirmationDialog::confirm("Are you sure you want to exec(Soft Key)?")) 
+          {
+            //std::system("pm enable com.gmd.hidesoftkeys")
+            std::system("am start com.gmd.hidesoftkeys/com.gmd.hidesoftkeys.MainActivity");
+          }
+  });  
 
   for (auto btn : {car_interfaces, build_exe, finger_exe, android_exe, apk_exe, mixplorer_exe, tmap_exe}) {
     if (btn) {
