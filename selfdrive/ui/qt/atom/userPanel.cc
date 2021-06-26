@@ -92,11 +92,11 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
    layout()->addWidget(new CLiveSteerRatioToggle());
    layout()->addWidget(new CTurnSteeringDisableToggle());
    layout()->addWidget(new CPrebuiltToggle());
-
+  
   layout()->addWidget(horizontal_line());
-
   layout()->addWidget(new CLongitudinalControlToggle() );
-
+  layout()->addWidget(horizontal_line());  
+  layout()->addWidget(new RunNaviOnBootToggle());
   layout()->addWidget(horizontal_line());
 
   layout()->addWidget(new BrightnessControl());

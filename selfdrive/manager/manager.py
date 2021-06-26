@@ -47,7 +47,8 @@ def manager_init():
     ("OpkrUIBrightness", "0"),
     ("OpkrUIVolumeBoost", "0"),    
     ("LongitudinalControl", "0"),
-    ("OpkrSSHLegacy", "1"),    
+    ("OpkrRunNaviOnBoot", "0"),
+    ("OpkrSSHLegacy", "1"), 
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))
@@ -145,7 +146,7 @@ def manager_thread():
   enableLogger = params.get_bool("UploadRaw")
   if not enableLogger:
     ignore.append("loggerd")
-    ignore.append("logcatd")
+    #ignore.append("logcatd")
     ignore.append("logmessaged")
     ignore.append("uploader")
     ignore.append("updated")

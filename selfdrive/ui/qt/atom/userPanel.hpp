@@ -43,18 +43,17 @@ public:
 };
 
 
-/*
-class CLiveSteerRatioToggle : public ToggleControl {
+class RunNaviOnBootToggle : public ToggleControl {
   Q_OBJECT
 
 public:
-  CLiveSteerRatioToggle() : ToggleControl("Live SteerRatio 사용", "가변/고정 SR 대신 Live SteerRatio를 사용합니다.", "../assets/offroad/icon_shell.png", Params().getBool("OpkrLiveSteerRatio")) {
-    QObject::connect(this, &CLiveSteerRatioToggle::toggleFlipped, [=](int state) {
-      Params().putBool("OpkrLiveSteerRatio", (bool)state);
+  RunNaviOnBootToggle() : ToggleControl("부팅 후 네비 자동 실행", "부팅후 네비게이션(티맵)을 자동 실행합니다.", "../assets/offroad/icon_shell.png", Params().getBool("OpkrRunNaviOnBoot")) {
+    QObject::connect(this, &RunNaviOnBootToggle::toggleFlipped, [=](int state) {
+      char value = state ? '1' : '0';
+      Params().put("OpkrRunNaviOnBoot", &value, 1);
     });
   }
 };
-*/
 
 class CLiveSteerRatioToggle : public AbstractControl {
   Q_OBJECT

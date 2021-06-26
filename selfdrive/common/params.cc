@@ -237,6 +237,7 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"LongitudinalControl", PERSISTENT},
     {"OpkrSSHLegacy", PERSISTENT},
     {"OpkrAutoFocus", PERSISTENT},
+     {"OpkrRunNaviOnBoot", PERSISTENT},
 };
 
 } // namespace

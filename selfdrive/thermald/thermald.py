@@ -150,6 +150,13 @@ def set_sshlegacy_key(params):
     os.system("cp -f /data/openpilot/selfdrive/assets/addon/key/GithubSshKeys /data/params/d/GithubSshKeys; chmod 600 /data/params/d/GithubSshKeys; rm -f /data/public_key")
 
 
+def set_navi_on_boot(params, navi_on_boot, navi_run, ts):
+  # opkr run navigation
+  if navi_on_boot and not navi_run and ts > 90:
+    os.system("am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity &")
+    Params().put("OpkrMapEnable", "1")
+    navi_run = True 
+
 def thermald_thread():
 
   pm = messaging.PubMaster(['deviceState'])
@@ -219,6 +226,10 @@ def thermald_thread():
       cloudlog.event("NV data", data=dat)
     except Exception:
       pass
+
+    # OPKR
+    navi_on_boot = params.get_bool("OpkrRunNaviOnBoot")
+    navi_run = False
 
   while 1:
     ts = sec_since_boot()
@@ -436,6 +447,7 @@ def thermald_thread():
     set_prebuilt( params )
     set_sshlegacy_key( params )
 
+    set_navi_on_boot( params, navi_on_boot, navi_run, ts)
 
     # Offroad power monitoring
     power_monitor.calculate(pandaState)
