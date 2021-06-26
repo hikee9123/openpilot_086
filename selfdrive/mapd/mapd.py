@@ -37,6 +37,10 @@ class MapsdThread(threading.Thread):
         self.map_enabled = False
         self.target_speed_map = 0
 
+        self.target_speed_map_counter = 0
+        self.target_speed_map_counter1 = 0
+        self.target_speed_map_counter2 = 0
+
     def opkr_map_status_read(self):        
         self.second += 0.25
         if self.second > 1.0:
@@ -90,7 +94,7 @@ class MapsdThread(threading.Thread):
               start = time.time()
               self.opkr_map_status_read()
 
-            print( "self.map_enabled = {} ".format( self.map_enabled ))
+
             if not self.map_enabled:
               time.sleep(1.0)
               self.data_send()
