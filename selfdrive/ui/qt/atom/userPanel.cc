@@ -18,6 +18,7 @@
 #include "userPanel.hpp"
 
 // 일부 코드 OPKR 참고.
+/*
 def exec_app(status, app, app_main):
   if status == "1":
     std::system("pm enable %s" % app)
@@ -26,6 +27,7 @@ def exec_app(status, app, app_main):
   if status == "0":
     std::system("pm disable %s" % app)
     return False
+*/
 
 CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
 {
