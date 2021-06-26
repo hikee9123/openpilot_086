@@ -476,7 +476,7 @@ static void ui_draw_debug1(UIState *s)
 
 
   int  x_pos = s->viz_rect.x + 900;
-  int  y_pos = 400; 
+  int  y_pos = 450; 
 
     ui_print( s, x_pos, y_pos+0,   "MS:%.2f", map_sign );
     ui_print( s, x_pos, y_pos+100,  "Dist:%.2f", speedLimitAheadDistance );
