@@ -48,7 +48,7 @@ class MapsdThread(threading.Thread):
         if self.second > 1.0:
             self.map_enabled = self.params.get_bool("OpkrMapEnable")
             self.second = 0.0
-            print( "self.map_enabled = {}".format( self.map_enabled  ))
+            
 
 
     def data_send(self):
@@ -109,6 +109,7 @@ class MapsdThread(threading.Thread):
                 os.system("logcat -d -s opkrspdlimit,opkrspd2limit | grep opkrspd | tail -n 1 | awk \'{print $7}\' > /data/params/d/LimitSetSpeedCamera &")
                 os.system("logcat -d -s opkrspddist,opkrspd2dist | grep opkrspd | tail -n 1 | awk \'{print $7}\' > /data/params/d/LimitSetSpeedCameraDist &")
                 os.system("logcat -d -s opkrsigntype,opkrspdsign | grep opkrspd | tail -n 1 | awk \'{print $7}\' > /data/params/d/OpkrMapSign &")
+                print( "self.map_enabled = {}".format( self.map_enabled  ))
                 self.target_speed_map_counter3 += 1
                 if self.target_speed_map_counter3 > 2:
                     self.target_speed_map_counter3 = 0
