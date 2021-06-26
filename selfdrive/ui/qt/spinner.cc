@@ -116,7 +116,7 @@ void Spinner::update(int n) {
 int main(int argc, char *argv[]) {
   setQtSurfaceFormat();
 
-  Hardware::set_display_power(true);
+ // Hardware::set_display_power(true);
   Hardware::set_brightness(10);
 
   QApplication a(argc, argv);
