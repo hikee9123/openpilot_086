@@ -154,8 +154,10 @@ def set_navi_on_boot(params, navi_on_boot, navi_run, ts):
   # opkr run navigation
   if navi_on_boot and not navi_run and ts > 90:
     os.system("am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity &")
-    Params().put("OpkrMapEnable", "1")
-    navi_run = True 
+    params.put("OpkrMapEnable", "1")
+    navi_run = True
+
+  return navi_run
 
 def thermald_thread():
 
@@ -228,6 +230,7 @@ def thermald_thread():
       pass
 
     # OPKR
+    params.put("OpkrMapEnable", "0")
     navi_on_boot = params.get_bool("OpkrRunNaviOnBoot")
     navi_run = False
 

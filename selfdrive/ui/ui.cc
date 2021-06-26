@@ -407,12 +407,22 @@ void Device::updateBrightness(const UIState &s) {
   
   //if ( s.scene.dm_active )
   //  brightness_m = 0.5; 
+
+  
+
   
   float clipped_brightness = std::min(100.0f, (s.scene.light_sensor * brightness_m));
   clipped_brightness = std::max( 5.0f, clipped_brightness );
-  if (!s.scene.started) {
+
+  if( s.scene.light_init < BACKLIGHT_OFFROAD )
+  {
+     s.scene.light_init += 0.1
+     clipped_brightness = 5 + s.scene.light_init;
+  }  
+  else if (!s.scene.started) {
     clipped_brightness = BACKLIGHT_OFFROAD;
   }
+
 
   int brightness = brightness_filter.update(clipped_brightness);
   if (!awake) {
