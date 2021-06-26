@@ -466,7 +466,7 @@ static void ui_draw_debug1(UIState *s)
   UIScene &scene = s->scene;
   
   nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
-  nvgFontSize(s->vg, 36*1.5*fFontSize);
+  nvgFontSize(s->vg, 36*1.7);
 
   float map_sign = scene.liveMapData.getSpeedLimitAhead();
   float speedLimitAheadDistance = scene.liveMapData.getSpeedLimitAheadDistance();
@@ -479,9 +479,9 @@ static void ui_draw_debug1(UIState *s)
   int  y_pos = 100; 
 
     ui_print( s, x_pos, y_pos+0,   "MS:%.2f", map_sign );
-    ui_print( s, x_pos, y_pos+50,  "DT:%.2f", speedLimitAheadDistance );
-    ui_print( s, x_pos, y_pos+100,  "SL:%.2f", speedLimit );
-    ui_print( s, x_pos, y_pos+150,  "%d,%d", map_enabled, mapValid );
+    ui_print( s, x_pos, y_pos+100,  "DT:%.2f", speedLimitAheadDistance );
+    ui_print( s, x_pos, y_pos+200,  "SL:%.2f", speedLimit );
+    ui_print( s, x_pos, y_pos+300,  "VA:%d,%d", map_enabled, mapValid );
 
   //  1035, 1078
   ui_draw_text1(s, 0, 30, scene.alert.alertTextMsg1.c_str(), 45, COLOR_WHITE, "sans-regular");
