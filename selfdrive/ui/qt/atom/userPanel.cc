@@ -206,7 +206,7 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
           }
   });  
 
-  for (auto btn : {car_interfaces, build_exe, finger_exe, android_exe, apk_exe, mixplorer_exe, tmap_exe}) {
+  for (auto btn : {car_interfaces, build_exe, finger_exe, android_exe, apk_exe, mixplorer_exe, tmap_exe, softkey_exe}) {
     if (btn) {
       layout()->addWidget(horizontal_line());
       connect(parent, SIGNAL(offroadTransition(bool)), btn, SLOT(setEnabled(bool)));
