@@ -11,7 +11,6 @@ import numpy as np
 # setup logging
 import logging
 import logging.handlers
-from scipy import spatial
 import selfdrive.crash as crash
 from common.params import Params
 from collections import defaultdict
