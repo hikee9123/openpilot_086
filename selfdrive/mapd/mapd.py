@@ -22,7 +22,7 @@ from common.realtime import set_realtime_priority
 
 class MapsdThread():
     def __init__(self):
-        self.logger = logging.getLogger()
+        self.logger = logging.getLogger("mapd")
         self.pm = messaging.PubMaster(['liveMapData'])
         self.logger.debug("entered mapsd_thread, ... %s" % ( str(self.pm)))
 
