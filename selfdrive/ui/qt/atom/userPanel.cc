@@ -180,14 +180,14 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
           }
   });
 
-   auto tmap_exe = new ButtonControl("Tmap Open", "Open",
+  auto tmapopen_exe = new ButtonControl("Tmap Open", "Open",
                                    "Tmap 을 실행 합니다.");
-  connect(tmap_exe, &ButtonControl::released, [=]() 
+  connect(tmapopen_exe, &ButtonControl::released, [=]() 
   { 
-          if (ConfirmationDialog::confirm("Are you sure you want to exec(Tmap)?")) 
+          if (ConfirmationDialog::confirm("Are you sure you want to exec(Tmap Open)?")) 
           {
             std::system("am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity &");
-
+            Params().put("OpkrMapEnable", "1");
             //QProcess::execute("am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity");
             //QProcess::execute("pkill com.skt.tmap.ku");
 
@@ -195,7 +195,22 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
           }
   });
 
-   auto softkey_exe = new ButtonControl("Soft Key Open", "Open",
+  auto tmapclose_exe = new ButtonControl("Tmap Close", "Close",
+                                   "Tmap 을 Close 합니다.");
+  connect(tmapclose_exe, &ButtonControl::released, [=]() 
+  { 
+          if (ConfirmationDialog::confirm("Are you sure you want to exec(Tmap Close)?")) 
+          {
+            std::system("pkill com.skt.tmap.ku");
+            Params().put("OpkrMapEnable", "0");
+            //QProcess::execute("am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity");
+            //QProcess::execute("pkill com.skt.tmap.ku");
+
+            //QProcess::execute("am start --activity-task-on-home com.opkr.maphack/com.opkr.maphack.MainActivity");  // OPKR add map
+          }
+  });
+
+  auto softkey_exe = new ButtonControl("Soft Key Open", "Open",
                                    "Soft Key 을 실행 합니다.");
   connect(softkey_exe, &ButtonControl::released, [=]() 
   { 
@@ -206,7 +221,7 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
           }
   });  
 
-  for (auto btn : {car_interfaces, build_exe, finger_exe, android_exe, apk_exe, mixplorer_exe, tmap_exe, softkey_exe}) {
+  for (auto btn : {car_interfaces, build_exe, finger_exe, android_exe, apk_exe, mixplorer_exe, tmapopen_exe, tmapclose_exe, softkey_exe}) {
     if (btn) {
       layout()->addWidget(horizontal_line());
       connect(parent, SIGNAL(offroadTransition(bool)), btn, SLOT(setEnabled(bool)));
