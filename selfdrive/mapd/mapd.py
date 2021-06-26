@@ -18,7 +18,7 @@ import cereal.messaging as messaging
 from common.realtime import set_realtime_priority
 
 
-# OPKR 코드 참고.
+# OPKR 코드 참조.
 
 class MapsdThread(threading.Thread):
     def __init__(self):
@@ -31,6 +31,7 @@ class MapsdThread(threading.Thread):
 
         self.params = Params()
 
+        self.second = 0
         self.map_sign = 0
         self.target_speed_map_dist = 0
         self.map_enabled = False
