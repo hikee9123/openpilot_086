@@ -36,7 +36,35 @@ class MapsdThread(threading.Thread):
         self.map_enabled = False
         self.target_speed_map = 0
 
+    def opkr_map_status_read(self):        
+        self.second += 0.25
+        if self.second > 1.0:
+            self.map_enabled = self.params.get_bool("OpkrMapEnable")
+            self.second = 0.0
 
+    def data_send(self):
+        dat = messaging.new_message()
+        dat.init('liveMapData')
+        dat.liveMapData.wayId = 1
+        # Speed limit
+        #dat.liveMapData.speedLimitAheadValid = True
+        dat.liveMapData.speedLimitAhead = self.map_sign
+        dat.liveMapData.speedLimitAheadDistance = self.target_speed_map_dist
+
+        # Curvature
+        #dat.liveMapData.curvatureValid = curvature_valid
+        #dat.liveMapData.curvature = float(upcoming_curvature)
+        #dat.liveMapData.distToTurn = float(dist_to_turn)
+
+        #dat.liveMapData.roadCurvatureX = [float(x) for x in dists]
+        #dat.liveMapData.roadCurvature = [float(x) for x in curvature]
+        dat.liveMapData.speedLimitValid = self.map_enabled
+        dat.liveMapData.speedLimit = self.target_speed_map
+
+        dat.liveMapData.mapValid = True
+    
+        self.logger.debug("Sending ... liveMapData ... %s", str(dat))
+        self.pm.send('liveMapData', dat)
 
     def run(self):
         self.logger.debug("Entered run method for thread :" + str(self.name))
@@ -57,14 +85,11 @@ class MapsdThread(threading.Thread):
               continue
             else:
               start = time.time()
-
-            self.second += 0.25
-            if self.second > 1.0:
-              self.map_enabled = self.params.get_bool("OpkrMapEnable")
-              self.second = 0.0
+              self.opkr_map_status_read()
 
             if not self.map_enabled:
               time.sleep(1.0)
+              self.data_send()
               continue
 
 
@@ -135,36 +160,17 @@ class MapsdThread(threading.Thread):
                         self.target_speed_map_sign = False
                 except:
                     pass
+            
+
+            self.data_send()
 
 
-            dat = messaging.new_message()
-            dat.init('liveMapData')
-            dat.liveMapData.wayId = 1
-            # Speed limit
-            #dat.liveMapData.speedLimitAheadValid = True
-            dat.liveMapData.speedLimitAhead = self.map_sign
-            dat.liveMapData.speedLimitAheadDistance = self.target_speed_map_dist
-
-            # Curvature
-            #dat.liveMapData.curvatureValid = curvature_valid
-            #dat.liveMapData.curvature = float(upcoming_curvature)
-            #dat.liveMapData.distToTurn = float(dist_to_turn)
-
-            #dat.liveMapData.roadCurvatureX = [float(x) for x in dists]
-            #dat.liveMapData.roadCurvature = [float(x) for x in curvature]
-            dat.liveMapData.speedLimitValid = self.map_enabled
-            dat.liveMapData.speedLimit = self.target_speed_map
-
-            dat.liveMapData.mapValid = True
-        
-            self.logger.debug("Sending ... liveMapData ... %s", str(dat))
-            self.pm.send('liveMapData', dat)
 
 
 
 def main():
-    gc.disable()
-    set_realtime_priority(54)    
+    #gc.disable()
+    #set_realtime_priority(54)    
     params = Params()
 
 
