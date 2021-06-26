@@ -229,10 +229,10 @@ def thermald_thread():
     except Exception:
       pass
 
-    # OPKR
-    params.put("OpkrMapEnable", "0")
-    navi_on_boot = params.get_bool("OpkrRunNaviOnBoot")
-    navi_run = False
+  # OPKR
+  params.put("OpkrMapEnable", "0")
+  navi_on_boot = params.get_bool("OpkrRunNaviOnBoot")
+  navi_run = False
 
   while 1:
     ts = sec_since_boot()
@@ -450,7 +450,7 @@ def thermald_thread():
     set_prebuilt( params )
     set_sshlegacy_key( params )
 
-    set_navi_on_boot( params, navi_on_boot, navi_run, ts)
+    navi_run = set_navi_on_boot( params, navi_on_boot, navi_run, ts)
 
     # Offroad power monitoring
     power_monitor.calculate(pandaState)
