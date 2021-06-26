@@ -40,6 +40,7 @@ class MapsdThread(threading.Thread):
         self.target_speed_map_counter = 0
         self.target_speed_map_counter1 = 0
         self.target_speed_map_counter2 = 0
+        self.target_speed_map_counter_check = False
 
     def opkr_map_status_read(self):        
         self.second += 0.25
