@@ -1300,7 +1300,8 @@ struct LiveParametersData {
   steerRateCostCV @12 :Float32;
 }
 
-struct LiveMapDataDEPRECATED {
+
+struct LiveMapData {
   speedLimitValid @0 :Bool;
   speedLimit @1 :Float32;
   speedAdvisoryValid @12 :Bool;
@@ -1408,9 +1409,12 @@ struct Event {
     deviceState @6 :DeviceState;
     logMessage @18 :Text;
 
-
+    # TMap Info
+    liveMapData @62 :LiveMapData;
+  
     # *********** debug ***********
     testJoystick @52 :Joystick;
+
 
     # *********** legacy + deprecated ***********
     model @9 :Legacy.ModelData; # TODO: rename modelV2 and mark this as deprecated
@@ -1424,7 +1428,6 @@ struct Event {
     cellInfoDEPRECATED @28 :List(Legacy.CellInfo);
     wifiScanDEPRECATED @29 :List(Legacy.WifiScan);
     uiNavigationEventDEPRECATED @50 :Legacy.UiNavigationEvent;
-    liveMapDataDEPRECATED @62 :LiveMapDataDEPRECATED;
     gpsPlannerPointsDEPRECATED @40 :Legacy.GPSPlannerPoints;
     gpsPlannerPlanDEPRECATED @41 :Legacy.GPSPlannerPlan;
     applanixRawDEPRECATED @42 :Data;

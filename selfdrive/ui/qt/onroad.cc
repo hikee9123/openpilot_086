@@ -7,6 +7,9 @@
 #include "selfdrive/ui/paint.h"
 #include "selfdrive/ui/qt/util.h"
 
+#define  ENABLE_MAPS
+
+
 #ifdef ENABLE_MAPS
 #include "selfdrive/ui/qt/maps/map.h"
 #endif

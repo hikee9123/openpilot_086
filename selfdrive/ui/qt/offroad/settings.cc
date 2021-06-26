@@ -9,6 +9,8 @@
 #include "selfdrive/ui/qt/offroad/networking.h"
 #endif
 
+#define  ENABLE_MAPS
+
 #ifdef ENABLE_MAPS
 #include "selfdrive/ui/qt/maps/map_settings.h"
 #endif
