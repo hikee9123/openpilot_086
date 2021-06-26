@@ -18,7 +18,7 @@ import cereal.messaging as messaging
 from common.realtime import set_realtime_priority
 
 
-
+# OPKR 코드 참고.
 
 class MapsdThread(threading.Thread):
     def __init__(self):
@@ -51,18 +51,22 @@ class MapsdThread(threading.Thread):
             else:
                 start = time.time()
 
+
+            self.second += 0.25
+            if self.second > 1.0:
+              self.map_enabled = self.params.get_bool("OpkrMapEnable")
+              self.second = 0.0
+
+            if self.map_enabled:
+                pass
+
+
+
             dat = messaging.new_message()
             dat.init('liveMapData')
-
-
-
             dat.liveMapData.wayId = 1
-
-
             # Speed limit
             max_speed = 10
-
-
             #dat.liveMapData.speedLimitAheadValid = True
             #dat.liveMapData.speedLimitAhead = float(max_speed_ahead)
             #dat.liveMapData.speedLimitAheadDistance = float(max_speed_ahead_dist)

@@ -106,7 +106,7 @@ typedef struct UIScene {
   // lead
   vertex_data lead_vertices[2];
   
-  float light_init = 0;
+
   float light_sensor = 0;
   float accel_sensor, gyro_sensor;
   bool started, ignition, is_metric, longitudinal_control, end_to_end;

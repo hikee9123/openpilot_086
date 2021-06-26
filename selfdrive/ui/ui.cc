@@ -404,7 +404,7 @@ void Device::setAwake(bool on, bool reset) {
 void Device::updateBrightness(const UIState &s) {
   //float brightness_b = 5;
   float brightness_m = 0.1;
-  
+  static float  light_init = 0;
   //if ( s.scene.dm_active )
   //  brightness_m = 0.5; 
 
@@ -414,10 +414,10 @@ void Device::updateBrightness(const UIState &s) {
   float clipped_brightness = std::min(100.0f, (s.scene.light_sensor * brightness_m));
   clipped_brightness = std::max( 5.0f, clipped_brightness );
 
-  if( s.scene.light_init < BACKLIGHT_OFFROAD )
+  if( light_init < BACKLIGHT_OFFROAD )
   {
-     s.scene.light_init += 0.1
-     clipped_brightness = 5 + s.scene.light_init;
+     light_init += 0.1
+     clipped_brightness = 5 + light_init;
   }  
   else if (!s.scene.started) {
     clipped_brightness = BACKLIGHT_OFFROAD;
