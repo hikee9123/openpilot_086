@@ -176,7 +176,7 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
   { 
           if (ConfirmationDialog::confirm("Are you sure you want to exec(Tmap)?")) 
           {
-            std::system("am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity &")
+            std::system("am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity &");
 
             //QProcess::execute("am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity");
             //QProcess::execute("pkill com.skt.tmap.ku");
