@@ -170,9 +170,22 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
           }
   });
 
- 
+   auto tmap_exe = new ButtonControl("Tmap Open", "Open",
+                                   "Tmap 을 실행 합니다.");
+  connect(tmap_exe, &ButtonControl::released, [=]() 
+  { 
+          if (ConfirmationDialog::confirm("Are you sure you want to exec(Tmap)?")) 
+          {
+            std::system("am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity &")
 
-  for (auto btn : {car_interfaces, build_exe, finger_exe, android_exe, apk_exe, mixplorer_exe}) {
+            //QProcess::execute("am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity");
+            //QProcess::execute("pkill com.skt.tmap.ku");
+
+            //QProcess::execute("am start --activity-task-on-home com.opkr.maphack/com.opkr.maphack.MainActivity");  // OPKR add map
+          }
+  });
+
+  for (auto btn : {car_interfaces, build_exe, finger_exe, android_exe, apk_exe, mixplorer_exe, tmap_exe}) {
     if (btn) {
       layout()->addWidget(horizontal_line());
       connect(parent, SIGNAL(offroadTransition(bool)), btn, SLOT(setEnabled(bool)));
