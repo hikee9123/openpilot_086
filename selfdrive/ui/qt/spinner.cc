@@ -117,7 +117,7 @@ int main(int argc, char *argv[]) {
   setQtSurfaceFormat();
 
   Hardware::set_display_power(true);
-  Hardware::set_brightness(65);
+  Hardware::set_brightness(10);
 
   QApplication a(argc, argv);
   Spinner spinner;
