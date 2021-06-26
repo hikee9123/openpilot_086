@@ -471,8 +471,8 @@ static void ui_draw_debug1(UIState *s)
   float map_sign = scene.liveMapData.getSpeedLimitAhead();
   float speedLimitAheadDistance = scene.liveMapData.getSpeedLimitAheadDistance();
   float speedLimit = scene.liveMapData.getSpeedLimit();
-  bool map_enabled = scene.liveMapData.getSpeedLimitValid();
-  bool  mapValid = scene.liveMapData.getMapValid();
+  int map_enabled = scene.liveMapData.getSpeedLimitValid();
+  int  mapValid = scene.liveMapData.getMapValid();
 
 
   int  x_pos = s->viz_rect.x + 250;
