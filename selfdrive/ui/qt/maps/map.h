@@ -36,9 +36,12 @@ private:
   QLabel *icon_01;
   QHBoxLayout *lane_layout;
   QMap<QString, QVariant> last_banner;
+  bool error = false;
 
 public:
   MapInstructions(QWidget * parent=nullptr);
+  void showError(QString error);
+  void hideIfNoError();
 
 public slots:
   void updateDistance(float d);
@@ -50,6 +53,7 @@ class MapETA : public QWidget {
 
 private:
   QLabel *eta;
+  QLabel *eta_unit;
   QLabel *time;
   QLabel *time_unit;
   QLabel *distance;
@@ -91,13 +95,15 @@ private:
   SubMaster *sm;
   QTimer* timer;
 
+  bool loaded_once = false;
+
   // Panning
   QPointF m_lastPos;
   int pan_counter = 0;
   int zoom_counter = 0;
 
   // Position
-  QMapbox::Coordinate last_position = QMapbox::Coordinate(37.7393118509158, -122.46471285025565);
+  std::optional<QMapbox::Coordinate> last_position;
   std::optional<float> last_bearing;
 
   // Route
@@ -111,7 +117,6 @@ private:
   MapETA* map_eta;
 
   QMapbox::Coordinate nav_destination;
-  double last_maneuver_distance = 1000;
 
   // Route recompute
   QTimer* recompute_timer;
