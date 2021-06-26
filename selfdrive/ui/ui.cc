@@ -416,7 +416,7 @@ void Device::updateBrightness(const UIState &s) {
 
   if( light_init < BACKLIGHT_OFFROAD )
   {
-     light_init += 0.1
+     light_init += 0.1;
      clipped_brightness = 5 + light_init;
   }  
   else if (!s.scene.started) {
