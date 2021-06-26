@@ -30,7 +30,6 @@ private:
   WifiManager *wifi = nullptr;
   QVBoxLayout* main_layout;
 
-  QButtonGroup *connectButtons;
   bool tetheringEnabled;
 
 signals:
@@ -38,7 +37,6 @@ signals:
 
 public slots:
   void refresh();
-  void handleButton(QAbstractButton* m_button);
 };
 
 class AdvancedNetworking : public QWidget {
@@ -72,15 +70,15 @@ private:
   bool ui_setup_complete = false;
   bool show_advanced;
 
-  Network selectedNetwork;
-
   WifiUI* wifiWidget;
   WifiManager* wifi = nullptr;
   void attemptInitialization();
+  void requestScan();
+
+public slots:
+  void refreshSlot();
 
 private slots:
   void connectToNetwork(const Network &n);
-  void refresh();
   void wrongPassword(const QString &ssid);
 };
-

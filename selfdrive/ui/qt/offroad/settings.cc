@@ -84,12 +84,6 @@ TogglesPanel::TogglesPanel(QWidget *parent) : QWidget(parent) {
     QObject::connect(toggles.back(), &ToggleControl::toggleFlipped, [=](bool state) {
       Params().remove("CalibrationParams");
     });
-
-    toggles.append(new ParamControl("EnableLteOnroad",
-                                    "Enable LTE while onroad",
-                                    "",
-                                    "../assets/offroad/icon_network.png",
-                                    this));
   }
 
   bool record_lock = Params().getBool("RecordFrontLock");
@@ -180,6 +174,7 @@ DevicePanel::DevicePanel(QWidget* parent) : QWidget(parent) {
   power_layout->setSpacing(30);
 
   QPushButton *reboot_btn = new QPushButton("Reboot");
+  reboot_btn->setStyleSheet("height: 120px;border-radius: 15px;background-color: #393939;");
   power_layout->addWidget(reboot_btn);
   QObject::connect(reboot_btn, &QPushButton::released, [=]() {
     if (ConfirmationDialog::confirm("Are you sure you want to reboot?", this)) {
@@ -188,7 +183,7 @@ DevicePanel::DevicePanel(QWidget* parent) : QWidget(parent) {
   });
 
   QPushButton *poweroff_btn = new QPushButton("Power Off");
-  poweroff_btn->setStyleSheet("background-color: #E22C2C;");
+  poweroff_btn->setStyleSheet("height: 120px;border-radius: 15px;background-color: #E22C2C;");
   power_layout->addWidget(poweroff_btn);
   QObject::connect(poweroff_btn, &QPushButton::released, [=]() {
     if (ConfirmationDialog::confirm("Are you sure you want to power off?", this)) {
@@ -197,15 +192,6 @@ DevicePanel::DevicePanel(QWidget* parent) : QWidget(parent) {
   });
 
   main_layout->addLayout(power_layout);
-
-  setStyleSheet(R"(
-    QPushButton {
-      padding: 0;
-      height: 120px;
-      border-radius: 15px;
-      background-color: #393939;
-    }
-  )");
 }
 
 SoftwarePanel::SoftwarePanel(QWidget* parent) : QWidget(parent) {
@@ -329,7 +315,7 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
     background-color: #292929;
   )");
   close_btn->setFixedSize(200, 200);
-  sidebar_layout->addSpacing(40);
+  sidebar_layout->addSpacing(45);
   sidebar_layout->addWidget(close_btn, 0, Qt::AlignCenter);
   QObject::connect(close_btn, &QPushButton::released, this, &SettingsWindow::closeSettings);
 
@@ -348,7 +334,9 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
 
 #ifdef ENABLE_MAPS
   if (!Params().get("MapboxToken").empty()) {
-    panels.push_back({"Navigation", new MapPanel(this)});
+    auto map_panel = new MapPanel(this);
+    panels.push_back({"Navigation", map_panel});
+    QObject::connect(map_panel, &MapPanel::closeSettings, this, &SettingsWindow::closeSettings);
   }
 #endif
   const int padding = panels.size() > 3 ? 20 : 35;

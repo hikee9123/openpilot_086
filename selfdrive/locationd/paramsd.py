@@ -6,9 +6,9 @@ import json
 import numpy as np
 
 import cereal.messaging as messaging
-from cereal import car, log
+from cereal import car
 from common.params import Params, put_nonblocking
-from common.realtime import DT_MDL, set_realtime_priority
+from common.realtime import set_realtime_priority, DT_MDL
 from common.numpy_fast import clip
 from selfdrive.locationd.models.car_kf import CarKalman, ObservationKind, States
 from selfdrive.locationd.models.constants import GENERATED_DIR
