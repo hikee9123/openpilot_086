@@ -475,8 +475,8 @@ static void ui_draw_debug1(UIState *s)
   int  mapValid = scene.liveMapData.getMapValid();
 
 
-  int  x_pos = s->viz_rect.x + 300;
-  int  y_pos = 800; 
+  int  x_pos = s->viz_rect.x + 800;
+  int  y_pos = 500; 
 
     ui_print( s, x_pos, y_pos+0,   "MS:%.2f", map_sign );
     ui_print( s, x_pos, y_pos+100,  "Dist:%.2f", speedLimitAheadDistance );
