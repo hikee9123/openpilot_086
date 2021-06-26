@@ -42,6 +42,8 @@ class MapsdThread(threading.Thread):
         if self.second > 1.0:
             self.map_enabled = self.params.get_bool("OpkrMapEnable")
             self.second = 0.0
+            print( "self.map_enabled = {}".format( self.map_enabledM  ))
+
 
     def data_send(self):
         dat = messaging.new_message()
