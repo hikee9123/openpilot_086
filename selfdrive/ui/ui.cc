@@ -255,6 +255,10 @@ static void update_state(UIState *s) {
    {
      scene.longitudinalPlan = sm["longitudinalPlan"].getLongitudinalPlan();
    }
+   if( sm.updated("liveMapData"))
+   {
+     scene.liveMapData = sm["liveMapData"].getLiveMapData();
+   }
 }
 
 static void update_params(UIState *s) {
@@ -328,7 +332,7 @@ QUIState::QUIState(QObject *parent) : QObject(parent) {
   ui_state.sm = std::make_unique<SubMaster, const std::initializer_list<const char *>>({
     "modelV2", "controlsState", "liveCalibration", "radarState", "deviceState", "liveLocationKalman",
     "pandaState", "carParams", "driverMonitoringState", "sensorEvents", "carState", "ubloxGnss",
-    "liveParameters","driverState","lateralPlan", "longitudinalPlan","carControl",  // atom
+    "liveParameters","driverState","lateralPlan", "longitudinalPlan","carControl","liveMapData",  // atom
     "gpsLocationExternal", "roadCameraState",
   });
 
