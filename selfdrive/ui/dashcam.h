@@ -466,7 +466,7 @@ static void ui_draw_debug1(UIState *s)
   UIScene &scene = s->scene;
   
   nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
-
+  nvgFontSize(s->vg, 36*1.5*fFontSize);
 
   float map_sign = scene.liveMapData.getSpeedLimitAhead();
   float speedLimitAheadDistance = scene.liveMapData.getSpeedLimitAheadDistance();
