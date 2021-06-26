@@ -479,9 +479,9 @@ static void ui_draw_debug1(UIState *s)
   int  y_pos = 100; 
 
     ui_print( s, x_pos, y_pos+0,   "MS:%.2f", map_sign );
-    ui_print( s, x_pos, y_pos+100,  "DT:%.2f", speedLimitAheadDistance );
-    ui_print( s, x_pos, y_pos+200,  "SL:%.2f", speedLimit );
-    ui_print( s, x_pos, y_pos+300,  "VA:%d,%d", map_enabled, mapValid );
+    ui_print( s, x_pos, y_pos+100,  "Dist:%.2f", speedLimitAheadDistance );
+    ui_print( s, x_pos, y_pos+200,  "Spd:%.2f", speedLimit );
+    ui_print( s, x_pos, y_pos+300,  "Valid:%d,%d", map_enabled, mapValid );
 
   //  1035, 1078
   ui_draw_text1(s, 0, 30, scene.alert.alertTextMsg1.c_str(), 45, COLOR_WHITE, "sans-regular");
