@@ -88,6 +88,7 @@ class MapsdThread(threading.Thread):
               start = time.time()
               self.opkr_map_status_read()
 
+            print( "self.map_enabled = {} ".format( self.map_enabled ))
             if not self.map_enabled:
               time.sleep(1.0)
               self.data_send()
