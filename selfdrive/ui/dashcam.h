@@ -269,7 +269,7 @@ void screen_toggle_record_state()
   }
 }
 
-static void draw_button( UIState *s, const char* string, Rect rect, NVGcolor fillColor, , NVGcolor txtColor ) 
+static void draw_button( UIState *s, const char* string, Rect rect, NVGcolor fillColor, NVGcolor txtColor ) 
 {
     int btn_x = rect.x;
     int btn_y = rect.y;
