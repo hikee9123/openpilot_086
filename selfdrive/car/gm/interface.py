@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 from cereal import car
 from selfdrive.config import Conversions as CV
 from selfdrive.car.gm.values import CAR, CruiseButtons, \
@@ -175,7 +175,7 @@ class CarInterface(CarInterfaceBase):
 
     return self.CS.out
 
-  def apply(self, c):
+  def apply(self, c, sm, CP):
     hud_v_cruise = c.hudControl.setSpeed
     if hud_v_cruise > 70:
       hud_v_cruise = 0

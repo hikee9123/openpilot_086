@@ -132,7 +132,7 @@ FrameBuffer::FrameBuffer(const char *name, uint32_t layer, int alpha, int *out_w
 
   printf("gl version %s\n", glGetString(GL_VERSION));
 
-  set_brightness(BACKLIGHT_LEVEL);
+  //set_brightness(BACKLIGHT_LEVEL);
 
   if (out_w) *out_w = w;
   if (out_h) *out_h = h;

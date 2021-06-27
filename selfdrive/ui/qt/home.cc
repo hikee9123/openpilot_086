@@ -5,6 +5,8 @@
 #include <QMouseEvent>
 #include <QVBoxLayout>
 
+#include <QProcess> // opkr
+
 #include "selfdrive/common/params.h"
 #include "selfdrive/common/swaglog.h"
 #include "selfdrive/common/timing.h"
@@ -70,20 +72,72 @@ void HomeWindow::showDriverView(bool show) {
 
 void HomeWindow::mousePressEvent(QMouseEvent* e) {
   // Handle sidebar collapsing
-  if (onroad->isVisible() && (!sidebar->isVisible() || e->x() > sidebar->width())) {
-
-    // TODO: Handle this without exposing pointer to map widget
+  // atom  mouse
+  int e_x = e->x();
+  int e_y = e->y();
+  int e_button= e->button();
+  // 1400, 820
+  if( e_x < 500 || e_y < 300 ) 
+  {
+    // Handle sidebar collapsing
+    bool bSidebar = sidebar->isVisible();
+    if (onroad->isVisible() && (!bSidebar || e_x > sidebar->width())) {
     // Hide map first if visible, then hide sidebar
-    if (onroad->map != nullptr && onroad->map->isVisible()) {
+    if (onroad->map != nullptr && onroad->map->isVisible()){
       onroad->map->setVisible(false);
     } else if (!sidebar->isVisible()) {
-      sidebar->setVisible(true);
+      bSidebar = true;
     } else {
-      sidebar->setVisible(false);
+      bSidebar = false;
 
       if (onroad->map != nullptr) onroad->map->setVisible(true);
     }
+    QUIState::ui_state.scene.mouse.sidebar = bSidebar;
+    sidebar->setVisible(bSidebar);
+    }
   }
+
+   // OPKR Code
+  if (QUIState::ui_state.scene.started && btn_map_overlay.ptInRect(e->x(), e->y())) {
+    if( QUIState::ui_state.scene.scr.map_is_running )
+    {
+      QProcess::execute("am start --activity-task-on-home com.opkr.maphack/com.opkr.maphack.MainActivity");
+      QUIState::ui_state.scene.scr.map_on_overlay = true;
+    }
+
+    //QSoundEffect effect1;
+    //effect1.setSource(QUrl::fromLocalFile("/data/openpilot/selfdrive/assets/sounds/warning_1.wav"));
+    //effect1.play();
+    return;
+  }
+
+
+  if ( QUIState::ui_state.scene.started && btn_Tmap.ptInRect(e->x(), e->y())) {
+
+    if ( !QUIState::ui_state.scene.scr.map_is_running ) {
+      //QProcess::execute("am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity");
+      //QUIState::ui_state.scene.scr.map_is_running = true;
+      //QUIState::ui_state.scene.scr.map_on_overlay = false;
+      Params().put("OpkrMapEnable", "1");
+    } else {
+      //QProcess::execute("pkill com.skt.tmap.ku");
+      //QUIState::ui_state.scene.scr.map_is_running = false;
+      Params().put("OpkrMapEnable", "0"); 
+    }
+    return;
+  }
+
+
+
+  if (QUIState::ui_state.scene.mouse.sidebar )
+  {
+    e_x -= QUIState::ui_state.viz_rect.x + (bdr_s * 2) + 170;
+  }
+  QUIState::ui_state.scene.mouse.touch_x = e_x;
+  QUIState::ui_state.scene.mouse.touch_y = e_y;
+  QUIState::ui_state.scene.mouse.touched = e_button;
+  QUIState::ui_state.scene.mouse.touch_cnt++;
+  printf("mousePressEvent %d,%d  %d \n", e_x, e_y, e_button);
 }
 
 // OffroadHome: the offroad home page

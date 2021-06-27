@@ -6,7 +6,7 @@ import json
 import numpy as np
 
 import cereal.messaging as messaging
-from cereal import car
+from cereal import car, log
 from common.params import Params, put_nonblocking
 from common.realtime import set_realtime_priority, DT_MDL
 from common.numpy_fast import clip
@@ -14,6 +14,10 @@ from selfdrive.locationd.models.car_kf import CarKalman, ObservationKind, States
 from selfdrive.locationd.models.constants import GENERATED_DIR
 from selfdrive.swaglog import cloudlog
 
+# atom
+from common.numpy_fast import interp
+from selfdrive.config import Conversions as CV
+LaneChangeState = log.LateralPlan.LaneChangeState
 
 MAX_ANGLE_OFFSET_DELTA = 20 * DT_MDL  # Max 20 deg/s
 
@@ -35,6 +39,37 @@ class ParamsLearner:
     self.steering_angle = 0
 
     self.valid = True
+
+
+
+  # atom
+  def atom_tune( self, v_ego_kph, angleDeg,  atomTuning ):  
+    self.cv_KPH = atomTuning.cvKPH
+    self.cv_BPV = atomTuning.cvBPV
+    self.cv_steerRatioV = atomTuning.cvsteerRatioV
+    self.cv_SteerRatio = []
+
+    self.cv_ActuatorDelayV = atomTuning.cvsteerActuatorDelayV
+    self.cv_ActuatorDelay = []
+
+    self.cv_SteerRateCostV = atomTuning.cvSteerRateCostV
+    self.cv_SteerRateCost = []
+
+    nPos = 0
+    for steerRatio in self.cv_BPV:  # steerRatio
+      self.cv_SteerRatio.append( interp( angleDeg, steerRatio, self.cv_steerRatioV[nPos] ) )
+      self.cv_ActuatorDelay.append( interp( angleDeg, steerRatio, self.cv_ActuatorDelayV[nPos] ) )
+      self.cv_SteerRateCost.append( interp( angleDeg, steerRatio, self.cv_SteerRateCostV[nPos] ) )
+      nPos += 1
+      if nPos > 20:
+        break
+
+    steerRatio = interp( v_ego_kph, self.cv_KPH, self.cv_SteerRatio )
+    actuatorDelay = interp( v_ego_kph, self.cv_KPH, self.cv_ActuatorDelay )
+    steerRateCost = interp( v_ego_kph, self.cv_KPH, self.cv_SteerRateCost )
+    return steerRatio, actuatorDelay, steerRateCost
+
+   
 
   def handle_log(self, t, which, msg):
     if which == 'liveLocationKalman':
@@ -76,7 +111,7 @@ def main(sm=None, pm=None):
   set_realtime_priority(5)
 
   if sm is None:
-    sm = messaging.SubMaster(['liveLocationKalman', 'carState'], poll=['liveLocationKalman'])
+    sm = messaging.SubMaster(['liveLocationKalman', 'carState', 'carParams','lateralPlan'], poll=['liveLocationKalman'])
   if pm is None:
     pm = messaging.PubMaster(['liveParameters'])
 
@@ -123,6 +158,7 @@ def main(sm=None, pm=None):
   # When driving in wet conditions the stiffness can go down, and then be too low on the next drive
   # Without a way to detect this we have to reset the stiffness every drive
   params['stiffnessFactor'] = 1.0
+  opkrLiveSteerRatio = int( params_reader.get("OpkrLiveSteerRatio") )
 
   learner = ParamsLearner(CP, params['steerRatio'], params['stiffnessFactor'], math.radians(params['angleOffsetAverageDeg']))
 
@@ -152,6 +188,34 @@ def main(sm=None, pm=None):
 
       msg.liveParameters.posenetValid = True
       msg.liveParameters.sensorValid = True
+
+      # atom
+      steerRateCostCV = CP.steerRateCost
+      actuatorDelayCV = CP.steerActuatorDelay
+      steerRatioCV = float(x[States.STEER_RATIO])
+      v_ego_kph = sm['carState'].vEgo * CV.MS_TO_KPH
+
+
+      if opkrLiveSteerRatio == 1:  # auto
+        pass
+      elif sm['carParams'].steerRateCost > 0:
+        lateralPlan = sm['lateralPlan']
+        vCurvature = abs(lateralPlan.curvature)
+
+        model_speed = interp( vCurvature, [0.0002, 0.00074, 0.0025, 0.008, 0.02], [255, 130, 90, 60, 20])
+        atomTuning = sm['carParams'].atomTuning
+        #angleDeg = sm['carState'].steeringAngleDeg
+        steerRatioCV, actuatorDelayCV, steerRateCostCV = learner.atom_tune( v_ego_kph, model_speed,  atomTuning )
+
+
+        if opkrLiveSteerRatio == 2:
+          steerRatioCV = float(x[States.STEER_RATIO])
+
+
+      msg.liveParameters.steerRatioCV = steerRatioCV
+      msg.liveParameters.steerActuatorDelayCV = actuatorDelayCV
+      msg.liveParameters.steerRateCostCV = steerRateCostCV
+
       msg.liveParameters.steerRatio = float(x[States.STEER_RATIO])
       msg.liveParameters.stiffnessFactor = float(x[States.STIFFNESS])
       msg.liveParameters.angleOffsetAverageDeg = angle_offset_average

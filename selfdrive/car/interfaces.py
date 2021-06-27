@@ -39,6 +39,10 @@ class CarInterfaceBase():
     if CarController is not None:
       self.CC = CarController(self.cp.dbc_name, CP, self.VM)
 
+
+    # atom
+    self.cruise_enabled_prev = True      
+
   @staticmethod
   def calc_accel_override(a_ego, a_target, v_ego, v_target):
     return 1.
@@ -94,7 +98,7 @@ class CarInterfaceBase():
     raise NotImplementedError
 
   # return sendcan, pass in a car.CarControl
-  def apply(self, c):
+  def apply(self, c, sm, CP):
     raise NotImplementedError
 
   def create_common_events(self, cs_out, extra_gears=[], gas_resume_speed=-1, pcm_enable=True):  # pylint: disable=dangerous-default-value
@@ -112,8 +116,8 @@ class CarInterfaceBase():
       events.add(EventName.wrongCarMode)
     if cs_out.espDisabled:
       events.add(EventName.espDisabled)
-    if cs_out.gasPressed:
-      events.add(EventName.gasPressed)
+    #if cs_out.gasPressed and self.CP.openpilotLongitudinalControl:
+    #  events.add(EventName.gasPressed)
     if cs_out.stockFcw:
       events.add(EventName.stockFcw)
     if cs_out.stockAeb:
@@ -134,9 +138,10 @@ class CarInterfaceBase():
     # Disable on rising edge of gas or brake. Also disable on brake when speed > 0.
     # Optionally allow to press gas at zero speed to resume.
     # e.g. Chrysler does not spam the resume button yet, so resuming with gas is handy. FIXME!
-    if (cs_out.gasPressed and (not self.CS.out.gasPressed) and cs_out.vEgo > gas_resume_speed) or \
-       (cs_out.brakePressed and (not self.CS.out.brakePressed or not cs_out.standstill)):
-      events.add(EventName.pedalPressed)
+    #if self.CP.openpilotLongitudinalControl:
+    #   if (cs_out.gasPressed and (not self.CS.out.gasPressed) and cs_out.vEgo > gas_resume_speed) or \
+    #    (cs_out.brakePressed and (not self.CS.out.brakePressed or not cs_out.standstill)):
+    #    events.add(EventName.pedalPressed)
 
     # we engage when pcm is active (rising edge)
     if pcm_enable:
@@ -144,6 +149,9 @@ class CarInterfaceBase():
         events.add(EventName.pcmEnable)
       elif not cs_out.cruiseState.enabled:
         events.add(EventName.pcmDisable)
+
+    if self.cruise_enabled_prev != cs_out.cruiseState.enabled:
+      self.cruise_enabled_prev = cs_out.cruiseState.enabled
 
     return events
 

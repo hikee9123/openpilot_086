@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 from cereal import car
 from selfdrive.swaglog import cloudlog
 from selfdrive.config import Conversions as CV
@@ -70,7 +70,7 @@ class CarInterface(CarInterfaceBase):
 
   # pass in a car.CarControl
   # to be called @ 100hz
-  def apply(self, c):
+  def apply(self, c, sm, CP):
 
     can_sends = self.CC.update(c.enabled, self.CS, self.frame, c.actuators,
                                c.hudControl.visualAlert, c.cruiseControl.cancel)

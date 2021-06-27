@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 from cereal import car
 from selfdrive.car.chrysler.values import CAR
 from selfdrive.car import STD_CARGO_KG, scale_rot_inertia, scale_tire_stiffness, gen_empty_fingerprint
@@ -84,7 +84,7 @@ class CarInterface(CarInterfaceBase):
 
   # pass in a car.CarControl
   # to be called @ 100hz
-  def apply(self, c):
+  def apply(self, c, sm, CP):
 
     if (self.CS.frame == -1):
       return []  # if we haven't seen a frame 220, then do not update.

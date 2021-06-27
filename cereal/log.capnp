@@ -286,6 +286,9 @@ struct DeviceState @0xa4d8b5af2aa492eb {
   networkStrength @24 :NetworkStrength;
   carBatteryCapacityUwh @25 :UInt32;
 
+  # atom
+  wifiIpAddress @33 :Text;
+  
   fanSpeedPercentDesired @10 :UInt16;
   started @11 :Bool;
   startedMonoTime @13 :UInt64;
@@ -539,6 +542,13 @@ struct ControlsState @0x97ff69c53601abf1 {
 
   cumLagMs @15 :Float32;
   canErrorCounter @57 :UInt32;
+
+  # atom
+  output @60 :Float32;
+  alertTextMsg1  @61 :Text;
+  alertTextMsg2  @62 :Text;
+  alertTextMsg3  @63 :Text;
+
 
   lateralControlState :union {
     indiState @52 :LateralINDIState;
@@ -853,6 +863,9 @@ struct LateralPlan @0xe1e9318e2ae8b51e {
   curvatureRate @23 :Float32;
   rawCurvature @24 :Float32;
   rawCurvatureRate @25 :Float32;
+
+  # atom
+  laneLess @26 :Bool;
 
   enum Desire {
     none @0;
@@ -1279,9 +1292,16 @@ struct LiveParametersData {
   yawRate @7 :Float32;
   posenetSpeed @8 :Float32;
   posenetValid @9 :Bool;
+
+
+  # atom
+  steerRatioCV @10 :Float32;
+  steerActuatorDelayCV @11 :Float32;
+  steerRateCostCV @12 :Float32;
 }
 
-struct LiveMapDataDEPRECATED {
+
+struct LiveMapData {
   speedLimitValid @0 :Bool;
   speedLimit @1 :Float32;
   speedAdvisoryValid @12 :Bool;
@@ -1299,6 +1319,7 @@ struct LiveMapDataDEPRECATED {
   roadCurvature @9 :List(Float32);
   distToTurn @10 :Float32;
   mapValid @11 :Bool;
+  mapEnable @17 :Bool;
 }
 
 struct CameraOdometry {
@@ -1389,9 +1410,12 @@ struct Event {
     deviceState @6 :DeviceState;
     logMessage @18 :Text;
 
-
+    # TMap Info
+    liveMapData @62 :LiveMapData;
+  
     # *********** debug ***********
     testJoystick @52 :Joystick;
+
 
     # *********** legacy + deprecated ***********
     model @9 :Legacy.ModelData; # TODO: rename modelV2 and mark this as deprecated
@@ -1405,7 +1429,6 @@ struct Event {
     cellInfoDEPRECATED @28 :List(Legacy.CellInfo);
     wifiScanDEPRECATED @29 :List(Legacy.WifiScan);
     uiNavigationEventDEPRECATED @50 :Legacy.UiNavigationEvent;
-    liveMapDataDEPRECATED @62 :LiveMapDataDEPRECATED;
     gpsPlannerPointsDEPRECATED @40 :Legacy.GPSPlannerPoints;
     gpsPlannerPlanDEPRECATED @41 :Legacy.GPSPlannerPlan;
     applanixRawDEPRECATED @42 :Data;

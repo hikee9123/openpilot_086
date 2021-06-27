@@ -131,6 +131,33 @@ def set_offroad_alert_if_changed(offroad_alert: str, show_alert: bool, extra_tex
   prev_offroad_states[offroad_alert] = (show_alert, extra_text)
   set_offroad_alert(offroad_alert, show_alert, extra_text)
 
+# atom
+def set_prebuilt(params):
+  prebuiltfile = '/data/openpilot/prebuilt'
+  prebuiltlet = params.get_bool("OpkrPrebuilt")
+  if not os.path.isfile(prebuiltfile) and prebuiltlet:
+    os.system("cd /data/openpilot; touch prebuilt")
+  elif os.path.isfile(prebuiltfile) and not prebuiltlet:
+    os.system("cd /data/openpilot; rm -f prebuilt")
+
+
+def set_sshlegacy_key(params):
+  sshkeyfile = '/data/public_key'
+  sshkeylet = params.get_bool("OpkrSSHLegacy")
+  if not os.path.isfile(sshkeyfile) and sshkeylet:
+    os.system("cp -f /data/openpilot/selfdrive/assets/addon/key/GithubSshKeys_legacy /data/params/d/GithubSshKeys; chmod 600 /data/params/d/GithubSshKeys; touch /data/public_key")
+  elif os.path.isfile(sshkeyfile) and not sshkeylet:
+    os.system("cp -f /data/openpilot/selfdrive/assets/addon/key/GithubSshKeys /data/params/d/GithubSshKeys; chmod 600 /data/params/d/GithubSshKeys; rm -f /data/public_key")
+
+
+def set_navi_on_boot(params, navi_on_boot, navi_run, ts):
+  # opkr run navigation
+  if navi_on_boot and not navi_run and ts > 90:
+    #os.system("am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity")
+    params.put("OpkrMapEnable", "2")
+    navi_run = True
+
+  return navi_run
 
 def thermald_thread():
 
@@ -160,6 +187,7 @@ def thermald_thread():
   network_strength = NetworkStrength.unknown
   network_info = None
   registered_count = 0
+  wifiIpAddress = 'N/A'
 
   current_filter = FirstOrderFilter(0., CURRENT_TAU, DT_TRML)
   cpu_temp_filter = FirstOrderFilter(0., CPU_TEMP_TAU, DT_TRML)
@@ -201,7 +229,13 @@ def thermald_thread():
     except Exception:
       pass
 
+  # OPKR
+  params.put("OpkrMapEnable", "0")
+  navi_on_boot = params.get_bool("OpkrRunNaviOnBoot")
+  navi_run = False
+
   while 1:
+    ts = sec_since_boot()
     pandaState = messaging.recv_sock(pandaState_sock, wait=True)
     msg = read_thermal(thermal_config)
 
@@ -248,6 +282,7 @@ def thermald_thread():
         network_type = HARDWARE.get_network_type()
         network_strength = HARDWARE.get_network_strength(network_type)
         network_info = HARDWARE.get_network_info()  # pylint: disable=assignment-from-none
+        wifiIpAddress = HARDWARE.get_ip_address()
 
         if TICI and (network_info.get('state', None) == "REGISTERED"):
           registered_count += 1
@@ -270,6 +305,7 @@ def thermald_thread():
     if network_info is not None:
       msg.deviceState.networkInfo = network_info
 
+    msg.deviceState.wifiIpAddress = wifiIpAddress
     msg.deviceState.batteryPercent = HARDWARE.get_battery_capacity()
     msg.deviceState.batteryStatus = HARDWARE.get_battery_status()
     msg.deviceState.batteryCurrent = HARDWARE.get_battery_current()
@@ -335,7 +371,11 @@ def thermald_thread():
     update_failed_count = 0 if update_failed_count is None else int(update_failed_count)
     last_update_exception = params.get("LastUpdateException", encoding='utf8')
 
-    if update_failed_count > 15 and last_update_exception is not None:
+
+    enableLogger = params.get_bool("UploadRaw")
+    if not enableLogger:
+      pass
+    elif update_failed_count > 15 and last_update_exception is not None:
       if current_branch in ["release2", "dashcam"]:
         extra_text = "Ensure the software is correctly installed"
       else:
@@ -381,7 +421,13 @@ def thermald_thread():
       set_offroad_alert_if_changed("Offroad_NvmeMissing", (not Path("/data/media").is_mount()))
 
     # Handle offroad/onroad transition
-    should_start = all(startup_conditions.values())
+    # atom
+    is_rhd_region = params.get_bool("IsOpenpilotViewEnabled") # IsRHD
+    if is_rhd_region:
+      should_start = True   # user video
+    else:    
+      should_start = all(startup_conditions.values())
+
     if should_start != should_start_prev or (count == 0):
       params.put_bool("IsOnroad", should_start)
       params.put_bool("IsOffroad", not should_start)
@@ -399,6 +445,12 @@ def thermald_thread():
       started_ts = None
       if off_ts is None:
         off_ts = sec_since_boot()
+ 
+    # atom
+    set_prebuilt( params )
+    set_sshlegacy_key( params )
+
+    navi_run = set_navi_on_boot( params, navi_on_boot, navi_run, ts)
 
     # Offroad power monitoring
     power_monitor.calculate(pandaState)
@@ -439,6 +491,10 @@ def thermald_thread():
 
     should_start_prev = should_start
     startup_conditions_prev = startup_conditions.copy()
+
+
+    if usb_power:
+      power_monitor.charging_ctrl( msg, ts, 60, 40 )    
 
     # report to server once every 10 minutes
     if (count % int(600. / DT_TRML)) == 0:
