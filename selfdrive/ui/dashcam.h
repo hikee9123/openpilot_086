@@ -286,6 +286,8 @@ static void draw_button( UIState *s, const char* string, Rect rect, NVGcolor fil
     nvgFillColor(s->vg, fillColor);
     nvgFill(s->vg);
 
+    int btn_xc = rect.centerX();
+    int btn_yc = rect.centerY();
 
     nvgFontSize(s->vg, 45);
     nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);    
@@ -666,7 +668,12 @@ void update_dashcam(UIState *s, int draw_vision)
   screen_draw_button(s, touch_x, touch_y, touched);
   screen_menu_button(s, touch_x, touch_y, touched);
 
-   draw_button( s, "TMAP", btn_Tmap, nvgRGBA(255,0,0,250) );
+
+  NVGcolor fillColor = nvgRGBA(255,0,0,250);
+  if( s->scene.scr.map_is_running  )
+    fillColor = nvgRGBA(255,0,0,100);
+
+  draw_button( s, "TMAP", btn_Tmap, fillColor );
 
   if( s->scene.dash_menu_no == 1 ) 
     focus_menu_button(s, touch_x, touch_y, touched);
