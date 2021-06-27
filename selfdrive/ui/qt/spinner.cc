@@ -113,6 +113,10 @@ void Spinner::update(int n) {
   }
 }
 
+void Spinner::set_display_power(bool on) {
+  Hardware::set_display_power( on );
+}
+
 int main(int argc, char *argv[]) {
   setQtSurfaceFormat();
 

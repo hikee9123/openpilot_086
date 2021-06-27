@@ -36,4 +36,5 @@ private:
 
 public slots:
   void update(int n);
+  void set_display_power(bool on);
 };
