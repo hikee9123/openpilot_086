@@ -139,8 +139,8 @@ class MapsdThread(threading.Thread):
         max_speed_prev = 0
         start = time.time()
         while True:
-            if time.time() - start < 0.5:
-              time.sleep(0.5)
+            if time.time() - start < 1.0:
+              time.sleep(1.0)
               continue
             else:
               start = time.time()
@@ -170,12 +170,9 @@ class MapsdThread(threading.Thread):
                     self.target_speed_map_counter_check = False
 
                 
+                self.data_send()
 
             
-
-            self.data_send()
-
-
 
 
 
