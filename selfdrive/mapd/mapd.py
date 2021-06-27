@@ -31,7 +31,7 @@ class MapsdThread(threading.Thread):
         self.logger.debug("entered mapsd_thread, ... %s" % ( str(self.pm)))
 
         self.params = Params()
-
+        self.params.put("OpkrMapEnable", "0")
         self.second = 0
         self.map_sign = 0
         self.target_speed_map_dist = 0
@@ -61,8 +61,14 @@ class MapsdThread(threading.Thread):
 
 
 
-        self.map_enabled = self.params.get_bool("OpkrMapEnable")
+        self.map_enabled = int(self.params.get("OpkrMapEnable"))
         self.second = 0.0
+
+        if self.map_enabled == 0:
+            self.target_speed_map_counter = 0
+            self.target_speed_map_counter1 = 0
+            self.target_speed_map_counter2 = 0
+            self.target_speed_map_counter3 = 0        
 
         if self.target_speed_map_counter1 > 0:
             self.target_speed_map_counter1 -= 1

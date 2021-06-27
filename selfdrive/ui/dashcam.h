@@ -287,7 +287,7 @@ static void draw_button( UIState *s, const char* string, Rect rect, NVGcolor fil
     //NVGcolor fillColor = nvgRGBA(255,0,0,150);
     nvgFillColor(s->vg, fillColor);
     nvgFill(s->vg);
-
+    nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 200));
     int btn_xc = rect.centerX();
     int btn_yc = rect.centerY();
 
