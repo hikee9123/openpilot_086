@@ -182,12 +182,9 @@ class MapsdThread(threading.Thread):
 def main():
     #gc.disable()
     set_realtime_priority(1)
-
     params = Params()
     dongle_id = params.get("DongleId")
-    crash.bind_user(id=dongle_id)
-    crash.bind_extra(version=version, dirty=dirty, is_eon=True)
-    crash.install()
+   
 
     mt = MapsdThread(1, "/data/media/0/videos/MapsdThread")
     mt.start()
