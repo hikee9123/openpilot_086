@@ -171,6 +171,11 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
   { 
           if (ConfirmationDialog::confirm("Are you sure you want to exec(apk.py)?")) 
           {
+
+            std::system("chmod 777 /data/openpilot/selfdrive/assets/addon/apk/apk.py");
+            std::system("chmod 777 /data/openpilot/gitpull.sh");
+            std::system("chmod 777 /data/openpilot/gitpull_cancel.sh");
+            std::system("chmod 777 /data/openpilot/run_mixplorer.sh");
             std::system("python /data/openpilot/selfdrive/assets/addon/apk/apk.py");
           }
   });
