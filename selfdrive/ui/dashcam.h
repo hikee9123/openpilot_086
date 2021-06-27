@@ -682,7 +682,7 @@ void update_dashcam(UIState *s, int draw_vision)
   }
   else
   {
-    is_map_program = 0;
+    is_map_program = is_map_program;
   }
 
   NVGcolor fillColor = nvgRGBA(0,255,255,100);
