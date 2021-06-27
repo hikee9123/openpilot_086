@@ -87,14 +87,14 @@ class MapsdThread(threading.Thread):
             return
 
         self.old_map_enable = self.map_enabled
-        self.target_speed_map_counter1 = 10
+        self.target_speed_map_counter1 = 5
 
         if self.map_enabled == 0:
             os.system("pkill com.skt.tmap.ku")
         else: 
             os.system("am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity")
             if self.map_enabled == 2:  # Tmap 실행후 Overlay mode로 변경합니다.
-                self.target_speed_map_counter2 = 50
+                self.target_speed_map_counter2 = 5
 
 
 
