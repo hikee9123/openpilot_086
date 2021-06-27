@@ -95,9 +95,9 @@ class MapsdThread(threading.Thread):
         return mapsign
 
     def make_map_data(self):
-        mapsign = read_map_data( "OpkrMapSign" )
-        mapspeed = read_map_data( "LimitSetSpeedCamera" )
-        mapspeeddist = read_map_data( "LimitSetSpeedCameraDist" )
+        mapsign = self.read_map_data( "OpkrMapSign" )
+        mapspeed = self.read_map_data( "LimitSetSpeedCamera" )
+        mapspeeddist = self.read_map_data( "LimitSetSpeedCameraDist" )
 
         if mapsign is not None:
             self.raw_map_sign = mapsign
