@@ -122,9 +122,9 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
       Params().put("OpkrMapEnable", "0"); 
     }
 
-    QSoundEffect effect2;
-    effect2.setSource(QUrl::fromLocalFile("/data/openpilot/selfdrive/assets/sounds/warning_1.wav"));
-    effect2.play();  
+    //QSoundEffect effect2;
+    //effect2.setSource(QUrl::fromLocalFile("/data/openpilot/selfdrive/assets/sounds/warning_1.wav"));
+    //effect2.play();  
     return;
   }
 
