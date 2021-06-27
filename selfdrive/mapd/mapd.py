@@ -74,12 +74,12 @@ class MapsdThread(threading.Thread):
 
         if self.target_speed_map_counter1 > 0:
             self.target_speed_map_counter1 -= 1
-            print( "target_speed_map_counter1 = {}".format( self.target_speed_map_counter1  ))
+            print( " target_speed_map_counter1 = {}".format( self.target_speed_map_counter1  ))
             return
 
         if self.map_enabled and self.target_speed_map_counter2 > 0:
             self.target_speed_map_counter2 -= 1
-            print( "target_speed_map_counter2 = {}".format( self.target_speed_map_counter2  ))
+            print( " target_speed_map_counter2 = {}".format( self.target_speed_map_counter2  ))
             if self.target_speed_map_counter2  == 0:
                 print( "am start --activity-task-on-home com.opkr.maphack/com.opkr.maphack.MainActivity" )
                 os.system("am start --activity-task-on-home com.opkr.maphack/com.opkr.maphack.MainActivity")
@@ -92,6 +92,7 @@ class MapsdThread(threading.Thread):
         self.target_speed_map_counter1 = 5
 
         if self.map_enabled == 0:
+            self.map_exec_status = False
             os.system("pkill com.skt.tmap.ku")
         elif self.map_exec_status == False: 
             self.map_exec_status = True
@@ -215,8 +216,8 @@ class MapsdThread(threading.Thread):
                 print( "self.map_enabled = {}".format( self.map_enabled  ))
                 self.target_speed_map_counter = 0
             else:
-                print( "raw_map_sign= {} raw_target_speed_map={},{}".format( self.raw_map_sign, self.raw_target_speed_map, self.raw_target_speed_map_dist  ))
-                print( "old_map_sign= {} old_target_speed_map={},{}".format( self.old_map_sign, self.old_target_speed_map, self.old_target_speed_map_dist  ))
+                print( " raw_map_sign= {} raw_target_speed_map={},{}".format( self.raw_map_sign, self.raw_target_speed_map, self.raw_target_speed_map_dist  ))
+                print( " old_map_sign= {} old_target_speed_map={},{}".format( self.old_map_sign, self.old_target_speed_map, self.old_target_speed_map_dist  ))
                 self.make_map_data()
                 self.target_speed_map_counter += 1
                 if self.target_speed_map_counter > 30:
