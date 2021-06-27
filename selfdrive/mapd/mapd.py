@@ -35,7 +35,8 @@ class MapsdThread(threading.Thread):
         self.second = 0
         self.map_sign = 0
         self.target_speed_map_dist = 0
-        self.map_enabled = False
+        self.map_enabled = 0
+        self.old_map_enable = 0        
         self.target_speed_map = 0
 
         self.raw_map_sign = 0
@@ -52,7 +53,7 @@ class MapsdThread(threading.Thread):
         self.target_speed_map_counter3 = 0
         self.target_speed_map_counter_check = False
 
-        self.old_map_enable = False
+
 
     def opkr_map_status_read(self):        
         self.second += 0.25
