@@ -53,6 +53,11 @@ const int footer_h = 280;
 
 const int UI_FREQ = 20;   // Hz
 
+
+const Rect btn_map_overlay = {0, 465, 150, 150};
+const Rect btn_Tmap = {1425, 905, 140, 140};
+const Rect btn_Rec = {1745, 905, 140, 140};
+
 typedef enum UIStatus {
   STATUS_DISENGAGED,
   STATUS_ENGAGED,
@@ -117,6 +122,8 @@ typedef struct UIScene {
   struct _screen
   {
      int  nTime;
+     int  map_is_running;
+     int  map_on_overlay;
      int  autoScreenOff;
      int  brightness;
      int  nVolumeBoost;

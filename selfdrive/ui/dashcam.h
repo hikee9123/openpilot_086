@@ -269,6 +269,28 @@ void screen_toggle_record_state()
   }
 }
 
+static void draw_button( UIState *s, const char* string, Rect rect, NVGcolor fillColor ) 
+{
+    int btn_x = rect.x;
+    int btn_y = rect.y;
+    int btn_w = rect.w;
+    int btn_h = rect.h;
+
+    nvgBeginPath(s->vg);
+    nvgRoundedRect(s->vg, btn_x - 110, btn_y - 45, btn_w, btn_h, 100);
+    nvgStrokeColor(s->vg, nvgRGBA(255, 255, 255, 80));
+    nvgStrokeWidth(s->vg, 6);
+    nvgStroke(s->vg);
+
+    //NVGcolor fillColor = nvgRGBA(255,0,0,150);
+    nvgFillColor(s->vg, fillColor);
+    nvgFill(s->vg);
+
+
+    nvgFontSize(s->vg, 45);
+    nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);    
+    nvgText(s->vg, btn_xc, btn_yc, string, NULL);
+}
 
 static void screen_draw_button(UIState *s, int touch_x, int touch_y, int touched)
 {
@@ -643,6 +665,8 @@ void update_dashcam(UIState *s, int draw_vision)
 
   screen_draw_button(s, touch_x, touch_y, touched);
   screen_menu_button(s, touch_x, touch_y, touched);
+
+   draw_button( s, "TMAP", btn_Tmap, nvgRGBA(255,0,0,250) );
 
   if( s->scene.dash_menu_no == 1 ) 
     focus_menu_button(s, touch_x, touch_y, touched);
