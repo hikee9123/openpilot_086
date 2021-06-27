@@ -53,6 +53,7 @@ class MapsdThread(threading.Thread):
         self.target_speed_map_counter3 = 0
         self.target_speed_map_counter_check = False
 
+        self.map_exec_status= False
 
 
     def opkr_map_status_read(self):        
@@ -80,6 +81,7 @@ class MapsdThread(threading.Thread):
             self.target_speed_map_counter2 -= 1
             print( "target_speed_map_counter2 = {}".format( self.target_speed_map_counter2  ))
             if self.target_speed_map_counter2  == 0:
+                print( "am start --activity-task-on-home com.opkr.maphack/com.opkr.maphack.MainActivity" )
                 os.system("am start --activity-task-on-home com.opkr.maphack/com.opkr.maphack.MainActivity")
             return
 
@@ -91,7 +93,9 @@ class MapsdThread(threading.Thread):
 
         if self.map_enabled == 0:
             os.system("pkill com.skt.tmap.ku")
-        else: 
+        elif self.map_exec_status == False: 
+            self.map_exec_status = True
+            print( "am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity" )
             os.system("am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity")
             if self.map_enabled == 2:  # Tmap 실행후 Overlay mode로 변경합니다.
                 self.target_speed_map_counter2 = 5
