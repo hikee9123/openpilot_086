@@ -8,6 +8,7 @@ import traceback
 
 import cereal.messaging as messaging
 import selfdrive.crash as crash
+from common.spinner import Spinner
 from common.basedir import BASEDIR
 from common.params import Params, ParamKeyType
 from common.text_window import TextWindow
@@ -120,7 +121,7 @@ def manager_cleanup():
   cloudlog.info("everything is dead")
 
 
-def manager_thread():
+def manager_thread(spinner):
   cloudlog.info("manager start")
   cloudlog.info({"environ": os.environ})
 
@@ -140,7 +141,7 @@ def manager_thread():
 
   started_prev = False
 
-
+  spinner.update_progress(70, 100.)
   # atom
   #params = Params()
   enableLogger = params.get_bool("UploadRaw")
@@ -159,7 +160,7 @@ def manager_thread():
 
   sm = messaging.SubMaster(['deviceState'])
   pm = messaging.PubMaster(['managerState'])
-
+  spinner.update_progress(100, 100.)
   while True:
     sm.update()
     not_run = ignore[:]
@@ -194,6 +195,8 @@ def manager_thread():
 
 
 def main():
+  spinner = Spinner()
+  spinner.update_progress(0, 100)  
   prepare_only = os.getenv("PREPAREONLY") is not None
 
   manager_init()
@@ -203,15 +206,16 @@ def main():
     managed_processes['ui'].start()
 
   manager_prepare()
-
+  spinner.update_progress(20, 100.)
   if prepare_only:
     return
 
   # SystemExit on sigterm
   signal.signal(signal.SIGTERM, lambda signum, frame: sys.exit(1))
 
+  spinner.update_progress(50, 100.)
   try:
-    manager_thread()
+    manager_thread(spinner)
   except Exception:
     traceback.print_exc()
     crash.capture_exception()
@@ -222,6 +226,7 @@ def main():
     cloudlog.warning("uninstalling")
     HARDWARE.uninstall()
 
+  spinner.close()
 
 if __name__ == "__main__":
   unblock_stdout()
