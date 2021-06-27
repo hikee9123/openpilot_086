@@ -77,6 +77,7 @@ class LateralPlanner():
     # atom
     self.lanelines = True
     self.lane_timer = 0
+    self.lane_timer2 = 0
 
 
   def setup_mpc(self):
@@ -106,7 +107,8 @@ class LateralPlanner():
     #dRel = radarState.leadOne.dRel
     vEgo_kph = carState.vEgo * CV.MS_TO_KPH
 
-    ll_prob_ok = True
+    ll_prob_ok = self.lanelines
+
     if ll_probs[1] < 0.5 or ll_probs[2] < 0.5:
       if self.lane_timer > 0:
         self.lane_timer -= 1
@@ -115,13 +117,21 @@ class LateralPlanner():
     else:
       self.lane_timer = 200
 
+    if ll_probs[1] > 0.5 and ll_probs[2] > 0.5:
+      if self.lane_timer2 > 0:
+        self.lane_timer2 -= 1
+      else:
+        ll_prob_ok = True
+    else:
+      self.lane_timer2 = 100
+
     
     if ll_prob_ok == False:
       lanelines = False
     elif vEgo_kph < 5:  #or dRel < 25:
       lanelines = False
     elif self.lanelines:
-      pass
+      lanelines = True
     else:
       if vEgo_kph < 15:
         lanelines = False
