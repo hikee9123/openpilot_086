@@ -276,8 +276,10 @@ static void draw_button( UIState *s, const char* string, Rect rect, NVGcolor fil
     int btn_w = rect.w;
     int btn_h = rect.h;
 
+
+
     nvgBeginPath(s->vg);
-    nvgRoundedRect(s->vg, btn_x - 110, btn_y - 45, btn_w, btn_h, 100);
+    nvgRoundedRect(s->vg, btn_x, btn_y, btn_w, btn_h, 100);
     nvgStrokeColor(s->vg, nvgRGBA(255, 255, 255, 80));
     nvgStrokeWidth(s->vg, 6);
     nvgStroke(s->vg);
@@ -669,9 +671,9 @@ void update_dashcam(UIState *s, int draw_vision)
   screen_menu_button(s, touch_x, touch_y, touched);
 
 
-  NVGcolor fillColor = nvgRGBA(255,0,0,250);
+  NVGcolor fillColor = nvgRGBA(20,0,0,250);
   if( s->scene.scr.map_is_running  )
-    fillColor = nvgRGBA(255,0,0,100);
+    fillColor = nvgRGBA(255,0,0,200);
 
   draw_button( s, "TMAP", btn_Tmap, fillColor );
 
