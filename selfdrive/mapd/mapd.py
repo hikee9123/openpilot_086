@@ -112,8 +112,8 @@ class MapsdThread(threading.Thread):
         dat.liveMapData.wayId = 1
         # Speed limit
         #dat.liveMapData.speedLimitAheadValid = True
-        dat.liveMapData.speedLimitAhead = self.map_sign
-        dat.liveMapData.speedLimitAheadDistance = self.target_speed_map_dist
+        dat.liveMapData.speedLimitAhead = self.old_map_sign
+        dat.liveMapData.speedLimitAheadDistance = self.raw_target_speed_map_dist
 
         # Curvature
         #dat.liveMapData.curvatureValid = curvature_valid
@@ -123,7 +123,7 @@ class MapsdThread(threading.Thread):
         #dat.liveMapData.roadCurvatureX = [float(x) for x in dists]
         #dat.liveMapData.roadCurvature = [float(x) for x in curvature]
         #dat.liveMapData.speedLimitValid = self.map_enabled
-        dat.liveMapData.speedLimit = self.target_speed_map
+        dat.liveMapData.speedLimit = self.raw_target_speed_map
 
         dat.liveMapData.mapEnable = self.map_enabled
         dat.liveMapData.mapValid = True
