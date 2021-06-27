@@ -180,6 +180,13 @@ class MapsdThread(threading.Thread):
         max_speed_ahead = None
         max_speed_ahead_dist = None
         max_speed_prev = 0
+
+        # OPKR
+        self.navi_on_boot = self.params.get_bool("OpkrRunNaviOnBoot")
+        
+        if self.navi_on_boot:
+            self.params.put("OpkrMapEnable", "2")
+
         start = time.time()
         while True:
             if time.time() - start < 1.0:
