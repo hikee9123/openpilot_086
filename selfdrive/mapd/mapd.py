@@ -221,7 +221,7 @@ class MapsdThread(threading.Thread):
             else:
                 self.make_map_data()
                 self.target_speed_map_counter += 1
-                if self.target_speed_map_counter > 5:
+                if self.target_speed_map_counter_check and self.target_speed_map_counter > 5:
                     os.system("logcat -c &")
                     self.target_speed_map_counter_check = False
                     self.target_speed_map = 0
