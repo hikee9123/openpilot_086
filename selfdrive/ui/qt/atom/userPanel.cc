@@ -95,6 +95,13 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
                                   "../assets/offroad/icon_network.png",
                                   this));
 
+  layout()->addWidget(horizontal_line());
+
+  layout()->addWidget(new ParamControl("OpkrMapEnable",
+                                  "Tmap Open",
+                                  "Tmap 을 실행 합니다.",
+                                  "../assets/offroad/icon_network.png",
+                                  this));
 
   layout()->addWidget(horizontal_line());
 
@@ -239,13 +246,7 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
     }
   }
 
-  layout()->addWidget(horizontal_line());
 
-  layout()->addWidget(new ParamControl("OpkrMapEnable",
-                                  "Tmap Open",
-                                  "Tmap 을 실행 합니다.",
-                                  "../assets/offroad/icon_network.png",
-                                  this));
 
   layout()->addWidget(horizontal_line());
   layout()->addWidget( new CarSelectCombo() );
