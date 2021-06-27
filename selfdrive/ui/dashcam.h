@@ -269,7 +269,7 @@ void screen_toggle_record_state()
   }
 }
 
-static void draw_button( UIState *s, const char* string, Rect rect, NVGcolor fillColor ) 
+static void draw_button( UIState *s, const char* string, Rect rect, NVGcolor fillColor, , NVGcolor txtColor ) 
 {
     int btn_x = rect.x;
     int btn_y = rect.y;
@@ -287,7 +287,7 @@ static void draw_button( UIState *s, const char* string, Rect rect, NVGcolor fil
     //NVGcolor fillColor = nvgRGBA(255,0,0,150);
     nvgFillColor(s->vg, fillColor);
     nvgFill(s->vg);
-    nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 200));
+    nvgFillColor(s->vg, txtColor );   // txtColor = nvgRGBA(255, 255, 255, 200)
     int btn_xc = rect.centerX();
     int btn_yc = rect.centerY();
 
@@ -674,12 +674,27 @@ void update_dashcam(UIState *s, int draw_vision)
   screen_draw_button(s, touch_x, touch_y, touched);
   screen_menu_button(s, touch_x, touch_y, touched);
 
+  int is_map_program = s->scene.scr.map_is_running;
+  if( s->scene.scr.map_command > 0 )
+  {
+     s->scene.scr.map_command--;
+     is_map_program = 1;
+  }
+  else
+  {
+    is_map_program = 0;
+  }
 
-  NVGcolor fillColor = nvgRGBA(0,255,255,250);
-  if( s->scene.scr.map_is_running  )
-    fillColor = nvgRGBA(255,0,0,200);
+  NVGcolor fillColor = nvgRGBA(0,255,255,100);
+  NVGcolor txtColor = nvgRGBA(0, 0, 0, 100);
+  if( is_map_program  )
+  {
+    fillColor = nvgRGBA(255,0,0,255);
+    txtColor = nvgRGBA(255, 255, 255, 255);
+  }
 
-  draw_button( s, "TMAP", btn_Tmap, fillColor );
+   
+  draw_button( s, "TMAP", btn_Tmap, fillColor, txtColor );
 
   if( s->scene.dash_menu_no == 1 ) 
     focus_menu_button(s, touch_x, touch_y, touched);
