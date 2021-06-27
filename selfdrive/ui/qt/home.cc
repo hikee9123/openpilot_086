@@ -96,7 +96,7 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
   }
 
    // OPKR Code
-  if (QUIState::ui_state.scene.started && map_overlay_btn.ptInRect(e->x(), e->y())) {
+  if (QUIState::ui_state.scene.started && btn_map_overlay.ptInRect(e->x(), e->y())) {
     QSoundEffect effect1;
     effect1.setSource(QUrl::fromLocalFile("/data/openpilot/selfdrive/assets/sounds/warning_1.wav"));
     //effect1.setLoopCount(1);
@@ -112,9 +112,6 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
   if ( QUIState::ui_state.scene.started && btn_Tmap.ptInRect(e->x(), e->y())) {
     QSoundEffect effect2;
     effect2.setSource(QUrl::fromLocalFile("/data/openpilot/selfdrive/assets/sounds/warning_1.wav"));
-    //effect2.setLoopCount(1);
-    //effect2.setLoopCount(QSoundEffect::Infinite);
-    //effect2.setVolume(0.1);
     effect2.play();
 
     if ( !QUIState::ui_state.scene.scr.map_is_running ) {
