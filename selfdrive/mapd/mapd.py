@@ -17,14 +17,15 @@ from collections import defaultdict
 import cereal.messaging as messaging
 from common.realtime import set_realtime_priority
 
+from selfdrive.version import version, dirty
 
 # OPKR 코드 참조.
 
 class MapsdThread(threading.Thread):
-    def __init__(self):
+    def __init__(self, threadID, name):
         threading.Thread.__init__(self)
-        self.threadID =  1
-        self.name  =  'mapd'
+        self.threadID =  threadID
+        self.name  =  name
         self.logger = logging.getLogger( self.name )
         self.pm = messaging.PubMaster(['liveMapData'])
         self.logger.debug("entered mapsd_thread, ... %s" % ( str(self.pm)))
@@ -180,11 +181,15 @@ class MapsdThread(threading.Thread):
 
 def main():
     #gc.disable()
-    set_realtime_priority(1)    
+    set_realtime_priority(1)
+
     params = Params()
+    dongle_id = params.get("DongleId")
+    crash.bind_user(id=dongle_id)
+    crash.bind_extra(version=version, dirty=dirty, is_eon=True)
+    crash.install()
 
-
-    mt = MapsdThread()
+    mt = MapsdThread(1, "/data/media/0/videos/MapsdThread")
     mt.start()
 
 if __name__ == "__main__":
