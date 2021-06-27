@@ -154,7 +154,7 @@ def set_navi_on_boot(params, navi_on_boot, navi_run, ts):
   # opkr run navigation
   if navi_on_boot and not navi_run and ts > 90:
     #os.system("am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity")
-    params.put("OpkrMapEnable", "1")
+    params.put("OpkrMapEnable", "2")
     navi_run = True
 
   return navi_run

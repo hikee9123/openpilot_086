@@ -195,6 +195,16 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
           }
   });
 
+  auto tmapopen2_exe = new ButtonControl("Tmap2 Open", "Open",
+                                   "Tmap2을 실행후 Overlay mode로 변경합니다.");
+  connect(tmapopen2_exe, &ButtonControl::released, [=]() 
+  { 
+        if (ConfirmationDialog::confirm("Are you sure you want to exec(Tmap2 Open)?")) 
+        {
+          Params().put("OpkrMapEnable", "2");
+        }
+  });  
+
   auto tmapclose_exe = new ButtonControl("Tmap Close", "Close",
                                    "Tmap 을 Close 합니다.");
   connect(tmapclose_exe, &ButtonControl::released, [=]() 
@@ -221,13 +231,21 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
           }
   });  
 
-  for (auto btn : {car_interfaces, build_exe, finger_exe, android_exe, apk_exe, mixplorer_exe, tmapopen_exe, tmapclose_exe, softkey_exe}) {
+  for (auto btn : {car_interfaces, build_exe, finger_exe, android_exe, apk_exe, mixplorer_exe, tmapopen_exe, tmapopen2_exe, tmapclose_exe, softkey_exe}) {
     if (btn) {
       layout()->addWidget(horizontal_line());
       connect(parent, SIGNAL(offroadTransition(bool)), btn, SLOT(setEnabled(bool)));
       layout()->addWidget(btn);
     }
   }
+
+  layout()->addWidget(horizontal_line());
+
+  layout()->addWidget(new ParamControl("OpkrMapEnable",
+                                  "Tmap Open",
+                                  "Tmap 을 실행 합니다.",
+                                  "../assets/offroad/icon_network.png",
+                                  this));
 
   layout()->addWidget(horizontal_line());
   layout()->addWidget( new CarSelectCombo() );
