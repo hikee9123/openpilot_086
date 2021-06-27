@@ -92,7 +92,7 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
   layout()->addWidget(new ParamControl("IsOpenpilotViewEnabled",
                                   "주행화면 미리보기",
                                   "오픈파일럿 주행화면을 미리보기 합니다.",
-                                  "../assets/offroad/icon_network.png",
+                                  "../assets/offroad/icon_eon.png",
                                   this));
 
   layout()->addWidget(horizontal_line());
@@ -100,7 +100,7 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
   layout()->addWidget(new ParamControl("OpkrMapEnable",
                                   "Tmap Open",
                                   "Tmap 을 실행 합니다.",
-                                  "../assets/offroad/icon_network.png",
+                                  "../assets/offroad/icon_shell.png",
                                   this));
 
   layout()->addWidget(horizontal_line());
