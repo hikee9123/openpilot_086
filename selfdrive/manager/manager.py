@@ -161,6 +161,7 @@ def manager_thread(spinner):
   sm = messaging.SubMaster(['deviceState'])
   pm = messaging.PubMaster(['managerState'])
   spinner.update_progress(100, 100.)
+  spinner.close()
   while True:
     sm.update()
     not_run = ignore[:]
