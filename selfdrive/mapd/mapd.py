@@ -70,14 +70,17 @@ class MapsdThread(threading.Thread):
             self.target_speed_map_counter = 0
             self.target_speed_map_counter1 = 0
             self.target_speed_map_counter2 = 0
-            self.target_speed_map_counter3 = 0        
+            self.target_speed_map_counter3 = 0
+
+        if self.target_speed_map_counter2:
+            self.target_speed_map_counter1 = 0
 
         if self.target_speed_map_counter1 > 0:
             self.target_speed_map_counter1 -= 1
             print( " target_speed_map_counter1 = {}".format( self.target_speed_map_counter1  ))
             return
 
-        if self.map_enabled and self.target_speed_map_counter2 > 0:
+        if self.map_enabled == 2 and self.target_speed_map_counter2 > 0:
             self.target_speed_map_counter2 -= 1
             print( " target_speed_map_counter2 = {}".format( self.target_speed_map_counter2  ))
             if self.target_speed_map_counter2  == 0:
@@ -89,7 +92,7 @@ class MapsdThread(threading.Thread):
             return
 
         self.old_map_enable = self.map_enabled
-        self.target_speed_map_counter1 = 5
+        self.target_speed_map_counter1 = 3
 
         if self.map_enabled == 0:
             self.map_exec_status = False
