@@ -37,6 +37,14 @@ class MapsdThread(threading.Thread):
         self.map_enabled = False
         self.target_speed_map = 0
 
+        self.raw_map_sign = 0
+        self.raw_target_speed_map = 0
+        self.raw_target_speed_map_dist = 0
+
+        self.old_map_sign = 0
+        self.old_target_speed_map = 0
+        self.old_target_speed_map_dist = 0        
+
         self.target_speed_map_counter = 0
         self.target_speed_map_counter1 = 0
         self.target_speed_map_counter2 = 0
@@ -75,6 +83,47 @@ class MapsdThread(threading.Thread):
         self.logger.debug("Sending ... liveMapData ... %s", str(dat))
         self.pm.send('liveMapData', dat)
 
+
+    def read_map_data(self, opkr_signal ):
+        try:
+            mapsign = self.params.get( opkr_signal, encoding="utf8")
+            mapsign = int(float(mapsign.rstrip('\n')))
+            self.map_sign = mapsign
+        except:
+            mapsign = None
+
+        return mapsign
+
+    def make_map_data(self):
+        mapsign = read_map_data( "OpkrMapSign" )
+        mapspeed = read_map_data( "LimitSetSpeedCamera" )
+        mapspeeddist = read_map_data( "LimitSetSpeedCameraDist" )
+
+        if mapsign is not None:
+            self.raw_map_sign = mapsign
+        else:
+            self.raw_map_sign = 0
+
+        if mapspeed is not None:
+            self.raw_target_speed_map = mapspeed
+        else:
+            self.raw_target_speed_map = 0
+
+        if mapspeeddist is not None:
+            self.raw_target_speed_map_dist = mapspeeddist
+        else:
+            self.raw_target_speed_map_dist = 0            
+
+        if mapspeed is not None and mapspeeddist is not None:
+            self.target_speed_map = self.raw_target_speed_map
+            self.target_speed_map_dist = self.raw_target_speed_map_dist
+            os.system("logcat -c &")
+            self.target_speed_map_counter_check = False
+        else:
+            self.target_speed_map = 0
+            self.target_speed_map_dist = 0
+              
+
     def run(self):
         self.logger.debug("Entered run method for thread :" + str(self.name))
         cur_way = None
@@ -89,8 +138,8 @@ class MapsdThread(threading.Thread):
         max_speed_prev = 0
         start = time.time()
         while True:
-            if time.time() - start < 0.1:
-              time.sleep(0.1)
+            if time.time() - start < 0.5:
+              time.sleep(0.5)
               continue
             else:
               start = time.time()
@@ -102,75 +151,25 @@ class MapsdThread(threading.Thread):
               self.data_send()
               continue
 
-
-            self.target_speed_map_counter += 1
-            if self.target_speed_map_counter >= (50+self.target_speed_map_counter1) and self.target_speed_map_counter_check == False:
+            print( "opkr_map_status_read = {}".format( self.target_speed_map_counter  ))
+            if self.target_speed_map_counter_check == False:
                 self.target_speed_map_counter_check = True
                 os.system("logcat -d -s opkrspdlimit,opkrspd2limit | grep opkrspd | tail -n 1 | awk \'{print $7}\' > /data/params/d/LimitSetSpeedCamera &")
                 os.system("logcat -d -s opkrspddist,opkrspd2dist | grep opkrspd | tail -n 1 | awk \'{print $7}\' > /data/params/d/LimitSetSpeedCameraDist &")
                 os.system("logcat -d -s opkrsigntype,opkrspdsign | grep opkrspd | tail -n 1 | awk \'{print $7}\' > /data/params/d/OpkrMapSign &")
                 print( "self.map_enabled = {}".format( self.map_enabled  ))
-                self.target_speed_map_counter3 += 1
-                if self.target_speed_map_counter3 > 2:
-                    self.target_speed_map_counter3 = 0
-                    os.system("logcat -c &")
-            elif self.target_speed_map_counter >= (75+self.target_speed_map_counter1):
-                self.target_speed_map_counter1 = 0
                 self.target_speed_map_counter = 0
-                self.target_speed_map_counter_check = False
-                try:
-                    mapspeed = self.params.get("LimitSetSpeedCamera", encoding="utf8")
-                    mapspeeddist = self.params.get("LimitSetSpeedCameraDist", encoding="utf8")
-                    mapsign = self.params.get("OpkrMapSign", encoding="utf8")
-                    if mapsign is not None:
+            else:
+                print( "raw_map_sign= {} raw_target_speed_map={},{}".format( self.raw_map_sign, self.raw_target_speed_map, self.raw_target_speed_map_dist  ))
+                print( "old_map_sign= {} old_target_speed_map={},{}".format( self.old_map_sign, self.old_target_speed_map, self.old_target_speed_map_dist  ))
+                self.make_map_data()
+                self.target_speed_map_counter += 1
+                if self.target_speed_map_counter > 50:
+                    os.system("logcat -c &")
+                    self.target_speed_map_counter_check = False
 
-                        try:
-                            mapsign = int(float(mapsign.rstrip('\n')))
-                            self.map_sign = mapsign
-                        except:
-                            pass
+                
 
-                    else:
-                        mapsign = 0
-                        self.map_sign = mapsign
-
-                    if mapspeed is not None and mapspeeddist is not None:
-
-                        try:
-                            mapspeed = int(float(mapspeed.rstrip('\n')))
-                            mapspeeddist = int(float(mapspeeddist.rstrip('\n')))
-                        except:
-                            pass
-
-                        if mapspeed > 29:
-                            self.target_speed_map = mapspeed
-                            self.target_speed_map_dist = mapspeeddist
-                            if self.target_speed_map_dist > 1001:
-                                self.target_speed_map_block = True
-                            self.target_speed_map_counter1 = 80
-                            os.system("logcat -c &")
-                        else:
-                            self.target_speed_map = 0
-                            self.target_speed_map_dist = 0
-                            self.target_speed_map_block = False
-                    elif mapspeed is None and mapspeeddist is None and self.target_speed_map_counter2 < 2:
-                        self.target_speed_map_counter2 += 1
-                        self.target_speed_map_counter = 51
-                        self.target_speed_map = 0
-                        self.target_speed_map_dist = 0
-                        self.target_speed_map_counter_check = True
-                        self.target_speed_map_block = False
-                        self.target_speed_map_sign = False
-                    else:
-                        self.target_speed_map_counter = 49
-                        self.target_speed_map_counter2 = 0
-                        self.target_speed_map = 0
-                        self.target_speed_map_dist = 0
-                        self.target_speed_map_counter_check = False
-                        self.target_speed_map_block = False
-                        self.target_speed_map_sign = False
-                except:
-                    pass
             
 
             self.data_send()
@@ -181,7 +180,7 @@ class MapsdThread(threading.Thread):
 
 def main():
     #gc.disable()
-    #set_realtime_priority(54)    
+    set_realtime_priority(1)    
     params = Params()
 
 
