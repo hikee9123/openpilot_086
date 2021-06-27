@@ -146,13 +146,13 @@ def manager_thread(spinner):
   #params = Params()
   enableLogger = params.get_bool("UploadRaw")
   if not enableLogger:
-    ignore.append("loggerd")
+    #ignore.append("loggerd")
     #ignore.append("logcatd")
-    ignore.append("logmessaged")
+    #ignore.append("logmessaged")
     ignore.append("uploader")
     ignore.append("updated")
     ignore.append("deleter")
-    ignore.append("tombstoned")
+    #ignore.append("tombstoned")
   else:
     # save boot log
     subprocess.call("./bootlog", cwd=os.path.join(BASEDIR, "selfdrive/loggerd"))

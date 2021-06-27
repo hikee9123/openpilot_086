@@ -77,7 +77,7 @@ class MapsdThread(threading.Thread):
 
         if self.target_speed_map_counter1 > 0:
             self.target_speed_map_counter1 -= 1
-            print( " target_speed_map_counter1 = {}".format( self.target_speed_map_counter1  ))
+            #print( " target_speed_map_counter1 = {}".format( self.target_speed_map_counter1  ))
             return
 
         if self.map_enabled == 2 and self.target_speed_map_counter2 > 0:
@@ -210,28 +210,28 @@ class MapsdThread(threading.Thread):
               self.data_send()
               continue
 
-            print( "map_enabled={} opkr_map_status_read = {}".format(  self.map_enabled, self.target_speed_map_counter  ))
+            #print( "map_enabled={} opkr_map_status_read = {}".format(  self.map_enabled, self.target_speed_map_counter  ))
             if self.target_speed_map_counter_check == False:
                 self.target_speed_map_counter_check = True
                 os.system("logcat -d -s opkrspdlimit,opkrspd2limit | grep opkrspd | tail -n 1 | awk \'{print $7}\' > /data/params/d/LimitSetSpeedCamera &")
                 os.system("logcat -d -s opkrspddist,opkrspd2dist | grep opkrspd | tail -n 1 | awk \'{print $7}\' > /data/params/d/LimitSetSpeedCameraDist &")
                 os.system("logcat -d -s opkrsigntype,opkrspdsign | grep opkrspd | tail -n 1 | awk \'{print $7}\' > /data/params/d/OpkrMapSign &")
-                print( "self.map_enabled = {}".format( self.map_enabled  ))
+                print( "self.map_enabled = {}  => logcat".format( self.map_enabled  ))
                 self.target_speed_map_counter = 0
             else:
-                print( " raw_map_sign= {} raw_target_speed_map={},{}".format( self.raw_map_sign, self.raw_target_speed_map, self.raw_target_speed_map_dist  ))
-                print( " old_map_sign= {} old_target_speed_map={},{}".format( self.old_map_sign, self.old_target_speed_map, self.old_target_speed_map_dist  ))
                 self.make_map_data()
                 self.target_speed_map_counter += 1
-                if self.target_speed_map_counter > 30:
+                if self.target_speed_map_counter > 5:
                     os.system("logcat -c &")
                     self.target_speed_map_counter_check = False
                     self.target_speed_map = 0
                     self.target_speed_map_dist = 0
                 
                 self.data_send()
-
-            
+                if self.old_target_speed_map > 0:
+                    print( " old_map_sign= {} old_target_speed_map={},{}".format( self.old_map_sign, self.old_target_speed_map, self.old_target_speed_map_dist  ))
+                if self.raw_target_speed_map > 0:
+                    print( " raw_map_sign= {} raw_target_speed_map={},{}".format( self.raw_map_sign, self.raw_target_speed_map, self.raw_target_speed_map_dist  ))            
 
 
 

@@ -280,7 +280,7 @@ static void draw_button( UIState *s, const char* string, Rect rect, NVGcolor fil
 
     nvgBeginPath(s->vg);
     nvgRoundedRect(s->vg, btn_x, btn_y, btn_w, btn_h, 100);
-    nvgStrokeColor(s->vg, nvgRGBA(255, 255, 255, 80));
+    nvgStrokeColor(s->vg, nvgRGBA(0, 0, 0, 80));
     nvgStrokeWidth(s->vg, 6);
     nvgStroke(s->vg);
 
