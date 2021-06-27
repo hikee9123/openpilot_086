@@ -195,7 +195,7 @@ class MapsdThread(threading.Thread):
               self.data_send()
               continue
 
-            print( "opkr_map_status_read = {}".format( self.target_speed_map_counter  ))
+            print( "map_enabled={} opkr_map_status_read = {}".format(  self.map_enabled, self.target_speed_map_counter  ))
             if self.target_speed_map_counter_check == False:
                 self.target_speed_map_counter_check = True
                 os.system("logcat -d -s opkrspdlimit,opkrspd2limit | grep opkrspd | tail -n 1 | awk \'{print $7}\' > /data/params/d/LimitSetSpeedCamera &")
