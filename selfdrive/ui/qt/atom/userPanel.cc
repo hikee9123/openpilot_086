@@ -186,7 +186,7 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
   { 
           if (ConfirmationDialog::confirm("Are you sure you want to exec(Tmap Open)?")) 
           {
-            std::system("am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity");
+            //std::system("am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity");
             Params().put("OpkrMapEnable", "1");
             //QProcess::execute("am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity");
             //QProcess::execute("pkill com.skt.tmap.ku");
@@ -201,7 +201,7 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
   { 
           if (ConfirmationDialog::confirm("Are you sure you want to exec(Tmap Close)?")) 
           {
-            std::system("pkill com.skt.tmap.ku");
+            //std::system("pkill com.skt.tmap.ku");
             Params().put("OpkrMapEnable", "0");
             //QProcess::execute("am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity");
             //QProcess::execute("pkill com.skt.tmap.ku");

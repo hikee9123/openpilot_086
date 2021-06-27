@@ -671,7 +671,7 @@ void update_dashcam(UIState *s, int draw_vision)
   screen_menu_button(s, touch_x, touch_y, touched);
 
 
-  NVGcolor fillColor = nvgRGBA(20,0,0,250);
+  NVGcolor fillColor = nvgRGBA(0,255,255,250);
   if( s->scene.scr.map_is_running  )
     fillColor = nvgRGBA(255,0,0,200);
 

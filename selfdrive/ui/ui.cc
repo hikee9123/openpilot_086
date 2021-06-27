@@ -258,6 +258,8 @@ static void update_state(UIState *s) {
    if( sm.updated("liveMapData"))
    {
      scene.liveMapData = sm["liveMapData"].getLiveMapData();
+
+     scene.scr.map_is_running = scene.liveMapData.getMapEnable();
    }
 }
 

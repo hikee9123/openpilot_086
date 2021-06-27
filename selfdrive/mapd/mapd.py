@@ -52,12 +52,44 @@ class MapsdThread(threading.Thread):
         self.target_speed_map_counter3 = 0
         self.target_speed_map_counter_check = False
 
+        self.old_map_enable = False
+
     def opkr_map_status_read(self):        
         self.second += 0.25
-        if self.second > 1.0:
-            self.map_enabled = self.params.get_bool("OpkrMapEnable")
-            self.second = 0.0
-            
+        if self.second < 1.0:
+            return
+
+
+
+        self.map_enabled = self.params.get_bool("OpkrMapEnable")
+        self.second = 0.0
+
+        if self.target_speed_map_counter1 > 0:
+            self.target_speed_map_counter1 -= 1
+            print( "target_speed_map_counter1 = {}".format( self.target_speed_map_counter1  ))
+            return
+
+        if self.map_enabled and self.target_speed_map_counter2 > 0:
+            self.target_speed_map_counter2 -= 1
+            print( "target_speed_map_counter2 = {}".format( self.target_speed_map_counter2  ))
+            if self.target_speed_map_counter2  == 0:
+                os.system("am start --activity-task-on-home com.opkr.maphack/com.opkr.maphack.MainActivity")
+            return
+
+        if( self.map_enabled == self.old_map_enable ):
+            return
+
+        self.old_map_enable = self.map_enabled
+        self.target_speed_map_counter1 = 10
+
+        if self.map_enabled == 0:
+            os.system("pkill com.skt.tmap.ku")
+        elif self.map_enabled == 1:
+            os.system("am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity")
+        elif self.map_enabled == 2:
+            os.system("am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity")
+            self.target_speed_map_counter2 = 50
+
 
 
     def data_send(self):
@@ -79,6 +111,7 @@ class MapsdThread(threading.Thread):
         dat.liveMapData.speedLimitValid = self.map_enabled
         dat.liveMapData.speedLimit = self.target_speed_map
 
+        dat.liveMapData.mapEnable = self.map_enabled
         dat.liveMapData.mapValid = True
     
         self.logger.debug("Sending ... liveMapData ... %s", str(dat))

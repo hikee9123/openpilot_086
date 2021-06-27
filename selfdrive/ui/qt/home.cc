@@ -99,12 +99,15 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
 
    // OPKR Code
   if (QUIState::ui_state.scene.started && btn_map_overlay.ptInRect(e->x(), e->y())) {
-    QProcess::execute("am start --activity-task-on-home com.opkr.maphack/com.opkr.maphack.MainActivity");
-    QUIState::ui_state.scene.scr.map_on_overlay = true;
+    if( QUIState::ui_state.scene.scr.map_is_running )
+    {
+      QProcess::execute("am start --activity-task-on-home com.opkr.maphack/com.opkr.maphack.MainActivity");
+      QUIState::ui_state.scene.scr.map_on_overlay = true;
+    }
 
-    QSoundEffect effect1;
-    effect1.setSource(QUrl::fromLocalFile("/data/openpilot/selfdrive/assets/sounds/warning_1.wav"));
-    effect1.play();
+    //QSoundEffect effect1;
+    //effect1.setSource(QUrl::fromLocalFile("/data/openpilot/selfdrive/assets/sounds/warning_1.wav"));
+    //effect1.play();
     return;
   }
 
@@ -112,19 +115,15 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
   if ( QUIState::ui_state.scene.started && btn_Tmap.ptInRect(e->x(), e->y())) {
 
     if ( !QUIState::ui_state.scene.scr.map_is_running ) {
-      QProcess::execute("am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity");
-      QUIState::ui_state.scene.scr.map_is_running = true;
-      QUIState::ui_state.scene.scr.map_on_overlay = false;
+      //QProcess::execute("am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity");
+      //QUIState::ui_state.scene.scr.map_is_running = true;
+      //QUIState::ui_state.scene.scr.map_on_overlay = false;
       Params().put("OpkrMapEnable", "1");
     } else {
-      QProcess::execute("pkill com.skt.tmap.ku");
-      QUIState::ui_state.scene.scr.map_is_running = false;
+      //QProcess::execute("pkill com.skt.tmap.ku");
+      //QUIState::ui_state.scene.scr.map_is_running = false;
       Params().put("OpkrMapEnable", "0"); 
     }
-
-    //QSoundEffect effect2;
-    //effect2.setSource(QUrl::fromLocalFile("/data/openpilot/selfdrive/assets/sounds/warning_1.wav"));
-    //effect2.play();  
     return;
   }
 
