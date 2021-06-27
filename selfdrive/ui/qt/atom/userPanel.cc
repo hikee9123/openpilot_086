@@ -31,7 +31,7 @@ def exec_app(status, app, app_main):
 
 CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
 {
-
+  Params().remove("OpkrMapEnable");
   //  UIState* ui_state = &QUIState::ui_state;
   QVBoxLayout *main_layout = new QVBoxLayout(this);
   main_layout->setMargin(100);

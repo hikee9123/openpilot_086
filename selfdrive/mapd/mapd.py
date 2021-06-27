@@ -114,7 +114,7 @@ class MapsdThread(threading.Thread):
 
         #dat.liveMapData.roadCurvatureX = [float(x) for x in dists]
         #dat.liveMapData.roadCurvature = [float(x) for x in curvature]
-        dat.liveMapData.speedLimitValid = self.map_enabled
+        #dat.liveMapData.speedLimitValid = self.map_enabled
         dat.liveMapData.speedLimit = self.target_speed_map
 
         dat.liveMapData.mapEnable = self.map_enabled

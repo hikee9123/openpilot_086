@@ -497,7 +497,7 @@ static void ui_draw_debug1(UIState *s)
   float map_sign = scene.liveMapData.getSpeedLimitAhead();
   float speedLimitAheadDistance = scene.liveMapData.getSpeedLimitAheadDistance();
   float speedLimit = scene.liveMapData.getSpeedLimit();
-  int map_enabled = scene.liveMapData.getSpeedLimitValid();
+  int map_enabled = scene.liveMapData.getMapValid();
   int  mapValid = scene.liveMapData.getMapValid();
 
 
@@ -507,7 +507,7 @@ static void ui_draw_debug1(UIState *s)
     ui_print( s, x_pos, y_pos+0,   "MS:%.2f", map_sign );
     ui_print( s, x_pos, y_pos+100,  "Dist:%.2f", speedLimitAheadDistance );
     ui_print( s, x_pos, y_pos+200,  "Spd:%.2f", speedLimit );
-    ui_print( s, x_pos, y_pos+300,  "Valid:%d,%d", map_enabled, mapValid );
+    ui_print( s, x_pos, y_pos+300,  "map_enabled:%d,%d", map_enabled, mapValid );
 
   //  1035, 1078
   ui_draw_text1(s, 0, 30, scene.alert.alertTextMsg1.c_str(), 45, COLOR_WHITE, "sans-regular");
