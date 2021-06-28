@@ -137,8 +137,10 @@ class MapsdThread(threading.Thread):
             mapsign = self.params.get( opkr_signal, encoding="utf8")
             mapsign = int(float(mapsign.rstrip('\n')))
             self.map_sign = mapsign
+            print( "read_map_data = {}: {} ".format( opkr_signal, mapsign ) )
         except:
             mapsign = None
+            print( "read_map_data None " )
 
         return mapsign
 
@@ -237,7 +239,7 @@ class MapsdThread(threading.Thread):
 
 def main():
     #gc.disable()
-    set_realtime_priority(1)
+    #set_realtime_priority(1)
     params = Params()
     dongle_id = params.get("DongleId")
    

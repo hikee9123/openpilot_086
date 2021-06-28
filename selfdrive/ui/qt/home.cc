@@ -120,12 +120,14 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
       //QUIState::ui_state.scene.scr.map_on_overlay = false;
       Params().put("OpkrMapEnable", "1");
 
-      QUIState::ui_state.scene.scr.map_command = 40;  // 2sec
+      QUIState::ui_state.scene.scr.map_command_off = 0;
+      QUIState::ui_state.scene.scr.map_command_on = 40;  // 2sec
     } else {
       //QProcess::execute("pkill com.skt.tmap.ku");
       //QUIState::ui_state.scene.scr.map_is_running = false;
       Params().put("OpkrMapEnable", "0"); 
-      QUIState::ui_state.scene.scr.map_command = 0;
+      QUIState::ui_state.scene.scr.map_command_off = 40;
+      QUIState::ui_state.scene.scr.map_command_on = 0;
     }
     return;
   }

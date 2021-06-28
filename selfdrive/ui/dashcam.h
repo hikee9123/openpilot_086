@@ -674,19 +674,28 @@ void update_dashcam(UIState *s, int draw_vision)
   screen_draw_button(s, touch_x, touch_y, touched);
   screen_menu_button(s, touch_x, touch_y, touched);
 
-  int is_map_program = s->scene.scr.map_is_running;
-  if( s->scene.scr.map_command > 0 )
-  {
-     s->scene.scr.map_command--;
-     is_map_program = 1;
-  }
-  else
-  {
-    is_map_program = is_map_program;
-  }
 
   NVGcolor fillColor = nvgRGBA(0,255,255,100);
   NVGcolor txtColor = nvgRGBA(0, 0, 0, 100);
+  int is_map_program = s->scene.scr.map_is_running;
+  
+  if( is_map_program )
+  {
+    if( s->scene.scr.map_command_off > 0 )
+    {
+      s->scene.scr.map_command_off--;
+      is_map_program = 0;
+    }  
+  }
+  else
+  {
+    if( s->scene.scr.map_command_on > 0 )
+    {
+      s->scene.scr.map_command_on--;
+      is_map_program = 1;
+    }
+  }
+
   if( is_map_program  )
   {
     fillColor = nvgRGBA(255,0,0,255);
