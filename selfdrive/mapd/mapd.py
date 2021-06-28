@@ -135,7 +135,7 @@ class MapsdThread(threading.Thread):
     def read_map_data(self, opkr_signal ):
         try:
             mapsign = self.params.get( opkr_signal, encoding="utf8")
-            mapsign = int(float(mapsign.rstrip('\n')))
+            #mapsign = int(float(mapsign.rstrip('\n')))
             self.map_sign = mapsign
             print( "read_map_data = {}: {} ".format( opkr_signal, mapsign ) )
         except:
