@@ -147,7 +147,7 @@ def manager_thread(spinner):
   enableLogger = params.get_bool("UploadRaw")
   if not enableLogger:
     ignore.append("loggerd")
-    #ignore.append("logcatd")
+    ignore.append("logcatd")
     ignore.append("logmessaged")
     ignore.append("uploader")
     ignore.append("updated")
