@@ -26,14 +26,14 @@ int main() {
 
     struct logger *main_logger = android_logger_open(logger_list, LOG_ID_MAIN);
     assert(main_logger);
-    struct logger *radio_logger = android_logger_open(logger_list, LOG_ID_RADIO);
-    assert(radio_logger);
-    struct logger *system_logger = android_logger_open(logger_list, LOG_ID_SYSTEM);
-    assert(system_logger);
-    struct logger *crash_logger = android_logger_open(logger_list, LOG_ID_CRASH);
-    assert(crash_logger);
-    struct logger *kernel_logger = android_logger_open(logger_list, (log_id_t)5); // LOG_ID_KERNEL
-    assert(kernel_logger);
+  //  struct logger *radio_logger = android_logger_open(logger_list, LOG_ID_RADIO);
+   // assert(radio_logger);
+   // struct logger *system_logger = android_logger_open(logger_list, LOG_ID_SYSTEM);
+   // assert(system_logger);
+   // struct logger *crash_logger = android_logger_open(logger_list, LOG_ID_CRASH);
+   // assert(crash_logger);
+   // struct logger *kernel_logger = android_logger_open(logger_list, (log_id_t)5); // LOG_ID_KERNEL
+   // assert(kernel_logger);
 
     while (!do_exit) {
       log_msg log_msg;
