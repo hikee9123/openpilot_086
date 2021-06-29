@@ -7,7 +7,7 @@
 
 #include "cereal/messaging/messaging.h"
 #include "selfdrive/common/util.h"
-
+#include "selfdrive/common/params.h"
 
 
 typedef struct LiveMapDataResult {
@@ -35,6 +35,7 @@ typedef struct LiveMapDataResult {
 int main() {
   setpriority(PRIO_PROCESS, 0, -15);
 
+  int     nTime = 0;
   ExitHandler do_exit;
   PubMaster pm({"liveMapData"});
   LiveMapDataResult  res;
@@ -71,7 +72,13 @@ int main() {
       last_log_time.tv_sec = entry.tv_sec;
       last_log_time.tv_nsec = entry.tv_nsec;
 
-      res.mapEnable = 1;
+      nTime++;
+      if( nTime > 10 )
+      {
+        nTime = 0;
+        res.mapEnable = Params().getBool("OpkrMapEnable");
+      }
+      
       res.mapValid = 1;
 
       MessageBuilder msg;
