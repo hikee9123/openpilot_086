@@ -125,6 +125,8 @@ int main() {
         res.speedLimitAheadDistance = atoi( entry.message );
       }      
 
+      res.mapValid = opkr;
+
       framed.setSpeedLimit( res.speedLimit );  // Float32;
       framed.setSpeedLimitAheadDistance( res.speedLimitAheadDistance );  // raw_target_speed_map_dist Float32;
       framed.setSpeedLimitAhead( res.speedLimitAhead ); // map_sign Float32;
@@ -132,7 +134,7 @@ int main() {
       framed.setMapEnable( res.mapEnable );
       framed.setMapValid( res.mapValid );
       
-      res.mapValid = opkr;
+      
       if( opkr )
       {
         printf("logcat ID(%d) - PID=%d tag=%d.[%s] \n", log_msg.id(), entry.pid,  entry.tid, entry.tag);
