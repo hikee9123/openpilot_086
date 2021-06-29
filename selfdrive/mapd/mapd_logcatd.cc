@@ -70,7 +70,7 @@ int main() {
       last_log_time.tv_nsec = entry.tv_nsec;
       
 
-     //   entry.tag
+     //   entry.tag   =>  opkrspd
      //   entry.messageLen;
      //    entry.message; 
      //    entry.message
