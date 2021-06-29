@@ -137,10 +137,18 @@ class MapsdThread(threading.Thread):
             mapsign = self.params.get( opkr_signal, encoding="utf8")
             #mapsign = int(float(mapsign.rstrip('\n')))
             self.map_sign = mapsign
-            print( "read_map_data = {}: {} ".format( opkr_signal, mapsign ) )
+            print( "read_map_data1 = {}: {} ".format( opkr_signal, mapsign ) )
+            return mapsign
         except:
             mapsign = None
-            print( "read_map_data None " )
+            print( "read_map_data {} = None ".format( opkr_signal ) )
+
+        try:
+            mapsign = self.params.get( opkr_signal )
+            self.map_sign = mapsign
+            print( "read_map_data2 = {}: {} ".format( opkr_signal, mapsign ) )
+        except:
+            mapsign = None
 
         return mapsign
 
