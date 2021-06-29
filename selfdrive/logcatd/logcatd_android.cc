@@ -86,7 +86,27 @@ int main() {
       auto framed = msg.initEvent().initLiveMapData();
       framed.setWayId(log_msg.id());
 
+
+   //  opkrspdlimit,opkrspd2limit
+   //  opkrspddist,opkrspd2dist
+   //  opkrsigntype,opkrspdsign
+
+
       opkr = 0;
+      if( strcmp( entry.tag, "opkrspd2dist" ) == 0 )
+      {
+        opkr = 1;
+      }
+      if( strcmp( entry.tag, "opkrspdsign" ) == 0 )
+      {
+        opkr = 1;
+      }
+
+      if( strcmp( entry.tag, "opkrspdlimit" ) == 0 )
+      {
+        opkr = 1;
+      }
+
       if( strcmp( entry.tag, "opkrspd2limit" ) == 0 )
       {
         opkr = 1;
