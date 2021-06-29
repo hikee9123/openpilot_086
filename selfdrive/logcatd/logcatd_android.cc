@@ -56,7 +56,10 @@ int main() {
       androidEntry.setTag(entry.tag);
       androidEntry.setMessage(entry.message);
 
-      printf("tag:%s  entry.message=%s",entry.tag, entry.message);
+
+
+      printf("logcat - tag=[%s] \n",entry.tag);
+      printf("entry.message=[%s]\n", entry.message);
 
       pm.send("androidLog", msg);
     }
