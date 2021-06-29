@@ -34,7 +34,8 @@ typedef struct LiveMapDataResult {
 
 int main() {
   setpriority(PRIO_PROCESS, 0, -15);
-
+   
+  int     opkr =0;
   int     nTime = 0;
   ExitHandler do_exit;
   PubMaster pm({"liveMapData"});
@@ -79,24 +80,28 @@ int main() {
         res.mapEnable = Params().getBool("OpkrMapEnable");
       }
       
-      res.mapValid = 1;
+      res.mapValid = 0;
 
       MessageBuilder msg;
       auto framed = msg.initEvent().initLiveMapData();
       framed.setWayId(log_msg.id());
 
+      opkr = 0;
       if( strcmp( entry.tag, "opkrspdlimit" ) == 0 )
       {
+        opkr = 1;
         res.speedLimit = atoi( entry.message );
       }
 
       if( strcmp( entry.tag, "opkrspdsign") == 0 )
       {
+         opkr = 1;
         res.speedLimitAhead = atoi( entry.message );
       }
 
       if( strcmp( entry.tag, "opkrspd2dist") == 0 )
       {
+        opkr = 1;
         res.speedLimitAheadDistance = atoi( entry.message );
       }      
 
@@ -106,8 +111,14 @@ int main() {
 
       framed.setMapEnable( res.mapEnable );
       framed.setMapValid( res.mapValid );
-      printf("logcat ID(%d) - PID=%d tag=%d.[%s] \n", log_msg.id(), entry.pid,  entry.tid, entry.tag);
-      printf("entry.message=[%s]\n", entry.message);
+      
+      res.mapValid = opkr;
+      if( opkr )
+      {
+        printf("logcat ID(%d) - PID=%d tag=%d.[%s] \n", log_msg.id(), entry.pid,  entry.tid, entry.tag);
+        printf("entry.message=[%s]\n", entry.message);
+        printf("spd = %f\n", res.speedLimit );
+      }
 
       pm.send("liveMapData", msg);
     }
