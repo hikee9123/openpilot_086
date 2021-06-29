@@ -58,7 +58,7 @@ int main() {
 
 
 
-      printf("logcat ID(%d) - PID=%d tag=%d.[%s] \n", log_msg.id(), entry.pid, entry.tag);
+      printf("logcat ID(%d) - PID=%d tag=%d.[%s] \n", log_msg.id(), entry.pid,  entry.tid, entry.tag);
       printf("entry.message=[%s]\n", entry.message);
 
       pm.send("androidLog", msg);
