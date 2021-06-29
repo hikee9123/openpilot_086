@@ -8,11 +8,36 @@
 #include "cereal/messaging/messaging.h"
 #include "selfdrive/common/util.h"
 
+
+
+typedef struct LiveMapDataResult {
+      bool  speedLimitValid;
+      float speedLimit;
+      bool  speedAdvisoryValid;
+      float speedAdvisory;
+      bool  speedLimitAheadValid;
+      float speedLimitAhead; // Float32;
+      float speedLimitAheadDistance;  // Float32;
+      bool  curvatureValid; //  @2 :Bool;
+      float curvature;    // @3 :Float32;
+      int   wayId;    //   @4 :UInt64;
+  //    framed.setRoadX();    // @5 :List(Float32);
+ //     framed.setRoadY();    // @6 :List(Float32);
+//      framed.setLastGps();    // @7: GpsLocationData;
+//      framed.setRoadCurvatureX();    // @8 :List(Float32);
+//      framed.setRoadCurvature();    // @9 :List(Float32);
+      float distToTurn;    // @10 :Float32;
+      bool  mapValid;    //@11 :Bool;
+      int   mapEnable;    // @17 :Int32;
+} LiveMapDataResult;
+
+
 int main() {
   setpriority(PRIO_PROCESS, 0, -15);
 
   ExitHandler do_exit;
-  PubMaster pm({"androidLog"});
+  PubMaster pm({"liveMapData"});
+  LiveMapDataResult  res;
 
   log_time last_log_time = {};
   logger_list *logger_list = android_logger_list_alloc(ANDROID_LOG_RDONLY | ANDROID_LOG_NONBLOCK, 0, 0);
@@ -46,22 +71,38 @@ int main() {
       last_log_time.tv_sec = entry.tv_sec;
       last_log_time.tv_nsec = entry.tv_nsec;
 
+      res.mapEnable = 1;
+      res.mapValid = 1;
+
       MessageBuilder msg;
-      auto androidEntry = msg.initEvent().initAndroidLog();
-      androidEntry.setId(log_msg.id());
-      androidEntry.setTs(entry.tv_sec * 1000000000ULL + entry.tv_nsec);
-      androidEntry.setPriority(entry.priority);
-      androidEntry.setPid(entry.pid);
-      androidEntry.setTid(entry.tid);
-      androidEntry.setTag(entry.tag);
-      androidEntry.setMessage(entry.message);
+      auto framed = msg.initEvent().initLiveMapData();
+      framed.setWayId(log_msg.id());
 
+      if( strcmp( entry.tag, "opkrspdlimit" ) == 0 )
+      {
+        res.speedLimit = atoi( entry.message );
+      }
 
+      if( strcmp( entry.tag, "opkrspdsign") == 0 )
+      {
+        res.speedLimitAhead = atoi( entry.message );
+      }
 
+      if( strcmp( entry.tag, "opkrspd2dist") == 0 )
+      {
+        res.speedLimitAheadDistance = atoi( entry.message );
+      }      
+
+      framed.setSpeedLimit( res.speedLimit );  // Float32;
+      framed.setSpeedLimitAheadDistance( res.speedLimitAheadDistance );  // raw_target_speed_map_dist Float32;
+      framed.setSpeedLimitAhead( res.speedLimitAhead ); // map_sign Float32;
+
+      framed.setMapEnable( res.mapEnable );
+      framed.setMapValid( res.mapValid );
       printf("logcat ID(%d) - PID=%d tag=%d.[%s] \n", log_msg.id(), entry.pid,  entry.tid, entry.tag);
       printf("entry.message=[%s]\n", entry.message);
 
-      pm.send("androidLog", msg);
+      pm.send("liveMapData", msg);
     }
 
     android_logger_list_free(logger_list);

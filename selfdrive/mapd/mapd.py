@@ -217,7 +217,7 @@ class MapsdThread(threading.Thread):
 
             if not self.map_enabled:
               time.sleep(1.0)
-              self.data_send()
+              #self.data_send()
               continue
 
             #print( "map_enabled={} opkr_map_status_read = {}".format(  self.map_enabled, self.target_speed_map_counter  ))
@@ -231,13 +231,13 @@ class MapsdThread(threading.Thread):
             else:
                 self.make_map_data()
                 self.target_speed_map_counter += 1
-                if self.target_speed_map_counter_check and self.target_speed_map_counter > 5:
+                if self.target_speed_map_counter_check and self.target_speed_map_counter > 20:
                     os.system("logcat -c &")
                     self.target_speed_map_counter_check = False
                     self.target_speed_map = 0
                     self.target_speed_map_dist = 0
                 
-                self.data_send()
+               # self.data_send()
                 if self.old_target_speed_map > 0:
                     print( " old_map_sign= {} old_target_speed_map={},{}".format( self.old_map_sign, self.old_target_speed_map, self.old_target_speed_map_dist  ))
                 if self.raw_target_speed_map > 0:
