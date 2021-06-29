@@ -87,19 +87,19 @@ int main() {
       framed.setWayId(log_msg.id());
 
       opkr = 0;
-      if( strcmp( entry.tag, "opkrspdlimit" ) == 0 )
+      if( strcmp( entry.tag, "opkrspd2limit" ) == 0 )
       {
         opkr = 1;
         res.speedLimit = atoi( entry.message );
       }
 
-      if( strcmp( entry.tag, "opkrspdsign") == 0 )
+      if( strcmp( entry.tag, "opkrsigntype") == 0 )
       {
          opkr = 1;
         res.speedLimitAhead = atoi( entry.message );
       }
 
-      if( strcmp( entry.tag, "opkrspd2dist") == 0 )
+      if( strcmp( entry.tag, "opkrspddist") == 0 )
       {
         opkr = 1;
         res.speedLimitAheadDistance = atoi( entry.message );
