@@ -57,28 +57,8 @@ class MapsdThread(threading.Thread):
 
 
     def opkr_map_status_read(self):        
-        self.second += 0.25
-        if self.second < 1.0:
-            return
-
-
-
         self.map_enabled = int(self.params.get("OpkrMapEnable"))
-        self.second = 0.0
 
-        if self.map_enabled == 0:
-            self.target_speed_map_counter = 0
-            self.target_speed_map_counter1 = 0
-            self.target_speed_map_counter2 = 0
-            self.target_speed_map_counter3 = 0
-
-        if self.target_speed_map_counter2:
-            self.target_speed_map_counter1 = 0
-
-        if self.target_speed_map_counter1 > 0:
-            self.target_speed_map_counter1 -= 1
-            #print( " target_speed_map_counter1 = {}".format( self.target_speed_map_counter1  ))
-            return
 
         if self.map_enabled == 2 and self.target_speed_map_counter2 > 0:
             self.target_speed_map_counter2 -= 1
@@ -106,99 +86,10 @@ class MapsdThread(threading.Thread):
 
 
 
-    def data_send(self):
-        dat = messaging.new_message()
-        dat.init('liveMapData')
-        dat.liveMapData.wayId = 1
-        # Speed limit
-        #dat.liveMapData.speedLimitAheadValid = True
-        dat.liveMapData.speedLimitAhead = self.old_map_sign
-        dat.liveMapData.speedLimitAheadDistance = self.raw_target_speed_map_dist
 
-        # Curvature
-        #dat.liveMapData.curvatureValid = curvature_valid
-        #dat.liveMapData.curvature = float(upcoming_curvature)
-        #dat.liveMapData.distToTurn = float(dist_to_turn)
-
-        #dat.liveMapData.roadCurvatureX = [float(x) for x in dists]
-        #dat.liveMapData.roadCurvature = [float(x) for x in curvature]
-        #dat.liveMapData.speedLimitValid = self.map_enabled
-        dat.liveMapData.speedLimit = self.raw_target_speed_map
-
-        dat.liveMapData.mapEnable = self.map_enabled
-        dat.liveMapData.mapValid = True
-    
-        self.logger.debug("Sending ... liveMapData ... %s", str(dat))
-        self.pm.send('liveMapData', dat)
-
-
-    def read_map_data(self, opkr_signal ):
-        try:
-            mapsign = self.params.get( opkr_signal, encoding="utf8")
-            #mapsign = int(float(mapsign.rstrip('\n')))
-            self.map_sign = mapsign
-            print( "read_map_data1 = {}: {} ".format( opkr_signal, mapsign ) )
-            return mapsign
-        except:
-            mapsign = None
-            print( "read_map_data {} = None ".format( opkr_signal ) )
-
-        try:
-            mapsign = self.params.get( opkr_signal )
-            self.map_sign = mapsign
-            print( "read_map_data2 = {}: {} ".format( opkr_signal, mapsign ) )
-        except:
-            mapsign = None
-
-        return mapsign
-
-    def make_map_data(self):
-        mapsign = self.read_map_data( "OpkrMapSign" )
-        mapspeed = self.read_map_data( "LimitSetSpeedCamera" )
-        mapspeeddist = self.read_map_data( "LimitSetSpeedCameraDist" )
-
-        if mapsign is not None:
-            self.old_map_sign = mapsign
-            self.raw_map_sign = mapsign
-        else:
-            self.raw_map_sign = 0
-
-        if mapspeed is not None:
-            self.raw_target_speed_map = mapspeed
-        else:
-            self.raw_target_speed_map = 0
-
-        if mapspeeddist is not None:
-            self.raw_target_speed_map_dist = mapspeeddist
-        else:
-            self.raw_target_speed_map_dist = 0            
-
-        if mapspeed is not None and mapspeeddist is not None:
-            self.target_speed_map = self.raw_target_speed_map
-            self.target_speed_map_dist = self.raw_target_speed_map_dist
-           
-            self.old_target_speed_map = self.raw_target_speed_map
-            self.old_target_speed_map_dist = self.raw_target_speed_map_dist
-            os.system("logcat -c &")
-            self.target_speed_map_counter_check = False
-        #else:
-        #    self.target_speed_map = 0
-        #    self.target_speed_map_dist = 0
               
 
     def run(self):
-        self.logger.debug("Entered run method for thread :" + str(self.name))
-        cur_way = None
-        curvature_valid = False
-        curvature = None
-        upcoming_curvature = 0.
-        dist_to_turn = 0.
-        road_points = None
-        max_speed = None
-        max_speed_ahead = None
-        max_speed_ahead_dist = None
-        max_speed_prev = 0
-
         # OPKR
         self.navi_on_boot = self.params.get_bool("OpkrRunNaviOnBoot")
         
@@ -214,34 +105,7 @@ class MapsdThread(threading.Thread):
               start = time.time()
               self.opkr_map_status_read()
 
-
-            if not self.map_enabled:
-              time.sleep(1.0)
-              #self.data_send()
-              continue
-
-            #print( "map_enabled={} opkr_map_status_read = {}".format(  self.map_enabled, self.target_speed_map_counter  ))
-            if self.target_speed_map_counter_check == False:
-                self.target_speed_map_counter_check = True
-                os.system("logcat -d -s opkrspdlimit,opkrspd2limit | grep opkrspd | tail -n 1 | awk \'{print $7}\' > /data/params/d/LimitSetSpeedCamera &")
-                os.system("logcat -d -s opkrspddist,opkrspd2dist | grep opkrspd | tail -n 1 | awk \'{print $7}\' > /data/params/d/LimitSetSpeedCameraDist &")
-                os.system("logcat -d -s opkrsigntype,opkrspdsign | grep opkrspd | tail -n 1 | awk \'{print $7}\' > /data/params/d/OpkrMapSign &")
-                print( "self.map_enabled = {}  => logcat".format( self.map_enabled  ))
-                self.target_speed_map_counter = 0
-            else:
-                self.make_map_data()
-                self.target_speed_map_counter += 1
-                if self.target_speed_map_counter_check and self.target_speed_map_counter > 20:
-                    os.system("logcat -c &")
-                    self.target_speed_map_counter_check = False
-                    self.target_speed_map = 0
-                    self.target_speed_map_dist = 0
-                
-               # self.data_send()
-                if self.old_target_speed_map > 0:
-                    print( " old_map_sign= {} old_target_speed_map={},{}".format( self.old_map_sign, self.old_target_speed_map, self.old_target_speed_map_dist  ))
-                if self.raw_target_speed_map > 0:
-                    print( " raw_map_sign= {} raw_target_speed_map={},{}".format( self.raw_map_sign, self.raw_target_speed_map, self.raw_target_speed_map_dist  ))            
+          
 
 
 
