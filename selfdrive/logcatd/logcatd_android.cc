@@ -111,13 +111,12 @@ int main() {
         opkr = 1;
         res.speedLimitAheadDistance = atoi( entry.message );
       }
-      if( strcmp( entry.tag, "opkrspdsign" ) == 0 )
+      else if( strcmp( entry.tag, "opkrspdsign" ) == 0 )
       {
         opkr = 1;
         res.speedLimitAhead = atoi( entry.message );
       }
-
-      if( strcmp( entry.tag, "opkrspdlimit" ) == 0 )
+      else if( strcmp( entry.tag, "opkrspdlimit" ) == 0 )
       {
         opkr = 1;
         res.speedLimit = atoi( entry.message );
@@ -130,14 +129,12 @@ int main() {
         opkr = 1;
         res.speedLimit = atoi( entry.message );
       }
-
-      if( strcmp( entry.tag, "opkrsigntype") == 0 )
+      else if( strcmp( entry.tag, "opkrsigntype") == 0 )
       {
          opkr = 1;
         res.speedLimitAhead = atoi( entry.message );
       }
-
-      if( strcmp( entry.tag, "opkrspddist") == 0 )
+      else if( strcmp( entry.tag, "opkrspddist") == 0 )
       {
         opkr = 1;
         res.speedLimitAheadDistance = atoi( entry.message );
