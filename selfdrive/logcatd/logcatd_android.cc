@@ -90,8 +90,21 @@ int main() {
    //  opkrspdlimit,opkrspd2limit
    //  opkrspddist,opkrspd2dist
    //  opkrsigntype,opkrspdsign
-
-
+/*
+   opkrsigntype  값정리
+    1 과속 단속 카메라
+    2. 구간단속 시작
+    3  구간단속 종료
+    4. 구간간속 진향중
+    7. 이동식 카메라
+    8. Box형 카메라
+    13.
+    29. 사고다발  x
+    30. 급커브     x
+    46.
+    63  졸움쉼터  x
+*/
+      //  안심모드
       opkr = 0;
       if( strcmp( entry.tag, "opkrspd2dist" ) == 0 )
       {
