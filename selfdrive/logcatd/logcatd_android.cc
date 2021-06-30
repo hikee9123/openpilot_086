@@ -96,17 +96,22 @@ int main() {
       if( strcmp( entry.tag, "opkrspd2dist" ) == 0 )
       {
         opkr = 1;
+        res.speedLimitAheadDistance = atoi( entry.message );
       }
       if( strcmp( entry.tag, "opkrspdsign" ) == 0 )
       {
         opkr = 1;
+        res.speedLimitAhead = atoi( entry.message );
       }
 
       if( strcmp( entry.tag, "opkrspdlimit" ) == 0 )
       {
         opkr = 1;
+        res.speedLimit = atoi( entry.message );
       }
 
+
+      // overlay mode
       if( strcmp( entry.tag, "opkrspd2limit" ) == 0 )
       {
         opkr = 1;
