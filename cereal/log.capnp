@@ -1302,24 +1302,14 @@ struct LiveParametersData {
 
 
 struct LiveMapData {
-  speedLimitValid @0 :Bool;
-  speedLimit @1 :Float32;
-  speedAdvisoryValid @12 :Bool;
-  speedAdvisory @13 :Float32;
-  speedLimitAheadValid @14 :Bool;
-  speedLimitAhead @15 :Float32;
-  speedLimitAheadDistance @16 :Float32;
-  curvatureValid @2 :Bool;
-  curvature @3 :Float32;
-  wayId @4 :UInt64;
-  roadX @5 :List(Float32);
-  roadY @6 :List(Float32);
-  lastGps @7: GpsLocationData;
-  roadCurvatureX @8 :List(Float32);
-  roadCurvature @9 :List(Float32);
-  distToTurn @10 :Float32;
-  mapValid @11 :Bool;
-  mapEnable @17 :Int32;
+  id @0 :UInt8;
+  ts @1 :UInt64;  
+  speedLimit @2 :Float32;
+  speedLimitDistance @3 :Float32;
+  safetySign @4 :Float32;
+  roadCurvature @5 :Float32;
+  mapValid @6 :Bool;
+  mapEnable @7 :Bool;
 }
 
 struct CameraOdometry {

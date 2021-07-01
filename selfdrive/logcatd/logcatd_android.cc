@@ -11,24 +11,12 @@
 
 
 typedef struct LiveMapDataResult {
-      bool  speedLimitValid;
-      float speedLimit;
-      bool  speedAdvisoryValid;
-      float speedAdvisory;
-      bool  speedLimitAheadValid;
-      float speedLimitAhead; // Float32;
-      float speedLimitAheadDistance;  // Float32;
-      bool  curvatureValid; //  @2 :Bool;
-      float curvature;    // @3 :Float32;
-      int   wayId;    //   @4 :UInt64;
-  //    framed.setRoadX();    // @5 :List(Float32);
- //     framed.setRoadY();    // @6 :List(Float32);
-//      framed.setLastGps();    // @7: GpsLocationData;
-//      framed.setRoadCurvatureX();    // @8 :List(Float32);
-//      framed.setRoadCurvature();    // @9 :List(Float32);
-      float distToTurn;    // @10 :Float32;
-      bool  mapValid;    //@11 :Bool;
-      int   mapEnable;    // @17 :Int32;
+      float speedLimit;  // Float32;
+      float speedLimitDistance;  // Float32;
+      float safetySign;    // Float32;
+      float roadCurvature;    // Float32;
+      bool  mapValid;    // bool;
+      bool  mapEnable;    // bool;
 } LiveMapDataResult;
 
 
@@ -80,13 +68,70 @@ int main() {
         res.mapEnable = Params().getBool("OpkrMapEnable");
       }
       
-      res.mapValid = 0;
+      //  안심모드
+      opkr = 0;
+     // code based from atom
+      if( strcmp( entry.tag, "opkrspdlimit" ) == 0 )
+      {
+        res.speedLimit = atoi( entry.message );
+        opkr = 1;
+      }
+      else if( strcmp( entry.tag, "opkrspddist" ) == 0 )
+      {
+        res.speedLimitDistance = atoi( entry.message );
+        opkr = 1;
+      }
+      else if( strcmp( entry.tag, "opkrsigntype" ) == 0 )
+      {
+        res.safetySign = atoi( entry.message );
+        opkr = 1;
+      }
+      else if( strcmp( entry.tag, "opkrcurvangle" ) == 0 )
+      {
+        res.roadCurvature = atoi( entry.message );
+        opkr = 1;
+      }
+
+      res.mapValid = opkr;
 
       MessageBuilder msg;
       auto framed = msg.initEvent().initLiveMapData();
-      framed.setWayId(log_msg.id());
+      framed.setId(log_msg.id());
+      framed.setTs( entry.tv_sec );
+      framed.setSpeedLimit( res.speedLimit );  // Float32;
+      framed.setSpeedLimitDistance( res.speedLimitDistance );  // raw_target_speed_map_dist Float32;
+      framed.setSafetySign( res.safetySign ); // map_sign Float32;
+      framed.setRoadCurvature( res.roadCurvature ); // road_curvature Float32;
+
+      framed.setMapEnable( res.mapEnable );
+      framed.setMapValid( res.mapValid );
+
+     
+      
+      if( opkr )
+      {
+        printf("logcat ID(%d) - PID=%d tag=%d.[%s] \n", log_msg.id(), entry.pid,  entry.tid, entry.tag);
+        printf("entry.message=[%s]\n", entry.message);
+        printf("spd = %f\n", res.speedLimit );
+      }
+
+      pm.send("liveMapData", msg);
+    }
+
+    android_logger_list_free(logger_list);
+    logger_list = NULL;
+    util::sleep_for(500);
+  }
+
+  if (logger_list) {
+    android_logger_list_free(logger_list);
+  }
+
+  return 0;
+}
 
 
+// TMAP
    //  opkrspdlimit,opkrspd2limit
    //  opkrspddist,opkrspd2dist
    //  opkrsigntype,opkrspdsign
@@ -104,70 +149,3 @@ int main() {
     46.
     63  졸움쉼터  x
 */
-      //  안심모드
-      opkr = 0;
-      if( strcmp( entry.tag, "opkrspd2dist" ) == 0 )
-      {
-        opkr = 1;
-        res.speedLimitAheadDistance = atoi( entry.message );
-      }
-      else if( strcmp( entry.tag, "opkrspdsign" ) == 0 )
-      {
-        opkr = 1;
-        res.speedLimitAhead = atoi( entry.message );
-      }
-      else if( strcmp( entry.tag, "opkrspdlimit" ) == 0 )
-      {
-        opkr = 1;
-        res.speedLimit = atoi( entry.message );
-      }
-
-
-      // overlay mode
-      if( strcmp( entry.tag, "opkrspd2limit" ) == 0 )
-      {
-        opkr = 1;
-        res.speedLimit = atoi( entry.message );
-      }
-      else if( strcmp( entry.tag, "opkrsigntype") == 0 )
-      {
-         opkr = 1;
-        res.speedLimitAhead = atoi( entry.message );
-      }
-      else if( strcmp( entry.tag, "opkrspddist") == 0 )
-      {
-        opkr = 1;
-        res.speedLimitAheadDistance = atoi( entry.message );
-      }      
-
-      res.mapValid = opkr;
-
-      framed.setSpeedLimit( res.speedLimit );  // Float32;
-      framed.setSpeedLimitAheadDistance( res.speedLimitAheadDistance );  // raw_target_speed_map_dist Float32;
-      framed.setSpeedLimitAhead( res.speedLimitAhead ); // map_sign Float32;
-
-      framed.setMapEnable( res.mapEnable );
-      framed.setMapValid( res.mapValid );
-      
-      
-     // if( opkr )
-     // {
-        printf("logcat ID(%d) - PID=%d tag=%d.[%s] \n", log_msg.id(), entry.pid,  entry.tid, entry.tag);
-        printf("entry.message=[%s]\n", entry.message);
-        printf("spd = %f\n", res.speedLimit );
-     // }
-
-      pm.send("liveMapData", msg);
-    }
-
-    android_logger_list_free(logger_list);
-    logger_list = NULL;
-    util::sleep_for(500);
-  }
-
-  if (logger_list) {
-    android_logger_list_free(logger_list);
-  }
-
-  return 0;
-}

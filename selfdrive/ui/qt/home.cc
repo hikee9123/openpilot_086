@@ -115,16 +115,11 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
   if ( QUIState::ui_state.scene.started && btn_Tmap.ptInRect(e->x(), e->y())) {
 
     if ( !QUIState::ui_state.scene.scr.map_is_running ) {
-      //QProcess::execute("am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity");
-      //QUIState::ui_state.scene.scr.map_is_running = true;
-      //QUIState::ui_state.scene.scr.map_on_overlay = false;
       Params().put("OpkrMapEnable", "1");
 
       QUIState::ui_state.scene.scr.map_command_off = 0;
       QUIState::ui_state.scene.scr.map_command_on = 40;  // 2sec
     } else {
-      //QProcess::execute("pkill com.skt.tmap.ku");
-      //QUIState::ui_state.scene.scr.map_is_running = false;
       Params().put("OpkrMapEnable", "0"); 
       QUIState::ui_state.scene.scr.map_command_off = 40;
       QUIState::ui_state.scene.scr.map_command_on = 0;

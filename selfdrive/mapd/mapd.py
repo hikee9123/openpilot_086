@@ -27,8 +27,8 @@ class MapsdThread(threading.Thread):
         self.threadID =  threadID
         self.name  =  name
         self.logger = logging.getLogger( self.name )
-        self.pm = messaging.PubMaster(['liveMapData'])
-        self.logger.debug("entered mapsd_thread, ... %s" % ( str(self.pm)))
+        #self.pm = messaging.PubMaster(['liveMapData'])
+        #self.logger.debug("entered mapsd_thread, ... %s" % ( str(self.pm)))
 
         self.params = Params()
         self.params.put("OpkrMapEnable", "0")
@@ -76,13 +76,14 @@ class MapsdThread(threading.Thread):
 
         if self.map_enabled == 0:
             self.map_exec_status = False
-            os.system("pkill com.skt.tmap.ku")
+            os.system("pkill com.mnsoft.mappyobn")
         elif self.map_exec_status == False: 
             self.map_exec_status = True
-            print( "am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity" )
-            os.system("am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity")
+            #print( "am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity" )
+            #os.system("am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity")
+            os.system("am start com.mnsoft.mappyobn/com.mnsoft.mappy.MainActivity")
             if self.map_enabled == 2:  # Tmap 실행후 Overlay mode로 변경합니다.
-                self.target_speed_map_counter2 = 3
+                self.target_speed_map_counter2 = 10
 
 
 

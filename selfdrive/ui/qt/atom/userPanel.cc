@@ -186,8 +186,7 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
   { 
           if (ConfirmationDialog::confirm("Are you sure you want to exec(com.mixplorer)?")) 
           {
-            //std::system("am start -n com.mixplorer/com.mixplorer.activities.BrowseActivity");
-            std::system("/data/openpilot/run_mixplorer.sh");
+              std::system("/data/openpilot/run_mixplorer.sh");
             
           }
   });
@@ -198,12 +197,7 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
   { 
           if (ConfirmationDialog::confirm("Are you sure you want to exec(Tmap Open)?")) 
           {
-            //std::system("am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity");
             Params().put("OpkrMapEnable", "1");
-            //QProcess::execute("am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity");
-            //QProcess::execute("pkill com.skt.tmap.ku");
-
-            //QProcess::execute("am start --activity-task-on-home com.opkr.maphack/com.opkr.maphack.MainActivity");  // OPKR add map
           }
   });
 
@@ -223,12 +217,7 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
   { 
           if (ConfirmationDialog::confirm("Are you sure you want to exec(Tmap Close)?")) 
           {
-            //std::system("pkill com.skt.tmap.ku");
             Params().put("OpkrMapEnable", "0");
-            //QProcess::execute("am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity");
-            //QProcess::execute("pkill com.skt.tmap.ku");
-
-            //QProcess::execute("am start --activity-task-on-home com.opkr.maphack/com.opkr.maphack.MainActivity");  // OPKR add map
           }
   });
 
