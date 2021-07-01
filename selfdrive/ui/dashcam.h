@@ -26,6 +26,7 @@ dashcam_element lock_button;
 
 extern float  fFontSize;
 
+long nCurrTimeSec = 0;
 int captureState = CAPTURE_STATE_NOT_CAPTURING;
 int captureNum = 0;
 int start_time = 0;
@@ -133,7 +134,7 @@ void stop_capture() {
     printf("stop_capture()\n ");
     system("killall -SIGINT screenrecord");
     captureState = CAPTURE_STATE_NOT_CAPTURING;
-    elapsed_time = get_time() - start_time;
+    elapsed_time = nCurrTimeSec - start_time;
     if (elapsed_time < 3)
     {
       remove_file(videos_dir, filenames[captureNum]);
@@ -190,7 +191,7 @@ void start_capture()
   strcpy(filenames[captureNum], filename);
 
   printf("Capturing to file: %s\n", cmd);
-  start_time = get_time();
+  start_time = nCurrTimeSec;
   system(cmd);
 
   if (lock_current_video)
@@ -311,12 +312,12 @@ static void screen_draw_button(UIState *s, int touch_x, int touch_y, int touched
 
   if ( touched && screen_button_clicked(touch_x, touch_y, btn_x, btn_y, btn_w, btn_h) )
   {
-    click_elapsed_time = get_time() - click_time;
+    click_elapsed_time = nCurrTimeSec - click_time;
 
     printf( "screen_button_clicked %d  captureState = %d \n", click_elapsed_time, captureState );
     if (click_elapsed_time > 0)
     {
-      click_time = get_time() + 1;
+      click_time = nCurrTimeSec + 1;
       screen_toggle_record_state();
     }
   }  
@@ -351,7 +352,7 @@ static void screen_draw_button(UIState *s, int touch_x, int touch_y, int touched
   if (captureState == CAPTURE_STATE_CAPTURING)
   {
 
-    elapsed_time = get_time() - start_time;
+    elapsed_time = nCurrTimeSec - start_time;
     if (elapsed_time >= RECORD_INTERVAL)
     {
       capture_cnt++;
@@ -506,14 +507,19 @@ static void ui_draw_debug1(UIState *s)
 
   if( scene.dash_menu_no == 1 && scene.scr.map_is_running )
   {
-    int  x_pos = s->viz_rect.x + 1000;
-    int  y_pos = 400; 
+    int  x_pos = s->viz_rect.x + 800;
+    int  y_pos = 420; 
+    //long nCurrT = 
+    ui_print( s, x_pos, y_pos+0,   "MS:%.0f", map_sign );
+    ui_print( s, x_pos, y_pos+90,  "Ts:%ld", ts );
+    ui_print( s, x_pos, y_pos+180,  "Dist:%.0f", speedLimitAheadDistance );
+    ui_print( s, x_pos, y_pos+270,  "Spd:%.0f", speedLimit );
+    ui_print( s, x_pos, y_pos+320,  "map:%d,%d", map_enabled, mapValid );
+    ui_print( s, x_pos, y_pos+400,  "CV:%.5f", roadCurvature );
 
-    ui_print( s, x_pos, y_pos+0,   "MS:%.0f, %ld", map_sign, ts );
-    ui_print( s, x_pos, y_pos+90,  "Dist:%.0f", speedLimitAheadDistance );
-    ui_print( s, x_pos, y_pos+180,  "Spd:%.0f", speedLimit );
-    ui_print( s, x_pos, y_pos+270,  "map:%d,%d", map_enabled, mapValid );
-    ui_print( s, x_pos, y_pos+360,  "CV:%.5f", roadCurvature );
+    ui_print( s, x_pos, y_pos+400,  "cT:%ld", nCurrTimeSec );
+
+    
 
 
   } 
@@ -649,6 +655,7 @@ int get_param( const std::string &key )
 
 void update_dashcam(UIState *s, int draw_vision)
 {
+  nCurrTimeSec =  get_time();
   if (!s->awake) return;
   int touch_x = s->scene.mouse.touch_x;
   int touch_y = s->scene.mouse.touch_y;
@@ -719,7 +726,7 @@ void update_dashcam(UIState *s, int draw_vision)
     int engaged = s->scene.controls_state.getEngageable();
     if(  (v_ego < 0.1 || !engaged) )
     {
-      elapsed_time = get_time() - stop_time;
+      elapsed_time = nCurrTimeSec - stop_time;
       if( captureState == CAPTURE_STATE_CAPTURING && elapsed_time > 2 )
       {
         capture_cnt = 0;
@@ -733,7 +740,7 @@ void update_dashcam(UIState *s, int draw_vision)
     }
     else
     {
-      stop_time = get_time();
+      stop_time = nCurrTimeSec;
     }
     
   }

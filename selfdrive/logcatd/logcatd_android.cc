@@ -70,9 +70,14 @@ int main() {
       }
       
 
-      opkr = 0;
+      
      // code based from atom
-      if( strcmp( entry.tag, "opkrspdlimit" ) == 0 )
+      if( strcmp( entry.tag, "Connector" ) == 0 )
+      {
+        long nDelta = entry.tv_sec - res.tv_sec;
+        if( nDelta > 1 ) opkr = 0;
+      }     
+      else if( strcmp( entry.tag, "opkrspdlimit" ) == 0 )
       {
         res.speedLimit = atoi( entry.message );
         opkr = 1;
@@ -92,6 +97,11 @@ int main() {
         res.roadCurvature = atoi( entry.message );
         opkr = 1;
       }
+      else 
+      {
+        opkr = 0;
+      }
+
       if (opkr)
       {
         res.tv_sec = entry.tv_sec;
@@ -134,6 +144,16 @@ int main() {
 
   return 0;
 }
+
+
+/*
+MAPPY
+   124 : 과속방지턱
+   131 : 단속카메라(신호위반카메라)
+   200 : 단속구간(고정형 이동식)
+   165 : 구간단속
+    
+*/
 
 
 // TMAP
