@@ -68,7 +68,7 @@ int main() {
         res.mapEnable = Params().getBool("OpkrMapEnable");
       }
       
-      //  안심모드
+
       opkr = 0;
      // code based from atom
       if( strcmp( entry.tag, "opkrspdlimit" ) == 0 )
@@ -149,3 +149,9 @@ int main() {
     46.
     63  졸움쉼터  x
 */
+
+ // 1. 안심모드
+    // - opkrspd2dist, opkrspdsign, opkrspdlimit,
+
+//  2. overlay mode
+    // - opkrspd2limit, opkrsigntype, opkrspddist
