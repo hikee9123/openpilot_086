@@ -492,7 +492,7 @@ static void ui_draw_debug1(UIState *s)
   UIScene &scene = s->scene;
   
   nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
-  nvgFontSize(s->vg, 36*1.9);
+  nvgFontSize(s->vg, 36*2);
 
   long  ts = scene.liveMapData.getTs();
   float speedLimit = scene.liveMapData.getSpeedLimit();  
@@ -506,14 +506,14 @@ static void ui_draw_debug1(UIState *s)
 
   if( scene.dash_menu_no == 1 && scene.scr.map_is_running )
   {
-    int  x_pos = s->viz_rect.x + 1100;
+    int  x_pos = s->viz_rect.x + 1000;
     int  y_pos = 400; 
 
     ui_print( s, x_pos, y_pos+0,   "MS:%.0f, %ld", map_sign, ts );
-    ui_print( s, x_pos, y_pos+100,  "Dist:%.0f", speedLimitAheadDistance );
-    ui_print( s, x_pos, y_pos+200,  "Spd:%.0f", speedLimit );
-    ui_print( s, x_pos, y_pos+300,  "map:%d,%d", map_enabled, mapValid );
-    ui_print( s, x_pos, y_pos+400,  "map:%.2f", roadCurvature );
+    ui_print( s, x_pos, y_pos+90,  "Dist:%.0f", speedLimitAheadDistance );
+    ui_print( s, x_pos, y_pos+180,  "Spd:%.0f", speedLimit );
+    ui_print( s, x_pos, y_pos+270,  "map:%d,%d", map_enabled, mapValid );
+    ui_print( s, x_pos, y_pos+360,  "CV:%.5f", roadCurvature );
 
 
   } 
