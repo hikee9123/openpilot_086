@@ -17,6 +17,7 @@ typedef struct LiveMapDataResult {
       float roadCurvature;    // Float32;
       bool  mapValid;    // bool;
       bool  mapEnable;    // bool;
+      long  tv_sec;
 } LiveMapDataResult;
 
 
@@ -91,13 +92,17 @@ int main() {
         res.roadCurvature = atoi( entry.message );
         opkr = 1;
       }
-
+      if (opkr)
+      {
+        res.tv_sec = entry.tv_sec;
+      }
+      
       res.mapValid = opkr;
 
       MessageBuilder msg;
       auto framed = msg.initEvent().initLiveMapData();
       framed.setId(log_msg.id());
-      framed.setTs( entry.tv_sec );
+      framed.setTs( res.tv_sec );
       framed.setSpeedLimit( res.speedLimit );  // Float32;
       framed.setSpeedLimitDistance( res.speedLimitDistance );  // raw_target_speed_map_dist Float32;
       framed.setSafetySign( res.safetySign ); // map_sign Float32;
