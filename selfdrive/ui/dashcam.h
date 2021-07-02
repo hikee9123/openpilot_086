@@ -507,7 +507,7 @@ static void ui_draw_debug1(UIState *s)
 
   if( scene.dash_menu_no == 1 && scene.scr.map_is_running )
   {
-    int  x_pos = s->viz_rect.x + 800;
+    int  x_pos = s->viz_rect.x + 700;
     int  y_pos = 420; 
     //long nCurrT = 
     ui_print( s, x_pos, y_pos+0,   "MS:%.0f", map_sign );
