@@ -54,6 +54,7 @@ class MapsdThread(threading.Thread):
         self.target_speed_map_counter_check = False
 
         self.map_exec_status= False
+        self.programRun = True
 
 
     def opkr_map_status_read(self):        
@@ -66,7 +67,9 @@ class MapsdThread(threading.Thread):
             if self.target_speed_map_counter2  == 0:
                 print( "am start --activity-task-on-home com.opkr.maphack/com.opkr.maphack.MainActivity" )
                 os.system("am start --activity-task-on-home com.opkr.maphack/com.opkr.maphack.MainActivity")
-            return
+                self.params.put("OpkrMapEnable", "1")
+                self.programRun = False
+                return
 
         if( self.map_enabled == self.old_map_enable ):
             return
@@ -98,7 +101,7 @@ class MapsdThread(threading.Thread):
             self.params.put("OpkrMapEnable", "2")
 
         start = time.time()
-        while True:
+        while self.programRun:
             if time.time() - start < 1.0:
               time.sleep(1.0)
               continue
