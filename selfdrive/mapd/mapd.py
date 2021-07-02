@@ -101,7 +101,7 @@ class MapsdThread(threading.Thread):
             self.params.put("OpkrMapEnable", "2")
 
         start = time.time()
-        while self.programRun:
+        while True:
             if time.time() - start < 1.0:
               time.sleep(1.0)
               continue
