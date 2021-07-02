@@ -83,7 +83,7 @@ class MapsdThread(threading.Thread):
             #os.system("am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity")
             os.system("am start com.mnsoft.mappyobn/com.mnsoft.mappy.MainActivity &")
             if self.map_enabled == 2:  # Tmap 실행후 Overlay mode로 변경합니다.
-                self.target_speed_map_counter2 = 5
+                self.target_speed_map_counter2 = 3
 
 
 
