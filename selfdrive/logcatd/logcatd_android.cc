@@ -23,7 +23,7 @@ typedef struct LiveMapDataResult {
 
 int main() {
   setpriority(PRIO_PROCESS, 0, -15);
-   
+   long  nDelta = 0;
   int     opkr =0;
   int     nTime = 0;
   ExitHandler do_exit;
@@ -74,7 +74,7 @@ int main() {
      // code based from atom
       if( strcmp( entry.tag, "Connector" ) == 0 )
       {
-        long nDelta = entry.tv_sec - res.tv_sec;
+        nDelta = entry.tv_sec - res.tv_sec;
         if( nDelta > 1 ) opkr = 0;
       }     
       else if( strcmp( entry.tag, "opkrspdlimit" ) == 0 )
@@ -99,7 +99,8 @@ int main() {
       }
       else 
       {
-        opkr = 0;
+        nDelta = entry.tv_sec - res.tv_sec;
+        if( nDelta > 1 ) opkr = 0;
       }
 
       if (opkr)
