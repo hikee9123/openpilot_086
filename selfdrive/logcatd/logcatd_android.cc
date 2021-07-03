@@ -27,7 +27,7 @@ int main() {
    long  nDelta = 0;
   int     opkr =0;
   int     nTime = 0;
-  long tv_nsec1, tv_nsec;
+  long    tv_nsec;
   float tv_nsec2;
 
   ExitHandler do_exit;
