@@ -532,7 +532,7 @@ static void ui_draw_debug1(UIState *s)
        else if( speedLimit <= 100 )  name = name_sped[7];
        else if( speedLimit <= 110 )  name = name_sped[8];
     }
-    
+  
     if( name ) 
     {
       int img_speedlimit_size = 472;
