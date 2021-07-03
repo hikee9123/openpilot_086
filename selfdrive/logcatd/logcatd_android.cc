@@ -18,6 +18,7 @@ typedef struct LiveMapDataResult {
       bool  mapValid;    // bool;
       bool  mapEnable;    // bool;
       long  tv_sec;
+      long  tv_nsec;
 } LiveMapDataResult;
 
 
