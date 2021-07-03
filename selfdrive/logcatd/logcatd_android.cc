@@ -75,7 +75,8 @@ int main() {
      nDelta = entry.tv_sec - res.tv_sec;
       if( strcmp( entry.tag, "Connector" ) == 0 )
       {
-        opkr = 5;
+         if( opkr == 1 )
+           opkr = 5;
       }     
       else if( strcmp( entry.tag, "opkrspdlimit" ) == 0 )
       {
@@ -99,12 +100,10 @@ int main() {
       }
       else if( strcmp( entry.tag, "audio_hw_primary" ) == 0 )
       {
-        
           opkr = 2;
       }
       else if( strcmp( entry.tag, "msm8974_platform" ) == 0 )
       {
-        
           opkr = 2;
       }      
       else if( opkr == 1 )
@@ -118,12 +117,10 @@ int main() {
       }
       else if ( opkr == 2 )
       {
-        nDelta = entry.tv_sec - res.tv_sec;
         if( nDelta > 1 ) opkr = 0;
       }
       else if ( opkr )
       {
-        nDelta = entry.tv_sec - res.tv_sec;
         if( nDelta >= opkr ) opkr = 0;
       }
 
