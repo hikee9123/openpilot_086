@@ -488,6 +488,43 @@ static void ui_draw_modeSel(UIState *s)
 }
 
 
+static void ui_draw_traffic_sign(UIState *s, float speedLimit,  float speedLimitAheadDistance ) 
+{
+    const char *traffic_sign = NULL;
+    const char *name_sped[] = {"speed_30","speed_40","speed_50","speed_60","speed_70","speed_80","speed_90","speed_100","speed_110"};
+    if( mapValid == 1 )
+    {
+       if( speedLimit <= 30 )  traffic_sign = name_sped[0];
+       else if( speedLimit <= 40 )  traffic_sign = name_sped[1];
+       else if( speedLimit <= 50 )  traffic_sign = name_sped[2];
+       else if( speedLimit <= 60 )  traffic_sign = name_sped[3];
+       else if( speedLimit <= 70 )  traffic_sign = name_sped[4];
+       else if( speedLimit <= 80 )  traffic_sign = name_sped[5];
+       else if( speedLimit <= 90 )  traffic_sign = name_sped[6];
+       else if( speedLimit <= 100 )  traffic_sign = name_sped[7];
+       else if( speedLimit <= 110 )  traffic_sign = name_sped[8];
+    }
+  
+    if( traffic_sign ) 
+    {
+      int img_speedlimit_size = 400;   // 472
+      int img_speedlimit_x = s->viz_rect.centerX() - img_speedlimit_size/2;
+      int img_speedlimit_y = s->viz_rect.centerY() - img_speedlimit_size/2;
+      float img_speedlimit_alpha = 0.35f;
+      ui_draw_image(s, {img_speedlimit_x, img_speedlimit_y, img_speedlimit_size, img_speedlimit_size}, traffic_sign, img_speedlimit_alpha);
+
+
+      nvgFontFace(s->vg, "sans-regular");
+      nvgFontSize(s->vg, 100);
+      nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
+      img_speedlimit_y += 500;
+      if( speedLimitAheadDistance >= 1000 )
+        ui_print( s, img_speedlimit_x, img_speedlimit_y,  "%.3f Km", speedLimitAheadDistance * 0.001 );
+      else
+        ui_print( s, img_speedlimit_x, img_speedlimit_y,  "%.0f mm", speedLimitAheadDistance );
+    }
+}
+
 static void ui_draw_debug1(UIState *s) 
 {
   UIScene &scene = s->scene;
@@ -517,36 +554,10 @@ static void ui_draw_debug1(UIState *s)
     ui_print( s, x_pos, y_pos+350,  "map:%d,%d", map_enabled, mapValid );
     //ui_print( s, x_pos, y_pos+400,  "CV:%.5f", roadCurvature );
     //ui_print( s, x_pos, y_pos+490,  "cT:%ld", nCurrTimeSec );
-  
-    const char *traffic_sign = NULL;
-    const char *name_sped[] = {"speed_30","speed_40","speed_50","speed_60","speed_70","speed_80","speed_90","speed_100","speed_110"};
-    if( mapValid == 1 )
-    {
-       if( speedLimit <= 30 )  traffic_sign = name_sped[0];
-       else if( speedLimit <= 40 )  traffic_sign = name_sped[1];
-       else if( speedLimit <= 50 )  traffic_sign = name_sped[2];
-       else if( speedLimit <= 60 )  traffic_sign = name_sped[3];
-       else if( speedLimit <= 70 )  traffic_sign = name_sped[4];
-       else if( speedLimit <= 80 )  traffic_sign = name_sped[5];
-       else if( speedLimit <= 90 )  traffic_sign = name_sped[6];
-       else if( speedLimit <= 100 )  traffic_sign = name_sped[7];
-       else if( speedLimit <= 110 )  traffic_sign = name_sped[8];
-    }
-  
-    if( traffic_sign ) 
-    {
-      int img_speedlimit_size = 472;
-      int img_speedlimit_x = s->viz_rect.centerX() - img_speedlimit_size/2;
-      int img_speedlimit_y = s->viz_rect.centerY() - img_speedlimit_size/2;
-      float img_speedlimit_alpha = 0.35f;
-      ui_draw_image(s, {img_speedlimit_x, img_speedlimit_y, img_speedlimit_size, img_speedlimit_size}, traffic_sign, img_speedlimit_alpha);
-
-      nvgFontFace(s->vg, "sans-regular");
-      nvgFontSize(s->vg, 100);
-      nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
-      ui_print( s, img_speedlimit_x, img_speedlimit_y+200,  "%.3f Km", speedLimitAheadDistance * 0.001 );
-    }
   } 
+
+  if( mapValid )
+    ui_draw_traffic_sign( s, speedLimit, speedLimitAheadDistance );
 
   nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
   //  1035, 1078
