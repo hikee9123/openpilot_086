@@ -495,11 +495,11 @@ static void ui_draw_debug1(UIState *s)
   nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
   nvgFontSize(s->vg, 36*2);
 
-  long  ts = scene.liveMapData.getTs();
+  //long  ts = scene.liveMapData.getTs();
   float speedLimit = scene.liveMapData.getSpeedLimit();  
   float speedLimitAheadDistance = scene.liveMapData.getSpeedLimitDistance();  
   float map_sign = scene.liveMapData.getSafetySign();
-  float  roadCurvature = scene.liveMapData.getRoadCurvature();
+  //float  roadCurvature = scene.liveMapData.getRoadCurvature();
 
   int mapValid = scene.liveMapData.getMapValid();
   int  map_enabled = scene.liveMapData.getMapEnable();
@@ -519,17 +519,18 @@ static void ui_draw_debug1(UIState *s)
     //ui_print( s, x_pos, y_pos+490,  "cT:%ld", nCurrTimeSec );
   
     char *name = NULL;
+    char *name_sped[] = {"speed_30","speed_40","speed_50","speed_60","speed_70","speed_80","speed_90","speed_100","speed_110"};
     if( mapValid == 1 )
     {
-       if( speedLimit <= 30 )  name = "speed_30";
-       else if( speedLimit <= 40 )  name = "speed_40";
-       else if( speedLimit <= 50 )  name = "speed_50";
-       else if( speedLimit <= 60 )  name = "speed_60";
-       else if( speedLimit <= 70 )  name = "speed_70";
-       else if( speedLimit <= 80 )  name = "speed_80";
-       else if( speedLimit <= 90 )  name = "speed_90";
-       else if( speedLimit <= 100 )  name = "speed_100";
-       else if( speedLimit <= 110 )  name = "speed_110";
+       if( speedLimit <= 30 )  name = name_sped[0];
+       else if( speedLimit <= 40 )  name = name_sped[1];
+       else if( speedLimit <= 50 )  name = name_sped[2];
+       else if( speedLimit <= 60 )  name = name_sped[3];
+       else if( speedLimit <= 70 )  name = name_sped[4];
+       else if( speedLimit <= 80 )  name = name_sped[5];
+       else if( speedLimit <= 90 )  name = name_sped[6];
+       else if( speedLimit <= 100 )  name = name_sped[7];
+       else if( speedLimit <= 110 )  name = name_sped[8];
     }
     
     if( name ) 
