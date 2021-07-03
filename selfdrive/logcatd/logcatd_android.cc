@@ -119,7 +119,7 @@ int main() {
       else if ( opkr == 2 )
       {
         nDelta = entry.tv_sec - res.tv_sec;
-        if( nDelta >= 1 ) opkr = 0;
+        if( nDelta > 1 ) opkr = 0;
       }
       else if ( opkr )
       {
