@@ -63,6 +63,10 @@ int main() {
       last_log_time.tv_sec = entry.tv_sec;
       last_log_time.tv_nsec = entry.tv_nsec;
 
+
+
+      tv_nsec =  entry.tv_sec * 1000000000ULL + entry.tv_nsec;
+
       nTime++;
       if( nTime > 10 )
       {
@@ -115,6 +119,7 @@ int main() {
       if ( opkr == 1 )
       {
         res.tv_sec = entry.tv_sec;
+        res.tv_nsec = tv_nsec;
       }
       else if ( opkr == 2 )
       {
