@@ -510,18 +510,20 @@ static void ui_draw_traffic_sign(UIState *s, float speedLimit,  float speedLimit
       int img_speedlimit_size = 400;   // 472
       int img_speedlimit_x = s->viz_rect.centerX() - img_speedlimit_size/2;
       int img_speedlimit_y = s->viz_rect.centerY() - img_speedlimit_size/2;
-      float img_speedlimit_alpha = 0.35f;
+      float img_speedlimit_alpha = 0.3f;
       ui_draw_image(s, {img_speedlimit_x, img_speedlimit_y, img_speedlimit_size, img_speedlimit_size}, traffic_sign, img_speedlimit_alpha);
 
 
       nvgFontFace(s->vg, "sans-regular");
       nvgFontSize(s->vg, 100);
       nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
-      img_speedlimit_y += 500;
+      img_speedlimit_y += 450;
+      img_speedlimit_x += img_speedlimit_size/2;
+
       if( speedLimitAheadDistance >= 1000 )
-        ui_print( s, img_speedlimit_x, img_speedlimit_y,  "%.3f Km", speedLimitAheadDistance * 0.001 );
+        ui_print( s, img_speedlimit_x, img_speedlimit_y,  "%.3fKm", speedLimitAheadDistance * 0.001 );
       else
-        ui_print( s, img_speedlimit_x, img_speedlimit_y,  "%.0f mm", speedLimitAheadDistance );
+        ui_print( s, img_speedlimit_x, img_speedlimit_y,  "%.0fmm", speedLimitAheadDistance );
     }
 }
 
