@@ -72,10 +72,10 @@ int main() {
 
       
      // code based from atom
+     nDelta = entry.tv_sec - res.tv_sec;
       if( strcmp( entry.tag, "Connector" ) == 0 )
       {
-        nDelta = entry.tv_sec - res.tv_sec;
-        if( nDelta > 1 ) opkr = 0;
+        if( nDelta > 5 ) opkr = 0;
       }     
       else if( strcmp( entry.tag, "opkrspdlimit" ) == 0 )
       {
@@ -97,18 +97,40 @@ int main() {
         res.roadCurvature = atoi( entry.message );
         opkr = 1;
       }
-      else 
+      else if( strcmp( entry.tag, "audio_hw_primary" ) == 0 )
       {
-        nDelta = entry.tv_sec - res.tv_sec;
-        if( nDelta > 1 ) opkr = 0;
+        if( opkr == 1 )
+          opkr = 2;
+      }
+      else if( strcmp( entry.tag, "msm8974_platform" ) == 0 )
+      {
+        if( opkr == 1 )
+          opkr = 2;
+      }      
+      else if( opkr == 1 )
+      {
+        if( nDelta > 5 ) opkr = 0;
       }
 
-      if (opkr)
+      if ( opkr == 1 )
       {
         res.tv_sec = entry.tv_sec;
       }
-      
-      res.mapValid = opkr;
+      else if ( opkr == 2 )
+      {
+        nDelta = entry.tv_sec - res.tv_sec;
+        if( nDelta >= 1 ) opkr = 0;
+      }
+      else if ( opkr )
+      {
+        nDelta = entry.tv_sec - res.tv_sec;
+        if( nDelta >= opkr ) opkr = 0;
+      }
+
+      if ( opkr )
+         res.mapValid = 1;
+      else
+         res.mapValid = 0;
 
       MessageBuilder msg;
       auto framed = msg.initEvent().initLiveMapData();

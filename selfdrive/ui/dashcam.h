@@ -509,21 +509,45 @@ static void ui_draw_debug1(UIState *s)
   {
     int  x_pos = s->viz_rect.x + 700;
     int  y_pos = 420; 
-    //long nCurrT = 
+
     ui_print( s, x_pos, y_pos+0,   "MS:%.0f", map_sign );
-    ui_print( s, x_pos, y_pos+90,  "Ts:%ld", ts );
+    //ui_print( s, x_pos, y_pos+90,  "Ts:%ld", ts );
     ui_print( s, x_pos, y_pos+180,  "Dist:%.0f", speedLimitAheadDistance );
     ui_print( s, x_pos, y_pos+270,  "Spd:%.0f", speedLimit );
     ui_print( s, x_pos, y_pos+320,  "map:%d,%d", map_enabled, mapValid );
-    ui_print( s, x_pos, y_pos+400,  "CV:%.5f", roadCurvature );
-
-    ui_print( s, x_pos, y_pos+490,  "cT:%ld", nCurrTimeSec );
-
+    //ui_print( s, x_pos, y_pos+400,  "CV:%.5f", roadCurvature );
+    //ui_print( s, x_pos, y_pos+490,  "cT:%ld", nCurrTimeSec );
+  
+    char *name = NULL;
+    if( mapValid == 1 )
+    {
+       if( speedLimit <= 30 )  name = "speed_30";
+       else if( speedLimit <= 40 )  name = "speed_40";
+       else if( speedLimit <= 50 )  name = "speed_50";
+       else if( speedLimit <= 60 )  name = "speed_60";
+       else if( speedLimit <= 70 )  name = "speed_70";
+       else if( speedLimit <= 80 )  name = "speed_80";
+       else if( speedLimit <= 90 )  name = "speed_90";
+       else if( speedLimit <= 100 )  name = "speed_100";
+       else if( speedLimit <= 110 )  name = "speed_110";
+    }
     
+    if( name ) 
+    {
+      int img_speedlimit_size = 472;
+      int img_speedlimit_x = s->viz_rect.centerX() - img_speedlimit_size/2;
+      int img_speedlimit_y = s->viz_rect.centerY() - img_speedlimit_size/2;
+      float img_speedlimit_alpha = 0.35f;
+      ui_draw_image(s, {img_speedlimit_x, img_speedlimit_y, img_speedlimit_size, img_speedlimit_size}, name, img_speedlimit_alpha);
 
-
+      nvgFontFace(s->vg, "sans-regular");
+      nvgFontSize(s->vg, 100);
+      nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
+      ui_print( s, img_speedlimit_x, img_speedlimit_y+200,  "%.3f Km", speedLimitAheadDistance * 0.001 );
+    }
   } 
 
+  nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
   //  1035, 1078
   ui_draw_text1(s, 0, 30, scene.alert.alertTextMsg1.c_str(), 45, COLOR_WHITE, "sans-regular");
   ui_draw_text1(s, 0, 1040, scene.alert.alertTextMsg2.c_str(), 45, COLOR_WHITE, "sans-regular");

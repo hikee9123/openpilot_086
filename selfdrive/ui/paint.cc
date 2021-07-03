@@ -827,6 +827,18 @@ void ui_nvg_init(UIState *s) {
     {"driver_face", "../assets/img_driver_face.png"},
     {"compass", "../assets/compass/img_compass.png"},
     {"direction", "../assets/compass/img_direction.png"},
+
+    {"speed_30", "../assets/navigation/img_30_speedahead.png"},
+    {"speed_40", "../assets/navigation/img_40_speedahead.png"},
+    {"speed_50", "../assets/navigation/img_50_speedahead.png"},
+    {"speed_60", "../assets/navigation/img_60_speedahead.png"},
+    {"speed_70", "../assets/navigation/img_70_speedahead.png"},
+    {"speed_80", "../assets/navigation/img_80_speedahead.png"},
+    {"speed_90", "../assets/navigation/img_90_speedahead.png"},
+    {"speed_100", "../assets/navigation/img_100_speedahead.png"},
+    {"speed_110", "../assets/navigation/img_110_speedahead.png"},
+    {"car_left", "../assets/navigation/img_car_left.png"},
+    {"car_right", "../assets/navigation/img_car_right.png"},    
   };
   for (auto [name, file] : images) {
     s->images[name] = nvgCreateImage(s->vg, file, 1);

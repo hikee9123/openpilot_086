@@ -97,19 +97,6 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
     }
   }
 
-   // OPKR Code
-  if (QUIState::ui_state.scene.started && btn_map_overlay.ptInRect(e->x(), e->y())) {
-    if( QUIState::ui_state.scene.scr.map_is_running )
-    {
-      QProcess::execute("am start --activity-task-on-home com.opkr.maphack/com.opkr.maphack.MainActivity");
-      QUIState::ui_state.scene.scr.map_on_overlay = true;
-    }
-
-    //QSoundEffect effect1;
-    //effect1.setSource(QUrl::fromLocalFile("/data/openpilot/selfdrive/assets/sounds/warning_1.wav"));
-    //effect1.play();
-    return;
-  }
 
 
   if ( QUIState::ui_state.scene.started && btn_Tmap.ptInRect(e->x(), e->y())) {
