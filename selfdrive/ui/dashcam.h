@@ -518,8 +518,8 @@ static void ui_draw_debug1(UIState *s)
     //ui_print( s, x_pos, y_pos+400,  "CV:%.5f", roadCurvature );
     //ui_print( s, x_pos, y_pos+490,  "cT:%ld", nCurrTimeSec );
   
-    char *name = NULL;
-    char *name_sped[] = {"speed_30","speed_40","speed_50","speed_60","speed_70","speed_80","speed_90","speed_100","speed_110"};
+    const char *name = NULL;
+    const char *name_sped[] = {"speed_30","speed_40","speed_50","speed_60","speed_70","speed_80","speed_90","speed_100","speed_110"};
     if( mapValid == 1 )
     {
        if( speedLimit <= 30 )  name = name_sped[0];
