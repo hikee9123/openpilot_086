@@ -1309,7 +1309,7 @@ struct LiveMapData {
   safetySign @4 :Float32;
   roadCurvature @5 :Float32;
   mapValid @6 :Bool;
-  mapEnable @7 :Bool;
+  mapEnable @7 :Int32;
 }
 
 struct CameraOdometry {
