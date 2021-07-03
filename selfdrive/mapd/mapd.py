@@ -90,8 +90,8 @@ class MapsdThread(threading.Thread):
             if self.map_enabled == 2:  # map 실행후 2초후 Overlay mode로 변경합니다.
                 self.target_speed_map_counter2 = 2
         elif self.map_enabled == 2:
-            #os.system("am start com.mnsoft.mappyobn/com.mnsoft.mappy.MainActivity &")
-            os.system("am start --activity-task-on-home com.opkr.maphack/com.opkr.maphack.MainActivity")
+            # map return 
+            os.system("am start --activity-task-on-home com.mnsoft.mappyobn/com.mnsoft.mappy.MainActivity") 
             self.params.put("OpkrMapEnable", "1")
 
 
