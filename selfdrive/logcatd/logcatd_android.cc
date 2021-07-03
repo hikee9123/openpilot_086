@@ -64,8 +64,8 @@ int main() {
       last_log_time.tv_nsec = entry.tv_nsec;
 
 
-
-      tv_nsec =  entry.tv_sec * 1000000000ULL + entry.tv_nsec;
+      long tv_nsec1 = entry.tv_nsec / 1000000;
+      long tv_nsec =  entry.tv_sec * 1000000000ULL + entry.tv_nsec;
 
       nTime++;
       if( nTime > 10 )
