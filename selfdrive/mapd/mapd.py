@@ -79,14 +79,20 @@ class MapsdThread(threading.Thread):
 
         if self.map_enabled == 0:
             self.map_exec_status = False
-            os.system("pkill com.mnsoft.mappyobn")
+            # os.system("pkill com.mnsoft.mappyobn")
+            # map return
+            os.system("am start --activity-task-on-home com.mnsoft.mappyobn/com.mnsoft.mappy.MainActivity")
         elif self.map_exec_status == False: 
             self.map_exec_status = True
             #print( "am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity" )
             #os.system("am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity")
             os.system("am start com.mnsoft.mappyobn/com.mnsoft.mappy.MainActivity &")
-            if self.map_enabled == 2:  # Tmap 실행후 Overlay mode로 변경합니다.
-                self.target_speed_map_counter2 = 3
+            if self.map_enabled == 2:  # map 실행후 2초후 Overlay mode로 변경합니다.
+                self.target_speed_map_counter2 = 2
+         elif self.map_enabled == 2:
+               #os.system("am start com.mnsoft.mappyobn/com.mnsoft.mappy.MainActivity &")
+               os.system("am start --activity-task-on-home com.opkr.maphack/com.opkr.maphack.MainActivity")
+               self.params.put("OpkrMapEnable", "1")
 
 
 
