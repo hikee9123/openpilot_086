@@ -518,28 +518,28 @@ static void ui_draw_debug1(UIState *s)
     //ui_print( s, x_pos, y_pos+400,  "CV:%.5f", roadCurvature );
     //ui_print( s, x_pos, y_pos+490,  "cT:%ld", nCurrTimeSec );
   
-    const char *name = NULL;
+    const char *traffic_sign = NULL;
     const char *name_sped[] = {"speed_30","speed_40","speed_50","speed_60","speed_70","speed_80","speed_90","speed_100","speed_110"};
     if( mapValid == 1 )
     {
-       if( speedLimit <= 30 )  name = name_sped[0];
-       else if( speedLimit <= 40 )  name = name_sped[1];
-       else if( speedLimit <= 50 )  name = name_sped[2];
-       else if( speedLimit <= 60 )  name = name_sped[3];
-       else if( speedLimit <= 70 )  name = name_sped[4];
-       else if( speedLimit <= 80 )  name = name_sped[5];
-       else if( speedLimit <= 90 )  name = name_sped[6];
-       else if( speedLimit <= 100 )  name = name_sped[7];
-       else if( speedLimit <= 110 )  name = name_sped[8];
+       if( speedLimit <= 30 )  traffic_sign = name_sped[0];
+       else if( speedLimit <= 40 )  traffic_sign = name_sped[1];
+       else if( speedLimit <= 50 )  traffic_sign = name_sped[2];
+       else if( speedLimit <= 60 )  traffic_sign = name_sped[3];
+       else if( speedLimit <= 70 )  traffic_sign = name_sped[4];
+       else if( speedLimit <= 80 )  traffic_sign = name_sped[5];
+       else if( speedLimit <= 90 )  traffic_sign = name_sped[6];
+       else if( speedLimit <= 100 )  traffic_sign = name_sped[7];
+       else if( speedLimit <= 110 )  traffic_sign = name_sped[8];
     }
   
-    if( name ) 
+    if( traffic_sign ) 
     {
       int img_speedlimit_size = 472;
       int img_speedlimit_x = s->viz_rect.centerX() - img_speedlimit_size/2;
       int img_speedlimit_y = s->viz_rect.centerY() - img_speedlimit_size/2;
       float img_speedlimit_alpha = 0.35f;
-      ui_draw_image(s, {img_speedlimit_x, img_speedlimit_y, img_speedlimit_size, img_speedlimit_size}, name, img_speedlimit_alpha);
+      ui_draw_image(s, {img_speedlimit_x, img_speedlimit_y, img_speedlimit_size, img_speedlimit_size}, traffic_sign, img_speedlimit_alpha);
 
       nvgFontFace(s->vg, "sans-regular");
       nvgFontSize(s->vg, 100);
