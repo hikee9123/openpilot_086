@@ -492,8 +492,8 @@ static void ui_draw_traffic_sign(UIState *s, float speedLimit,  float speedLimit
 {
     const char *traffic_sign = NULL;
     const char *name_sped[] = {"speed_30","speed_40","speed_50","speed_60","speed_70","speed_80","speed_90","speed_100","speed_110"};
-    if( mapValid == 1 )
-    {
+    //if( mapValid == 1 )
+    //{
        if( speedLimit <= 30 )  traffic_sign = name_sped[0];
        else if( speedLimit <= 40 )  traffic_sign = name_sped[1];
        else if( speedLimit <= 50 )  traffic_sign = name_sped[2];
@@ -503,7 +503,7 @@ static void ui_draw_traffic_sign(UIState *s, float speedLimit,  float speedLimit
        else if( speedLimit <= 90 )  traffic_sign = name_sped[6];
        else if( speedLimit <= 100 )  traffic_sign = name_sped[7];
        else if( speedLimit <= 110 )  traffic_sign = name_sped[8];
-    }
+    //}
   
     if( traffic_sign ) 
     {
