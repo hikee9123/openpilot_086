@@ -71,7 +71,7 @@ int main() {
       if( nTime > 10 )
       {
         nTime = 0;
-        res.mapEnable = Params().getBool("OpkrMapEnable");
+        res.mapEnable = Params().getInt("OpkrMapEnable");
       }
       
 
