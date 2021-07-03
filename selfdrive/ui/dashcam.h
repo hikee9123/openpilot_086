@@ -744,11 +744,16 @@ void update_dashcam(UIState *s, int draw_vision)
     }
   }
 
-  if( is_map_program  )
+  if( is_map_program )
   {
-    fillColor = nvgRGBA(255,0,0,255);
+    if( is_map_program == 1 )
+      fillColor = nvgRGBA(255,0,0,255);
+    else
+      fillColor = nvgRGBA(100,0,0,255);
+
     txtColor = nvgRGBA(255, 255, 255, 255);
   }
+
 
    
   draw_button( s, "NAVI", btn_Tmap, fillColor, txtColor );
