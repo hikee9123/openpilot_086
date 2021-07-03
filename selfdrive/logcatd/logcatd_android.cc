@@ -68,7 +68,8 @@ int main() {
 
 
       tv_nsec2 = entry.tv_nsec / 1000000;
-      tv_nsec =  entry.tv_sec * 1000000000ULL + entry.tv_nsec;
+      tv_nsec =  entry.tv_sec * 1000ULL + long(tv_nsec2);
+      printf("nsec  %f  %ld \n", tv_nsec2, tv_nsec);
 
       nTime++;
       if( nTime > 10 )
