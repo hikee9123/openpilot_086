@@ -514,7 +514,7 @@ static void ui_draw_debug1(UIState *s)
     //ui_print( s, x_pos, y_pos+90,  "Ts:%ld", ts );
     ui_print( s, x_pos, y_pos+180,  "Dist:%.0f", speedLimitAheadDistance );
     ui_print( s, x_pos, y_pos+270,  "Spd:%.0f", speedLimit );
-    ui_print( s, x_pos, y_pos+320,  "map:%d,%d", map_enabled, mapValid );
+    ui_print( s, x_pos, y_pos+350,  "map:%d,%d", map_enabled, mapValid );
     //ui_print( s, x_pos, y_pos+400,  "CV:%.5f", roadCurvature );
     //ui_print( s, x_pos, y_pos+490,  "cT:%ld", nCurrTimeSec );
   
