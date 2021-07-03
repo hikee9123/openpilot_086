@@ -27,6 +27,9 @@ int main() {
    long  nDelta = 0;
   int     opkr =0;
   int     nTime = 0;
+  long tv_nsec1, tv_nsec;
+  float tv_nsec2;
+
   ExitHandler do_exit;
   PubMaster pm({"liveMapData"});
   LiveMapDataResult  res;
@@ -64,8 +67,8 @@ int main() {
       last_log_time.tv_nsec = entry.tv_nsec;
 
 
-      long tv_nsec1 = entry.tv_nsec / 1000000;
-      long tv_nsec =  entry.tv_sec * 1000000000ULL + entry.tv_nsec;
+      tv_nsec2 = entry.tv_nsec / 1000000;
+      tv_nsec =  entry.tv_sec * 1000000000ULL + entry.tv_nsec;
 
       nTime++;
       if( nTime > 10 )
