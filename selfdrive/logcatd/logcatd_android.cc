@@ -16,7 +16,7 @@ typedef struct LiveMapDataResult {
       float safetySign;    // Float32;
       float roadCurvature;    // Float32;
       bool  mapValid;    // bool;
-      bool  mapEnable;    // bool;
+      int   mapEnable;    // bool;
       long  tv_sec;
       long  tv_nsec;
 } LiveMapDataResult;
