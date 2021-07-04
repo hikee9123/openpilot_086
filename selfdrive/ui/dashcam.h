@@ -493,9 +493,9 @@ static void ui_draw_traffic_sign(UIState *s, float map_sign, float speedLimit,  
     const char *traffic_sign = NULL;
     const char *name_sped[] = {"speed_var","speed_30","speed_40","speed_50","speed_60","speed_70","speed_80","speed_90","speed_100","speed_110","traf_turn"};
 
-    if( map_sign == 113 ) traffic_sign = name_sped[10];  // 굽은도로
-    else if( speedLimit == 0 && speedLimitAheadDistance != 0 ) traffic_sign = name_sped[0];  // 가변 단속.
-    else if( speedLimit <= 10 )  traffic_sign = NULL;
+    //if( map_sign == 113 ) traffic_sign = name_sped[10];  // 굽은도로
+   // else if( speedLimit == 0 && speedLimitAheadDistance != 0 ) traffic_sign = name_sped[0];  // 가변 단속.
+    if( speedLimit <= 10 )  traffic_sign = NULL;
     else if( speedLimit <= 30 )  traffic_sign = name_sped[1];
     else if( speedLimit <= 40 )  traffic_sign = name_sped[2];
     else if( speedLimit <= 50 )  traffic_sign = name_sped[3];
