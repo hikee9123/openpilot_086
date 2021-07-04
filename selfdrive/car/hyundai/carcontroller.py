@@ -328,4 +328,16 @@ class CarController():
 
     # counter inc
     self.lkas11_cnt += 1
+    self.update_navibtn( sm, CS )
     return can_sends
+
+
+  def update_navibtn(self, sm, CS):
+    if CS.cruise_buttons != Buttons.CANCEL:     
+      return
+
+    liveMapData = sm['liveMapData']
+    if liveMapData.mapEnable != 2:
+       self.params.put("OpkrMapEnable", "2")
+
+    return

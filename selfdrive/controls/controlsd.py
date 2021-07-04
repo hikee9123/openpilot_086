@@ -25,6 +25,7 @@ from selfdrive.controls.lib.longitudinal_planner import LON_MPC_STEP
 from selfdrive.locationd.calibrationd import Calibration
 from selfdrive.hardware import HARDWARE, TICI
 
+
 # atom
 from selfdrive.car.hyundai.interface import CarInterface
 import common.log as  trace1
@@ -71,7 +72,7 @@ class Controls:
       ignore = ['driverCameraState', 'managerState'] if SIMULATION else None
       self.sm = messaging.SubMaster(['deviceState', 'pandaState', 'modelV2', 'liveCalibration',
                                      'driverMonitoringState', 'longitudinalPlan', 'lateralPlan', 'liveLocationKalman',
-                                     'managerState', 'liveParameters', 'radarState'] + self.camera_packets + joystick_packet,
+                                     'managerState', 'liveParameters', 'radarState','liveMapData'] + self.camera_packets + joystick_packet,
                                      ignore_alive=ignore, ignore_avg_freq=['radarState', 'longitudinalPlan'])
 
     self.can_sock = can_sock
@@ -176,6 +177,8 @@ class Controls:
     self.init_flag = True
     self.timer_alloowed = 1500
     self.timer_start = 1500
+
+
 
   def update_events(self, CS):
     """Compute carEvents from carState"""
@@ -563,10 +566,12 @@ class Controls:
     self.AM.process_alerts(self.sm.frame, clear_event)
     CC.hudControl.visualAlert = self.AM.visual_alert
 
-    if not self.hyundai_lkas and self.initialized:
+    if self.initialized:
       # send car controls over can
       can_sends = self.CI.apply(CC, self.sm, self.CP)
-      self.pm.send('sendcan', can_list_to_can_capnp(can_sends, msgtype='sendcan', valid=CS.canValid))
+      if self.hyundai_lkas:
+        self.pm.send('sendcan', can_list_to_can_capnp(can_sends, msgtype='sendcan', valid=CS.canValid))
+
 
     force_decel = (self.sm['driverMonitoringState'].awarenessStatus < 0.) or \
                   (self.state == State.softDisabling)

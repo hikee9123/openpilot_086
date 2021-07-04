@@ -40,6 +40,7 @@ class CLongControl():
     self.curve_speed = 0
     self.curvature_gain = 1
 
+
   def cal_curve_speed(self, sm, v_ego):
     md = sm['modelV2']
     if len(md.position.x) == TRAJECTORY_SIZE and len(md.position.y) == TRAJECTORY_SIZE:
@@ -87,7 +88,7 @@ class CLongControl():
 
   def update_btn(self, CS ): 
     if CS.driverOverride == 2 or not CS.acc_active or CS.cruise_buttons == Buttons.RES_ACCEL or CS.cruise_buttons == Buttons.SET_DECEL or CS.cruise_buttons == Buttons.CANCEL: 
-      self.wait_timer2 = 10 
+      self.wait_timer2 = 50 
     elif self.wait_timer2: 
       self.wait_timer2 -= 1
     else:

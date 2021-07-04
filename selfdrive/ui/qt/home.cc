@@ -112,9 +112,13 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
 
 
 
-  if ( bNAVITop == 0 && QUIState::ui_state.scene.started && btn_NAVI.ptInRect(e->x(), e->y())) {
-
-    if ( QUIState::ui_state.scene.scr.map_is_running == 2) {  // backgrand
+  if ( QUIState::ui_state.scene.started && btn_NAVI.ptInRect(e->x(), e->y())) {
+  
+    if ( bNAVITop )
+    {
+      Params().put("OpkrMapEnable", "2"); 
+    }
+    else if ( bNAVITop == 0 && QUIState::ui_state.scene.scr.map_is_running == 2) {  // backgrand
       Params().put("OpkrMapEnable", "3");  // NAVI Top
 
       QUIState::ui_state.scene.scr.map_command_off = 0;
