@@ -74,7 +74,7 @@ int main() {
       tv_nsec =  entry.tv_sec * 1000ULL + long(tv_nsec2);
 
 
-      nDelta2 = entry.tv_sec - nLastTime
+      nDelta2 = entry.tv_sec - nLastTime;
       if( nDelta2 >= 1 )
       {
         nLastTime = entry.tv_sec;
