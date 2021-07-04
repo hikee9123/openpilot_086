@@ -477,10 +477,10 @@ static void ui_draw_modeSel(UIState *s)
   switch( modeSel  )
   {
     case 0: strcpy( str_msg, "0.OPM" ); nColor = COLOR_WHITE; break;
-    case 1: strcpy( str_msg, "1.CVS" );    nColor = nvgRGBA(200, 200, 255, 255);  break;
-    case 2: strcpy( str_msg, "2.FCAR" );  nColor = nvgRGBA(200, 255, 255, 255);  break;
+    case 1: strcpy( str_msg, "1.NAVI" );    nColor = nvgRGBA(200, 200, 255, 255);  break;
+    case 2: strcpy( str_msg, "2.COMA" );  nColor = nvgRGBA(200, 255, 255, 255);  break;
     case 3: strcpy( str_msg, "3.HYUN" );  nColor = nvgRGBA(200, 255, 255, 255);  break;
-    case 4: strcpy( str_msg, "4.CURV" );   nColor = nvgRGBA(200, 255, 255, 255);  break;
+    case 4: strcpy( str_msg, "4.CRUS" );   nColor = nvgRGBA(200, 255, 255, 255);  break;
     default :  sprintf( str_msg, "%d.NORMAL", modeSel ); nColor = COLOR_WHITE;  break;
   }
   nvgFillColor(s->vg, nColor);  
@@ -538,7 +538,7 @@ static void ui_draw_debug1(UIState *s)
   float speedLimit = scene.liveMapData.getSpeedLimit();  
   float speedLimitAheadDistance = scene.liveMapData.getSpeedLimitDistance();  
   float map_sign = scene.liveMapData.getSafetySign();
-  //float  roadCurvature = scene.liveMapData.getRoadCurvature();
+  float  roadCurvature = scene.liveMapData.getRoadCurvature();
 
   int  mapValid = scene.liveMapData.getMapValid();
   int  map_enabled = scene.liveMapData.getMapEnable();
@@ -554,7 +554,7 @@ static void ui_draw_debug1(UIState *s)
     ui_print( s, x_pos, y_pos+180,  "Dist:%.0f", speedLimitAheadDistance );
     ui_print( s, x_pos, y_pos+270,  "Spd:%.0f", speedLimit );
     ui_print( s, x_pos, y_pos+350,  "map:%d,%d", map_enabled, mapValid );
-    //ui_print( s, x_pos, y_pos+400,  "CV:%.5f", roadCurvature );
+    ui_print( s, x_pos, y_pos+430,  "CV:%.3f", roadCurvature );
     //ui_print( s, x_pos, y_pos+490,  "cT:%ld", nCurrTimeSec );
   } 
 

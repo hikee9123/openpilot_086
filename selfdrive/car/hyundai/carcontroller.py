@@ -54,7 +54,7 @@ class CarController():
 
     # long control
     self.longCtrl = CLongControl(self.p)
-
+    self.liveMapData = None
 
 
 
@@ -200,18 +200,58 @@ class CarController():
 
     return  param, dst_steer
 
+
+  # safetySign
+  # 131 : 단속카메라(신호위반카메라)
+  # 165 : 구간단속
+  # 200 : 단속구간(고정형 이동식)
+  # 231 : 단속(카메라, 신호위반)
+
+  def update_navi(self, sm ):
+    cruise_set_speed_kph = self.cruise_set_speed_kph
+    self.liveMapData = sm['liveMapData']    
+    speedLimit = self.liveMapData.speedLimit
+    speedLimitDistance = self.liveMapData.speedLimitDistance
+    safetySign  = self.liveMapData.safetySign
+    mapValid = self.liveMapData.mapValid
+
+    if not mapValid:
+      return  cruise_set_speed_kph
+    elif safetySign == 131:
+      mapValid = True
+    elif safetySign == 165:
+      mapValid = True
+    elif safetySign == 200:
+      mapValid = True
+    elif safetySign == 231:
+      mapValid = True
+    else:
+      mapValid = False
+
+    if mapValid: 
+      cruise_set_speed_kph = speedLimit
+
+    return  cruise_set_speed_kph
+
+
   def update_longctrl(self, c, CS, frame, sm, CP ):  
     # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
     # atom
+
     btn_signal = None
     vCruise = sm['longitudinalPlan'].vCruise
     kph_set_vEgo = vCruise * CV.MS_TO_KPH
 
     self.cruise_set_speed_kph = CS.out.cruiseState.speed * CV.MS_TO_KPH
-    
+
+
+    if CS.out.cruiseState.modeSel == 1:
+      self.cruise_set_speed_kph = self.update_navi( sm )
+
+
     if self.longCtrl.update_btn( CS  ) == 0:
       pass
-    elif CS.acc_active and (CS.out.cruiseState.modeSel == 4 or CS.out.cruiseState.modeSel == 2):
+    elif CS.acc_active and (CS.out.cruiseState.modeSel == 4 or CS.out.cruiseState.modeSel == 2 or CS.out.cruiseState.modeSel == 1):
       self.ctrl_speed = min( self.cruise_set_speed_kph, kph_set_vEgo)
       btn_signal = self.longCtrl.update_scc( CS, self.ctrl_speed )
 
@@ -279,7 +319,7 @@ class CarController():
 
     str_log1 = 'LKAS={:.0f} hold={:.0f}'.format( CS.lkas_button_on, CS.auto_hold )
     str_log2 = 'limit={:.0f} tm={:.1f} '.format( apply_steer_limit, self.timer1.sampleTime()  )               
-    #trace1.printf3( '{} {}'.format( str_log1, str_log2 ) )    
+    #trace1.printf3( '{} {}'.format( str_log1, str_log2 ) )
 
     if pcm_cancel_cmd:
       can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.CANCEL))
@@ -311,6 +351,7 @@ class CarController():
         else:
           self.resume_cnt = 0
 
+        str_log1 = 'NAVI set_speed={:.0f} '.format( self.cruise_set_speed_kph )
         # dec 제어.
         if CS.out.cruiseState.modeSel == 2:
           data = self.longCtrl.update( self.packer, CS, c, frame )
@@ -318,6 +359,8 @@ class CarController():
             can_sends.append( data )
           else:
             trace1.printf3( '{} {}'.format( str_log1, str_log2 ) )
+        else:
+          trace1.printf3( '{}'.format( str_log1) )
 
 
 
@@ -336,8 +379,8 @@ class CarController():
     if CS.cruise_buttons != Buttons.CANCEL:     
       return
 
-    liveMapData = sm['liveMapData']
-    if liveMapData.mapEnable != 2:
+    self.liveMapData = sm['liveMapData']
+    if self.liveMapData.mapEnable != 2:
        self.params.put("OpkrMapEnable", "2")
 
     return
