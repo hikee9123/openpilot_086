@@ -198,8 +198,8 @@ int main() {
       
       //if( opkr )
       //{
-        printf("[%ld] logcat ID(%d) - PID=%d tag=%d.[%s] \n", tv_nsec, log_msg.id(),  entry.pid,  entry.tid, entry.tag);
-        printf("entry.message=[%s]\n", entry.message);
+      //  printf("[%ld] logcat ID(%d) - PID=%d tag=%d.[%s] \n", tv_nsec, log_msg.id(),  entry.pid,  entry.tid, entry.tag);
+      //  printf("entry.message=[%s]\n", entry.message);
       //}
       pm.send("liveMapData", msg);
     }
