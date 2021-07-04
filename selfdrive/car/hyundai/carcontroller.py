@@ -55,7 +55,7 @@ class CarController():
     # long control
     self.longCtrl = CLongControl(self.p)
     self.liveMapData = None
-
+    self.ctrl_speed = 0
 
 
 
@@ -216,10 +216,13 @@ class CarController():
     if not mapValid or trafficType == 0:
       return  cruise_set_speed_kph
     elif CS.is_highway:
-      spdTarget = interp( speedLimitDistance, [300,1000], [ speedLimit, cruise_set_speed_kph ] )
+      spdTarget = interp( speedLimitDistance, [200,1000], [ speedLimit, cruise_set_speed_kph ] )
     else:
-      spdTarget = interp( speedLimitDistance, [300,600], [ speedLimit, cruise_set_speed_kph ] )
-    #deltaSpd = speedLimit - v_ego_kph
+      spdTarget = interp( speedLimitDistance, [200,600], [ speedLimit, cruise_set_speed_kph ] )
+    
+    if v_ego_kph < speedLimit:
+      v_ego_kph = speedLimit
+
     cruise_set_speed_kph = min( spdTarget, v_ego_kph )
 
     return  cruise_set_speed_kph
@@ -342,7 +345,7 @@ class CarController():
         else:
           self.resume_cnt = 0
 
-        str_log1 = 'NAVI set_speed={:.0f} '.format( self.cruise_set_speed_kph )
+        str_log1 = 'NAVI set_speed={:.0f} '.format( self.ctrl_speed )
         # dec 제어.
         if CS.out.cruiseState.modeSel == 2:
           data = self.longCtrl.update( self.packer, CS, c, frame )
