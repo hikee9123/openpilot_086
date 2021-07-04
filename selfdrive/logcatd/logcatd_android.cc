@@ -22,11 +22,45 @@ typedef struct LiveMapDataResult {
 } LiveMapDataResult;
 
 
+int traffic_camera( int nsignal_type )
+{
+    int ret_code = 0;
+
+/*
+MAPPY
+   111 : 우측 커브 
+   112 : 윈쪽 커브
+   113 : 굽은도로
+   118, 127 : 어린이보호구역
+   122 : 좁아지는 도로
+   124 : 과속방지턱
+   129 : 주정차
+
+   131 : 단속카메라(신호위반카메라)
+   165 : 구간단속
+   200 : 단속구간(고정형 이동식)
+   231 : 단속(카메라, 신호위반)
+
+*/
+    switch( nsignal_type )
+    {
+      case  131:
+      case  165:
+      case  200:
+      case  231:
+            ret_code = 1;
+            break;
+    } 
+
+    return ret_code;
+}
+
 int main() {
   setpriority(PRIO_PROCESS, 0, -15);
    long  nDelta = 0;
    long  nLastTime = 0, nDelta2 = 0;
    long  nDelta_nsec = 0;
+   int   safety_sign;
   int     opkr =0;
   long    tv_nsec;
   float   tv_nsec2;
@@ -88,10 +122,12 @@ int main() {
      nDelta = entry.tv_sec - res.tv_sec;
 
 
-      if( strcmp( entry.tag, "Connector" ) == 0 )
+      safety_sign = traffic_camera( res.safetySign );
+
+      if( opkr && strcmp( entry.tag, "Connector" ) == 0 )
       {
-         if( res.speedLimitDistance < 30 )
-           opkr = 3;
+         if( safety_sign && res.speedLimitDistance < 30 )
+           opkr = 2;
          else if( opkr == 1 )
            opkr = 5;
       }     
@@ -115,10 +151,10 @@ int main() {
         res.roadCurvature = atoi( entry.message );
         opkr = 1;
       }
-      else if( strcmp( entry.tag, "AudioFlinger" ) == 0 )  //   msm8974_platform
+      else if(  opkr && strcmp( entry.tag, "AudioFlinger" ) == 0 )  //   msm8974_platform
       {
-        if( res.speedLimitDistance < 50 )
-           opkr = 2;
+        if( safety_sign && res.speedLimitDistance < 50 )
+           opkr = 1000;
       }      
       else if( opkr == 1 )
       {
@@ -130,7 +166,7 @@ int main() {
         res.tv_sec = entry.tv_sec;
         res.tv_nsec = tv_nsec;
       }
-      else if ( opkr == 2 )
+      else if ( opkr == 1000 )
       {
         if( nDelta_nsec > 500 ) opkr = 0;
       }
