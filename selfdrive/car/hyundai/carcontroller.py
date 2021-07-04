@@ -216,11 +216,11 @@ class CarController():
     if not mapValid or trafficType == 0:
       return  cruise_set_speed_kph
     elif CS.is_highway:
-      spdTarget = interp( speedLimitDistance, [300,1000], [ speedLimit, v_ego_kph ] )
+      spdTarget = interp( speedLimitDistance, [300,1000], [ speedLimit, cruise_set_speed_kph ] )
     else:
-      spdTarget = interp( speedLimitDistance, [300,600], [ speedLimit, v_ego_kph ] )
+      spdTarget = interp( speedLimitDistance, [300,600], [ speedLimit, cruise_set_speed_kph ] )
     #deltaSpd = speedLimit - v_ego_kph
-    cruise_set_speed_kph = min( spdTarget, cruise_set_speed_kph )
+    cruise_set_speed_kph = min( spdTarget, v_ego_kph )
 
     return  cruise_set_speed_kph
 
