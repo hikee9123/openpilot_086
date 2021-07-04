@@ -112,7 +112,7 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
 
 
 
-  if ( QUIState::ui_state.scene.started && btn_NAVI.ptInRect(e->x(), e->y())) {
+  if ( bSidebar == false && QUIState::ui_state.scene.started && btn_NAVI.ptInRect(e->x(), e->y())) {
   
     if ( bNAVITop )
     {
