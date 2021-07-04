@@ -60,7 +60,7 @@ int main() {
    long  nDelta = 0;
    long  nLastTime = 0, nDelta2 = 0;
    long  nDelta_nsec = 0;
-   int   safety_sign;
+   int   traffic_type;
   int     opkr =0;
   long    tv_nsec;
   float   tv_nsec2;
@@ -122,11 +122,11 @@ int main() {
      nDelta = entry.tv_sec - res.tv_sec;
 
 
-      safety_sign = traffic_camera( res.safetySign );
+      traffic_type = traffic_camera( res.safetySign );
 
       if( opkr && strcmp( entry.tag, "Connector" ) == 0 )
       {
-         if( safety_sign && res.speedLimitDistance < 30 )
+         if( traffic_type && res.speedLimitDistance < 30 )
            opkr = 2;
          else if( opkr == 1 )
            opkr = 5;
@@ -153,7 +153,7 @@ int main() {
       }
       else if(  opkr && strcmp( entry.tag, "AudioFlinger" ) == 0 )  //   msm8974_platform
       {
-        if( safety_sign && res.speedLimitDistance < 50 )
+        if( traffic_type && res.speedLimitDistance < 50 )
            opkr = 1000;
       }      
       else if( opkr == 1 )
@@ -191,6 +191,8 @@ int main() {
 
       framed.setMapEnable( res.mapEnable );
       framed.setMapValid( res.mapValid );
+
+      framed.setTrafficType( traffic_type );
 
      
       

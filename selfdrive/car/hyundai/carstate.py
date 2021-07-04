@@ -45,6 +45,7 @@ class CarState(CarStateBase):
     self.rightBlindspot_time = 0
 
     self.time_delay_int = 600
+    self.is_highway = False
 
     # long control
     self.longCtrl = CLongControl()
@@ -92,6 +93,8 @@ class CarState(CarStateBase):
     self.Mdps_ToiUnavail = cp.vl["MDPS12"]['CF_Mdps_ToiUnavail']    
     self.clu_Vanz = cp.vl["CLU11"]["CF_Clu_Vanz"]
     ret.vEgo = self.clu_Vanz * CV.KPH_TO_MS
+
+    self.is_highway = cp.vl["SCC11"]["Navi_SCC_Camera_Act"] != 0.
 
     steerWarning = False
     if ret.vEgo < 5 or not self.Mdps_ToiUnavail:
@@ -179,6 +182,7 @@ class CarState(CarStateBase):
     else:
       ret.stockAeb = cp.vl["SCC12"]['AEB_CmdAct'] != 0
       ret.stockFcw = cp.vl["SCC12"]['CF_VSM_Warn'] == 2
+
 
 
     #TPMS

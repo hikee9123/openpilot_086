@@ -1310,6 +1310,7 @@ struct LiveMapData {
   roadCurvature @5 :Float32;
   mapValid @6 :Bool;
   mapEnable @7 :Int32;
+  trafficType @8 :Int32;
 }
 
 struct CameraOdometry {

@@ -201,35 +201,32 @@ class CarController():
     return  param, dst_steer
 
 
-  # safetySign
-  # 131 : 단속카메라(신호위반카메라)
-  # 165 : 구간단속
-  # 200 : 단속구간(고정형 이동식)
-  # 231 : 단속(카메라, 신호위반)
-
-  def update_navi(self, sm ):
+  def update_navi(self, sm, CS ):
+    v_ego_kph = CS.out.vEgo * CV.MS_TO_KPH    
     cruise_set_speed_kph = self.cruise_set_speed_kph
     self.liveMapData = sm['liveMapData']    
     speedLimit = self.liveMapData.speedLimit
     speedLimitDistance = self.liveMapData.speedLimitDistance
     safetySign  = self.liveMapData.safetySign
     mapValid = self.liveMapData.mapValid
+    trafficType = self.liveMapData.trafficType
 
+
+   
     if not mapValid:
       return  cruise_set_speed_kph
-    elif safetySign == 131:
-      mapValid = True
-    elif safetySign == 165:
-      mapValid = True
-    elif safetySign == 200:
-      mapValid = True
-    elif safetySign == 231:
+    elif trafficType:
       mapValid = True
     else:
       mapValid = False
+      return  cruise_set_speed_kph
 
-    if mapValid: 
-      cruise_set_speed_kph = min( speedLimit, cruise_set_speed_kph )
+    if CS.is_highway:
+      spdTarget = interp( speedLimitDistance, [300,1000], [ speedLimit, v_ego_kph ] )
+    else:
+      spdTarget = interp( speedLimitDistance, [300,600], [ speedLimit, v_ego_kph ] )
+    #deltaSpd = speedLimit - v_ego_kph
+    cruise_set_speed_kph = min( spdTarget, cruise_set_speed_kph )
 
     return  cruise_set_speed_kph
 
@@ -245,15 +242,15 @@ class CarController():
     self.cruise_set_speed_kph = CS.out.cruiseState.speed * CV.MS_TO_KPH
 
 
-    if CS.out.cruiseState.modeSel == 1:
-      self.cruise_set_speed_kph = self.update_navi( sm )
-
-
     if self.longCtrl.update_btn( CS  ) == 0:
       pass
-    elif CS.acc_active and (CS.out.cruiseState.modeSel == 4 or CS.out.cruiseState.modeSel == 2 or CS.out.cruiseState.modeSel == 1):
+    elif CS.out.cruiseState.modeSel == 1:
+      kph_set_vEgo = self.update_navi( sm, CS )
       self.ctrl_speed = min( self.cruise_set_speed_kph, kph_set_vEgo)
-      btn_signal = self.longCtrl.update_scc( CS, self.ctrl_speed )
+      btn_signal = self.longCtrl.update_scc( CS, self.ctrl_speed )      
+    elif CS.acc_active and (CS.out.cruiseState.modeSel == 4 or CS.out.cruiseState.modeSel == 2):
+      self.ctrl_speed = min( self.cruise_set_speed_kph, kph_set_vEgo)      
+      btn_signal = self.longCtrl.update_scc( CS, self.ctrl_speed )     
 
     return btn_signal
 
