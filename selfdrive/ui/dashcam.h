@@ -750,8 +750,8 @@ void update_dashcam(UIState *s, int draw_vision)
   }
 
 
-   
-  draw_button( s, "NAVI", btn_NAVI, fillColor, txtColor );
+  if(  s->scene.mouse.sidebar == false )
+    draw_button( s, "NAVI", btn_NAVI, fillColor, txtColor );
 
   if( s->scene.dash_menu_no == 1 ) 
     focus_menu_button(s, touch_x, touch_y, touched);
