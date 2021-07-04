@@ -527,7 +527,7 @@ static void ui_draw_traffic_sign(UIState *s, float map_sign, float speedLimit,  
       if( speedLimitAheadDistance >= 1000 )
         ui_print( s, img_speedlimit_x, img_speedlimit_y,  "%.1fkm", speedLimitAheadDistance * 0.001 );
       else
-        ui_print( s, img_speedlimit_x, img_speedlimit_y,  "%.0fmm", speedLimitAheadDistance );
+        ui_print( s, img_speedlimit_x, img_speedlimit_y,  "%.0fm", speedLimitAheadDistance );
     }
 }
 
