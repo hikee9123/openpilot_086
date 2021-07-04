@@ -213,15 +213,9 @@ class CarController():
 
 
    
-    if not mapValid:
+    if not mapValid or trafficType == 0:
       return  cruise_set_speed_kph
-    elif trafficType:
-      mapValid = True
-    else:
-      mapValid = False
-      return  cruise_set_speed_kph
-
-    if CS.is_highway:
+    elif CS.is_highway:
       spdTarget = interp( speedLimitDistance, [300,1000], [ speedLimit, v_ego_kph ] )
     else:
       spdTarget = interp( speedLimitDistance, [300,600], [ speedLimit, v_ego_kph ] )
