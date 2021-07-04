@@ -229,7 +229,7 @@ class CarController():
       mapValid = False
 
     if mapValid: 
-      cruise_set_speed_kph = speedLimit
+      cruise_set_speed_kph = min( speedLimit, cruise_set_speed_kph )
 
     return  cruise_set_speed_kph
 
