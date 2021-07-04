@@ -25,11 +25,11 @@ typedef struct LiveMapDataResult {
 int main() {
   setpriority(PRIO_PROCESS, 0, -15);
    long  nDelta = 0;
+   long  nLastTime = 0, nDelta2 = 0;
    long  nDelta_nsec = 0;
   int     opkr =0;
-  int     nTime = 0;
   long    tv_nsec;
-  float tv_nsec2;
+  float   tv_nsec2;
 
   ExitHandler do_exit;
   PubMaster pm({"liveMapData"});
@@ -64,18 +64,20 @@ int main() {
       AndroidLogEntry entry;
       err = android_log_processLogBuffer(&log_msg.entry_v1, &entry);
       if (err < 0) continue;
+
+
       last_log_time.tv_sec = entry.tv_sec;
       last_log_time.tv_nsec = entry.tv_nsec;
 
 
       tv_nsec2 = entry.tv_nsec / 1000000;
       tv_nsec =  entry.tv_sec * 1000ULL + long(tv_nsec2);
-      printf("nsec  %.1f  %ld \n", tv_nsec2, tv_nsec);
 
-      nTime++;
-      if( nTime > 10 )
+
+      nDelta2 = entry.tv_sec - nLastTime
+      if( nDelta2 >= 1 )
       {
-        nTime = 0;
+        nLastTime = entry.tv_sec;
         res.mapEnable = Params().getInt("OpkrMapEnable");
       }
       
@@ -84,9 +86,13 @@ int main() {
      // code based from atom
      nDelta_nsec = tv_nsec - res.tv_nsec;
      nDelta = entry.tv_sec - res.tv_sec;
+
+
       if( strcmp( entry.tag, "Connector" ) == 0 )
       {
-         if( opkr == 1 )
+         if( res.speedLimitDistance < 30 )
+           opkr = 3;
+         else if( opkr == 1 )
            opkr = 5;
       }     
       else if( strcmp( entry.tag, "opkrspdlimit" ) == 0 )
@@ -104,18 +110,15 @@ int main() {
         res.safetySign = atoi( entry.message );
         opkr = 1;
       }
-      else if( strcmp( entry.tag, "opkrcurvangle" ) == 0 )
+      else if( strcmp( entry.tag, "opkrcurvangle" ) == 0 )  
       {
         res.roadCurvature = atoi( entry.message );
         opkr = 1;
       }
-      else if( strcmp( entry.tag, "audio_hw_primary" ) == 0 )
+      else if( strcmp( entry.tag, "AudioFlinger" ) == 0 )  //   msm8974_platform
       {
-          opkr = 2;
-      }
-      else if( strcmp( entry.tag, "msm8974_platform" ) == 0 )
-      {
-          opkr = 2;
+        if( res.speedLimitDistance < 50 )
+           opkr = 2;
       }      
       else if( opkr == 1 )
       {
@@ -157,7 +160,7 @@ int main() {
       
       //if( opkr )
       //{
-        printf("logcat ID(%d) - PID=%d tag=%d.[%s] \n", log_msg.id(), entry.pid,  entry.tid, entry.tag);
+        printf("[%ld] logcat ID(%d) - PID=%d tag=%d.[%s] \n", tv_nsec, log_msg.id(),  entry.pid,  entry.tid, entry.tag);
         printf("entry.message=[%s]\n", entry.message);
       //}
       pm.send("liveMapData", msg);
@@ -178,11 +181,18 @@ int main() {
 
 /*
 MAPPY
+   111 : 우측 커브 
+   112 : 윈쪽 커브
+   113 : 굽은도로
+   118, 127 : 어린이보호구역
+   122 : 좁아지는 도로
    124 : 과속방지턱
+   129 : 주정차
    131 : 단속카메라(신호위반카메라)
-   200 : 단속구간(고정형 이동식)
    165 : 구간단속
-    
+   200 : 단속구간(고정형 이동식)
+   231 : 단속(카메라, 신호위반)
+
 */
 
 

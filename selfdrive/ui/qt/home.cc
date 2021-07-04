@@ -77,10 +77,23 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
   int e_y = e->y();
   int e_button= e->button();
   // 1400, 820
-  if( e_x < 500 || e_y < 300 ) 
-  {
+
     // Handle sidebar collapsing
-    bool bSidebar = sidebar->isVisible();
+  bool bSidebar = sidebar->isVisible();
+  int  bNAVITop = 0;
+
+  if( QUIState::ui_state.scene.scr.map_is_running == 1 || QUIState::ui_state.scene.scr.map_is_running == 3 )
+  {
+    bNAVITop = 1;
+    bSidebar = false;
+    if( QUIState::ui_state.scene.mouse.sidebar != bSidebar )
+    {
+      QUIState::ui_state.scene.mouse.sidebar = bSidebar;
+      sidebar->setVisible(bSidebar);
+    }
+  }
+  else if( e_x < 500 || e_y < 300 ) 
+  {
     if (onroad->isVisible() && (!bSidebar || e_x > sidebar->width())) {
     // Hide map first if visible, then hide sidebar
     if (onroad->map != nullptr && onroad->map->isVisible()){
@@ -99,18 +112,15 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
 
 
 
-  if ( QUIState::ui_state.scene.started && btn_Tmap.ptInRect(e->x(), e->y())) {
+  if ( bNAVITop == 0 && QUIState::ui_state.scene.started && btn_NAVI.ptInRect(e->x(), e->y())) {
 
-    if ( !QUIState::ui_state.scene.scr.map_is_running ) {
-      Params().put("OpkrMapEnable", "1");
+    if ( QUIState::ui_state.scene.scr.map_is_running == 2) {  // backgrand
+      Params().put("OpkrMapEnable", "3");  // NAVI Top
 
       QUIState::ui_state.scene.scr.map_command_off = 0;
       QUIState::ui_state.scene.scr.map_command_on = 40;  // 2sec
-    } else {
-      Params().put("OpkrMapEnable", "0"); 
-      QUIState::ui_state.scene.scr.map_command_off = 40;
-      QUIState::ui_state.scene.scr.map_command_on = 0;
     }
+
     return;
   }
 

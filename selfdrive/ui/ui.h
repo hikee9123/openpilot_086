@@ -55,7 +55,7 @@ const int UI_FREQ = 20;   // Hz
 
 
 const Rect btn_map_overlay = {0, 465, 150, 150};
-const Rect btn_Tmap = {1400, 905, 140, 140};
+const Rect btn_NAVI = {1300, 905, 140, 140};
 const Rect btn_Rec = {1745, 905, 140, 140};
 
 typedef enum UIStatus {

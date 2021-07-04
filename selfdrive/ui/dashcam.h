@@ -488,22 +488,21 @@ static void ui_draw_modeSel(UIState *s)
 }
 
 
-static void ui_draw_traffic_sign(UIState *s, float speedLimit,  float speedLimitAheadDistance ) 
+static void ui_draw_traffic_sign(UIState *s, float map_sign, float speedLimit,  float speedLimitAheadDistance ) 
 {
     const char *traffic_sign = NULL;
     const char *name_sped[] = {"speed_30","speed_40","speed_50","speed_60","speed_70","speed_80","speed_90","speed_100","speed_110"};
-    //if( mapValid == 1 )
-    //{
-       if( speedLimit <= 30 )  traffic_sign = name_sped[0];
-       else if( speedLimit <= 40 )  traffic_sign = name_sped[1];
-       else if( speedLimit <= 50 )  traffic_sign = name_sped[2];
-       else if( speedLimit <= 60 )  traffic_sign = name_sped[3];
-       else if( speedLimit <= 70 )  traffic_sign = name_sped[4];
-       else if( speedLimit <= 80 )  traffic_sign = name_sped[5];
-       else if( speedLimit <= 90 )  traffic_sign = name_sped[6];
-       else if( speedLimit <= 100 )  traffic_sign = name_sped[7];
-       else if( speedLimit <= 110 )  traffic_sign = name_sped[8];
-    //}
+
+      if( speedLimit <= 10 )  traffic_sign = NULL;
+      else if( speedLimit <= 30 )  traffic_sign = name_sped[0];
+      else if( speedLimit <= 40 )  traffic_sign = name_sped[1];
+      else if( speedLimit <= 50 )  traffic_sign = name_sped[2];
+      else if( speedLimit <= 60 )  traffic_sign = name_sped[3];
+      else if( speedLimit <= 70 )  traffic_sign = name_sped[4];
+      else if( speedLimit <= 80 )  traffic_sign = name_sped[5];
+      else if( speedLimit <= 90 )  traffic_sign = name_sped[6];
+      else if( speedLimit <= 100 )  traffic_sign = name_sped[7];
+      else if( speedLimit <= 110 )  traffic_sign = name_sped[8];
   
     if( traffic_sign ) 
     {
@@ -515,15 +514,14 @@ static void ui_draw_traffic_sign(UIState *s, float speedLimit,  float speedLimit
 
 
       nvgFontFace(s->vg, "sans-regular");
-      nvgFontSize(s->vg, 100);
+      nvgFontSize(s->vg, 90);
       nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
-      img_speedlimit_y += 450;
+      img_speedlimit_y += 470;
       img_speedlimit_x += img_speedlimit_size/2;
       
-      nvgFillColor(s->vg, nvgRGBA(255, 0, 0, 200));
-
+      nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 200));
       if( speedLimitAheadDistance >= 1000 )
-        ui_print( s, img_speedlimit_x, img_speedlimit_y,  "%.3fKm", speedLimitAheadDistance * 0.001 );
+        ui_print( s, img_speedlimit_x, img_speedlimit_y,  "%.1fkm", speedLimitAheadDistance * 0.001 );
       else
         ui_print( s, img_speedlimit_x, img_speedlimit_y,  "%.0fmm", speedLimitAheadDistance );
     }
@@ -542,13 +540,13 @@ static void ui_draw_debug1(UIState *s)
   float map_sign = scene.liveMapData.getSafetySign();
   //float  roadCurvature = scene.liveMapData.getRoadCurvature();
 
-  int mapValid = scene.liveMapData.getMapValid();
+  int  mapValid = scene.liveMapData.getMapValid();
   int  map_enabled = scene.liveMapData.getMapEnable();
 
 
   if( scene.dash_menu_no == 1 && scene.scr.map_is_running )
   {
-    int  x_pos = s->viz_rect.x + 700;
+    int  x_pos = s->viz_rect.x + 1300;
     int  y_pos = 420; 
 
     ui_print( s, x_pos, y_pos+0,   "MS:%.0f", map_sign );
@@ -561,7 +559,7 @@ static void ui_draw_debug1(UIState *s)
   } 
 
   if( mapValid )
-    ui_draw_traffic_sign( s, speedLimit, speedLimitAheadDistance );
+    ui_draw_traffic_sign( s, map_sign, speedLimit, speedLimitAheadDistance );
 
   nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
   //  1035, 1078
@@ -736,21 +734,14 @@ void update_dashcam(UIState *s, int draw_vision)
     if( s->scene.scr.map_command_off > 0 )
     {
       s->scene.scr.map_command_off--;
-      is_map_program = 0;
+      is_map_program = 1;
     }  
   }
-  else
-  {
-    if( s->scene.scr.map_command_on > 0 )
-    {
-      s->scene.scr.map_command_on--;
-      is_map_program = 1;
-    }
-  }
+
 
   if( is_map_program )
   {
-    if( is_map_program == 1 )
+    if( is_map_program == 2 )
       fillColor = nvgRGBA(255,0,0,255);
     else
       fillColor = nvgRGBA(100,0,0,255);
@@ -760,7 +751,7 @@ void update_dashcam(UIState *s, int draw_vision)
 
 
    
-  draw_button( s, "NAVI", btn_Tmap, fillColor, txtColor );
+  draw_button( s, "NAVI", btn_NAVI, fillColor, txtColor );
 
   if( s->scene.dash_menu_no == 1 ) 
     focus_menu_button(s, touch_x, touch_y, touched);

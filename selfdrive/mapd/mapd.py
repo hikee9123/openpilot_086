@@ -27,36 +27,19 @@ class MapsdThread(threading.Thread):
         self.threadID =  threadID
         self.name  =  name
         self.logger = logging.getLogger( self.name )
-        #self.pm = messaging.PubMaster(['liveMapData'])
-        #self.logger.debug("entered mapsd_thread, ... %s" % ( str(self.pm)))
+
 
         self.params = Params()
         self.params.put("OpkrMapEnable", "0")
-        self.second = 0
-        self.map_sign = 0
-        self.target_speed_map_dist = 0
         self.map_enabled = 0
         self.old_map_enable = 0        
-        self.target_speed_map = 0
-
-        self.raw_map_sign = 0
-        self.raw_target_speed_map = 0
-        self.raw_target_speed_map_dist = 0
-
-        self.old_map_sign = 0
-        self.old_target_speed_map = 0
-        self.old_target_speed_map_dist = 0        
-
-        self.target_speed_map_counter = 0
-        self.target_speed_map_counter1 = 0
         self.target_speed_map_counter2 = 0
-        self.target_speed_map_counter3 = 0
-        self.target_speed_map_counter_check = False
-
         self.map_exec_status= False
         self.programRun = True
 
-
+    # 1,3  map top
+    # 2,   backgrand
+    # 0,   kill
     def opkr_map_status_read(self):        
         self.map_enabled = int(self.params.get("OpkrMapEnable"))
 
@@ -67,7 +50,6 @@ class MapsdThread(threading.Thread):
             if self.target_speed_map_counter2  == 0:
                 print( "am start --activity-task-on-home com.opkr.maphack/com.opkr.maphack.MainActivity" )
                 os.system("am start --activity-task-on-home com.opkr.maphack/com.opkr.maphack.MainActivity")
-                self.params.put("OpkrMapEnable", "1")
                 self.programRun = False
                 return
 
@@ -75,24 +57,20 @@ class MapsdThread(threading.Thread):
             return
 
         self.old_map_enable = self.map_enabled
-        self.target_speed_map_counter1 = 3
 
         if self.map_enabled == 0:
             self.map_exec_status = False
-            # os.system("pkill com.mnsoft.mappyobn")
-            # map return
-            os.system("am start --activity-task-on-home com.mnsoft.mappyobn/com.mnsoft.mappy.MainActivity")
+            os.system("pkill com.mnsoft.mappyobn")
         elif self.map_exec_status == False: 
             self.map_exec_status = True
-            #print( "am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity" )
-            #os.system("am start com.skt.tmap.ku/com.skt.tmap.activity.TmapNaviActivity")
             os.system("am start com.mnsoft.mappyobn/com.mnsoft.mappy.MainActivity &")
-            if self.map_enabled == 2:  # map 실행후 2초후 Overlay mode로 변경합니다.
-                self.target_speed_map_counter2 = 2
-        elif self.map_enabled == 2:
+            if self.map_enabled == 2: 
+                self.target_speed_map_counter2 = 3   # map 실행후 3초후 backgrand로 전환합니다.
+        elif self.map_enabled == 2:  # map backgrand
+            os.system("am start --activity-task-on-home com.opkr.maphack/com.opkr.maphack.MainActivity") 
+        elif self.map_enabled == 3:
             # map return 
             os.system("am start --activity-task-on-home com.mnsoft.mappyobn/com.mnsoft.mappy.MainActivity") 
-            self.params.put("OpkrMapEnable", "1")
 
 
 
