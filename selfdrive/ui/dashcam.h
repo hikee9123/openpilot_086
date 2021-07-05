@@ -531,14 +531,14 @@ static void ui_draw_traffic_sign(UIState *s, float map_sign, float speedLimit,  
     }
 }
 
-static void ui_draw_debug1(UIState *s) 
+static void ui_draw_navi(UIState *s) 
 {
   UIScene &scene = s->scene;
-  
-  nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
-  nvgFontSize(s->vg, 36*2);
 
-  //long  ts = scene.liveMapData.getTs();
+  nvgFontSize(s->vg, 36*2);
+  nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
+
+
   float speedLimit = scene.liveMapData.getSpeedLimit();  
   float speedLimitAheadDistance = scene.liveMapData.getSpeedLimitDistance();  
   float map_sign = scene.liveMapData.getSafetySign();
@@ -564,7 +564,13 @@ static void ui_draw_debug1(UIState *s)
 
   if( mapValid )
     ui_draw_traffic_sign( s, map_sign, speedLimit, speedLimitAheadDistance );
+}
 
+static void ui_draw_debug1(UIState *s) 
+{
+  UIScene &scene = s->scene;
+ 
+  nvgFontSize(s->vg, 36*2);
   nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
   //  1035, 1078
   ui_draw_text1(s, 0, 30, scene.alert.alertTextMsg1.c_str(), 45, COLOR_WHITE, "sans-regular");
@@ -637,14 +643,16 @@ static void ui_draw_debug(UIState *s)
 {
   UIScene &scene = s->scene;
 
-  ui_draw_modeSel(s);
+  ui_draw_modeSel( s );
 
+  ui_draw_navi( s );
+  
   if( scene.dash_menu_no == 0 ) return;
-  ui_draw_debug1(s);
+  ui_draw_debug1( s );
   
   if( scene.dash_menu_no == 2 ) 
   {
-    ui_draw_debug2(s);
+    ui_draw_debug2( s );
   }
 }
 
