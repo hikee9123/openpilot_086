@@ -523,7 +523,7 @@ static void ui_draw_traffic_sign(UIState *s, float map_sign, float speedLimit,  
       img_speedlimit_y += 470;
       img_speedlimit_x += img_speedlimit_size/2;
       
-      nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 200));
+      nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 255));
       if( speedLimitAheadDistance >= 1000 )
         ui_print( s, img_speedlimit_x, img_speedlimit_y,  "%.1fkm", speedLimitAheadDistance * 0.001 );
       else
