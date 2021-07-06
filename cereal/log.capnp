@@ -1311,6 +1311,9 @@ struct LiveMapData {
   mapValid @6 :Bool;
   mapEnable @7 :Int32;
   trafficType @8 :Int32;
+
+  turnInfo @9 :Int32;
+  distanceToTurn @10 :Int32;       
 }
 
 struct CameraOdometry {

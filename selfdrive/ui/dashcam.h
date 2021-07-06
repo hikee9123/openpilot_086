@@ -535,7 +535,7 @@ static void ui_draw_navi(UIState *s)
 {
   UIScene &scene = s->scene;
 
-  nvgFontSize(s->vg, 36*2);
+  nvgFontSize(s->vg, 36*1.5);
   nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
 
 
@@ -543,6 +543,9 @@ static void ui_draw_navi(UIState *s)
   float speedLimitAheadDistance = scene.liveMapData.getSpeedLimitDistance();  
   float map_sign = scene.liveMapData.getSafetySign();
   float  roadCurvature = scene.liveMapData.getRoadCurvature();
+
+  int   opkrturninfo = scene.liveMapData.getTurnInfo();
+  int   opkrdisttoturn = scene.liveMapData.getDistanceToTurn();
 
   int  mapValid = scene.liveMapData.getMapValid();
   int  map_enabled = scene.liveMapData.getMapEnable();
@@ -554,12 +557,11 @@ static void ui_draw_navi(UIState *s)
     int  y_pos = 420; 
 
     ui_print( s, x_pos, y_pos+0,   "MS:%.0f", map_sign );
-    //ui_print( s, x_pos, y_pos+90,  "Ts:%ld", ts );
     ui_print( s, x_pos, y_pos+180,  "Dist:%.0f", speedLimitAheadDistance );
     ui_print( s, x_pos, y_pos+270,  "Spd:%.0f", speedLimit );
     ui_print( s, x_pos, y_pos+350,  "map:%d,%d", map_enabled, mapValid );
-    ui_print( s, x_pos, y_pos+430,  "CV:%.3f", roadCurvature );
-    //ui_print( s, x_pos, y_pos+490,  "cT:%ld", nCurrTimeSec );
+    ui_print( s, x_pos, y_pos+430,  "CV:%.2f", roadCurvature );
+    ui_print( s, x_pos, y_pos+490,  "Tu:%d,%d", opkrturninfo,opkrdisttoturn );
   } 
 
   if( mapValid )

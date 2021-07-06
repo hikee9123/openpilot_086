@@ -15,6 +15,8 @@ typedef struct LiveMapDataResult {
       float speedLimitDistance;  // Float32;
       float safetySign;    // Float32;
       float roadCurvature;    // Float32;
+      int   turnInfo;    // Int32;
+      int   distanceToTurn;    // Int32;      
       bool  mapValid;    // bool;
       int   mapEnable;    // bool;
       long  tv_sec;
@@ -152,6 +154,14 @@ int main() {
         res.roadCurvature = atoi( entry.message );
         opkr = 1;
       }
+      else if( strcmp( entry.tag, "opkrturninfo" ) == 0 )
+      {
+        res.turnInfo = atoi( entry.message );
+      } 
+      else if( strcmp( entry.tag, "opkrdistancetoturn" ) == 0 )
+      {
+        res.distanceToTurn = atoi( entry.message );
+      }      
       else if(  opkr && strcmp( entry.tag, "AudioFlinger" ) == 0 )  //   msm8974_platform
       {
         if( traffic_type && res.speedLimitDistance < 50 )
@@ -190,6 +200,10 @@ int main() {
       framed.setSafetySign( res.safetySign ); // map_sign Float32;
       framed.setRoadCurvature( res.roadCurvature ); // road_curvature Float32;
 
+      // Turn Info
+      framed.setTurnInfo( res.turnInfo );
+      framed.setDistanceToTurn( res.distanceToTurn );
+
       framed.setMapEnable( res.mapEnable );
       framed.setMapValid( res.mapValid );
 
@@ -197,11 +211,11 @@ int main() {
 
      
       
-      //if( opkr )
-      //{
-      //  printf("[%ld] logcat ID(%d) - PID=%d tag=%d.[%s] \n", tv_nsec, log_msg.id(),  entry.pid,  entry.tid, entry.tag);
-      //  printf("entry.message=[%s]\n", entry.message);
-      //}
+      if( opkr )
+      {
+        printf("[%ld] logcat ID(%d) - PID=%d tag=%d.[%s] \n", tv_nsec, log_msg.id(),  entry.pid,  entry.tid, entry.tag);
+        printf("entry.message=[%s]\n", entry.message);
+      }
       pm.send("liveMapData", msg);
     }
 
