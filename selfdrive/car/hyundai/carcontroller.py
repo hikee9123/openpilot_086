@@ -212,13 +212,17 @@ class CarController():
     trafficType = self.liveMapData.trafficType
 
 
-   
+
+    
     if not mapValid or trafficType == 0:
       return  cruise_set_speed_kph
+
     elif CS.is_highway:
-      spdTarget = interp( speedLimitDistance, [200,1000], [ speedLimit, cruise_set_speed_kph ] )
+      decPos =  interp( speedLimit, [90,110], [ 100, 300 ] )
+      spdTarget = interp( speedLimitDistance, [decPos,1000], [ speedLimit, cruise_set_speed_kph ] )
     else:
-      spdTarget = interp( speedLimitDistance, [200,600], [ speedLimit, cruise_set_speed_kph ] )
+      decPos =  interp( speedLimit, [30,100], [ 50, 200 ] )
+      spdTarget = interp( speedLimitDistance, [decPos,600], [ speedLimit, cruise_set_speed_kph ] )
     
     if v_ego_kph < speedLimit:
       v_ego_kph = speedLimit
