@@ -511,7 +511,7 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w )
   float lead_v_rel1 = scene->lead_data[0].getVRel();
 
   float angleSteers = scene->car_state.getSteeringAngleDeg();
-  float angleSteersDes = scene->controls_state.getSteeringAngleDesiredDeg();
+  float angleSteersDes = scene->controls_state.getSteeringAngleDesiredDegDEPRECATED();
   //add visual radar relative distance
   if( true )
   {

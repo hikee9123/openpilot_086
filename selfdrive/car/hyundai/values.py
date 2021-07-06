@@ -661,8 +661,9 @@ FEATURES = {
   "use_lfa_mfa": set([ CAR.PALISADE, CAR.GRANDEUR_HEV_20 ]),
 }
 
-EV_CAR = set([CAR.IONIQ_EV_2020, CAR.IONIQ_EV_LTD, CAR.IONIQ, CAR.KONA_EV, CAR.KIA_NIRO_EV])
 HYBRID_CAR = set([CAR.GRANDEUR_HEV_19, CAR.GRANDEUR_HEV_20])
+EV_CAR = set([CAR.IONIQ_EV_2020, CAR.IONIQ_EV_LTD, CAR.IONIQ, CAR.KONA_EV, CAR.KIA_NIRO_EV])
+
 
 DBC = {
   CAR.ELANTRA: dbc_dict('hyundai_kia_generic', None),
@@ -691,8 +692,8 @@ DBC = {
   CAR.PALISADE: dbc_dict('hyundai_kia_generic', None),
   CAR.VELOSTER: dbc_dict('hyundai_kia_generic', None),
   CAR.KIA_CEED: dbc_dict('hyundai_kia_generic', None),
-  CAR.GRANDEUR_HEV_20: dbc_dict('hyundai_kia_generic_hybrid', None),
-  CAR.GRANDEUR_HEV_19: dbc_dict('hyundai_kia_generic_hybrid', None),
+  CAR.GRANDEUR_HEV_20: dbc_dict('hyundai_kia_generic', None),
+  CAR.GRANDEUR_HEV_19: dbc_dict('hyundai_kia_generic', None),
 }
 
 STEER_THRESHOLD = 150

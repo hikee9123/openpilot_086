@@ -312,7 +312,7 @@ class CarController():
 
 
 
-    str_log1 = 'gas={:.3f} gap={:.0f} Value={:.3f} raw={:.3f} '.format( CS.out.gas, CS.cruiseGapSet, CS.aReqValue, CS.aReqRaw )
+    str_log1 = 'gas={:.3f} gap={:.0f}'.format( CS.out.gas, CS.cruiseGapSet  )
     trace1.printf2( '{}'.format( str_log1 ) )
 
     str_log1 = 'LKAS={:.0f} hold={:.0f}'.format( CS.lkas_button_on, CS.auto_hold )

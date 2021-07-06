@@ -145,9 +145,4 @@ void DriverViewScene::ui_draw_driver(cereal::DriverState::Reader driver_state)
 
     p.setPen(QColor(255, 175, 3)); // orange
     ui_print( p, centerX, 350, "blinksProb:  %.2f%%,  %.2f%%",  driver_state.getLeftBlinkProb()*100, driver_state.getRightBlinkProb()*100);
-
-    p.setPen(QColor(255, 255, 255)); // white
-    ui_print( p, centerX, 450, "poorVision:  %.2f%%",  driver_state.getPoorVision()*100);
-    ui_print( p, centerX, 500, "eyesOnRoad:  %.2f%%",  driver_state.getEyesOnRoad()*100);
-    ui_print( p, centerX, 550, "distractedPose: %.2f distractedEyes:  %.2f%%",  driver_state.getDistractedPose()*100, driver_state.getDistractedEyes()*100);
 }

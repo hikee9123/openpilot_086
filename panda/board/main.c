@@ -662,7 +662,7 @@ uint8_t loop_counter = 0U;
 void TIM1_BRK_TIM9_IRQ_Handler(void) {
   if (TIM9->SR != 0) {
     // siren
-    current_board->set_siren((loop_counter & 1U) && siren_enabled);
+    current_board->set_siren((loop_counter & 1U) && (siren_enabled || (siren_countdown > 0U)));
 
     // decimated to 1Hz
     if(loop_counter == 0U){
@@ -698,11 +698,20 @@ void TIM1_BRK_TIM9_IRQ_Handler(void) {
         heartbeat_counter += 1U;
       }
 
+      if (siren_countdown > 0U) {
+        siren_countdown -= 1U;
+      }
+
       if (!heartbeat_disabled) {
         // if the heartbeat has been gone for a while, go to SILENT safety mode and enter power save
         if (heartbeat_counter >= (check_started() ? HEARTBEAT_IGNITION_CNT_ON : HEARTBEAT_IGNITION_CNT_OFF)) {
           puts("device hasn't sent a heartbeat for 0x");
           puth(heartbeat_counter);
+
+          if (controls_allowed) {
+            siren_countdown = 5U;
+          }
+
           puts(" seconds. Safety is set to NOOUTPUT mode.\n");  // atom
           if (current_safety_mode != SAFETY_NOOUTPUT) {
             set_safety_mode(SAFETY_NOOUTPUT, 0U);
