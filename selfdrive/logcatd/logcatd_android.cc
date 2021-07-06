@@ -157,10 +157,12 @@ int main() {
       else if( strcmp( entry.tag, "opkrturninfo" ) == 0 )
       {
         res.turnInfo = atoi( entry.message );
+        opkr = 1;
       } 
       else if( strcmp( entry.tag, "opkrdistancetoturn" ) == 0 )
       {
         res.distanceToTurn = atoi( entry.message );
+        opkr = 1;
       }      
       else if(  opkr && strcmp( entry.tag, "AudioFlinger" ) == 0 )  //   msm8974_platform
       {
