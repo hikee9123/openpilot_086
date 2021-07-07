@@ -603,6 +603,8 @@ static void ui_draw_debug2(UIState *s)
   float  laneWidth = scene.lateralPlan.getLaneWidth();
   float  vCruise = scene.longitudinalPlan.getVCruise();
 
+  int    modelSpeed = scene.longitudinalPlan.getModelSpeed();
+
  // float  curvature1 = scene.controls_state.getCurvature();
   // float  curvature2 = scene.lateralPlan.getCurvature();
  //  float  curvatureRate = scene.lateralPlan.getCurvatureRate();
@@ -625,7 +627,7 @@ static void ui_draw_debug2(UIState *s)
     ui_print( s, x_pos, y_pos+100,  "aO:%.2f, %.2f", angleOffset, angleOffsetAverage );
     ui_print( s, x_pos, y_pos+150, "sF:%.2f Fan:%.0f", stiffnessFactor, fanSpeed/1000. );
     ui_print( s, x_pos, y_pos+200, "lW:%.2f", laneWidth );
-
+    ui_print( s, x_pos, y_pos+250, "MS:%d",  modelSpeed );
    // ui_print( s, x_pos, y_pos+300, "CV:%.5f,%.5f  raw:%.5f", curvature1, curvature2, rawCurvature );
     ui_print( s, x_pos, y_pos+350, "prob:%.2f, %.2f, %.2f, %.2f", lane_line_probs[0], lane_line_probs[1], lane_line_probs[2], lane_line_probs[3] );
     ui_print( s, x_pos, y_pos+400, "vCruise:%.1f  face:%d  sensor:%.1f",  vCruise*3.6,  scene.dm_active, scene.light_sensor );//,  aCruise, vTarget*3.6,  aTarget);

@@ -17,9 +17,11 @@ from selfdrive.swaglog import cloudlog
 # atom
 from common.numpy_fast import interp
 from selfdrive.config import Conversions as CV
-
+from selfdrive.controls.lib.lane_planner import TRAJECTORY_SIZE
 
 MAX_ANGLE_OFFSET_DELTA = 20 * DT_MDL  # Max 20 deg/s
+MAX_SPEED = 255.0
+MIN_CURVE_SPEED = 30.
 
 class ParamsLearner:
   def __init__(self, CP, steer_ratio, stiffness_factor, angle_offset):
@@ -39,7 +41,9 @@ class ParamsLearner:
     self.steering_angle = 0
 
     self.valid = True
-
+    self.curve_speed = MAX_SPEED
+    self.old_model_speed = 0
+    self.old_model_init = 0    
 
 
   # atom
@@ -69,6 +73,44 @@ class ParamsLearner:
     steerRateCost = interp( v_ego_kph, self.cv_KPH, self.cv_SteerRateCost )
     return steerRatio, actuatorDelay, steerRateCost
 
+
+
+  def cal_curve_speed(self, sm, v_ego):
+    md = sm['modelV2']
+    if len(md.position.x) == TRAJECTORY_SIZE and len(md.position.y) == TRAJECTORY_SIZE:
+      x = md.position.x
+      y = md.position.y
+      dy = np.gradient(y, x)
+      d2y = np.gradient(dy, x)
+      curv = d2y / (1 + dy ** 2) ** 1.5
+      curv = curv[5:TRAJECTORY_SIZE-10]
+      a_y_max = 2.975 - v_ego * 0.0375  # ~1.85 @ 75mph, ~2.6 @ 25mph
+      v_curvature = np.sqrt(a_y_max / np.clip(np.abs(curv), 1e-4, None))
+      model_speed = np.mean(v_curvature) * 0.9 * self.curvature_gain
+      self.curve_speed = float(max(model_speed * CV.MS_TO_KPH, MIN_CURVE_SPEED))
+      if np.isnan(self.curve_speed):
+        self.curve_speed = MAX_SPEED
+
+      if self.curve_speed > MAX_SPEED:
+        self.curve_speed = MAX_SPEED                
+
+
+
+      delta_model = self.curve_speed  - self.old_model_speed
+      if self.old_model_init < 10:
+          self.old_model_init += 1
+          self.old_model_speed = self.curve_speed
+      elif self.old_model_speed == self.curve_speed:
+          pass
+      elif delta_model < -1:
+          self.old_model_speed -= 0.5  #model_speed
+      elif delta_model > 0:
+          self.old_model_speed += 0.1
+
+      else:
+          self.old_model_speed = self.curve_speed
+
+    return  self.old_model_speed
    
 
   def handle_log(self, t, which, msg):
@@ -111,7 +153,7 @@ def main(sm=None, pm=None):
   set_realtime_priority(5)
 
   if sm is None:
-    sm = messaging.SubMaster(['liveLocationKalman', 'carState', 'carParams','lateralPlan'], poll=['liveLocationKalman'])
+    sm = messaging.SubMaster(['liveLocationKalman', 'carState', 'carParams','modelV2'], poll=['liveLocationKalman'])
   if pm is None:
     pm = messaging.PubMaster(['liveParameters'])
 
@@ -193,18 +235,15 @@ def main(sm=None, pm=None):
       steerRateCostCV = CP.steerRateCost
       actuatorDelayCV = CP.steerActuatorDelay
       steerRatioCV = float(x[States.STEER_RATIO])
-      v_ego_kph = sm['carState'].vEgo * CV.MS_TO_KPH
+      v_ego = sm['carState'].vEgo
+      v_ego_kph = v_ego * CV.MS_TO_KPH
 
 
       if opkrLiveSteerRatio == 1:  # auto
         pass
       elif sm['carParams'].steerRateCost > 0:
-        lateralPlan = sm['lateralPlan']
-        vCurvature = abs(lateralPlan.curvature)
-
-        model_speed = interp( vCurvature, [0.0002, 0.00074, 0.0025, 0.008, 0.02], [255, 130, 90, 60, 20])
+        model_speed = learner.cal_curve_speed( sm, v_ego )
         atomTuning = sm['carParams'].atomTuning
-        #angleDeg = sm['carState'].steeringAngleDeg
         steerRatioCV, actuatorDelayCV, steerRateCostCV = learner.atom_tune( v_ego_kph, model_speed,  atomTuning )
 
 
@@ -215,6 +254,7 @@ def main(sm=None, pm=None):
       msg.liveParameters.steerRatioCV = steerRatioCV
       msg.liveParameters.steerActuatorDelayCV = actuatorDelayCV
       msg.liveParameters.steerRateCostCV = steerRateCostCV
+      msg.liveParameters.modelSpeed = model_speed
 
       msg.liveParameters.steerRatio = float(x[States.STEER_RATIO])
       msg.liveParameters.stiffnessFactor = float(x[States.STIFFNESS])

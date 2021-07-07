@@ -34,7 +34,7 @@ class CLongControl():
     self.prev_VSetDis  = 0
     self.curise_set_first = 0
     self.curise_sw_check = False
-    self.cruise_set_mode = 0
+    self.cruise_set_mode = 1      # 초기 선택 모델.
     self.cruise_set_speed_kph = 30
 
     self.curve_speed = 0

@@ -37,9 +37,8 @@ class CarState(CarStateBase):
 
     self.main_on = False
     self.acc_active = False
-    self.cruiseState_modeSel = 1    # 초기 선택 모델.
+    self.cruiseState_modeSel = 0    
 
-    self.Mdps_ToiUnavail = 0
 
     self.left_blinker_flash = 0
     self.right_blinker_flash = 0  
@@ -89,11 +88,9 @@ class CarState(CarStateBase):
     #ret.leftBlinker, ret.rightBlinker = self.update_blinker(cp)
 
     self.cruiseGapSet = cp.vl["SCC11"]['TauGapSet']
-    lead_objspd = cp.vl["SCC11"]['ACC_ObjRelSpd']
-    self.lead_objspd = lead_objspd * CV.MS_TO_KPH
+    self.lead_objspd = cp.vl["SCC11"]['ACC_ObjRelSpd'] * CV.MS_TO_KPH
 
     self.VSetDis = cp.vl["SCC11"]['VSetDis']
-    self.Mdps_ToiUnavail = cp.vl["MDPS12"]['CF_Mdps_ToiUnavail']    
     self.clu_Vanz = cp.vl["CLU11"]["CF_Clu_Vanz"]
     ret.vEgo = self.clu_Vanz * CV.KPH_TO_MS
     self.is_highway = cp.vl["SCC11"]["Navi_SCC_Camera_Act"] != 0.
@@ -114,7 +111,6 @@ class CarState(CarStateBase):
       ret.cruiseState.standstill = cp.vl["SCC11"]['SCCInfoDisplay'] == 4.
 
     self.update_atom( cp, cp_cam )
-
     ret.cruiseState.available = False
     if self.main_on == False:
       self.time_delay_int = 0
@@ -216,25 +212,6 @@ class CarState(CarStateBase):
     return ret
 
 
-
-
-  def update_blinker(self, cp):
-    leftBlinker = cp.vl["CGW1"]['CF_Gway_TurnSigLh'] != 0
-    rightBlinker = cp.vl["CGW1"]['CF_Gway_TurnSigRh'] != 0
-
-    if leftBlinker:
-      self.left_blinker_flash = 300
-    elif  self.left_blinker_flash:
-      self.left_blinker_flash -= 1
-
-    if rightBlinker:
-      self.right_blinker_flash = 300
-    elif  self.right_blinker_flash:
-      self.right_blinker_flash -= 1
-
-    leftBlinker = self.left_blinker_flash != 0
-    rightBlinker = self.right_blinker_flash != 0
-    return  leftBlinker, rightBlinker
 
 
   def update_atom(self, cp, cp_cam):
