@@ -603,7 +603,7 @@ static void ui_draw_debug2(UIState *s)
   float  laneWidth = scene.lateralPlan.getLaneWidth();
   float  vCruise = scene.longitudinalPlan.getVCruise();
 
-  int    modelSpeed = scene.longitudinalPlan.getModelSpeed();
+  int    modelSpeed = scene.liveParameters.getModelSpeed();
 
  // float  curvature1 = scene.controls_state.getCurvature();
   // float  curvature2 = scene.lateralPlan.getCurvature();
