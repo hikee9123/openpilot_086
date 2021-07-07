@@ -437,6 +437,7 @@ class Controls:
 
     # Update VehicleModel
     params = self.sm['liveParameters']
+    self.CP.steerActuatorDelay = params.steerActuatorDelayCV
     x = max(params.stiffnessFactor, 0.1)
     sr = max(params.steerRatioCV, 0.1)
     self.VM.update_params(x, sr)

@@ -59,7 +59,7 @@ class CarInterface(CarInterfaceBase):
       ret.steerRatio = 16.5  #13.96   #12.5
       ret.steerMaxBP = [1.,5.]
       ret.steerMaxV = [0.3,1.0]
-      ret.steerRateCost = 0.8
+      ret.steerRateCost = 1.2
 
       ret.lateralTuning.pid.kf = 0.000005
       ret.lateralTuning.pid.kpBP, ret.lateralTuning.pid.kpV = [[0.], [0.20]]
@@ -299,7 +299,6 @@ class CarInterface(CarInterfaceBase):
     ret.atomTuning.cvsMaxV  = ATOMC.cv_sMaxV
     ret.atomTuning.cvsdUpV  = ATOMC.cv_sdUPV
     ret.atomTuning.cvsdDnV  = ATOMC.cv_sdDNV
-
     ret.atomTuning.cvsteerRatioV = ATOMC.cv_steerRatioV
     ret.atomTuning.cvsteerActuatorDelayV = ATOMC.cv_ActuatorDelayV
     ret.atomTuning.cvSteerRateCostV = ATOMC.cv_SteerRateCostV
@@ -339,24 +338,24 @@ class CarInterface(CarInterfaceBase):
     
     # stock ACC by neokil
     ret.openpilotLongitudinalControl = Params().get('LongitudinalControl') == b'1'  #False
-    ret.enableCruise = True
-    ret.minEnableSpeed = -1.  # enable is done by stock ACC, so ignore this
-    ret.steerRatioRear = 0.  # no rear steering, at least on the listed cars aboveA
-    ret.gasMaxBP = [0., 10.*CV.KPH_TO_MS, 20.*CV.KPH_TO_MS, 70.*CV.KPH_TO_MS, 130.*CV.KPH_TO_MS ]
-    ret.gasMaxV = [0.48, 0.32, 0.23, 0.14, 0.097]  # half max brake
-    ret.brakeMaxBP = [0.]
-    ret.brakeMaxV = [1.]
-    ret.startAccel = 1.7
-    ret.minSpeedCan = 0.3
-    ret.stoppingBrakeRate = 0.2 # brake_travel/s while trying to stop
-    ret.startingBrakeRate = 0.8 # brake_travel/s while releasing on restart
-    ret.stoppingControl = False
-    ret.longitudinalTuning.deadzoneBP = [0., 100.*CV.KPH_TO_MS]
-    ret.longitudinalTuning.deadzoneV = [0., 0.015]
-    ret.longitudinalTuning.kpBP = [0., 10. * CV.KPH_TO_MS, 20. * CV.KPH_TO_MS, 40. * CV.KPH_TO_MS, 100. * CV.KPH_TO_MS]
-    ret.longitudinalTuning.kpV = [0.97, 0.82, 0.63, 0.58, 0.43]
-    ret.longitudinalTuning.kiBP = [0.]
-    ret.longitudinalTuning.kiV = [0.015]
+    #ret.enableCruise = True
+    #ret.minEnableSpeed = -1.  # enable is done by stock ACC, so ignore this
+    #ret.steerRatioRear = 0.  # no rear steering, at least on the listed cars aboveA
+    #ret.gasMaxBP = [0., 10.*CV.KPH_TO_MS, 20.*CV.KPH_TO_MS, 70.*CV.KPH_TO_MS, 130.*CV.KPH_TO_MS ]
+    #ret.gasMaxV = [0.48, 0.32, 0.23, 0.14, 0.097]  # half max brake
+    #ret.brakeMaxBP = [0.]
+    #ret.brakeMaxV = [1.]
+    #ret.startAccel = 1.7
+    #ret.minSpeedCan = 0.3
+    #ret.stoppingBrakeRate = 0.2 # brake_travel/s while trying to stop
+    #ret.startingBrakeRate = 0.8 # brake_travel/s while releasing on restart
+    #ret.stoppingControl = False
+    #ret.longitudinalTuning.deadzoneBP = [0., 100.*CV.KPH_TO_MS]
+    #ret.longitudinalTuning.deadzoneV = [0., 0.015]
+    #ret.longitudinalTuning.kpBP = [0., 10. * CV.KPH_TO_MS, 20. * CV.KPH_TO_MS, 40. * CV.KPH_TO_MS, 100. * CV.KPH_TO_MS]
+    #ret.longitudinalTuning.kpV = [0.97, 0.82, 0.63, 0.58, 0.43]
+    #ret.longitudinalTuning.kiBP = [0.]
+    #ret.longitudinalTuning.kiV = [0.015]
     return ret
 
 
