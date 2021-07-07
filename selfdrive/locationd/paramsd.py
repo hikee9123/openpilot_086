@@ -237,12 +237,11 @@ def main(sm=None, pm=None):
       steerRatioCV = float(x[States.STEER_RATIO])
       v_ego = sm['carState'].vEgo
       v_ego_kph = v_ego * CV.MS_TO_KPH
-
+      model_speed = learner.cal_curve_speed( sm, v_ego )
 
       if opkrLiveSteerRatio == 1:  # auto
         pass
       elif sm['carParams'].steerRateCost > 0:
-        model_speed = learner.cal_curve_speed( sm, v_ego )
         atomTuning = sm['carParams'].atomTuning
         steerRatioCV, actuatorDelayCV, steerRateCostCV = learner.atom_tune( v_ego_kph, model_speed,  atomTuning )
 
