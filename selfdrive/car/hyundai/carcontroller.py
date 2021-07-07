@@ -218,8 +218,9 @@ class CarController():
       return  cruise_set_speed_kph
 
     elif CS.is_highway:
-      decPos =  interp( speedLimit, [90,110], [ 100, 300 ] )
-      spdTarget = interp( speedLimitDistance, [decPos,1000], [ speedLimit, cruise_set_speed_kph ] )
+      return  cruise_set_speed_kph
+      #decPos =  interp( speedLimit, [90,110], [ 100, 300 ] )
+      #spdTarget = interp( speedLimitDistance, [decPos,1000], [ speedLimit, cruise_set_speed_kph ] )
     else:
       decPos =  interp( speedLimit, [30,100], [ 50, 200 ] )
       spdTarget = interp( speedLimitDistance, [decPos,600], [ speedLimit, cruise_set_speed_kph ] )
