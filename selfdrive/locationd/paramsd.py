@@ -254,7 +254,7 @@ def main(sm=None, pm=None):
       msg.liveParameters.steerRatioCV = steerRatioCV
       msg.liveParameters.steerActuatorDelayCV = actuatorDelayCV
       msg.liveParameters.steerRateCostCV = steerRateCostCV
-      msg.liveParameters.modelSpeed = model_speed
+      msg.liveParameters.modelSpeed = int(model_speed)
 
       msg.liveParameters.steerRatio = float(x[States.STEER_RATIO])
       msg.liveParameters.stiffnessFactor = float(x[States.STIFFNESS])
