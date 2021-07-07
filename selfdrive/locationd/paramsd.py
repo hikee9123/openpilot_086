@@ -43,7 +43,8 @@ class ParamsLearner:
     self.valid = True
     self.curve_speed = MAX_SPEED
     self.old_model_speed = 0
-    self.old_model_init = 0    
+    self.old_model_init = 0
+    self.curvature_gain = 1
 
 
   # atom
