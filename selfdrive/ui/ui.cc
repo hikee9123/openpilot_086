@@ -189,7 +189,6 @@ static void update_state(UIState *s) {
     
   } else if ((s->sm->frame - s->sm->rcv_frame("pandaState")) > 5*UI_FREQ) {
     scene.pandaType = cereal::PandaState::PandaType::UNKNOWN;
-    scene.ignition = scene.IsOpenpilotViewEnabled;
   }
   if (sm.updated("ubloxGnss")) {
     auto data = sm["ubloxGnss"].getUbloxGnss();
@@ -236,9 +235,16 @@ static void update_state(UIState *s) {
 
     scene.light_sensor = std::clamp<float>((1023.0 / max_lines) * (max_lines - camera_state.getIntegLines() * gain), 0.0, 1023.0);
   }
-  scene.started = sm["deviceState"].getDeviceState().getStarted() && scene.ignition;
 
-  //printf( "scene.started=%d   scene.ignition=%d \n", scene.started, scene.ignition);
+  if (scene.IsOpenpilotViewEnabled )
+  {
+    scene.started = sm["deviceState"].getDeviceState().getStarted();
+  }
+  else
+  {
+      scene.started = sm["deviceState"].getDeviceState().getStarted() && scene.ignition;
+  }
+  
 
    // atom
    if (sm.updated("deviceState")) {

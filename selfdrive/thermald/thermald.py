@@ -228,9 +228,6 @@ def thermald_thread():
         no_panda_cnt = 0
         startup_conditions["ignition"] = pandaState.pandaState.ignitionLine or pandaState.pandaState.ignitionCan
 
-
-
-
       startup_conditions["hardware_supported"] = pandaState.pandaState.pandaType not in [log.PandaState.PandaType.whitePanda,
                                                                                          log.PandaState.PandaType.greyPanda]
       set_offroad_alert_if_changed("Offroad_HardwareUnsupported", not startup_conditions["hardware_supported"])
@@ -247,7 +244,6 @@ def thermald_thread():
           setup_eon_fan()
           handle_fan = handle_fan_eon
 
-
       # Handle disconnect
       if pandaState_prev is not None:
         if pandaState.pandaState.pandaType == log.PandaState.PandaType.unknown and \
@@ -259,9 +255,7 @@ def thermald_thread():
       is_openpilot_view_enabled = params.get_bool("IsOpenpilotViewEnabled") # IsRHD
       if is_openpilot_view_enabled:
         startup_conditions["ignition"] = True
-      else:
-        startup_conditions["ignition"] = False
-  
+
     # get_network_type is an expensive call. update every 10s
     if (count % int(10. / DT_TRML)) == 0:
       try:
