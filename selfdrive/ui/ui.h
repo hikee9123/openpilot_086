@@ -53,6 +53,11 @@ const int footer_h = 280;
 
 const int UI_FREQ = 20;   // Hz
 
+
+const Rect btn_map_overlay = {0, 465, 150, 150};
+const Rect btn_NAVI = {1300, 905, 140, 140};
+const Rect btn_Rec = {1745, 905, 140, 140};
+
 typedef enum UIStatus {
   STATUS_DISENGAGED,
   STATUS_ENGAGED,
@@ -62,9 +67,9 @@ typedef enum UIStatus {
 
 const QColor bg_colors [] = {
   [STATUS_DISENGAGED] =  QColor(0x17, 0x33, 0x49, 0xc8),
-  [STATUS_ENGAGED] = QColor(0x17, 0x86, 0x44, 0xf1),
-  [STATUS_WARNING] = QColor(0xDA, 0x6F, 0x25, 0xf1),
-  [STATUS_ALERT] = QColor(0xC9, 0x22, 0x31, 0xf1),
+  [STATUS_ENGAGED] = QColor(0x17, 0x86, 0x44, 0x51),
+  [STATUS_WARNING] = QColor(0xDA, 0x6F, 0x25, 0x51),
+  [STATUS_ALERT] = QColor(0xC9, 0x22, 0x31, 0x31),
 };
 
 typedef struct {
@@ -83,8 +88,16 @@ typedef struct UIScene {
 
   cereal::PandaState::PandaType pandaType;
 
+  cereal::DeviceState::Reader deviceState;
+  cereal::RadarState::LeadData::Reader lead_data[2];
+  cereal::CarState::Reader car_state;
+  cereal::ControlsState::Reader controls_state;
+  cereal::DriverState::Reader driver_state;
+
+
   // gps
   int satelliteCount;
+  float gpsAccuracy;
 
   // modelV2
   float lane_line_probs[4];
@@ -97,10 +110,53 @@ typedef struct UIScene {
 
   // lead
   vertex_data lead_vertices[2];
+  
 
-  float light_sensor, accel_sensor, gyro_sensor;
+  float light_sensor = 0;
+  float accel_sensor, gyro_sensor;
   bool started, ignition, is_metric, longitudinal_control, end_to_end;
   uint64_t started_frame;
+
+
+  // atom
+  struct _screen
+  {
+     int  nTime;
+     int  map_is_running, map_command_on, map_command_off;
+     int  map_on_overlay;
+     int  autoScreenOff;
+     int  brightness;
+     int  nVolumeBoost;
+     int  awake;
+  } scr;
+
+  
+  int  IsOpenpilotViewEnabled;
+  int  dash_menu_no;
+  struct _mouse
+  {
+    int touch_x;
+    int touch_y;
+    int touched;
+    int touch_cnt;
+    int sidebar;
+  } mouse;
+
+  cereal::ModelDataV2::Reader modelDataV2;
+  cereal::FrameData::Reader   camera_state;
+  cereal::CarControl::Reader carControl;
+  cereal::LateralPlan::Reader lateralPlan;
+  cereal::LiveParametersData::Reader   liveParameters;
+  cereal::GpsLocationData::Reader   gpsLocationExternal;
+  cereal::LongitudinalPlan::Reader longitudinalPlan;
+  cereal::LiveNaviData::Reader liveNaviData;
+
+  struct _STATUS_
+  {
+      std::string alertTextMsg1;
+      std::string alertTextMsg2; 
+      std::string alertTextMsg3;
+  } alert;
 } UIScene;
 
 typedef struct UIState {
@@ -173,7 +229,7 @@ private:
   const float accel_samples = 5*UI_FREQ;
 
   bool awake;
-  int awake_timeout = 0;
+  int awake_timeout = 900;
   float accel_prev = 0;
   float gyro_prev = 0;
   float last_brightness = 0;
@@ -183,6 +239,7 @@ private:
 
   void updateBrightness(const UIState &s);
   void updateWakefulness(const UIState &s);
+  void ScreenAwake();
 
 signals:
   void displayPowerChanged(bool on);

@@ -14,8 +14,14 @@ from selfdrive.locationd.models.car_kf import CarKalman, ObservationKind, States
 from selfdrive.locationd.models.constants import GENERATED_DIR
 from selfdrive.swaglog import cloudlog
 
+# atom
+from common.numpy_fast import interp
+from selfdrive.config import Conversions as CV
+from selfdrive.controls.lib.lane_planner import TRAJECTORY_SIZE
 
 MAX_ANGLE_OFFSET_DELTA = 20 * DT_MDL  # Max 20 deg/s
+MAX_SPEED = 255.0
+MIN_CURVE_SPEED = 30.
 
 class ParamsLearner:
   def __init__(self, CP, steer_ratio, stiffness_factor, angle_offset):
@@ -35,6 +41,77 @@ class ParamsLearner:
     self.steering_angle = 0
 
     self.valid = True
+    self.curve_speed = MAX_SPEED
+    self.old_model_speed = 0
+    self.old_model_init = 0
+    self.curvature_gain = 1
+
+
+  # atom
+  def atom_tune( self, v_ego_kph, angleDeg,  atomTuning ):  
+    self.cv_KPH = atomTuning.cvKPH
+    self.cv_BPV = atomTuning.cvBPV
+    self.cv_steerRatioV = atomTuning.cvsteerRatioV
+    self.cv_SteerRatio = []
+
+    self.cv_ActuatorDelayV = atomTuning.cvsteerActuatorDelayV
+    self.cv_ActuatorDelay = []
+
+    self.cv_SteerRateCostV = atomTuning.cvSteerRateCostV
+    self.cv_SteerRateCost = []
+
+    nPos = 0
+    for steerRatio in self.cv_BPV:  # steerRatio
+      self.cv_SteerRatio.append( interp( angleDeg, steerRatio, self.cv_steerRatioV[nPos] ) )
+      self.cv_ActuatorDelay.append( interp( angleDeg, steerRatio, self.cv_ActuatorDelayV[nPos] ) )
+      self.cv_SteerRateCost.append( interp( angleDeg, steerRatio, self.cv_SteerRateCostV[nPos] ) )
+      nPos += 1
+      if nPos > 20:
+        break
+
+    steerRatio = interp( v_ego_kph, self.cv_KPH, self.cv_SteerRatio )
+    actuatorDelay = interp( v_ego_kph, self.cv_KPH, self.cv_ActuatorDelay )
+    steerRateCost = interp( v_ego_kph, self.cv_KPH, self.cv_SteerRateCost )
+    return steerRatio, actuatorDelay, steerRateCost
+
+
+
+  def cal_curve_speed(self, sm, v_ego):
+    md = sm['modelV2']
+    if len(md.position.x) == TRAJECTORY_SIZE and len(md.position.y) == TRAJECTORY_SIZE:
+      x = md.position.x
+      y = md.position.y
+      dy = np.gradient(y, x)
+      d2y = np.gradient(dy, x)
+      curv = d2y / (1 + dy ** 2) ** 1.5
+      curv = curv[5:TRAJECTORY_SIZE-10]
+      a_y_max = 2.975 - v_ego * 0.0375  # ~1.85 @ 75mph, ~2.6 @ 25mph
+      v_curvature = np.sqrt(a_y_max / np.clip(np.abs(curv), 1e-4, None))
+      model_speed = np.mean(v_curvature) * 0.9 * self.curvature_gain
+      self.curve_speed = float(max(model_speed * CV.MS_TO_KPH, MIN_CURVE_SPEED))
+      if np.isnan(self.curve_speed):
+        self.curve_speed = MAX_SPEED
+
+      if self.curve_speed > MAX_SPEED:
+        self.curve_speed = MAX_SPEED                
+
+
+
+      delta_model = self.curve_speed  - self.old_model_speed
+      if self.old_model_init < 10:
+          self.old_model_init += 1
+          self.old_model_speed = self.curve_speed
+      elif self.old_model_speed == self.curve_speed:
+          pass
+      elif delta_model < -2:
+          self.old_model_speed -= 2.0  #model_speed
+      elif delta_model > 0:
+          self.old_model_speed += 0.5
+      else:
+          self.old_model_speed = self.curve_speed
+
+    return  self.old_model_speed
+   
 
   def handle_log(self, t, which, msg):
     if which == 'liveLocationKalman':
@@ -76,7 +153,7 @@ def main(sm=None, pm=None):
   set_realtime_priority(5)
 
   if sm is None:
-    sm = messaging.SubMaster(['liveLocationKalman', 'carState'], poll=['liveLocationKalman'])
+    sm = messaging.SubMaster(['liveLocationKalman', 'carState', 'carParams','modelV2'], poll=['liveLocationKalman'])
   if pm is None:
     pm = messaging.PubMaster(['liveParameters'])
 
@@ -123,6 +200,7 @@ def main(sm=None, pm=None):
   # When driving in wet conditions the stiffness can go down, and then be too low on the next drive
   # Without a way to detect this we have to reset the stiffness every drive
   params['stiffnessFactor'] = 1.0
+  opkrLiveSteerRatio = int( params_reader.get("OpkrLiveSteerRatio") )
 
   learner = ParamsLearner(CP, params['steerRatio'], params['stiffnessFactor'], math.radians(params['angleOffsetAverageDeg']))
 
@@ -152,6 +230,31 @@ def main(sm=None, pm=None):
 
       msg.liveParameters.posenetValid = True
       msg.liveParameters.sensorValid = True
+
+      # atom
+      steerRateCostCV = CP.steerRateCost
+      actuatorDelayCV = CP.steerActuatorDelay
+      steerRatioCV = float(x[States.STEER_RATIO])
+      v_ego = sm['carState'].vEgo
+      v_ego_kph = v_ego * CV.MS_TO_KPH
+      model_speed = learner.cal_curve_speed( sm, v_ego )
+
+      if opkrLiveSteerRatio == 1:  # auto
+        pass
+      elif sm['carParams'].steerRateCost > 0:
+        atomTuning = sm['carParams'].atomTuning
+        steerRatioCV, actuatorDelayCV, steerRateCostCV = learner.atom_tune( v_ego_kph, model_speed,  atomTuning )
+
+
+        if opkrLiveSteerRatio == 2:
+          steerRatioCV = float(x[States.STEER_RATIO])
+
+
+      msg.liveParameters.steerRatioCV = steerRatioCV
+      msg.liveParameters.steerActuatorDelayCV = actuatorDelayCV
+      msg.liveParameters.steerRateCostCV = steerRateCostCV
+      msg.liveParameters.modelSpeed = int(model_speed)
+
       msg.liveParameters.steerRatio = float(x[States.STEER_RATIO])
       msg.liveParameters.stiffnessFactor = float(x[States.STIFFNESS])
       msg.liveParameters.angleOffsetAverageDeg = angle_offset_average

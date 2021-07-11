@@ -24,6 +24,8 @@
 #include "selfdrive/ui/ui.h"
 #include "selfdrive/ui/qt/util.h"
 
+#include "atom/userPanel.hpp"
+
 TogglesPanel::TogglesPanel(QWidget *parent) : QWidget(parent) {
   QVBoxLayout *main_layout = new QVBoxLayout(this);
 
@@ -324,6 +326,7 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
     {"Network", network_panel(this)},
     {"Toggles", new TogglesPanel(this)},
     {"Software", new SoftwarePanel(this)},
+    {"Community", new CUserPanel(this)},
   };
 
 #ifdef ENABLE_MAPS
@@ -333,7 +336,7 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
     QObject::connect(map_panel, &MapPanel::closeSettings, this, &SettingsWindow::closeSettings);
   }
 #endif
-  const int padding = panels.size() > 3 ? 25 : 35;
+  const int padding = panels.size() > 3 ? 20 : 35;
 
   nav_btns = new QButtonGroup();
   for (auto &[name, panel] : panels) {

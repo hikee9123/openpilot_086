@@ -88,6 +88,15 @@ void Sidebar::updateState(const UIState &s) {
   }
   setProperty("pandaStr", pandaStr);
   setProperty("pandaStatus", pandaStatus);
+
+
+  // atom
+  if (s.sm->updated("deviceState") || s.sm->updated("pandaState")) {
+    m_battery_img = s.scene.deviceState.getBatteryStatus() == "Charging" ? 1 : 0;
+    m_batteryPercent = s.scene.deviceState.getBatteryPercent();
+    m_strip = s.scene.deviceState.getWifiIpAddress();
+    repaint();
+  }
 }
 
 void Sidebar::paintEvent(QPaintEvent *event) {
@@ -112,11 +121,32 @@ void Sidebar::paintEvent(QPaintEvent *event) {
 
   configFont(p, "Open Sans", 35, "Regular");
   p.setPen(QColor(0xff, 0xff, 0xff));
-  const QRect r = QRect(50, 247, 100, 50);
+  const QRect r = QRect(50, 237, 100, 50);
   p.drawText(r, Qt::AlignCenter, net_type);
 
   // metrics
   drawMetric(p, "TEMP", QString("%1°C").arg(temp_val), temp_status, 338);
   drawMetric(p, panda_str, "", panda_status, 518);
   drawMetric(p, "CONNECT\n" + connect_str, "", connect_status, 676);
+
+  // atom - ip
+  if( m_batteryPercent <= 1) return;
+  QString  strip = m_strip.c_str();
+  const QRect r2 = QRect(50, 295, 200, 50);
+  configFont(p, "Open Sans", 28, "Regular");
+  p.drawText(r2, Qt::AlignLeft, strip);
+
+  // atom - battery
+  QRect  rect(160, 247, 76, 36);
+  QRect  bq(rect.left() + 6, rect.top() + 5, int((rect.width() - 19) * m_batteryPercent * 0.01), rect.height() - 11 );
+  QBrush bgBrush("#149948");
+  p.fillRect(bq, bgBrush);  
+  p.drawImage(rect, battery_imgs[m_battery_img]);
+
+  p.setPen(Qt::white);
+  configFont(p, "Open Sans", 25, "Regular");
+
+  char temp_value_str1[32];
+  snprintf(temp_value_str1, sizeof(temp_value_str1), "%d", m_batteryPercent );
+  p.drawText(rect, Qt::AlignCenter, temp_value_str1);
 }

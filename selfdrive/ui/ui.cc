@@ -38,6 +38,7 @@ static bool calib_frame_to_full_frame(const UIState *s, float in_x, float in_y, 
 static void ui_init_vision(UIState *s) {
   // Invisible until we receive a calibration message.
   s->scene.world_objects_visible = false;
+  s->scene.ignition = true;
 
   for (int i = 0; i < s->vipc_client->num_buffers; i++) {
     s->texture[i].reset(new EGLImageTexture(&s->vipc_client->buffers[i]));
@@ -71,6 +72,7 @@ static void update_leads(UIState *s, const cereal::RadarState::Reader &radar_sta
       // negative because radarState uses left positive convention
       calib_frame_to_full_frame(s, lead_data.getDRel(), -lead_data.getYRel(), z + 1.22, &s->scene.lead_vertices[i]);
     }
+    s->scene.lead_data[i] = lead_data;
   }
 }
 
@@ -133,6 +135,22 @@ static void update_state(UIState *s) {
   if (sm.frame % (UI_FREQ / 2) == 0) {
     scene.engageable = sm["controlsState"].getControlsState().getEngageable();
     scene.dm_active = sm["driverMonitoringState"].getDriverMonitoringState().getIsActiveMode();
+
+  }
+
+  if (scene.started && sm.updated("controlsState")) {
+    scene.controls_state = sm["controlsState"].getControlsState();
+
+// debug Message
+  scene.alert.alertTextMsg1 = scene.controls_state.getAlertTextMsg1();
+  scene.alert.alertTextMsg2 = scene.controls_state.getAlertTextMsg2();
+  scene.alert.alertTextMsg3 = scene.controls_state.getAlertTextMsg3();
+  }
+  if (sm.updated("carState")) {
+    scene.car_state = sm["carState"].getCarState();
+
+    auto cruiseState = scene.car_state.getCruiseState();
+    scene.scr.awake = cruiseState.getCruiseSwState();
   }
   if (sm.updated("radarState")) {
     std::optional<cereal::ModelDataV2::XYZTData::Reader> line;
@@ -159,14 +177,19 @@ static void update_state(UIState *s) {
     }
   }
   if (sm.updated("modelV2")) {
-    update_model(s, sm["modelV2"].getModelV2());
+    scene.modelDataV2 = sm["modelV2"].getModelV2();
+    update_model(s, scene.modelDataV2);
   }
+
   if (sm.updated("pandaState")) {
     auto pandaState = sm["pandaState"].getPandaState();
     scene.pandaType = pandaState.getPandaType();
     scene.ignition = pandaState.getIgnitionLine() || pandaState.getIgnitionCan();
+
+    
   } else if ((s->sm->frame - s->sm->rcv_frame("pandaState")) > 5*UI_FREQ) {
     scene.pandaType = cereal::PandaState::PandaType::UNKNOWN;
+    scene.ignition = scene.IsOpenpilotViewEnabled;
   }
   if (sm.updated("ubloxGnss")) {
     auto data = sm["ubloxGnss"].getUbloxGnss();
@@ -174,9 +197,17 @@ static void update_state(UIState *s) {
       scene.satelliteCount = data.getMeasurementReport().getNumMeas();
     }
   }
+  if (sm.updated("gpsLocationExternal")) {
+    scene.gpsLocationExternal = sm["gpsLocationExternal"].getGpsLocationExternal();
+    scene.gpsAccuracy = scene.gpsLocationExternal.getAccuracy();
+  }  
   if (sm.updated("carParams")) {
     scene.longitudinal_control = sm["carParams"].getCarParams().getOpenpilotLongitudinalControl();
   }
+  if (sm.updated("driverState")) {
+    scene.driver_state = sm["driverState"].getDriverState();
+  }
+
   if (sm.updated("sensorEvents")) {
     for (auto sensor : sm["sensorEvents"].getSensorEvents()) {
       if (!scene.started && sensor.which() == cereal::SensorEventData::ACCELERATION) {
@@ -200,12 +231,42 @@ static void update_state(UIState *s) {
 
     if (Hardware::TICI()) {
       // Max gain is 4 * 2.5 (High Conversion Gain)
-      gain /= 10.0;
+      gain *= 0.01;
     }
 
     scene.light_sensor = std::clamp<float>((1023.0 / max_lines) * (max_lines - camera_state.getIntegLines() * gain), 0.0, 1023.0);
   }
   scene.started = sm["deviceState"].getDeviceState().getStarted() && scene.ignition;
+
+  //printf( "scene.started=%d   scene.ignition=%d \n", scene.started, scene.ignition);
+
+   // atom
+   if (sm.updated("deviceState")) {
+    scene.deviceState = sm["deviceState"].getDeviceState();
+   }   
+   if (sm.updated("liveParameters")) 
+   { 
+    scene.liveParameters = sm["liveParameters"].getLiveParameters();
+   }
+   if (sm.updated("lateralPlan"))
+   {
+    scene.lateralPlan = sm["lateralPlan"].getLateralPlan();
+    scene.end_to_end = scene.lateralPlan.getLaneLess();
+   } 
+   if (sm.updated("carControl"))
+   {
+    scene.carControl = sm["carControl"].getCarControl();
+   } 
+   if (sm.updated("longitudinalPlan"))
+   {
+     scene.longitudinalPlan = sm["longitudinalPlan"].getLongitudinalPlan();
+   }
+   if( sm.updated("liveNaviData"))
+   {
+     scene.liveNaviData = sm["liveNaviData"].getLiveNaviData();
+
+     scene.scr.map_is_running = scene.liveNaviData.getMapEnable();
+   }
 }
 
 static void update_params(UIState *s) {
@@ -213,6 +274,7 @@ static void update_params(UIState *s) {
   UIScene &scene = s->scene;
   if (frame % (5*UI_FREQ) == 0) {
     scene.is_metric = Params().getBool("IsMetric");
+    scene.IsOpenpilotViewEnabled = Params().getBool("IsOpenpilotViewEnabled");
   }
 }
 
@@ -279,6 +341,8 @@ QUIState::QUIState(QObject *parent) : QObject(parent) {
   ui_state.sm = std::make_unique<SubMaster, const std::initializer_list<const char *>>({
     "modelV2", "controlsState", "liveCalibration", "radarState", "deviceState", "roadCameraState",
     "pandaState", "carParams", "driverMonitoringState", "sensorEvents", "carState", "ubloxGnss",
+    "liveParameters","driverState","lateralPlan", "longitudinalPlan","carControl","liveNaviData",  // atom
+    "gpsLocationExternal",
   });
 
   ui_state.fb_w = vwp_w;
@@ -330,15 +394,23 @@ void Device::update(const UIState &s) {
 }
 
 void Device::setAwake(bool on, bool reset) {
+  UIScene  &scene = QUIState::ui_state.scene;
   if (on != awake) {
     awake = on;
-    Hardware::set_display_power(awake);
-    LOGD("setting display power %d", awake);
-    emit displayPowerChanged(awake);
+
+    // atom
+    if( scene.ignition || !scene.scr.autoScreenOff )
+    {
+      Hardware::set_display_power(awake);
+      LOGD("setting display power %d", awake);
+      emit displayPowerChanged(awake);
+    }
   }
 
   if (reset) {
     awake_timeout = 30 * UI_FREQ;
+    scene.scr.nTime = scene.scr.autoScreenOff * 60 * UI_FREQ;
+   // printf("Device::setAwake=%d \n", scene.scr.nTime);
   }
 }
 
@@ -354,7 +426,11 @@ void Device::updateBrightness(const UIState &s) {
   if (!awake) {
     brightness = 0;
   }
-
+  else if( s.scene.scr.brightness )  // atom
+  {
+    brightness = 255 * (s.scene.scr.brightness * 0.002);
+  }
+  
   if (brightness != last_brightness) {
     std::thread{Hardware::set_brightness, brightness}.detach();
   }
@@ -364,15 +440,58 @@ void Device::updateBrightness(const UIState &s) {
 void Device::updateWakefulness(const UIState &s) {
   awake_timeout = std::max(awake_timeout - 1, 0);
 
-  bool should_wake = s.scene.started || s.scene.ignition;
-  if (!should_wake) {
-    // tap detection while display is off
-    bool accel_trigger = abs(s.scene.accel_sensor - accel_prev) > 0.2;
-    bool gyro_trigger = abs(s.scene.gyro_sensor - gyro_prev) > 0.15;
-    should_wake = accel_trigger && gyro_trigger;
-    gyro_prev = s.scene.gyro_sensor;
-    accel_prev = (accel_prev * (accel_samples - 1) + s.scene.accel_sensor) / accel_samples;
+  bool should_wake = false;
+  if( !s.scene.scr.autoScreenOff || !s.scene.ignition )
+  {
+    should_wake = s.scene.started || s.scene.ignition;
+    if (!should_wake ) {
+      // tap detection while display is off
+      bool accel_trigger = abs(s.scene.accel_sensor - accel_prev) > 0.2;
+      bool gyro_trigger = abs(s.scene.gyro_sensor - gyro_prev) > 0.15;
+      should_wake = accel_trigger && gyro_trigger;
+      gyro_prev = s.scene.gyro_sensor;
+      accel_prev = (accel_prev * (accel_samples - 1) + s.scene.accel_sensor) / accel_samples;
+    }
   }
 
+ // printf("updateWakefulness started = %d  ignition=%d \n", s.scene.started, s.scene.ignition );  
+  ScreenAwake();
   setAwake(awake_timeout, should_wake);
+}
+
+
+//  atom
+void Device::ScreenAwake() 
+{
+  UIState &s = QUIState::ui_state;  
+  const bool draw_alerts = s.scene.started;
+  const float speed = s.scene.car_state.getVEgo();
+
+  if( s.scene.scr.nTime > 0 )
+  {
+    awake_timeout = 30 * UI_FREQ;
+    s.scene.scr.nTime--;
+  }
+  else if(s.scene.ignition && (speed < 1))
+  {
+    awake_timeout = 30 * UI_FREQ;
+  }
+  else if( s.scene.scr.autoScreenOff && s.scene.scr.nTime == 0)
+  {
+   // awake = false;
+  }
+
+  int  cur_key = s.scene.scr.awake;
+  if (draw_alerts && s.scene.controls_state.getAlertSize() != cereal::ControlsState::AlertSize::NONE) 
+  {
+      cur_key += 1;
+  }
+
+  static int old_key;
+  if( cur_key != old_key )
+  {
+    old_key = cur_key;
+    if(cur_key)
+        setAwake(true, true);
+  } 
 }

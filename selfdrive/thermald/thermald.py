@@ -128,6 +128,25 @@ def set_offroad_alert_if_changed(offroad_alert: str, show_alert: bool, extra_tex
   prev_offroad_states[offroad_alert] = (show_alert, extra_text)
   set_offroad_alert(offroad_alert, show_alert, extra_text)
 
+# atom
+def set_prebuilt(params):
+  prebuiltfile = '/data/openpilot/prebuilt'
+  prebuiltlet = params.get_bool("PutPrebuiltOn")
+  if not os.path.isfile(prebuiltfile) and prebuiltlet:
+    os.system("cd /data/openpilot; touch prebuilt")
+  elif os.path.isfile(prebuiltfile) and not prebuiltlet:
+    os.system("cd /data/openpilot; rm -f prebuilt")
+
+
+def set_sshlegacy_key(params):
+  sshkeyfile = '/data/public_key'
+  sshkeylet = params.get_bool("OpkrSSHLegacy")
+  if not os.path.isfile(sshkeyfile) and sshkeylet:
+    os.system("cp -f /data/openpilot/selfdrive/assets/addon/key/GithubSshKeys_legacy /data/params/d/GithubSshKeys; chmod 600 /data/params/d/GithubSshKeys; touch /data/public_key")
+  elif os.path.isfile(sshkeyfile) and not sshkeylet:
+    os.system("cp -f /data/openpilot/selfdrive/assets/addon/key/GithubSshKeys /data/params/d/GithubSshKeys; chmod 600 /data/params/d/GithubSshKeys; rm -f /data/public_key")
+
+
 
 def thermald_thread():
 
@@ -157,6 +176,7 @@ def thermald_thread():
   network_strength = NetworkStrength.unknown
   network_info = None
   registered_count = 0
+  wifiIpAddress = 'N/A'
 
   current_filter = FirstOrderFilter(0., CURRENT_TAU, DT_TRML)
   cpu_temp_filter = FirstOrderFilter(0., CPU_TEMP_TAU, DT_TRML)
@@ -190,6 +210,7 @@ def thermald_thread():
     cloudlog.event("CPR", data=cpr_data)
 
   while 1:
+    ts = sec_since_boot()
     pandaState = messaging.recv_sock(pandaState_sock, wait=True)
     msg = read_thermal(thermal_config)
 
@@ -207,6 +228,9 @@ def thermald_thread():
         no_panda_cnt = 0
         startup_conditions["ignition"] = pandaState.pandaState.ignitionLine or pandaState.pandaState.ignitionCan
 
+
+
+
       startup_conditions["hardware_supported"] = pandaState.pandaState.pandaType not in [log.PandaState.PandaType.whitePanda,
                                                                                          log.PandaState.PandaType.greyPanda]
       set_offroad_alert_if_changed("Offroad_HardwareUnsupported", not startup_conditions["hardware_supported"])
@@ -223,19 +247,28 @@ def thermald_thread():
           setup_eon_fan()
           handle_fan = handle_fan_eon
 
+
       # Handle disconnect
       if pandaState_prev is not None:
         if pandaState.pandaState.pandaType == log.PandaState.PandaType.unknown and \
           pandaState_prev.pandaState.pandaType != log.PandaState.PandaType.unknown:
           params.clear_all(ParamKeyType.CLEAR_ON_PANDA_DISCONNECT)
       pandaState_prev = pandaState
-
+    else:
+      # atom
+      is_openpilot_view_enabled = params.get_bool("IsOpenpilotViewEnabled") # IsRHD
+      if is_openpilot_view_enabled:
+        startup_conditions["ignition"] = True
+      else:
+        startup_conditions["ignition"] = False
+  
     # get_network_type is an expensive call. update every 10s
     if (count % int(10. / DT_TRML)) == 0:
       try:
         network_type = HARDWARE.get_network_type()
         network_strength = HARDWARE.get_network_strength(network_type)
         network_info = HARDWARE.get_network_info()  # pylint: disable=assignment-from-none
+        wifiIpAddress = HARDWARE.get_ip_address()
 
         if TICI and (network_info.get('state', None) == "REGISTERED"):
           registered_count += 1
@@ -259,6 +292,7 @@ def thermald_thread():
     if network_info is not None:
       msg.deviceState.networkInfo = network_info
 
+    msg.deviceState.wifiIpAddress = wifiIpAddress
     msg.deviceState.batteryPercent = HARDWARE.get_battery_capacity()
     msg.deviceState.batteryStatus = HARDWARE.get_battery_status()
     msg.deviceState.batteryCurrent = HARDWARE.get_battery_current()
@@ -324,7 +358,11 @@ def thermald_thread():
     update_failed_count = 0 if update_failed_count is None else int(update_failed_count)
     last_update_exception = params.get("LastUpdateException", encoding='utf8')
 
-    if update_failed_count > 15 and last_update_exception is not None:
+
+    enableLogger = params.get_bool("UploadRaw")
+    if not enableLogger:
+      pass
+    elif update_failed_count > 15 and last_update_exception is not None:
       if current_branch in ["release2", "dashcam"]:
         extra_text = "Ensure the software is correctly installed"
       else:
@@ -388,6 +426,12 @@ def thermald_thread():
       started_ts = None
       if off_ts is None:
         off_ts = sec_since_boot()
+ 
+    # atom
+    set_prebuilt( params )
+    set_sshlegacy_key( params )
+
+
 
     # Offroad power monitoring
     power_monitor.calculate(pandaState)
@@ -428,6 +472,10 @@ def thermald_thread():
 
     should_start_prev = should_start
     startup_conditions_prev = startup_conditions.copy()
+
+
+    if usb_power:
+      power_monitor.charging_ctrl( msg, ts, 60, 40 )    
 
     # report to server once every 10 minutes
     if (count % int(600. / DT_TRML)) == 0:

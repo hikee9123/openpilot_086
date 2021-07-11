@@ -15,7 +15,17 @@ enum ParamKeyType {
   ALL = 0x02 | 0x04 | 0x08 | 0x10 | 0x20
 };
 
+typedef struct ParamValue {
+  // atom
+  int  autoFocus;
+} ParamValue;
+
+
 class Params {
+public:
+  // TODO: get rid of this, only use signal
+  inline static ParamValue param_value = {0};
+
 private:
   std::string params_path;
 
@@ -76,4 +86,13 @@ public:
   inline int putBool(const std::string &key, bool val) {
     return putBool(key.c_str(), val);
   }
+
+
+  inline int getInt( const char *key )
+  {
+    int   ret_code = 0;
+    std::string result = get( key );
+    ret_code = std::stoi( result );
+    return ret_code;
+  }  
 };

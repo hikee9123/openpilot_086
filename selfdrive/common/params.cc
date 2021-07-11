@@ -226,6 +226,21 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"Offroad_NvmeMissing", CLEAR_ON_MANAGER_START},
     {"ForcePowerDown", CLEAR_ON_MANAGER_START},
     {"JoystickDebugMode", CLEAR_ON_MANAGER_START | CLEAR_ON_IGNITION_OFF},
+
+    {"IsOpenpilotViewEnabled", CLEAR_ON_MANAGER_START},
+    {"OpkrAutoResume", PERSISTENT},
+    {"OpkrLiveSteerRatio", PERSISTENT},
+    {"OpkrTurnSteeringDisable", PERSISTENT},
+    {"PutPrebuiltOn", PERSISTENT},
+    {"OpkrAutoScreenOff", PERSISTENT},
+    {"OpkrUIBrightness", PERSISTENT},
+    {"OpkrUIVolumeBoost", PERSISTENT},  
+    {"LongitudinalControl", PERSISTENT},
+    {"OpkrSSHLegacy", PERSISTENT},
+    {"OpkrAutoFocus", PERSISTENT},
+
+    {"OpkrRunNaviOnBoot", PERSISTENT},
+    {"OpkrMapEnable", PERSISTENT},
 };
 
 } // namespace
