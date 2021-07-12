@@ -90,8 +90,6 @@ void safety_setter_thread() {
   cereal::CarParams::Reader car_params = cmsg.getRoot<cereal::CarParams>();
   cereal::CarParams::SafetyModel safety_model = car_params.getSafetyModel();
 
-  panda->set_unsafe_mode(0);  // see safety_declarations.h for allowed values
-
   auto safety_param = car_params.getSafetyParam();
   LOGW("setting safety model: %d with param %d", (int)safety_model, safety_param);
 
@@ -141,9 +139,9 @@ bool usb_connect() {
 
   // power on charging, only the first time. Panda can also change mode and it causes a brief disconneciton
 #ifndef __x86_64__
-  if (!connected_once) {
+  //if (!connected_once) {
     tmp_panda->set_usb_power_mode(cereal::PandaState::UsbPowerMode::CDP);
-  }
+  //}
 #endif
 
   if (tmp_panda->has_rtc) {
@@ -367,7 +365,7 @@ void panda_state_thread(bool spoofing_started) {
     ps.setIgnitionCan(pandaState.ignition_can);
     ps.setControlsAllowed(pandaState.controls_allowed);
     ps.setGasInterceptorDetected(pandaState.gas_interceptor_detected);
-    ps.setHasGps(true);
+    ps.setHasGps(panda->is_pigeon);
     ps.setCanRxErrs(pandaState.can_rx_errs);
     ps.setCanSendErrs(pandaState.can_send_errs);
     ps.setCanFwdErrs(pandaState.can_fwd_errs);
@@ -475,6 +473,15 @@ static void pigeon_publish_raw(PubMaster &pm, const std::string &dat) {
 }
 
 void pigeon_thread() {
+
+  printf("panda->is_pigeon: %s !!!!!\n", panda->is_pigeon ? "true" : "false");
+  if(!panda->is_pigeon) {
+    puts("pigeon_thread canceled !!!!!");
+    return;
+  }
+
+  puts("pigeon_thread start !!!!!");
+
   PubMaster pm({"ubloxRaw"});
   bool ignition_last = false;
 
@@ -545,6 +552,8 @@ void pigeon_thread() {
   }
 
   delete pigeon;
+
+  puts("pigeon_thread end !!!!!");
 }
 
 
