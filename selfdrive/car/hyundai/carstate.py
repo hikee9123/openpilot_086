@@ -456,13 +456,16 @@ class CarState(CarStateBase):
       ("CGW4", 5),
       ("WHL_SPD11", 50),
       ("SAS11", 100),
+
+      ("SCC11", 50),
+      ("SCC12", 50),  
     ]
 
-    if not CP.openpilotLongitudinalControl:
-      checks += [
-        ("SCC11", 50),
-        ("SCC12", 50),
-      ]
+    #if not CP.openpilotLongitudinalControl:
+    #  checks += [
+    #    ("SCC11", 50),
+    #    ("SCC12", 50),
+    #  ]
 
     signals, checks = CarState.get_parser_ev_hybrid( CP, signals, checks )
     signals, checks = CarState.get_parser_gears( CP, signals, checks )
