@@ -434,6 +434,7 @@ class CarState(CarStateBase):
       ("CR_VSM_Alive", "SCC12", 0),
       ("CR_VSM_ChkSum", "SCC12", 0),
 
+      ("UNIT", "TPMS11", 0),
       ("PRESSURE_FL", "TPMS11", 0),
       ("PRESSURE_FR", "TPMS11", 0),
       ("PRESSURE_RL", "TPMS11", 0),
@@ -457,15 +458,15 @@ class CarState(CarStateBase):
       ("WHL_SPD11", 50),
       ("SAS11", 100),
 
-      ("SCC11", 50),
-      ("SCC12", 50),  
+      #("SCC11", 50),
+      #("SCC12", 50),  
     ]
 
-    #if not CP.openpilotLongitudinalControl:
-    #  checks += [
-    #    ("SCC11", 50),
-    #    ("SCC12", 50),
-    #  ]
+    if not CP.openpilotLongitudinalControl:
+      checks += [
+        ("SCC11", 50),
+        ("SCC12", 50),
+      ]
 
     signals, checks = CarState.get_parser_ev_hybrid( CP, signals, checks )
     signals, checks = CarState.get_parser_gears( CP, signals, checks )
