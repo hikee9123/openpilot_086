@@ -38,7 +38,6 @@ static bool calib_frame_to_full_frame(const UIState *s, float in_x, float in_y, 
 static void ui_init_vision(UIState *s) {
   // Invisible until we receive a calibration message.
   s->scene.world_objects_visible = false;
-  s->scene.ignition = true;
 
   for (int i = 0; i < s->vipc_client->num_buffers; i++) {
     s->texture[i].reset(new EGLImageTexture(&s->vipc_client->buffers[i]));
@@ -135,22 +134,6 @@ static void update_state(UIState *s) {
   if (sm.frame % (UI_FREQ / 2) == 0) {
     scene.engageable = sm["controlsState"].getControlsState().getEngageable();
     scene.dm_active = sm["driverMonitoringState"].getDriverMonitoringState().getIsActiveMode();
-
-  }
-
-  if (scene.started && sm.updated("controlsState")) {
-    scene.controls_state = sm["controlsState"].getControlsState();
-
-// debug Message
-  scene.alert.alertTextMsg1 = scene.controls_state.getAlertTextMsg1();
-  scene.alert.alertTextMsg2 = scene.controls_state.getAlertTextMsg2();
-  scene.alert.alertTextMsg3 = scene.controls_state.getAlertTextMsg3();
-  }
-  if (sm.updated("carState")) {
-    scene.car_state = sm["carState"].getCarState();
-
-    auto cruiseState = scene.car_state.getCruiseState();
-    scene.scr.awake = cruiseState.getCruiseSwState();
   }
   if (sm.updated("radarState")) {
     std::optional<cereal::ModelDataV2::XYZTData::Reader> line;
@@ -180,13 +163,10 @@ static void update_state(UIState *s) {
     scene.modelDataV2 = sm["modelV2"].getModelV2();
     update_model(s, scene.modelDataV2);
   }
-
   if (sm.updated("pandaState")) {
     auto pandaState = sm["pandaState"].getPandaState();
     scene.pandaType = pandaState.getPandaType();
     scene.ignition = pandaState.getIgnitionLine() || pandaState.getIgnitionCan();
-
-    
   } else if ((s->sm->frame - s->sm->rcv_frame("pandaState")) > 5*UI_FREQ) {
     scene.pandaType = cereal::PandaState::PandaType::UNKNOWN;
   }
@@ -196,17 +176,9 @@ static void update_state(UIState *s) {
       scene.satelliteCount = data.getMeasurementReport().getNumMeas();
     }
   }
-  if (sm.updated("gpsLocationExternal")) {
-    scene.gpsLocationExternal = sm["gpsLocationExternal"].getGpsLocationExternal();
-    scene.gpsAccuracy = scene.gpsLocationExternal.getAccuracy();
-  }  
   if (sm.updated("carParams")) {
     scene.longitudinal_control = sm["carParams"].getCarParams().getOpenpilotLongitudinalControl();
   }
-  if (sm.updated("driverState")) {
-    scene.driver_state = sm["driverState"].getDriverState();
-  }
-
   if (sm.updated("sensorEvents")) {
     for (auto sensor : sm["sensorEvents"].getSensorEvents()) {
       if (!scene.started && sensor.which() == cereal::SensorEventData::ACCELERATION) {
@@ -230,23 +202,40 @@ static void update_state(UIState *s) {
 
     if (Hardware::TICI()) {
       // Max gain is 4 * 2.5 (High Conversion Gain)
-      gain *= 0.01;
+      gain /= 10.0;
     }
 
     scene.light_sensor = std::clamp<float>((1023.0 / max_lines) * (max_lines - camera_state.getIntegLines() * gain), 0.0, 1023.0);
   }
 
-  if (scene.IsOpenpilotViewEnabled )
-  {
+  if( scene.IsOpenpilotViewEnabled )
     scene.started = sm["deviceState"].getDeviceState().getStarted();
-  }
   else
-  {
-      scene.started = sm["deviceState"].getDeviceState().getStarted() && scene.ignition;
-  }
-  
+    scene.started = sm["deviceState"].getDeviceState().getStarted() && scene.ignition;
+
+
 
    // atom
+   if (scene.started && sm.updated("controlsState")) {
+    scene.controls_state = sm["controlsState"].getControlsState();
+// debug Message
+    scene.alert.alertTextMsg1 = scene.controls_state.getAlertTextMsg1();
+    scene.alert.alertTextMsg2 = scene.controls_state.getAlertTextMsg2();
+    scene.alert.alertTextMsg3 = scene.controls_state.getAlertTextMsg3();
+   }
+   if (sm.updated("carState")) {
+    scene.car_state = sm["carState"].getCarState();
+
+    auto cruiseState = scene.car_state.getCruiseState();
+    scene.scr.awake = cruiseState.getCruiseSwState();
+   }
+   if (sm.updated("gpsLocationExternal")) {
+    scene.gpsLocationExternal = sm["gpsLocationExternal"].getGpsLocationExternal();
+    scene.gpsAccuracy = scene.gpsLocationExternal.getAccuracy();
+   }  
+   if (sm.updated("driverState")) {
+    scene.driver_state = sm["driverState"].getDriverState();
+   }
    if (sm.updated("deviceState")) {
     scene.deviceState = sm["deviceState"].getDeviceState();
    }   
